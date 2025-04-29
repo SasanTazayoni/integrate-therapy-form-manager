@@ -1,5 +1,5 @@
 function App() {
-  return <h1>Schema Mode Questionnaire</h1>;
+  return <h1>YSQ Questionnaire</h1>;
 }
 
 export default App;
