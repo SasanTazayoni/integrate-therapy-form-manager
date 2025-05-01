@@ -1,0 +1,48 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Overlay that covers the full screen */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* The modal box in the center */
+.modal-box {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  width: 300px;
+  text-align: center;
+  z-index: 1001;
+}
+
+.modal-box input {
+  width: 100%;
+  margin: 1rem 0;
+  padding: 0.5rem;
+}
+
+.modal-box button {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+/* Blur effect for background when locked */
+.blurred {
+  filter: blur(10px);
+  pointer-events: none;
+  user-select: none;
+}
