@@ -13,18 +13,27 @@ const ProtectedForm = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  if (authenticated) return <>{children}</>;
-
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Enter Password to Access the Form</h2>
-      <input
-        type="password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button type="submit">Enter</button>
-    </form>
+    <>
+      <div className={`app-content ${!authenticated ? "blurred" : ""}`}>
+        {children}
+      </div>
+
+      {!authenticated && (
+        <div className="modal-overlay">
+          <form className="modal-box" onSubmit={handleSubmit}>
+            <h2>Enter Password</h2>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+            />
+            <button type="submit">Access Form</button>
+          </form>
+        </div>
+      )}
+    </>
   );
 };
 
