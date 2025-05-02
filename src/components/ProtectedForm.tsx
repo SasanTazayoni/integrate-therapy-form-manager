@@ -20,8 +20,8 @@ const ProtectedForm = ({ children }: { children: React.ReactNode }) => {
       </div>
 
       {!authenticated && (
-        <div className="modal-overlay">
-          <form className="modal-box" onSubmit={handleSubmit}>
+        <div className="overlay">
+          <form className="modal" onSubmit={handleSubmit}>
             <h2>Enter Password</h2>
             <input
               type="password"
