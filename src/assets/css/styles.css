@@ -6,6 +6,10 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 h1,
 h2,
 h3 {
@@ -54,4 +58,45 @@ body {
   filter: blur(10px);
   pointer-events: none;
   user-select: none;
+}
+
+/* Forms */
+
+label {
+  display: block;
+  margin: 5px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+select,
+textarea {
+  border: 2px solid #7ccfff;
+  border-radius: 5px;
+  padding: 5px 8px;
+  transition: all 0.3s;
+  margin-bottom: 15px;
+  background-color: #f7f7f7;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+textarea {
+  width: 100%;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+input[type="tel"]:focus,
+textarea:focus {
+  border-color: #325aff;
+  outline: 0;
 }
