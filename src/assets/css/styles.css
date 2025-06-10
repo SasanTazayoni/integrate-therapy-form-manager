@@ -1,5 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
 
+:root {
+  --color-primary: #39b6ff;
+  --color-secondary: #325aff;
+  --color-link: #0f0094;
+  --color-border: #7ccfff;
+  --color-block--white: #fff;
+  --color-block--grey: #f4f4f4;
+}
+
 *,
 *::before,
 *::after {
@@ -14,10 +23,12 @@ h1,
 h2,
 h3 {
   font-family: "Lora", Arial, Helvetica, sans-serif;
+  color: #000;
 }
 
 body {
   font-family: "Open Sans", Arial, Helvetica, sans-serif;
+  color: #3c0042;
 }
 
 .overlay {
@@ -34,7 +45,12 @@ body {
 }
 
 .modal {
-  background: linear-gradient(rgb(226, 208, 208), white, rgb(226, 208, 208));
+  background: linear-gradient(
+    to bottom right,
+    rgba(244, 244, 244, 0.8) 10%,
+    #fff,
+    rgba(244, 244, 244, 0.8) 90%
+  );
   padding: 2rem;
   border-radius: 10px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
@@ -74,7 +90,7 @@ input[type="number"],
 input[type="tel"],
 select,
 textarea {
-  border: 2px solid #7ccfff;
+  border: 2px solid var(--color-border);
   border-radius: 5px;
   padding: 5px 8px;
   transition: all 0.3s;
@@ -97,6 +113,6 @@ input[type="password"]:focus,
 input[type="number"]:focus,
 input[type="tel"]:focus,
 textarea:focus {
-  border-color: #325aff;
+  border-color: var(--color-secondary);
   outline: 0;
 }
