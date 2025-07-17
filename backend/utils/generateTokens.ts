@@ -1,5 +1,6 @@
 import { nanoid } from "nanoid";
 import pool from "../db";
+import { createTokenGenerationError } from "../errors";
 
 type TokenData = {
   questionnaire: "SMI" | "YSQ" | "BECKS" | "BURNS";
@@ -35,7 +36,9 @@ export async function generateTokens(email: string): Promise<TokenData[]> {
   } catch (error) {
     await client.query("ROLLBACK");
     console.error("Token generation failed:", error);
-    throw new Error("Failed to generate tokens");
+    throw createTokenGenerationError(
+      error instanceof Error ? error.message : undefined
+    );
   } finally {
     try {
       client.release();
