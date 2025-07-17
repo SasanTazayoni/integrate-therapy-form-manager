@@ -12,9 +12,10 @@ import http from "http";
 import pool from "./db";
 import app from "./index";
 import * as tokenUtils from "./utils/generateTokens";
+import * as emailUtils from "./utils/email";
 
 vi.mock("./utils/generateTokens");
-
+vi.mock("./utils/email");
 vi.mock("./db", () => {
   return {
     default: {
@@ -51,90 +52,126 @@ describe("GET / error handling", () => {
   });
 });
 
-let server;
-
-beforeAll(() => {
-  server = http.createServer(app);
-  tokenUtils.generateTokens.mockResolvedValue([
-    { questionnaire: "SMI", token: "fakeToken1" },
-    { questionnaire: "YSQ", token: "fakeToken2" },
-    { questionnaire: "BECKS", token: "fakeToken3" },
-    { questionnaire: "BURNS", token: "fakeToken4" },
-  ]);
-  return new Promise((resolve) => server.listen(resolve));
-});
-
-afterAll(() => {
-  return new Promise((resolve, reject) => {
-    if (!server) return resolve();
-    server.close((err) => (err ? reject(err) : resolve()));
-  });
-});
-
 describe("POST /api/dev/generate-tokens", () => {
-  test("should generate 4 tokens for the given email", async () => {
-    const email = "test@example.com";
-    const res = await request(server)
+  test("should return 400 if email is missing", async () => {
+    const res = await request(app).post("/api/dev/generate-tokens").send({});
+    expect(res.statusCode).toBe(400);
+    expect(res.body.error).toBe("Email is required");
+  });
+
+  test("should send magic links successfully", async () => {
+    const mockTokens = [
+      { questionnaire: "PHQ9", token: "abc123" },
+      { questionnaire: "GAD7", token: "xyz456" },
+    ];
+
+    tokenUtils.generateTokens.mockResolvedValue(mockTokens);
+    emailUtils.sendMagicLinksEmail.mockResolvedValue();
+
+    const res = await request(app)
       .post("/api/dev/generate-tokens")
-      .send({ email })
-      .set("Accept", "application/json");
+      .send({ email: "test@example.com" });
 
-    expect(res.status).toBe(200);
-    expect(res.body).toHaveProperty("email", email);
-    expect(res.body).toHaveProperty("tokens");
-    expect(Array.isArray(res.body.tokens)).toBe(true);
-    expect(res.body.tokens.length).toBe(4);
+    expect(res.statusCode).toBe(200);
+    expect(res.body.email).toBe("test@example.com");
+    expect(res.body.magicLinks).toHaveLength(2);
+    expect(emailUtils.sendMagicLinksEmail).toHaveBeenCalledWith(
+      "test@example.com",
+      expect.any(Array)
+    );
+  });
 
-    const questionnaires = ["SMI", "YSQ", "BECKS", "BURNS"];
-    const tokenQuestionnaires = res.body.tokens.map((t) => t.questionnaire);
-
-    questionnaires.forEach((q) => {
-      expect(tokenQuestionnaires).toContain(q);
+  test("should handle token generation failure", async () => {
+    tokenUtils.generateTokens.mockRejectedValue({
+      type: "TokenGenerationError",
+      message: "Failed to create tokens",
     });
 
-    res.body.tokens.forEach((t) => {
-      expect(typeof t.token).toBe("string");
-      expect(t.token.length).toBeGreaterThan(0);
+    const res = await request(app)
+      .post("/api/dev/generate-tokens")
+      .send({ email: "fail@example.com" });
+
+    expect(res.statusCode).toBe(500);
+    expect(res.body.error).toBe("Failed to generate tokens");
+  });
+
+  test("should handle magic link email failure", async () => {
+    tokenUtils.generateTokens.mockResolvedValue([
+      { questionnaire: "PHQ9", token: "abc123" },
+    ]);
+
+    emailUtils.sendMagicLinksEmail.mockRejectedValue({
+      type: "MagicLinkSendingError",
+      message: "Email failed",
     });
+
+    const res = await request(app)
+      .post("/api/dev/generate-tokens")
+      .send({ email: "fail2@example.com" });
+
+    expect(res.statusCode).toBe(500);
+    expect(res.body.error).toBe("Failed to send magic links");
+  });
+
+  test("should handle unknown/untyped error", async () => {
+    tokenUtils.generateTokens.mockImplementation(() => {
+      throw new Error("Something totally unexpected");
+    });
+
+    const res = await request(app)
+      .post("/api/dev/generate-tokens")
+      .send({ email: "weird@example.com" });
+
+    expect(res.statusCode).toBe(500);
+    expect(res.body.error).toBe("Unknown error");
+    expect(res.body.details).toMatch(/Something totally unexpected/);
   });
 });
 
-describe("POST /api/dev/generate-tokens error handling", () => {
-  test("should return 400 if email is missing in request body", async () => {
-    const res = await request(server)
-      .post("/api/dev/generate-tokens")
-      .send({}) // no email
-      .set("Accept", "application/json");
-
-    expect(res.status).toBe(400);
-    expect(res.body).toHaveProperty("error", "Email is required");
+describe("POST /api/send-pack", () => {
+  test("should return 400 if email is missing", async () => {
+    const res = await request(app).post("/api/send-pack").send({});
+    expect(res.statusCode).toBe(400);
+    expect(res.body.error).toBe("Email is required");
   });
 
-  test("should return 500 if generateTokens throws an Error", async () => {
-    tokenUtils.generateTokens.mockRejectedValueOnce(
-      new Error("Token gen failed")
+  test("should use fallback URL when CLIENT_BASE_URL is undefined", async () => {
+    const originalBaseUrl = process.env.CLIENT_BASE_URL;
+    delete process.env.CLIENT_BASE_URL;
+
+    tokenUtils.generateTokens.mockResolvedValue([
+      { questionnaire: "PHQ9", token: "abc123" },
+    ]);
+
+    emailUtils.sendMagicLinksEmail.mockResolvedValue(undefined);
+
+    const res = await request(app)
+      .post("/api/send-pack")
+      .send({ email: "fallback@test.com" });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.magicLinks[0].url).toBe(
+      "http://localhost:3000/phq9?token=abc123"
     );
 
-    const res = await request(server)
-      .post("/api/dev/generate-tokens")
-      .send({ email: "fail@example.com" })
-      .set("Accept", "application/json");
-
-    expect(res.status).toBe(500);
-    expect(res.body).toHaveProperty("error", "Failed to generate tokens");
-    expect(res.body).toHaveProperty("details", "Token gen failed");
+    process.env.CLIENT_BASE_URL = originalBaseUrl;
   });
 
-  test("should return 500 if generateTokens throws a non-Error value", async () => {
-    tokenUtils.generateTokens.mockRejectedValueOnce("Some string error");
+  test("should send magic links via send-pack", async () => {
+    const mockTokens = [
+      { questionnaire: "PHQ9", token: "abc123" },
+      { questionnaire: "GAD7", token: "xyz456" },
+    ];
 
-    const res = await request(server)
-      .post("/api/dev/generate-tokens")
-      .send({ email: "fail2@example.com" })
-      .set("Accept", "application/json");
+    tokenUtils.generateTokens.mockResolvedValue(mockTokens);
+    emailUtils.sendMagicLinksEmail.mockResolvedValue();
 
-    expect(res.status).toBe(500);
-    expect(res.body).toHaveProperty("error", "Failed to generate tokens");
-    expect(res.body).toHaveProperty("details", "Some string error");
+    const res = await request(app)
+      .post("/api/send-pack")
+      .send({ email: "client@example.com" });
+
+    expect(res.statusCode).toBe(200);
+    expect(res.body.magicLinks).toHaveLength(2);
+    expect(emailUtils.sendMagicLinksEmail).toHaveBeenCalled();
   });
 });
