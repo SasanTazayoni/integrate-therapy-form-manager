@@ -1,6 +1,6 @@
 const Questionnaire = () => {
   return (
-    <div>
+    <div data-testid="ysq-questionnaire">
       <h1>YSQ Questionnaire</h1>
     </div>
   );
