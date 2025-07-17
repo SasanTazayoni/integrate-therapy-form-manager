@@ -50,17 +50,17 @@ describe("generateTokens", () => {
     expect(mockClient.release).toHaveBeenCalled();
   });
 
-  test("should rollback and throw if insertion fails", async () => {
+  test("should rollback and throw error if insertion fails", async () => {
     mockClient.query
-      .mockResolvedValueOnce() // BEGIN
-      .mockRejectedValueOnce(new Error("DB error")) // first INSERT fails
-      .mockResolvedValueOnce(); // ROLLBACK
+      .mockResolvedValueOnce({}) // BEGIN
+      .mockRejectedValueOnce(new Error("DB error")) // INSERT fails
+      .mockResolvedValueOnce({}); // ROLLBACK
 
     const email = "fail@example.com";
 
-    await expect(generateTokens(email)).rejects.toThrow(
-      "Failed to generate tokens"
-    );
+    await expect(generateTokens(email)).rejects.toMatchObject({
+      type: "TokenGenerationError",
+    });
 
     expect(mockClient.query).toHaveBeenCalledWith("BEGIN");
     expect(mockClient.query).toHaveBeenCalledWith("ROLLBACK");
@@ -68,18 +68,19 @@ describe("generateTokens", () => {
   });
 
   test("should log error when insertion fails", async () => {
+    const email = "fail@example.com";
     const consoleErrorSpy = vi
       .spyOn(console, "error")
       .mockImplementation(() => {});
 
     mockClient.query
-      .mockResolvedValueOnce() // BEGIN
+      .mockResolvedValueOnce({}) // BEGIN
       .mockRejectedValueOnce(new Error("DB error")) // first INSERT fails
-      .mockResolvedValueOnce(); // ROLLBACK
+      .mockResolvedValueOnce({}); // ROLLBACK
 
-    await expect(generateTokens("fail@example.com")).rejects.toThrow(
-      "Failed to generate tokens"
-    );
+    await expect(generateTokens(email)).rejects.toMatchObject({
+      type: "TokenGenerationError",
+    });
 
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       "Token generation failed:",
@@ -110,5 +111,22 @@ describe("generateTokens", () => {
     await expect(generateTokens(email)).resolves.toHaveLength(4);
 
     expect(mockClient.release).toHaveBeenCalled();
+  });
+
+  test("throws createTokenGenerationError with undefined message if error is not an Error instance", async () => {
+    mockClient.query
+      .mockResolvedValueOnce({}) // BEGIN
+      .mockRejectedValueOnce("some string error") // INSERT throws string instead of Error
+      .mockResolvedValueOnce({}); // ROLLBACK
+
+    const email = "fail@example.com";
+
+    await expect(generateTokens(email)).rejects.toMatchObject({
+      type: "TokenGenerationError",
+    });
+
+    await generateTokens(email).catch((err) => {
+      expect(err.message).toBeUndefined();
+    });
   });
 });
