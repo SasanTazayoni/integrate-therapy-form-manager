@@ -2,9 +2,10 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import pool from "./db";
-import { generateTokens } from "./utils/generateTokens";
+import { generateAllTokens } from "./utils/generateAllTokens";
 import { sendMagicLinksEmail } from "./utils/email";
 import { TypedError } from "./errors";
+import { tokenValidator } from "./utils/tokenValidator";
 
 dotenv.config();
 const app = express();
@@ -12,9 +13,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-async function handleSendMagicLinks(email: string, res: express.Response) {
+async function handleSendMagicLinks(
+  email: string,
+  res: express.Response,
+  options?: { forceNewSMI?: boolean }
+) {
   try {
-    const tokens = await generateTokens(email);
+    const tokens = await generateAllTokens(email, options);
     const magicLinks = tokens.map(({ questionnaire, token }) => ({
       questionnaire,
       url: `${
@@ -67,11 +72,36 @@ app.post("/api/dev/generate-tokens", async (req, res) => {
 });
 
 app.post("/api/send-pack", async (req, res) => {
-  const { email } = req.body;
+  const { email, forceNewSMI } = req.body;
   if (!email) return res.status(400).json({ error: "Email is required" });
 
   console.log(`📩 Sending questionnaire pack to ${email}`);
-  await handleSendMagicLinks(email, res);
+  await handleSendMagicLinks(email, res, { forceNewSMI });
+});
+
+app.post("/api/validate-token", async (req, res) => {
+  const { token } = req.body;
+  if (!token) return res.status(400).json({ error: "Token is required" });
+
+  try {
+    const validationResult = await tokenValidator(token);
+    if (!validationResult.valid) {
+      return res
+        .status(401)
+        .json({ valid: false, message: validationResult.message });
+    }
+
+    return res.status(200).json({
+      valid: true,
+      email: validationResult.email,
+      questionnaire: validationResult.questionnaire,
+    });
+  } catch (err) {
+    console.error("Validation error:", err);
+    return res
+      .status(500)
+      .json({ valid: false, message: "Internal server error" });
+  }
 });
 
 export default app;
