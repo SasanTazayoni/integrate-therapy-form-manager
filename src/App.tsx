@@ -1,12 +1,47 @@
-import ProtectedForm from "./components/ProtectedForm";
-import Questionnaire from "./components/Questionnaire";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import YSQ from "./pages/YSQ";
+import SMI from "./pages/SMI";
+import BECKS from "./pages/BECKS";
+import BURNS from "./pages/BURNS";
+import NotFound from "./pages/404";
 
-function App() {
-  return (
-    <ProtectedForm>
-      <Questionnaire />
-    </ProtectedForm>
-  );
+import { SMIAction } from "./actions/SMIAction";
+import { YSQAction } from "./actions/YSQAction";
+import { BECKSAction } from "./actions/BECKSAction";
+import { BURNSAction } from "./actions/BURNSAction";
+
+const router = createBrowserRouter(
+  [
+    {
+      path: "/SMI",
+      element: <SMI />,
+      action: SMIAction,
+    },
+    {
+      path: "/YSQ",
+      element: <YSQ />,
+      action: YSQAction,
+    },
+    {
+      path: "/BECKS",
+      element: <BECKS />,
+      action: BECKSAction,
+    },
+    {
+      path: "/BURNS",
+      element: <BURNS />,
+      action: BURNSAction,
+    },
+    {
+      path: "*",
+      element: <NotFound />,
+    },
+  ],
+  {
+    basename: "/integrate-therapy-forms",
+  }
+);
+
+export default function App() {
+  return <RouterProvider router={router} />;
 }
-
-export default App;
