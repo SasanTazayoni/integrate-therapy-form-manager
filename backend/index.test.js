@@ -1,21 +1,14 @@
 import request from "supertest";
-import {
-  describe,
-  test,
-  expect,
-  vi,
-  beforeEach,
-  beforeAll,
-  afterAll,
-} from "vitest";
-import http from "http";
+import { describe, test, expect, vi, beforeEach } from "vitest";
 import pool from "./db";
 import app from "./index";
-import * as tokenUtils from "./utils/generateTokens";
+import * as tokenUtils from "./utils/generateAllTokens";
 import * as emailUtils from "./utils/email";
+import * as tokenValidatorModule from "./utils/tokenValidator";
 
 vi.mock("./utils/generateTokens");
 vi.mock("./utils/email");
+vi.mock("./utils/tokenValidator");
 vi.mock("./db", () => {
   return {
     default: {
@@ -173,5 +166,69 @@ describe("POST /api/send-pack", () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.magicLinks).toHaveLength(2);
     expect(emailUtils.sendMagicLinksEmail).toHaveBeenCalled();
+  });
+});
+
+describe("POST /api/validate-token", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("returns 400 if no token provided", async () => {
+    const res = await request(app).post("/api/validate-token").send({});
+    expect(res.status).toBe(400);
+    expect(res.body).toEqual({ error: "Token is required" });
+  });
+
+  test("returns 200 and valid=true for valid token", async () => {
+    vi.mocked(tokenValidatorModule.tokenValidator).mockResolvedValue({
+      valid: true,
+      email: "test@example.com",
+      questionnaire: "SMI",
+    });
+
+    const res = await request(app)
+      .post("/api/validate-token")
+      .send({ token: "validtoken123" });
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      valid: true,
+      email: "test@example.com",
+      questionnaire: "SMI",
+    });
+  });
+
+  test("returns 401 and valid=false for invalid token", async () => {
+    vi.mocked(tokenValidatorModule.tokenValidator).mockResolvedValue({
+      valid: false,
+      message: "Token expired",
+    });
+
+    const res = await request(app)
+      .post("/api/validate-token")
+      .send({ token: "expiredtoken" });
+
+    expect(res.status).toBe(401);
+    expect(res.body).toEqual({
+      valid: false,
+      message: "Token expired",
+    });
+  });
+
+  test("returns 500 on unexpected error", async () => {
+    vi.mocked(tokenValidatorModule.tokenValidator).mockRejectedValue(
+      new Error("DB error")
+    );
+
+    const res = await request(app)
+      .post("/api/validate-token")
+      .send({ token: "anytoken" });
+
+    expect(res.status).toBe(500);
+    expect(res.body).toEqual({
+      valid: false,
+      message: "Internal server error",
+    });
   });
 });
