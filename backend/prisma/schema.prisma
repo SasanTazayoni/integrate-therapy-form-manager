@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id             String    @id @default(uuid())
+  email          String    @unique
+  status         String    @default("active")
+  inactivated_at DateTime? 
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+
+  forms          Form[]
+}
+
+model Form {
+  id               String    @id @default(uuid())
+  client           Client    @relation(fields: [clientId], references: [id])
+  clientId         String
+  form_type        String
+  token            String    @unique
+  token_sent_at    DateTime
+  token_expires_at DateTime
+  token_used_at    DateTime?
+  is_active        Boolean   @default(true)
+  submitted_at     DateTime?
+  total_score      Int?
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
+}
+
+model ActivityLog {
+  id           String   @id @default(uuid())
+  event_type   String
+  timestamp    DateTime @default(now())
+  client_email String
+  notes        String?
+  created_at   DateTime @default(now())
+}
