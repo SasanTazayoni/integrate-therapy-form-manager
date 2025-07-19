@@ -42,10 +42,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1;
+  z-index: 11;
+}
+
+.overlay.fade-out {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
 }
 
 .modal {
+  all: unset;
+  display: block;
   background: linear-gradient(
     to bottom right,
     rgba(244, 244, 244, 0.8) 10%,
@@ -57,12 +65,12 @@ body {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   width: 300px;
   text-align: center;
-  z-index: 1;
+  z-index: 12;
 }
 
 .modal input {
   width: 100%;
-  margin: 1rem 0;
+  margin: 0.5rem 0;
   padding: 0.5rem;
 }
 
@@ -95,7 +103,7 @@ textarea {
   border-radius: 5px;
   padding: 5px 8px;
   transition: all 0.3s;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   background-color: #f7f7f7;
 }
 
