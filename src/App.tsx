@@ -18,22 +18,22 @@ const router = createBrowserRouter(
       element: <Dashboard />,
     },
     {
-      path: "/SMI",
+      path: "/SMI/:token",
       element: <SMI />,
       action: SMIAction,
     },
     {
-      path: "/YSQ",
+      path: "/YSQ/:token",
       element: <YSQ />,
       action: YSQAction,
     },
     {
-      path: "/BECKS",
+      path: "/BECKS/:token",
       element: <BECKS />,
       action: BECKSAction,
     },
     {
-      path: "/BURNS",
+      path: "/BURNS/:token",
       element: <BURNS />,
       action: BURNSAction,
     },
