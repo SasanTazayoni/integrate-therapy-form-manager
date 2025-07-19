@@ -4,6 +4,7 @@ import SMI from "./pages/SMI";
 import BECKS from "./pages/BECKS";
 import BURNS from "./pages/BURNS";
 import NotFound from "./pages/404";
+import Dashboard from "./pages/Dashboard";
 
 import { SMIAction } from "./actions/SMIAction";
 import { YSQAction } from "./actions/YSQAction";
@@ -12,6 +13,10 @@ import { BURNSAction } from "./actions/BURNSAction";
 
 const router = createBrowserRouter(
   [
+    {
+      path: "/",
+      element: <Dashboard />,
+    },
     {
       path: "/SMI",
       element: <SMI />,
@@ -38,7 +43,7 @@ const router = createBrowserRouter(
     },
   ],
   {
-    basename: "/integrate-therapy-forms",
+    basename: "/integrate-therapy-form-manager",
   }
 );
 
