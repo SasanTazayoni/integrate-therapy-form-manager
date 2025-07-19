@@ -2,7 +2,7 @@ import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 
 export default defineConfig({
-  base: "/integrate-therapy-forms/",
+  base: "/integrate-therapy-form-manager/",
   plugins: [react()],
   test: {
     environment: "jsdom",
