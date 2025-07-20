@@ -17,10 +17,12 @@ export async function sendFormLink({
   to,
   token,
   formType,
+  clientName,
 }: {
   to: string;
   token: string;
   formType: string;
+  clientName?: string;
 }) {
   const formPath = pathMap[formType];
   if (!formPath) {
@@ -28,13 +30,14 @@ export async function sendFormLink({
   }
 
   const link = `${baseUrl}${formPath}/${token}`;
+  const nameToUse = clientName ?? "Sir/Madam";
 
   const email = {
     from: process.env.FROM_EMAIL!,
     to,
     subject: `Your ${formType} Form`,
     html: `
-      <p>Hello,</p>
+      <p>Hi ${nameToUse},</p>
       <p>You’ve been sent a <strong>${formType}</strong> form to complete.</p>
       <p><a href="${link}">Click here to complete your form</a></p>
       <p>This link will expire in 24 hours.</p>
