@@ -10,6 +10,8 @@ datasource db {
 model Client {
   id             String    @id @default(uuid())
   email          String    @unique
+  name           String?
+  dob            DateTime?
   status         String    @default("active")
   inactivated_at DateTime? 
   created_at     DateTime  @default(now())
