@@ -1,9 +1,10 @@
 import { useEffect, useReducer } from "react";
-import { useSearchParams, Form, useActionData } from "react-router-dom";
+import { Form, useActionData } from "react-router-dom";
 
 type QuestionnaireFormProps = {
   title: string;
   questionnaire: "SMI" | "YSQ" | "BECKS" | "BURNS";
+  token?: string;
   children: React.ReactNode;
 };
 
@@ -29,10 +30,9 @@ export default function QuestionnaireForm({
   title,
   questionnaire,
   children,
+  token,
 }: QuestionnaireFormProps) {
-  const [searchParams] = useSearchParams();
   const actionData = useActionData() as { error?: string; success?: boolean };
-  const token = searchParams.get("token") ?? "";
 
   const [state, dispatch] = useReducer(reducer, { status: "loading" });
 
