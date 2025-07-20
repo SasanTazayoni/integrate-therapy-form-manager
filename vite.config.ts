@@ -5,6 +5,15 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
   base: "/integrate-therapy-form-manager/",
   plugins: [react(), tailwindcss()],
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:3001",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, "/api"),
+      },
+    },
+  },
   test: {
     environment: "jsdom",
     setupFiles: "./setupTests.js",
