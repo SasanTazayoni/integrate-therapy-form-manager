@@ -18,16 +18,20 @@ app.get("/ping", (req, res) => {
 });
 
 app.post("/clients", async (req, res) => {
-  const { email } = req.body;
+  const { email, name, dob } = req.body;
 
-  if (!email) {
-    return res.status(400).json({ error: "Email is required" });
+  if (!email || !name || !dob) {
+    return res
+      .status(400)
+      .json({ error: "Email, name, and date of birth are required" });
   }
 
   try {
     const client = await prisma.client.create({
       data: {
         email,
+        name,
+        dob: new Date(dob),
         status: "active",
       },
     });
@@ -110,8 +114,12 @@ app.post("/forms/send", async (req, res) => {
       },
     });
 
-    // Send email with form link
-    await sendFormLink({ to: client.email, token, formType });
+    await sendFormLink({
+      to: client.email,
+      token,
+      formType,
+      clientName: client.name ?? undefined,
+    });
 
     res.status(201).json({ message: "Form sent via email", form });
   } catch (error) {
@@ -154,6 +162,56 @@ app.get("/api/validate-token", async (req, res) => {
     return res
       .status(500)
       .json({ valid: false, message: "Server error validating token" });
+  }
+});
+
+app.post("/forms/submit", async (req, res) => {
+  const { token, fullName, dob, result } = req.body;
+
+  if (!token || !fullName || !dob || !result) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
+
+  try {
+    const form = await prisma.form.findUnique({
+      where: { token },
+      include: { client: true },
+    });
+
+    if (!form) {
+      return res.status(404).json({ error: "Form not found" });
+    }
+
+    if (
+      !form.is_active ||
+      form.token_used_at ||
+      new Date(form.token_expires_at) < new Date()
+    ) {
+      return res.status(403).json({ error: "Token is invalid or expired" });
+    }
+
+    await prisma.form.update({
+      where: { token },
+      data: {
+        submitted_at: new Date(),
+        total_score: parseInt(result),
+        token_used_at: new Date(),
+        is_active: false,
+      },
+    });
+
+    await prisma.client.update({
+      where: { id: form.clientId },
+      data: {
+        name: fullName,
+        dob: new Date(dob),
+      },
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Error submitting form:", error);
+    res.status(500).json({ error: "Failed to submit form" });
   }
 });
 
