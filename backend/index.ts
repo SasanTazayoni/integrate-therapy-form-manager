@@ -59,7 +59,7 @@ app.post("/forms", async (req, res) => {
   try {
     const token = nanoid(32);
     const now = new Date();
-    const expiresAt = new Date(now.getTime() + 1000 * 60 * 60 * 24);
+    const expiresAt = new Date(now.getTime() + 1000 * 60 * 60 * 24 * 14);
 
     const form = await prisma.form.create({
       data: {
