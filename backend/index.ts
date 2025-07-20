@@ -93,6 +93,21 @@ app.post("/forms/send", async (req, res) => {
   }
 
   try {
+    if (formType !== "SMI") {
+      const existingForm = await prisma.form.findFirst({
+        where: {
+          clientId,
+          form_type: formType,
+        },
+      });
+
+      if (existingForm) {
+        return res.status(400).json({
+          error: `Client already has a ${formType} form. Only SMI can be sent multiple times.`,
+        });
+      }
+    }
+
     // Check client exists
     const client = await prisma.client.findUnique({ where: { id: clientId } });
     if (!client) {
@@ -102,7 +117,7 @@ app.post("/forms/send", async (req, res) => {
     // Create form with token and expiry
     const token = nanoid(32);
     const now = new Date();
-    const expiresAt = new Date(now.getTime() + 1000 * 60 * 60 * 24); // 24 hours
+    const expiresAt = new Date(now.getTime() + 1000 * 60 * 60 * 24 * 14);
 
     const form = await prisma.form.create({
       data: {
