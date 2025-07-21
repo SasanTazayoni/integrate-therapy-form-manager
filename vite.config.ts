@@ -3,7 +3,10 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineConfig({
-  base: "/integrate-therapy-form-manager/",
+  base:
+    process.env.NODE_ENV === "production"
+      ? "/integrate-therapy-form-manager/"
+      : "/",
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
