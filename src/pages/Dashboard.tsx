@@ -7,13 +7,14 @@ export default function Dashboard() {
   const [errorFadingOut, setErrorFadingOut] = useState(false);
   const [formsCompleted, setFormsCompleted] = useState<number | null>(null);
   const [searched, setSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const validateEmail = (email: string) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
   };
 
-  const handleCheckProgress = () => {
+  const handleCheckProgress = async () => {
     if (!email.trim()) {
       setError("Input cannot be empty");
       setErrorFadingOut(false);
@@ -27,10 +28,28 @@ export default function Dashboard() {
 
     setError("");
     setErrorFadingOut(false);
-    setSearched(true);
+    setSearched(false);
+    setLoading(true);
 
-    const completedForms = Math.floor(Math.random() * 5);
-    setFormsCompleted(completedForms);
+    try {
+      const response = await fetch(
+        `/api/client-forms-status?email=${encodeURIComponent(email)}`
+      );
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.error || "Failed to fetch progress");
+        setFormsCompleted(null);
+      } else {
+        const data = await response.json();
+        setFormsCompleted(data.formsCompleted ?? 0);
+        setSearched(true);
+      }
+    } catch (err) {
+      setError("Network error, please try again");
+      setFormsCompleted(null);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleClear = () => {
@@ -86,12 +105,14 @@ export default function Dashboard() {
           <button
             onClick={handleCheckProgress}
             className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            disabled={loading}
           >
-            Check
+            {loading ? "Checking..." : "Check"}
           </button>
           <button
             onClick={handleClear}
             className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+            disabled={loading}
           >
             Clear
           </button>
