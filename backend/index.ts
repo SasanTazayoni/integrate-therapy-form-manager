@@ -255,4 +255,59 @@ app.post("/forms/submit", async (req, res) => {
   }
 });
 
+app.get("/api/client-forms-status", async (req, res) => {
+  const email = (req.query.email as string)?.toLowerCase();
+
+  if (!email) {
+    return res.status(400).json({ error: "Email query param is required" });
+  }
+
+  try {
+    const client = await prisma.client.findUnique({
+      where: { email },
+    });
+
+    if (!client) {
+      return res.json({
+        exists: false,
+        forms: {
+          YSQ: { activeToken: false, submitted: false },
+          SMI: { activeToken: false, submitted: false },
+          BECKS: { activeToken: false, submitted: false },
+          BURNS: { activeToken: false, submitted: false },
+        },
+      });
+    }
+
+    const forms = await prisma.form.findMany({
+      where: { clientId: client.id },
+    });
+
+    const formTypes = ["YSQ", "SMI", "BECKS", "BURNS"];
+    const formsStatus = formTypes.reduce(
+      (acc, type) => {
+        const formsOfType = forms.filter((f) => f.form_type === type);
+
+        const activeToken = formsOfType.some(
+          (f) => f.is_active === true && !f.token_used_at
+        );
+
+        const submitted = formsOfType.some((f) => !!f.submitted_at);
+
+        acc[type] = { activeToken, submitted };
+        return acc;
+      },
+      {} as Record<string, { activeToken: boolean; submitted: boolean }>
+    );
+
+    res.json({
+      exists: true,
+      forms: formsStatus,
+    });
+  } catch (error) {
+    console.error("Error fetching client forms status:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 export default app;
