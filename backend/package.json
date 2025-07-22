@@ -8,7 +8,8 @@
     "start": "node dist/server.js",
     "build": "tsc",
     "seed": "tsx prisma/seed.ts",
-    "test": "vitest --coverage"
+    "test": "vitest --coverage",
+    "send:test-email": "tsx scripts/sendTestEmail.ts"
   },
   "keywords": [],
   "author": "",
