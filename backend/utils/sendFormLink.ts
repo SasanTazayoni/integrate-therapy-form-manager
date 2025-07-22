@@ -5,8 +5,15 @@ import { getEnvVar } from "./requiredEnv";
 dotenv.config();
 
 const resend = new Resend(getEnvVar("RESEND_API_KEY"));
-const fromEmail = getEnvVar("FROM_EMAIL");
 const baseUrl = getEnvVar("FRONTEND_BASE_URL");
+
+function getFromEmail() {
+  if (process.env.NODE_ENV === "production") {
+    return getEnvVar("FROM_EMAIL_PROD");
+  } else {
+    return getEnvVar("FROM_EMAIL_TEST");
+  }
+}
 
 const pathMap: Record<string, string> = {
   YSQ: "/YSQ",
@@ -33,6 +40,7 @@ export async function sendFormLink({
 
   const link = `${baseUrl}${formPath}/${token}`;
   const nameToUse = clientName ?? "Sir/Madam";
+  const fromEmail = getFromEmail();
 
   const email = {
     from: fromEmail,
