@@ -9,7 +9,7 @@ import {
 const router = Router();
 
 router.post("/", createForm);
-router.post("/send", sendForm);
+router.post("/send/:formType", sendForm);
 router.get("/validate-token", validateToken);
 router.post("/submit", submitForm);
 
