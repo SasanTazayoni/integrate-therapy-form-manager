@@ -85,7 +85,7 @@ export default function Dashboard() {
       setSendStatus("");
 
       try {
-        const response = await fetch(`/api/forms/${formType}/send-token`, {
+        const response = await fetch(`/api/forms/send-token/${formType}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: email.trim().toLowerCase() }),
