@@ -1,19 +1,119 @@
 import { Request, Response } from "express";
 import prisma from "../prisma/client";
 
-export const createClient = async (req: Request, res: Response) => {
+type FormStatus = {
+  activeToken: boolean;
+  submitted: boolean;
+};
+
+type FormsStatusRecord = Record<string, FormStatus>;
+
+type Client = {
+  id: string;
+  email: string;
+  name?: string | null;
+  dob?: Date | null;
+  status: string;
+  inactivated_at?: Date | null;
+  created_at: Date;
+  updated_at: Date;
+};
+
+type Form = {
+  id: string;
+  clientId: string;
+  form_type: string;
+  token: string;
+  token_sent_at: Date;
+  token_expires_at: Date;
+  token_used_at: Date | null;
+  is_active: boolean;
+  submitted_at: Date | null;
+  total_score?: number | null;
+  created_at: Date;
+  updated_at: Date;
+};
+
+export const getClientFormsStatus = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const email: string | undefined = (
+    req.query.email as string | undefined
+  )?.toLowerCase();
+
+  if (!email) {
+    res.status(400).json({ error: "Email query param is required" });
+    return;
+  }
+
+  try {
+    const client: Client | null = await prisma.client.findUnique({
+      where: { email },
+    });
+
+    if (!client) {
+      const emptyFormsStatus: FormsStatusRecord = {
+        YSQ: { activeToken: false, submitted: false },
+        SMI: { activeToken: false, submitted: false },
+        BECKS: { activeToken: false, submitted: false },
+        BURNS: { activeToken: false, submitted: false },
+      };
+
+      res.json({ exists: false, forms: emptyFormsStatus });
+      return;
+    }
+
+    const forms: Form[] = await prisma.form.findMany({
+      where: { clientId: client.id },
+    });
+
+    const formTypes: string[] = ["YSQ", "SMI", "BECKS", "BURNS"];
+
+    const formsStatus: FormsStatusRecord = formTypes.reduce(
+      (acc: FormsStatusRecord, type: string): FormsStatusRecord => {
+        const formsOfType: Form[] = forms.filter(
+          (f: Form) => f.form_type === type
+        );
+
+        const activeToken: boolean = formsOfType.some(
+          (f: Form) => f.is_active === true && !f.token_used_at
+        );
+
+        const submitted: boolean = formsOfType.some(
+          (f: Form) => !!f.submitted_at
+        );
+
+        acc[type] = { activeToken, submitted };
+        return acc;
+      },
+      {} as FormsStatusRecord
+    );
+
+    res.json({ exists: true, forms: formsStatus });
+  } catch (error: unknown) {
+    console.error("Error fetching client forms status:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const createClient = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   const { email, name, dob } = req.body;
 
   if (!email || !name || !dob) {
-    return res.status(400).json({
-      error: "Email, name, and date of birth are required",
-    });
+    res
+      .status(400)
+      .json({ error: "Email, name, and date of birth are required" });
+    return;
   }
 
   try {
     const client = await prisma.client.create({
       data: {
-        email,
+        email: email.toLowerCase(),
         name,
         dob: new Date(dob),
         status: "active",
@@ -23,55 +123,5 @@ export const createClient = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error creating client:", error);
     res.status(500).json({ error: "Failed to create client" });
-  }
-};
-
-export const getClientFormsStatus = async (req: Request, res: Response) => {
-  const email = (req.query.email as string)?.toLowerCase();
-
-  if (!email) {
-    return res.status(400).json({ error: "Email query param is required" });
-  }
-
-  try {
-    const client = await prisma.client.findUnique({
-      where: { email },
-    });
-
-    if (!client) {
-      return res.json({
-        exists: false,
-        forms: {
-          YSQ: { activeToken: false, submitted: false },
-          SMI: { activeToken: false, submitted: false },
-          BECKS: { activeToken: false, submitted: false },
-          BURNS: { activeToken: false, submitted: false },
-        },
-      });
-    }
-
-    const forms = await prisma.form.findMany({
-      where: { clientId: client.id },
-    });
-
-    const formTypes = ["YSQ", "SMI", "BECKS", "BURNS"];
-    const formsStatus = formTypes.reduce(
-      (acc, type) => {
-        const formsOfType = forms.filter((f) => f.form_type === type);
-
-        acc[type] = {
-          activeToken: formsOfType.some((f) => f.is_active && !f.token_used_at),
-          submitted: formsOfType.some((f) => !!f.submitted_at),
-        };
-
-        return acc;
-      },
-      {} as Record<string, { activeToken: boolean; submitted: boolean }>
-    );
-
-    res.json({ exists: true, forms: formsStatus });
-  } catch (error) {
-    console.error("Error fetching client forms status:", error);
-    res.status(500).json({ error: "Internal server error" });
   }
 };
