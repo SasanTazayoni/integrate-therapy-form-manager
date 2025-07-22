@@ -48,7 +48,7 @@ export default function Dashboard() {
 
     try {
       const response = await fetch(
-        `/api/clients/${encodeURIComponent(normalizedEmail)}/forms-status`
+        `/api/clients/forms-status?email=${encodeURIComponent(normalizedEmail)}`
       );
       const data = await response.json();
 
