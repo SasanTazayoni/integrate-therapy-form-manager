@@ -43,13 +43,11 @@ export const sendForm = async (req: Request, res: Response) => {
   }
 
   try {
-    // Find client by email
     const client = await prisma.client.findUnique({
       where: { email: email.toLowerCase() },
     });
     if (!client) return res.status(404).json({ error: "Client not found" });
 
-    // Check if active token exists for that form
     const existingForm = await prisma.form.findFirst({
       where: {
         clientId: client.id,
@@ -65,7 +63,6 @@ export const sendForm = async (req: Request, res: Response) => {
         .json({ error: "Active token already exists for this form" });
     }
 
-    // Create new token and form record
     const token = crypto.randomUUID();
     const now = new Date();
     const expiresAt = new Date(now.getTime() + 1000 * 60 * 60 * 24 * 14);
@@ -83,7 +80,6 @@ export const sendForm = async (req: Request, res: Response) => {
       },
     });
 
-    // Send email
     await sendFormLink({
       to: client.email,
       token,
