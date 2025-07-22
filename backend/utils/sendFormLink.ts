@@ -1,10 +1,12 @@
 import { Resend } from "resend";
 import dotenv from "dotenv";
+import { getEnvVar } from "./requiredEnv";
 
 dotenv.config();
 
-const resend = new Resend(process.env.RESEND_API_KEY!);
-const baseUrl = "http://localhost:5173/integrate-therapy-form-manager";
+const resend = new Resend(getEnvVar("RESEND_API_KEY"));
+const fromEmail = getEnvVar("FROM_EMAIL");
+const baseUrl = getEnvVar("FRONTEND_BASE_URL");
 
 const pathMap: Record<string, string> = {
   YSQ: "/YSQ",
@@ -33,7 +35,7 @@ export async function sendFormLink({
   const nameToUse = clientName ?? "Sir/Madam";
 
   const email = {
-    from: process.env.FROM_EMAIL!,
+    from: fromEmail,
     to,
     subject: `Your ${formType} Form`,
     html: `
