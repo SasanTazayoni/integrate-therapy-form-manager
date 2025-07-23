@@ -138,6 +138,26 @@ async function main() {
         is_active: true,
         total_score: null,
       },
+      {
+        clientId: emma.id,
+        form_type: "BURNS",
+        token: "emma-burns-active",
+        token_sent_at: now,
+        token_expires_at: twoWeeksFromNow,
+        submitted_at: null,
+        is_active: true,
+        total_score: null,
+      },
+      {
+        clientId: emma.id,
+        form_type: "BECKS",
+        token: "emma-burns-submitted",
+        token_sent_at: now,
+        token_expires_at: now,
+        submitted_at: now,
+        is_active: false,
+        total_score: 19,
+      },
     ],
   });
 
