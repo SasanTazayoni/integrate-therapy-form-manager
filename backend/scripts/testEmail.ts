@@ -1,20 +1,18 @@
-import { Resend } from "resend";
 import { getEnvVar } from "../utils/requiredEnv";
+import { sendFormLink } from "../utils/sendFormLink";
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const resend = new Resend(getEnvVar("RESEND_API_KEY"));
-
 async function testSend() {
   try {
-    const result = await resend.emails.send({
-      from: getEnvVar("FROM_EMAIL_TEST"),
-      to: "integrate.therapy.forms@gmail.com",
-      subject: "Hello World from Resend",
-      html: "<p>Congrats on sending your <strong>first email</strong> via Node!</p>",
+    await sendFormLink({
+      to: "sasantazayoni@gmail.com",
+      token: "testtoken123",
+      formType: "YSQ",
+      clientName: "Test Client",
     });
-    console.log("✅ Email sent:", result);
+    console.log("✅ Test email sent successfully");
   } catch (error: any) {
     console.error("❌ Failed to send test email:", error.message || error);
   }
