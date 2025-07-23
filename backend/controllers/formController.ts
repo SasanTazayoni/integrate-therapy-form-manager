@@ -52,7 +52,7 @@ export const sendForm = async (req: Request, res: Response) => {
       where: {
         clientId: client.id,
         form_type: formType,
-        token_used_at: null,
+        submitted_at: null,
         is_active: true,
       },
     });
@@ -74,7 +74,6 @@ export const sendForm = async (req: Request, res: Response) => {
         form_type: formType,
         token_sent_at: now,
         token_expires_at: expiresAt,
-        token_used_at: null,
         is_active: true,
         submitted_at: null,
       },
@@ -109,9 +108,9 @@ export const validateToken = async (req: Request, res: Response) => {
     }
 
     const isExpired = new Date(form.token_expires_at) < new Date();
-    const isUsed = !!form.token_used_at;
+    const isSubmitted = !!form.submitted_at;
 
-    if (!form.is_active || isExpired || isUsed) {
+    if (!form.is_active || isExpired || isSubmitted) {
       return res
         .status(403)
         .json({ valid: false, message: "Token is invalid or expired" });
@@ -142,7 +141,6 @@ export const submitForm = async (req: Request, res: Response) => {
     if (
       !form ||
       !form.is_active ||
-      form.token_used_at ||
       new Date(form.token_expires_at) < new Date()
     ) {
       return res.status(403).json({ error: "Token is invalid or expired" });
@@ -153,7 +151,6 @@ export const submitForm = async (req: Request, res: Response) => {
       data: {
         submitted_at: new Date(),
         total_score: parseInt(result),
-        token_used_at: new Date(),
         is_active: false,
       },
     });
