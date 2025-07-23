@@ -48,6 +48,16 @@ export const sendForm = async (req: Request, res: Response) => {
     });
     if (!client) return res.status(404).json({ error: "Client not found" });
 
+    await prisma.form.updateMany({
+      where: {
+        clientId: client.id,
+        form_type: formType,
+        is_active: true,
+        token_expires_at: { lt: new Date() },
+      },
+      data: { is_active: false },
+    });
+
     const existingForm = await prisma.form.findFirst({
       where: {
         clientId: client.id,
