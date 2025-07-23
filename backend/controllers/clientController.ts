@@ -26,7 +26,6 @@ type Form = {
   token: string;
   token_sent_at: Date;
   token_expires_at: Date;
-  token_used_at: Date | null;
   is_active: boolean;
   submitted_at: Date | null;
   total_score?: number | null;
@@ -77,7 +76,7 @@ export const getClientFormsStatus = async (
         );
 
         const activeToken: boolean = formsOfType.some(
-          (f: Form) => f.is_active === true && !f.token_used_at
+          (f: Form) => f.is_active === true && !f.submitted_at
         );
 
         const submitted: boolean = formsOfType.some(
