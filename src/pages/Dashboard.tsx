@@ -48,7 +48,7 @@ export default function Dashboard() {
 
     try {
       const response = await fetch(
-        `/api/clients/forms-status?email=${encodeURIComponent(normalizedEmail)}`
+        `/clients/form-status?email=${encodeURIComponent(normalizedEmail)}`
       );
       const data = await response.json();
 
@@ -85,7 +85,7 @@ export default function Dashboard() {
       setSendStatus("");
 
       try {
-        const response = await fetch(`/api/forms/send-token/${formType}`, {
+        const response = await fetch(`/forms/send-token/${formType}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email: email.trim().toLowerCase() }),
