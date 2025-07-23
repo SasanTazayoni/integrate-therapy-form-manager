@@ -76,7 +76,10 @@ export const getClientFormsStatus = async (
         );
 
         const activeToken: boolean = formsOfType.some(
-          (f: Form) => f.is_active === true && !f.submitted_at
+          (f: Form) =>
+            f.is_active === true &&
+            !f.submitted_at &&
+            new Date(f.token_expires_at) > new Date()
         );
 
         const submitted: boolean = formsOfType.some(
