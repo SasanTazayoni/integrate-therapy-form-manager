@@ -1,20 +1,25 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import { getEnvVar } from "./requiredEnv";
 import { getFrontendBaseUrl } from "./getFrontendBaseUrl";
 
 dotenv.config();
 
-const resend = new Resend(getEnvVar("RESEND_API_KEY"));
 const baseUrl = getFrontendBaseUrl();
 
 function getFromEmail() {
-  if (process.env.NODE_ENV === "production") {
-    return getEnvVar("FROM_EMAIL_PROD");
-  } else {
-    return getEnvVar("FROM_EMAIL_TEST");
-  }
+  return getEnvVar("FROM_EMAIL");
 }
+
+const transporter = nodemailer.createTransport({
+  host: getEnvVar("SMTP_HOST"),
+  port: Number(getEnvVar("SMTP_PORT")),
+  secure: getEnvVar("SMTP_SECURE") === "true",
+  auth: {
+    user: getEnvVar("SMTP_USER"),
+    pass: getEnvVar("SMTP_PASS"),
+  },
+});
 
 const pathMap: Record<string, string> = {
   YSQ: "/YSQ",
@@ -43,7 +48,7 @@ export async function sendFormLink({
   const nameToUse = clientName ?? "Sir/Madam";
   const fromEmail = getFromEmail();
 
-  const email = {
+  const mailOptions = {
     from: fromEmail,
     to,
     subject: `Your ${formType} Form`,
@@ -51,13 +56,13 @@ export async function sendFormLink({
       <p>Hi ${nameToUse},</p>
       <p>You’ve been sent a <strong>${formType}</strong> form to complete.</p>
       <p><a href="${link}">Click here to complete your form</a></p>
-      <p>This link will expire in 24 hours.</p>
+      <p>This link will expire in 2 weeks.</p>
     `,
   };
 
   try {
-    const result = await resend.emails.send(email);
-    console.log("✅ Resend email sent successfully:", result);
+    const info = await transporter.sendMail(mailOptions);
+    console.log("✅ Email sent:", info.messageId);
   } catch (error: any) {
     console.error("❌ Failed to send email:", error.message || error);
     throw new Error("Email sending failed");
