@@ -28,7 +28,6 @@ model Form {
   token            String    @unique
   token_sent_at    DateTime
   token_expires_at DateTime
-  token_used_at    DateTime?
   is_active        Boolean   @default(true)
   submitted_at     DateTime?
   total_score      Int?
