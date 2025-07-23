@@ -90,7 +90,11 @@ export const getClientFormsStatus = async (
       {} as FormsStatusRecord
     );
 
-    res.json({ exists: true, forms: formsStatus });
+    const formsCompleted = formTypes.reduce((count, type) => {
+      return formsStatus[type].submitted ? count + 1 : count;
+    }, 0);
+
+    res.json({ exists: true, forms: formsStatus, formsCompleted });
   } catch (error: unknown) {
     console.error("Error fetching client forms status:", error);
     res.status(500).json({ error: "Internal server error" });
