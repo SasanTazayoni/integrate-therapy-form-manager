@@ -152,7 +152,7 @@ export const submitForm = async (req: Request, res: Response) => {
       where: { token },
       data: {
         submitted_at: now,
-        total_score: parseInt(result),
+        total_score: Number.isInteger(parseInt(result)) ? parseInt(result) : 0,
         is_active: false,
         token_expires_at: now,
       },
