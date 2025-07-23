@@ -45,6 +45,24 @@ async function main() {
     },
   });
 
+  const emma = await prisma.client.create({
+    data: {
+      name: "Emma MultiForm",
+      email: "emma@multi.com",
+      dob: new Date("1993-07-10"),
+      status: "active",
+    },
+  });
+
+  const frank = await prisma.client.create({
+    data: {
+      name: "Frank Expired",
+      email: "frank@expired.com",
+      dob: new Date("1980-02-20"),
+      status: "active",
+    },
+  });
+
   // Forms for each client
   await prisma.form.create({
     data: {
@@ -98,7 +116,45 @@ async function main() {
     },
   });
 
-  console.log("🌱 Seeded 4 clients and 4 forms.");
+  await prisma.form.createMany({
+    data: [
+      {
+        clientId: emma.id,
+        form_type: "YSQ",
+        token: "emma-ysq-submitted",
+        token_sent_at: now,
+        token_expires_at: now,
+        submitted_at: now,
+        is_active: false,
+        total_score: 150,
+      },
+      {
+        clientId: emma.id,
+        form_type: "SMI",
+        token: "emma-smi-active",
+        token_sent_at: now,
+        token_expires_at: twoWeeksFromNow,
+        submitted_at: null,
+        is_active: true,
+        total_score: null,
+      },
+    ],
+  });
+
+  await prisma.form.create({
+    data: {
+      clientId: frank.id,
+      form_type: "BECKS",
+      token: "frank-expired-token",
+      token_sent_at: new Date(now.getTime() - 1000 * 60 * 60 * 48),
+      token_expires_at: new Date(now.getTime() - 1000 * 60 * 60 * 24),
+      submitted_at: null,
+      is_active: false,
+      total_score: null,
+    },
+  });
+
+  console.log("🌱 Seeded clients and forms.");
 }
 
 main()
