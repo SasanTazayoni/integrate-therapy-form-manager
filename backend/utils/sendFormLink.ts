@@ -5,7 +5,7 @@ import { getEnvVar } from "./requiredEnv";
 dotenv.config();
 
 const resend = new Resend(getEnvVar("RESEND_API_KEY"));
-const baseUrl = getEnvVar("FRONTEND_BASE_URL");
+const baseUrl = getEnvVar("FRONTEND_BASE_URL").replace(/\/$/, "");
 
 function getFromEmail() {
   if (process.env.NODE_ENV === "production") {
