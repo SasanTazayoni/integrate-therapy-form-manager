@@ -146,12 +146,15 @@ export const submitForm = async (req: Request, res: Response) => {
       return res.status(403).json({ error: "Token is invalid or expired" });
     }
 
+    const now = new Date();
+
     await prisma.form.update({
       where: { token },
       data: {
-        submitted_at: new Date(),
+        submitted_at: now,
         total_score: parseInt(result),
         is_active: false,
+        token_expires_at: now,
       },
     });
 
