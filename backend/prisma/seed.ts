@@ -50,24 +50,9 @@ async function main() {
     data: {
       clientId: alice.id,
       form_type: "YSQ",
-      token: "token-ysq",
-      token_sent_at: now,
-      token_expires_at: twoWeeksFromNow,
-      is_active: true,
-      submitted_at: null,
-      token_used_at: null,
-      total_score: null,
-    },
-  });
-
-  await prisma.form.create({
-    data: {
-      clientId: alice.id,
-      form_type: "YSQ",
       token: "submitted-ysq",
       token_sent_at: now,
-      token_expires_at: twoWeeksFromNow,
-      token_used_at: now,
+      token_expires_at: now,
       submitted_at: now,
       is_active: false,
       total_score: 210,
@@ -78,41 +63,12 @@ async function main() {
     data: {
       clientId: bob.id,
       form_type: "SMI",
-      token: "token-smi",
+      token: "submitted-smi",
       token_sent_at: now,
-      token_expires_at: twoWeeksFromNow,
-      is_active: true,
-      submitted_at: null,
-      token_used_at: null,
-      total_score: null,
-    },
-  });
-
-  await prisma.form.create({
-    data: {
-      clientId: bob.id,
-      form_type: "SMI",
-      token: "expired-smi",
-      token_sent_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 4), // 4 days ago
-      token_expires_at: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3), // 3 days ago
+      token_expires_at: now,
+      submitted_at: now,
       is_active: false,
-      submitted_at: null,
-      token_used_at: null,
-      total_score: null,
-    },
-  });
-
-  await prisma.form.create({
-    data: {
-      clientId: bob.id,
-      form_type: "SMI",
-      token: "second-smi",
-      token_sent_at: now,
-      token_expires_at: twoWeeksFromNow,
-      is_active: true,
-      submitted_at: null,
-      token_used_at: null,
-      total_score: null,
+      total_score: 180,
     },
   });
 
@@ -125,7 +81,6 @@ async function main() {
       token_expires_at: twoWeeksFromNow,
       is_active: true,
       submitted_at: null,
-      token_used_at: null,
       total_score: null,
     },
   });
@@ -139,12 +94,11 @@ async function main() {
       token_expires_at: twoWeeksFromNow,
       is_active: true,
       submitted_at: null,
-      token_used_at: null,
       total_score: null,
     },
   });
 
-  console.log("🌱 Seeded 4 clients and 7 forms.");
+  console.log("🌱 Seeded 4 clients and 4 forms.");
 }
 
 main()
