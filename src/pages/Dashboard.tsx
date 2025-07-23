@@ -133,13 +133,6 @@ export default function Dashboard() {
           setErrorFadingOut={setErrorFadingOut}
         />
 
-        <p
-          className="text-red-600 text-sm mb-4 text-center font-bold min-h-[1.25rem] transition-opacity duration-500"
-          style={{ opacity: error && !errorFadingOut ? 1 : 0 }}
-        >
-          {error || "\u00A0"}
-        </p>
-
         {sendStatus && (
           <p className="text-center mb-4 font-medium">{sendStatus}</p>
         )}
