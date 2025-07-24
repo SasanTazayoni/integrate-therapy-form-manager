@@ -26,7 +26,3 @@ export default function FormButtonStatus({
     </button>
   );
 }
-const disabled = Boolean(
-  !clientFormsStatus?.exists ||
-    (formType !== "SMI" && (status?.submitted || status?.activeToken))
-);
