@@ -151,7 +151,7 @@ async function main() {
       {
         clientId: emma.id,
         form_type: "BECKS",
-        token: "emma-burns-submitted",
+        token: "emma-becks-submitted",
         token_sent_at: now,
         token_expires_at: now,
         submitted_at: now,
