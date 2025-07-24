@@ -1,8 +1,8 @@
 import { useState, useCallback } from "react";
 import ProtectedAccess from "../components/ProtectedAccess";
 import EmailInput from "../components/EmailInput";
-import FormStatusButton from "../components/FormStatusButton";
 import AddClientPrompt from "../components/AddClientPrompt";
+import FormButtons from "../components/FormButtons";
 
 type FormStatus = {
   submitted: boolean;
@@ -201,34 +201,10 @@ export default function Dashboard() {
           </button>
         </div>
 
-        <div className="grid gap-2">
-          {["YSQ", "SMI", "BECKS", "BURNS"].map((formType) => {
-            const status = clientFormsStatus?.forms?.[formType];
-            const disabled = Boolean(
-              !clientFormsStatus?.exists ||
-                status?.submitted ||
-                status?.activeToken
-            );
-
-            const title = !clientFormsStatus?.exists
-              ? "Client not found"
-              : status?.submitted
-              ? "Form already submitted"
-              : status?.activeToken
-              ? "Active token already sent"
-              : "";
-
-            return (
-              <FormStatusButton
-                key={formType}
-                formType={formType}
-                disabled={disabled}
-                title={title}
-                onSend={handleSendForm}
-              />
-            );
-          })}
-        </div>
+        <FormButtons
+          clientFormsStatus={clientFormsStatus}
+          onSend={handleSendForm}
+        />
       </div>
     </ProtectedAccess>
   );
