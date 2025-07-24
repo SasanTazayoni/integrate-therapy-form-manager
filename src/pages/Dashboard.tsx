@@ -22,9 +22,36 @@ export default function Dashboard() {
     useState<ClientFormsStatus | null>(null);
   const [loading, setLoading] = useState(false);
   const [sendStatus, setSendStatus] = useState("");
+  const [showAddClientPrompt, setShowAddClientPrompt] = useState(false);
 
   const validateEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const handleConfirmAddClient = async () => {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    try {
+      const response = await fetch("/clients/add", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: normalizedEmail }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Failed to add client");
+        return;
+      }
+
+      setError("");
+      setShowAddClientPrompt(false);
+      setClientFormsStatus(data);
+      setSendStatus("✅ Client added successfully");
+    } catch {
+      setError("Network error, could not add client.");
+    }
+  };
 
   const handleCheckProgress = useCallback(async () => {
     const normalizedEmail = email.trim().toLowerCase();
@@ -53,10 +80,18 @@ export default function Dashboard() {
       const data = await response.json();
 
       if (!response.ok) {
-        setError(data.error || "Failed to fetch progress");
-        setClientFormsStatus(null);
+        if (data.error === "Client not found") {
+          setClientFormsStatus(null);
+          setError("There is no data for this email currently.");
+          setShowAddClientPrompt(true);
+        } else {
+          setError(data.error || "Failed to fetch progress");
+          setClientFormsStatus(null);
+        }
       } else {
         setClientFormsStatus(data);
+        setShowAddClientPrompt(false);
+        setSendStatus("");
       }
     } catch {
       setError("Network error, please try again");
@@ -135,6 +170,33 @@ export default function Dashboard() {
 
         {sendStatus && (
           <p className="text-center mb-4 font-medium">{sendStatus}</p>
+        )}
+
+        {showAddClientPrompt && (
+          <div className="text-center text-sm mt-2">
+            <p className="text-red-500 font-medium">
+              There is no data for this email currently.
+            </p>
+            <div className="mt-2 flex justify-center items-center gap-4">
+              <span className="text-gray-700">Add to database?</span>
+              <button
+                onClick={handleConfirmAddClient}
+                className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
+              >
+                ✅
+              </button>
+              <button
+                onClick={() => {
+                  setShowAddClientPrompt(false);
+                  setEmail("");
+                  setError("");
+                }}
+                className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500"
+              >
+                ❌
+              </button>
+            </div>
+          </div>
         )}
 
         <div className="flex justify-center gap-4 mb-6">
