@@ -5,7 +5,7 @@ type Props = {
   onSend: (formType: string) => void;
 };
 
-export default function FormStatusButton({
+export default function FormButtonStatus({
   formType,
   disabled,
   title,
@@ -26,3 +26,7 @@ export default function FormStatusButton({
     </button>
   );
 }
+const disabled = Boolean(
+  !clientFormsStatus?.exists ||
+    (formType !== "SMI" && (status?.submitted || status?.activeToken))
+);
