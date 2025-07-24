@@ -42,12 +42,20 @@ export default function QuestionnaireForm({
       return;
     }
 
-    fetch(`/api/validate-token?token=${token}`)
-      .then((res) => res.json())
-      .then((data) => {
+    fetch(`/forms/validate-token?token=${token}`)
+      .then(async (res) => {
+        const contentType = res.headers.get("content-type");
+        if (!contentType?.includes("application/json")) {
+          const text = await res.text();
+          throw new Error(`Expected JSON, got: ${text.slice(0, 100)}`);
+        }
+
+        const data = await res.json();
+
         if (!(data.valid && data.questionnaire === questionnaire)) {
           throw new Error(data.message || "Invalid token for this form");
         }
+
         dispatch({ type: "VALID" });
       })
       .catch((err) =>
