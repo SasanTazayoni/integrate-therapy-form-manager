@@ -3,6 +3,7 @@ import ProtectedAccess from "../components/ProtectedAccess";
 import EmailInput from "../components/EmailInput";
 import AddClientPrompt from "../components/AddClientPrompt";
 import FormButtons from "../components/FormButtons";
+import EmailSearchControls from "../components/EmailSearchControls";
 
 type FormStatus = {
   submitted: boolean;
@@ -184,22 +185,11 @@ export default function Dashboard() {
           />
         )}
 
-        <div className="flex justify-center gap-4 mb-6">
-          <button
-            onClick={handleCheckProgress}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-            disabled={loading}
-          >
-            {loading ? "Checking..." : "Check"}
-          </button>
-          <button
-            onClick={handleClear}
-            className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
-            disabled={loading}
-          >
-            Clear
-          </button>
-        </div>
+        <EmailSearchControls
+          onCheck={handleCheckProgress}
+          onClear={handleClear}
+          loading={loading}
+        />
 
         <FormButtons
           clientFormsStatus={clientFormsStatus}
