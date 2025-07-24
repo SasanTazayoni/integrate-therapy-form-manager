@@ -193,6 +193,7 @@ export default function Dashboard() {
 
         <FormButtons
           clientFormsStatus={clientFormsStatus}
+          email={email}
           onSend={handleSendForm}
         />
       </div>
