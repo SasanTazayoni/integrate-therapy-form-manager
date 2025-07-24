@@ -7,6 +7,7 @@ type Props = {
   setSendStatus: (status: string) => void;
   setErrorFadingOut: (val: boolean) => void;
   status?: string;
+  addClientPrompt?: React.ReactNode;
 };
 
 export default function EmailInput({
@@ -18,6 +19,7 @@ export default function EmailInput({
   setSendStatus,
   setErrorFadingOut,
   status,
+  addClientPrompt,
 }: Props) {
   return (
     <>
@@ -42,10 +44,9 @@ export default function EmailInput({
         {error || "\u00A0"}
       </p>
       {status && !error && (
-        <p className="text-green-600 text-sm mb-4 text-center font-medium">
-          {status}
-        </p>
+        <p className="text-green-600 text-sm mb-4 text-center font-medium"></p>
       )}
+      {addClientPrompt && <div className="mt-2">{addClientPrompt}</div>}
     </>
   );
 }
