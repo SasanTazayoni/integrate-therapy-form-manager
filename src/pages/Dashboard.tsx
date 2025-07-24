@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import ProtectedAccess from "../components/ProtectedAccess";
 import EmailInput from "../components/EmailInput";
 import FormStatusButton from "../components/FormStatusButton";
+import AddClientPrompt from "../components/AddClientPrompt";
 
 type FormStatus = {
   submitted: boolean;
@@ -173,30 +174,14 @@ export default function Dashboard() {
         )}
 
         {showAddClientPrompt && (
-          <div className="text-center text-sm mt-2">
-            <p className="text-red-500 font-medium">
-              There is no data for this email currently.
-            </p>
-            <div className="mt-2 flex justify-center items-center gap-4">
-              <span className="text-gray-700">Add to database?</span>
-              <button
-                onClick={handleConfirmAddClient}
-                className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
-              >
-                ✅
-              </button>
-              <button
-                onClick={() => {
-                  setShowAddClientPrompt(false);
-                  setEmail("");
-                  setError("");
-                }}
-                className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500"
-              >
-                ❌
-              </button>
-            </div>
-          </div>
+          <AddClientPrompt
+            onConfirm={handleConfirmAddClient}
+            onCancel={() => {
+              setShowAddClientPrompt(false);
+              setEmail("");
+              setError("");
+            }}
+          />
         )}
 
         <div className="flex justify-center gap-4 mb-6">
