@@ -6,6 +6,7 @@ type Props = {
   setError: (error: string) => void;
   setSendStatus: (status: string) => void;
   setErrorFadingOut: (val: boolean) => void;
+  status?: string;
 };
 
 export default function EmailInput({
@@ -16,6 +17,7 @@ export default function EmailInput({
   setError,
   setSendStatus,
   setErrorFadingOut,
+  status,
 }: Props) {
   return (
     <>
@@ -39,6 +41,11 @@ export default function EmailInput({
       >
         {error || "\u00A0"}
       </p>
+      {status && !error && (
+        <p className="text-green-600 text-sm mb-4 text-center font-medium">
+          {status}
+        </p>
+      )}
     </>
   );
 }
