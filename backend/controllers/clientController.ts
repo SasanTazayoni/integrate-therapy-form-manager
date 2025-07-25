@@ -42,6 +42,7 @@ export const getClientFormsStatus = async (
   )?.toLowerCase();
 
   if (!email) {
+    console.warn("❌ No email provided in query");
     res.status(400).json({ error: "Email query param is required" });
     return;
   }
@@ -52,6 +53,8 @@ export const getClientFormsStatus = async (
     });
 
     if (!client) {
+      console.log(`📭 No client found for email: ${email}`);
+
       const emptyFormsStatus: FormsStatusRecord = {
         YSQ: { activeToken: false, submitted: false },
         SMI: { activeToken: false, submitted: false },
@@ -62,6 +65,8 @@ export const getClientFormsStatus = async (
       res.json({ exists: false, forms: emptyFormsStatus });
       return;
     }
+
+    console.log(`✅ Client found for email: ${email} (id: ${client.id})`);
 
     const forms: Form[] = await prisma.form.findMany({
       where: { clientId: client.id },
@@ -96,9 +101,11 @@ export const getClientFormsStatus = async (
       return formsStatus[type].submitted ? count + 1 : count;
     }, 0);
 
+    console.log(`📄 Forms status for ${email}:`, formsStatus);
+
     res.json({ exists: true, forms: formsStatus, formsCompleted });
   } catch (error: unknown) {
-    console.error("Error fetching client forms status:", error);
+    console.error("❌ Error fetching client forms status:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -109,10 +116,8 @@ export const createClient = async (
 ): Promise<void> => {
   const { email, name, dob } = req.body;
 
-  if (!email || !name || !dob) {
-    res
-      .status(400)
-      .json({ error: "Email, name, and date of birth are required" });
+  if (!email) {
+    res.status(400).json({ error: "Email is required" });
     return;
   }
 
@@ -120,8 +125,8 @@ export const createClient = async (
     const client = await prisma.client.create({
       data: {
         email: email.toLowerCase(),
-        name,
-        dob: new Date(dob),
+        name: name ?? null,
+        dob: dob ? new Date(dob) : null,
         status: "active",
       },
     });
