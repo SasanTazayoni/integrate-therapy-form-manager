@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import ProtectedAccess from "../components/ProtectedAccess";
 import EmailInput from "../components/EmailInput";
-import AddClientPrompt from "../components/AddClientPrompt";
 import FormButtons from "../components/FormButtons";
 import EmailSearchControls from "../components/EmailSearchControls";
 
@@ -83,20 +82,23 @@ export default function Dashboard() {
 
       if (!response.ok) {
         if (data.error === "Client not found") {
-          setClientFormsStatus(null);
           setError("There is no data for this email currently.");
           setShowAddClientPrompt(true);
+          setClientFormsStatus(null);
         } else {
           setError(data.error || "Failed to fetch progress");
+          setShowAddClientPrompt(false);
           setClientFormsStatus(null);
         }
       } else {
         setClientFormsStatus(data);
         setShowAddClientPrompt(false);
         setSendStatus("");
+        setError("");
       }
     } catch {
       setError("Network error, please try again");
+      setShowAddClientPrompt(false);
       setClientFormsStatus(null);
     } finally {
       setLoading(false);
@@ -168,21 +170,35 @@ export default function Dashboard() {
           setError={setError}
           setSendStatus={setSendStatus}
           setErrorFadingOut={setErrorFadingOut}
+          addClientPrompt={
+            showAddClientPrompt ? (
+              <div className="text-center text-sm">
+                <div className="mt-2 flex justify-center items-center gap-4">
+                  <span className="text-gray-700">Add to database?</span>
+                  <button
+                    onClick={handleConfirmAddClient}
+                    className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
+                  >
+                    ✅
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowAddClientPrompt(false);
+                      setEmail("");
+                      setError("");
+                    }}
+                    className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500"
+                  >
+                    ❌
+                  </button>
+                </div>
+              </div>
+            ) : null
+          }
         />
 
         {sendStatus && (
           <p className="text-center mb-4 font-medium">{sendStatus}</p>
-        )}
-
-        {showAddClientPrompt && (
-          <AddClientPrompt
-            onConfirm={handleConfirmAddClient}
-            onCancel={() => {
-              setShowAddClientPrompt(false);
-              setEmail("");
-              setError("");
-            }}
-          />
         )}
 
         <EmailSearchControls
