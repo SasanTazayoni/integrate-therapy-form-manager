@@ -19,14 +19,20 @@ export default function Dashboard() {
   const [email, setEmail] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [error, setError] = useState("");
-  const [errorFadingOut, setErrorFadingOut] = useState(false);
   const [clientFormsStatus, setClientFormsStatus] =
     useState<ClientFormsStatus | null>(null);
   const [loading, setLoading] = useState(false);
   const [showAddClientPrompt, setShowAddClientPrompt] = useState(false);
+  const [confirmedEmail, setConfirmedEmail] = useState<string | null>(null);
 
   const validateEmail = (email: string) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    setError("");
+    setShowAddClientPrompt(false);
+  };
 
   const handleConfirmAddClient = async () => {
     const normalizedEmail = email.trim().toLowerCase();
@@ -62,7 +68,6 @@ export default function Dashboard() {
     if (!normalizedEmail) {
       setError("Input cannot be empty");
       setSuccessMessage("");
-      setErrorFadingOut(false);
       setShowAddClientPrompt(false);
       return;
     }
@@ -70,14 +75,16 @@ export default function Dashboard() {
     if (!validateEmail(normalizedEmail)) {
       setError("This email is not valid");
       setSuccessMessage("");
-      setErrorFadingOut(false);
       setShowAddClientPrompt(false);
       return;
     }
 
+    if (confirmedEmail !== normalizedEmail) {
+      setSuccessMessage("");
+      setConfirmedEmail(null);
+    }
+
     setError("");
-    setSuccessMessage("");
-    setErrorFadingOut(false);
     setLoading(true);
 
     try {
@@ -90,11 +97,13 @@ export default function Dashboard() {
         if (data.error === "Client not found") {
           setError("No data for this email - add to database?");
           setSuccessMessage("");
+          setConfirmedEmail(null);
           setShowAddClientPrompt(true);
           setClientFormsStatus(null);
         } else {
           setError(data.error || "Failed to fetch progress");
           setSuccessMessage("");
+          setConfirmedEmail(null);
           setShowAddClientPrompt(false);
           setClientFormsStatus(null);
         }
@@ -102,36 +111,33 @@ export default function Dashboard() {
         setClientFormsStatus(data);
         setShowAddClientPrompt(false);
         setError("");
-        setSuccessMessage("Retrieved data successfully");
+        setSuccessMessage(`Retrieved data successfully for ${normalizedEmail}`);
+        setConfirmedEmail(normalizedEmail);
       }
     } catch {
       setError("Network error, please try again");
       setSuccessMessage("");
+      setConfirmedEmail(null);
       setClientFormsStatus(null);
       setShowAddClientPrompt(false);
     } finally {
       setLoading(false);
     }
-  }, [email]);
+  }, [email, confirmedEmail]);
 
   const handleClear = () => {
     setEmail("");
     setClientFormsStatus(null);
     setError("");
     setSuccessMessage("");
-
-    if (error) {
-      setErrorFadingOut(true);
-      setError("");
-      setErrorFadingOut(false);
-      setShowAddClientPrompt(false);
-    } else {
-      setShowAddClientPrompt(false);
-    }
+    setConfirmedEmail(null);
+    setShowAddClientPrompt(false);
   };
 
   const handleSendForm = useCallback(
     async (formType: string) => {
+      if (loading) return;
+
       try {
         const response = await fetch(`/forms/send-token/${formType}`, {
           method: "POST",
@@ -154,7 +160,7 @@ export default function Dashboard() {
         setSuccessMessage("");
       }
     },
-    [email, handleCheckProgress]
+    [email, handleCheckProgress, loading]
   );
 
   return (
@@ -174,13 +180,14 @@ export default function Dashboard() {
 
         <EmailInput
           email={email}
-          setEmail={setEmail}
+          setEmail={handleEmailChange}
           successMessage={successMessage}
+          setSuccessMessage={setSuccessMessage}
           error={error}
-          errorFadingOut={errorFadingOut}
           setError={setError}
-          setErrorFadingOut={setErrorFadingOut}
+          loading={loading}
           showAddClientPrompt={showAddClientPrompt}
+          setShowAddClientPrompt={setShowAddClientPrompt}
           onConfirmAddClient={handleConfirmAddClient}
         />
 
@@ -192,7 +199,6 @@ export default function Dashboard() {
 
         <FormButtons
           clientFormsStatus={clientFormsStatus}
-          email={email}
           onSend={handleSendForm}
         />
       </div>
