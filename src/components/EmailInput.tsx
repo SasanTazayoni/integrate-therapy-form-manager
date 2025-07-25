@@ -1,3 +1,5 @@
+import { Loader2 } from "lucide-react";
+
 type Props = {
   email: string;
   setEmail: (email: string) => void;
@@ -40,7 +42,14 @@ export default function EmailInput({
         }`}
       />
 
-      <div className="min-h-[2rem] text-center text-sm font-bold">
+      <div className="min-h-[2.5rem] text-center text-sm font-bold">
+        {loading && !error && !successMessage && (
+          <div className="text-blue-600 flex justify-center items-center gap-2">
+            <Loader2 className="animate-spin h-4 w-4" />
+            <span>Loading...</span>
+          </div>
+        )}
+
         {error && <p className="text-red-600 inline">{error}</p>}
 
         {!error && successMessage && (
