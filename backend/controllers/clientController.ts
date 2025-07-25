@@ -54,15 +54,7 @@ export const getClientFormsStatus = async (
 
     if (!client) {
       console.log(`📭 No client found for email: ${email}`);
-
-      const emptyFormsStatus: FormsStatusRecord = {
-        YSQ: { activeToken: false, submitted: false },
-        SMI: { activeToken: false, submitted: false },
-        BECKS: { activeToken: false, submitted: false },
-        BURNS: { activeToken: false, submitted: false },
-      };
-
-      res.json({ exists: false, forms: emptyFormsStatus });
+      res.status(404).json({ error: "Client not found" });
       return;
     }
 
