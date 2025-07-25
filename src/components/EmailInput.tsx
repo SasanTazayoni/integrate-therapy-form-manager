@@ -1,6 +1,7 @@
 type Props = {
   email: string;
   setEmail: (email: string) => void;
+  successMessage?: string;
   error: string;
   errorFadingOut: boolean;
   setError: (error: string) => void;
@@ -12,6 +13,7 @@ type Props = {
 export default function EmailInput({
   email,
   setEmail,
+  successMessage,
   error,
   errorFadingOut,
   setError,
@@ -35,22 +37,16 @@ export default function EmailInput({
         }`}
       />
 
-      <div
-        className={`min-h-[2.5rem] text-center text-sm transition-opacity duration-500 ${
-          error && !errorFadingOut ? "opacity-100" : "opacity-0"
-        }`}
-      >
-        {error ? (
-          <p className="text-red-600 font-bold inline">{error}</p>
-        ) : showAddClientPrompt && onConfirmAddClient ? (
-          <p className="text-green-600 font-medium inline">
-            ✅ Client added successfully
-          </p>
-        ) : (
-          <span className="inline-block">&nbsp;</span>
+      <div className="min-h-[2.5rem] text-center text-sm font-bold">
+        {error && !errorFadingOut && (
+          <p className="text-red-600 inline">{error}</p>
         )}
 
-        {showAddClientPrompt && onConfirmAddClient && error && (
+        {!error && successMessage && (
+          <p className="text-green-600 inline">{successMessage}</p>
+        )}
+
+        {showAddClientPrompt && onConfirmAddClient && (
           <button
             onClick={onConfirmAddClient}
             className="ml-3 w-7 h-7 inline-flex items-center justify-center bg-green-500 text-white rounded hover:bg-green-600 shadow-sm"

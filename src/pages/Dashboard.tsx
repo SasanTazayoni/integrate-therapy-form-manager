@@ -17,6 +17,7 @@ type ClientFormsStatus = {
 
 export default function Dashboard() {
   const [email, setEmail] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [error, setError] = useState("");
   const [errorFadingOut, setErrorFadingOut] = useState(false);
   const [clientFormsStatus, setClientFormsStatus] =
@@ -41,14 +42,17 @@ export default function Dashboard() {
 
       if (!response.ok) {
         setError(data.error || "Failed to add client");
+        setSuccessMessage("");
         return;
       }
 
-      setError("Client added successfully");
+      setError("");
+      setSuccessMessage("Client added successfully");
       setShowAddClientPrompt(false);
       setClientFormsStatus(data);
     } catch {
       setError("Network error, could not add client.");
+      setSuccessMessage("");
     }
   };
 
@@ -57,6 +61,7 @@ export default function Dashboard() {
 
     if (!normalizedEmail) {
       setError("Input cannot be empty");
+      setSuccessMessage("");
       setErrorFadingOut(false);
       setShowAddClientPrompt(false);
       return;
@@ -64,12 +69,14 @@ export default function Dashboard() {
 
     if (!validateEmail(normalizedEmail)) {
       setError("This email is not valid");
+      setSuccessMessage("");
       setErrorFadingOut(false);
       setShowAddClientPrompt(false);
       return;
     }
 
     setError("");
+    setSuccessMessage("");
     setErrorFadingOut(false);
     setLoading(true);
 
@@ -82,20 +89,24 @@ export default function Dashboard() {
       if (!response.ok) {
         if (data.error === "Client not found") {
           setError("No data for this email - add to database?");
+          setSuccessMessage("");
           setShowAddClientPrompt(true);
           setClientFormsStatus(null);
         } else {
           setError(data.error || "Failed to fetch progress");
+          setSuccessMessage("");
           setShowAddClientPrompt(false);
           setClientFormsStatus(null);
         }
       } else {
         setClientFormsStatus(data);
         setShowAddClientPrompt(false);
-        setError("Retrieved data successfully");
+        setError("");
+        setSuccessMessage("Retrieved data successfully");
       }
     } catch {
       setError("Network error, please try again");
+      setSuccessMessage("");
       setClientFormsStatus(null);
       setShowAddClientPrompt(false);
     } finally {
@@ -106,6 +117,8 @@ export default function Dashboard() {
   const handleClear = () => {
     setEmail("");
     setClientFormsStatus(null);
+    setError("");
+    setSuccessMessage("");
 
     if (error) {
       setErrorFadingOut(true);
@@ -132,12 +145,15 @@ export default function Dashboard() {
 
         if (!response.ok) {
           setError(`${data.error || `Failed to send ${formType} form`}`);
+          setSuccessMessage("");
         } else {
-          setError(`${formType} form sent successfully!`);
+          setError("");
+          setSuccessMessage(`${formType} form sent successfully!`);
           await handleCheckProgress();
         }
       } catch {
         setError(`Network error while sending ${formType} form.`);
+        setSuccessMessage("");
       }
     },
     [email, handleCheckProgress]
@@ -161,6 +177,7 @@ export default function Dashboard() {
         <EmailInput
           email={email}
           setEmail={setEmail}
+          successMessage={successMessage}
           error={error}
           errorFadingOut={errorFadingOut}
           setError={setError}
