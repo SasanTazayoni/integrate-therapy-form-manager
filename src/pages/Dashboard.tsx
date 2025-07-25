@@ -22,7 +22,6 @@ export default function Dashboard() {
   const [clientFormsStatus, setClientFormsStatus] =
     useState<ClientFormsStatus | null>(null);
   const [loading, setLoading] = useState(false);
-  const [sendStatus, setSendStatus] = useState("");
   const [showAddClientPrompt, setShowAddClientPrompt] = useState(false);
 
   const validateEmail = (email: string) =>
@@ -45,10 +44,9 @@ export default function Dashboard() {
         return;
       }
 
-      setError("");
+      setError("Client added successfully");
       setShowAddClientPrompt(false);
       setClientFormsStatus(data);
-      setSendStatus("✅ Client added successfully");
     } catch {
       setError("Network error, could not add client.");
     }
@@ -72,7 +70,6 @@ export default function Dashboard() {
     }
 
     setError("");
-    setSendStatus("");
     setErrorFadingOut(false);
     setLoading(true);
 
@@ -95,8 +92,7 @@ export default function Dashboard() {
       } else {
         setClientFormsStatus(data);
         setShowAddClientPrompt(false);
-        setSendStatus("");
-        setError("");
+        setError("Retrieved data successfully");
       }
     } catch {
       setError("Network error, please try again");
@@ -110,11 +106,9 @@ export default function Dashboard() {
   const handleClear = () => {
     setEmail("");
     setClientFormsStatus(null);
-    setSendStatus("");
 
     if (error) {
       setErrorFadingOut(true);
-
       setTimeout(() => {
         setError("");
         setErrorFadingOut(false);
@@ -127,8 +121,6 @@ export default function Dashboard() {
 
   const handleSendForm = useCallback(
     async (formType: string) => {
-      setSendStatus("");
-
       try {
         const response = await fetch(`/forms/send-token/${formType}`, {
           method: "POST",
@@ -139,15 +131,13 @@ export default function Dashboard() {
         const data = await response.json();
 
         if (!response.ok) {
-          setSendStatus(
-            `❌ ${data.error || `Failed to send ${formType} form`}`
-          );
+          setError(`${data.error || `Failed to send ${formType} form`}`);
         } else {
-          setSendStatus(`✅ ${formType} form sent successfully!`);
+          setError(`${formType} form sent successfully!`);
           await handleCheckProgress();
         }
       } catch {
-        setSendStatus(`❌ Network error while sending ${formType} form.`);
+        setError(`Network error while sending ${formType} form.`);
       }
     },
     [email, handleCheckProgress]
@@ -174,16 +164,10 @@ export default function Dashboard() {
           error={error}
           errorFadingOut={errorFadingOut}
           setError={setError}
-          setSendStatus={setSendStatus}
           setErrorFadingOut={setErrorFadingOut}
-          status={sendStatus}
           showAddClientPrompt={showAddClientPrompt}
           onConfirmAddClient={handleConfirmAddClient}
         />
-
-        {sendStatus && !error && (
-          <p className="text-center mb-4 font-medium">{sendStatus}</p>
-        )}
 
         <EmailSearchControls
           onCheck={handleCheckProgress}

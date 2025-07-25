@@ -4,9 +4,7 @@ type Props = {
   error: string;
   errorFadingOut: boolean;
   setError: (error: string) => void;
-  setSendStatus: (status: string) => void;
   setErrorFadingOut: (val: boolean) => void;
-  status?: string;
   showAddClientPrompt?: boolean;
   onConfirmAddClient?: () => void;
 };
@@ -17,9 +15,7 @@ export default function EmailInput({
   error,
   errorFadingOut,
   setError,
-  setSendStatus,
   setErrorFadingOut,
-  status,
   showAddClientPrompt = false,
   onConfirmAddClient,
 }: Props) {
@@ -31,7 +27,6 @@ export default function EmailInput({
         onChange={(e) => {
           setEmail(e.target.value);
           setError("");
-          setSendStatus("");
           setErrorFadingOut(false);
         }}
         placeholder="Enter client email"
@@ -45,9 +40,17 @@ export default function EmailInput({
           error && !errorFadingOut ? "opacity-100" : "opacity-0"
         }`}
       >
-        <p className="text-red-600 font-bold inline">{error || "\u00A0"}</p>
+        {error ? (
+          <p className="text-red-600 font-bold inline">{error}</p>
+        ) : showAddClientPrompt && onConfirmAddClient ? (
+          <p className="text-green-600 font-medium inline">
+            ✅ Client added successfully
+          </p>
+        ) : (
+          <span className="inline-block">&nbsp;</span>
+        )}
 
-        {showAddClientPrompt && onConfirmAddClient && (
+        {showAddClientPrompt && onConfirmAddClient && error && (
           <button
             onClick={onConfirmAddClient}
             className="ml-3 w-7 h-7 inline-flex items-center justify-center bg-green-500 text-white rounded hover:bg-green-600 shadow-sm"
@@ -57,12 +60,6 @@ export default function EmailInput({
           </button>
         )}
       </div>
-
-      {status && !error && (
-        <p className="text-green-600 text-sm mb-4 text-center font-medium">
-          {status}
-        </p>
-      )}
     </>
   );
 }
