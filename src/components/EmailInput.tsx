@@ -7,7 +7,8 @@ type Props = {
   setSendStatus: (status: string) => void;
   setErrorFadingOut: (val: boolean) => void;
   status?: string;
-  addClientPrompt?: React.ReactNode;
+  showAddClientPrompt?: boolean;
+  onConfirmAddClient?: () => void;
 };
 
 export default function EmailInput({
@@ -19,7 +20,8 @@ export default function EmailInput({
   setSendStatus,
   setErrorFadingOut,
   status,
-  addClientPrompt,
+  showAddClientPrompt = false,
+  onConfirmAddClient,
 }: Props) {
   return (
     <>
@@ -33,20 +35,34 @@ export default function EmailInput({
           setErrorFadingOut(false);
         }}
         placeholder="Enter client email"
-        className={`w-full p-2 border rounded mb-1 ${
+        className={`w-full p-2 border rounded mb-2 ${
           error ? "border-red-500" : "border-gray-300"
         }`}
       />
-      <p
-        className={`text-red-600 text-sm mb-4 text-center font-bold min-h-[1.25rem] transition-opacity duration-500`}
-        style={{ opacity: error && !errorFadingOut ? 1 : 0 }}
+
+      <div
+        className={`min-h-[3.5rem] text-center text-sm transition-opacity duration-500 ${
+          error && !errorFadingOut ? "opacity-100" : "opacity-0"
+        }`}
       >
-        {error || "\u00A0"}
-      </p>
+        <p className="text-red-600 font-bold inline">{error || "\u00A0"}</p>
+
+        {showAddClientPrompt && onConfirmAddClient && (
+          <button
+            onClick={onConfirmAddClient}
+            className="ml-3 w-7 h-7 inline-flex items-center justify-center bg-green-500 text-white rounded hover:bg-green-600 shadow-sm"
+            title="Add client"
+          >
+            ✓
+          </button>
+        )}
+      </div>
+
       {status && !error && (
-        <p className="text-green-600 text-sm mb-4 text-center font-medium"></p>
+        <p className="text-green-600 text-sm mb-4 text-center font-medium">
+          {status}
+        </p>
       )}
-      {addClientPrompt && <div className="mt-2">{addClientPrompt}</div>}
     </>
   );
 }

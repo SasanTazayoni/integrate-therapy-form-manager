@@ -60,12 +60,14 @@ export default function Dashboard() {
     if (!normalizedEmail) {
       setError("Input cannot be empty");
       setErrorFadingOut(false);
+      setShowAddClientPrompt(false);
       return;
     }
 
     if (!validateEmail(normalizedEmail)) {
       setError("This email is not valid");
       setErrorFadingOut(false);
+      setShowAddClientPrompt(false);
       return;
     }
 
@@ -82,7 +84,7 @@ export default function Dashboard() {
 
       if (!response.ok) {
         if (data.error === "Client not found") {
-          setError("There is no data for this email currently.");
+          setError("No data for this email - add to database?");
           setShowAddClientPrompt(true);
           setClientFormsStatus(null);
         } else {
@@ -98,8 +100,8 @@ export default function Dashboard() {
       }
     } catch {
       setError("Network error, please try again");
-      setShowAddClientPrompt(false);
       setClientFormsStatus(null);
+      setShowAddClientPrompt(false);
     } finally {
       setLoading(false);
     }
@@ -112,10 +114,14 @@ export default function Dashboard() {
 
     if (error) {
       setErrorFadingOut(true);
+
       setTimeout(() => {
         setError("");
         setErrorFadingOut(false);
+        setShowAddClientPrompt(false);
       }, 500);
+    } else {
+      setShowAddClientPrompt(false);
     }
   };
 
@@ -170,34 +176,12 @@ export default function Dashboard() {
           setError={setError}
           setSendStatus={setSendStatus}
           setErrorFadingOut={setErrorFadingOut}
-          addClientPrompt={
-            showAddClientPrompt ? (
-              <div className="text-center text-sm">
-                <div className="mt-2 flex justify-center items-center gap-4">
-                  <span className="text-gray-700">Add to database?</span>
-                  <button
-                    onClick={handleConfirmAddClient}
-                    className="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600"
-                  >
-                    ✅
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowAddClientPrompt(false);
-                      setEmail("");
-                      setError("");
-                    }}
-                    className="bg-gray-400 text-white px-2 py-1 rounded hover:bg-gray-500"
-                  >
-                    ❌
-                  </button>
-                </div>
-              </div>
-            ) : null
-          }
+          status={sendStatus}
+          showAddClientPrompt={showAddClientPrompt}
+          onConfirmAddClient={handleConfirmAddClient}
         />
 
-        {sendStatus && (
+        {sendStatus && !error && (
           <p className="text-center mb-4 font-medium">{sendStatus}</p>
         )}
 
