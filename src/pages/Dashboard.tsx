@@ -55,7 +55,8 @@ export default function Dashboard() {
       setError("");
       setSuccessMessage("Client added successfully");
       setShowAddClientPrompt(false);
-      setClientFormsStatus(data);
+
+      await handleCheckProgress();
     } catch {
       setError("Network error, could not add client.");
       setSuccessMessage("");
