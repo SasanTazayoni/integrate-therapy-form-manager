@@ -37,7 +37,7 @@ export default function EmailInput({
         }`}
       />
 
-      <div className="min-h-[2.5rem] text-center text-sm font-bold">
+      <div className="min-h-[2rem] text-center text-sm font-bold">
         {error && !errorFadingOut && (
           <p className="text-red-600 inline">{error}</p>
         )}
