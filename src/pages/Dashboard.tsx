@@ -15,6 +15,11 @@ type ClientFormsStatus = {
   formsCompleted?: number;
 };
 
+function truncateEmail(email: string, maxLength = 16) {
+  if (email.length <= maxLength) return email;
+  return email.slice(0, maxLength - 1) + "…";
+}
+
 export default function Dashboard() {
   const [email, setEmail] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -112,7 +117,9 @@ export default function Dashboard() {
         setClientFormsStatus(data);
         setShowAddClientPrompt(false);
         setError("");
-        setSuccessMessage(`Retrieved data successfully for ${normalizedEmail}`);
+        setSuccessMessage(
+          `Retrieved data successfully for ${truncateEmail(normalizedEmail)}`
+        );
         setConfirmedEmail(normalizedEmail);
       }
     } catch {
