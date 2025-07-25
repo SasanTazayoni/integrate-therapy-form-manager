@@ -94,7 +94,7 @@ async function main() {
     data: {
       clientId: carol.id,
       form_type: "BECKS",
-      token: "token-becks",
+      token: "token-becks-active",
       token_sent_at: now,
       token_expires_at: twoWeeksFromNow,
       is_active: true,
@@ -107,7 +107,7 @@ async function main() {
     data: {
       clientId: dave.id,
       form_type: "BURNS",
-      token: "token-burns",
+      token: "token-burns-active",
       token_sent_at: now,
       token_expires_at: twoWeeksFromNow,
       is_active: true,
@@ -161,17 +161,29 @@ async function main() {
     ],
   });
 
-  await prisma.form.create({
-    data: {
-      clientId: frank.id,
-      form_type: "BECKS",
-      token: "frank-expired-token",
-      token_sent_at: new Date(now.getTime() - 1000 * 60 * 60 * 48),
-      token_expires_at: new Date(now.getTime() - 1000 * 60 * 60 * 24),
-      submitted_at: null,
-      is_active: false,
-      total_score: null,
-    },
+  await prisma.form.createMany({
+    data: [
+      {
+        clientId: frank.id,
+        form_type: "BECKS",
+        token: "frank-expired-becks",
+        token_sent_at: new Date(now.getTime() - 1000 * 60 * 60 * 48),
+        token_expires_at: new Date(now.getTime() - 1000 * 60 * 60 * 24),
+        submitted_at: null,
+        is_active: false,
+        total_score: null,
+      },
+      {
+        clientId: frank.id,
+        form_type: "SMI",
+        token: "frank-expired-smi",
+        token_sent_at: new Date(now.getTime() - 1000 * 60 * 60 * 48),
+        token_expires_at: new Date(now.getTime() - 1000 * 60 * 60 * 24),
+        submitted_at: null,
+        is_active: false,
+        total_score: null,
+      },
+    ],
   });
 
   console.log("🌱 Seeded clients and forms.");
