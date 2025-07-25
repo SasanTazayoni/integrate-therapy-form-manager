@@ -8,17 +8,17 @@ export default function EmailSearchControls({
   loading: boolean;
 }) {
   return (
-    <div className="flex justify-center gap-4 mb-6">
+    <div className="flex justify-center gap-4 mb-10">
       <button
         onClick={onCheck}
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        className="bg-blue-500 text-white px-8 py-2 rounded hover:bg-blue-600"
         disabled={loading}
       >
-        {loading ? "Checking..." : "Check"}
+        Check
       </button>
       <button
         onClick={onClear}
-        className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+        className="bg-gray-400 text-white px-8 py-2 rounded hover:bg-gray-500"
         disabled={loading}
       >
         Clear
