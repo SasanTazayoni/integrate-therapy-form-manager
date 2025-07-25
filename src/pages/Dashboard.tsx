@@ -190,7 +190,6 @@ export default function Dashboard() {
           email={email}
           setEmail={handleEmailChange}
           successMessage={successMessage}
-          setSuccessMessage={setSuccessMessage}
           error={error}
           setError={setError}
           loading={loading}

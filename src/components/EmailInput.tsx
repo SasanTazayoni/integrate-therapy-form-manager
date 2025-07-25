@@ -4,7 +4,6 @@ type Props = {
   email: string;
   setEmail: (email: string) => void;
   successMessage?: string;
-  setSuccessMessage: (msg: string) => void;
   error: string;
   setError: (error: string) => void;
   showAddClientPrompt?: boolean;
@@ -17,7 +16,6 @@ export default function EmailInput({
   email,
   setEmail,
   successMessage,
-  setSuccessMessage,
   error,
   setError,
   showAddClientPrompt = false,
@@ -33,7 +31,6 @@ export default function EmailInput({
         onChange={(e) => {
           setEmail(e.target.value);
           setError("");
-          setSuccessMessage("");
           setShowAddClientPrompt(false);
         }}
         placeholder="Enter client email"
