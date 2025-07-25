@@ -41,7 +41,7 @@ export default function EmailInput({
       />
 
       <div
-        className={`min-h-[3.5rem] text-center text-sm transition-opacity duration-500 ${
+        className={`min-h-[2.5rem] text-center text-sm transition-opacity duration-500 ${
           error && !errorFadingOut ? "opacity-100" : "opacity-0"
         }`}
       >
