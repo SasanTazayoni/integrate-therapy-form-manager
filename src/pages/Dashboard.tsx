@@ -122,11 +122,9 @@ export default function Dashboard() {
 
     if (error) {
       setErrorFadingOut(true);
-      setTimeout(() => {
-        setError("");
-        setErrorFadingOut(false);
-        setShowAddClientPrompt(false);
-      }, 500);
+      setError("");
+      setErrorFadingOut(false);
+      setShowAddClientPrompt(false);
     } else {
       setShowAddClientPrompt(false);
     }
