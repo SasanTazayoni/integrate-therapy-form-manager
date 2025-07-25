@@ -7,6 +7,9 @@ import EmailSearchControls from "../components/EmailSearchControls";
 type FormStatus = {
   submitted: boolean;
   activeToken: boolean;
+  submittedAt?: string;
+  tokenCreatedAt?: string;
+  tokenExpiresAt?: string;
 };
 
 type ClientFormsStatus = {

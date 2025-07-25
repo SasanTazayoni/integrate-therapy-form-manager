@@ -3,6 +3,9 @@ import FormButtonStatus from "./FormButtonStatus";
 type FormStatus = {
   submitted: boolean;
   activeToken: boolean;
+  submittedAt?: string;
+  tokenCreatedAt?: string;
+  tokenExpiresAt?: string;
 };
 
 type ClientFormsStatus = {
@@ -12,57 +15,86 @@ type ClientFormsStatus = {
 
 type FormButtonsProps = {
   clientFormsStatus: ClientFormsStatus | null;
-  email: string;
   onSend: (formType: string) => void;
+};
+
+const formatDate = (iso?: string) => {
+  if (!iso) return "";
+  const date = new Date(iso);
+  return date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
 };
 
 export default function FormButtons({
   clientFormsStatus,
-  email,
   onSend,
 }: FormButtonsProps) {
-  const normalizedEmail = email.trim().toLowerCase();
-  const noEmail = normalizedEmail === "";
+  const clientSearched = clientFormsStatus !== null;
   const clientExists = clientFormsStatus?.exists ?? false;
 
   const formTypes = ["YSQ", "SMI", "BECKS", "BURNS"];
 
   return (
-    <div className="grid gap-2">
+    <div className="grid gap-4">
       {formTypes.map((formType) => {
         const status = clientFormsStatus?.forms?.[formType];
 
         let disabled = false;
-
-        if (noEmail) {
-          disabled = true;
-        } else if (!clientExists) {
-          disabled = false;
-        } else if (status?.activeToken) {
+        if (!clientSearched || !clientExists) {
           disabled = true;
         } else if (formType === "SMI") {
-          disabled = !status?.submitted;
+          disabled = status?.activeToken || false;
         } else {
-          disabled = !!status?.submitted;
+          disabled = status?.submitted || status?.activeToken || false;
         }
 
-        let title = "";
-        if (!clientExists) {
-          title = "Client not found";
-        } else if (status?.submitted) {
-          title = "Form already submitted";
-        } else if (status?.activeToken) {
-          title = "Active token already sent";
+        let message: React.ReactNode = "";
+        if (!clientSearched) {
+          message = "";
+        } else if (!status) {
+          message = "No data found for this client";
+        } else if (
+          status.tokenExpiresAt &&
+          new Date(status.tokenExpiresAt) < new Date()
+        ) {
+          message = (
+            <>
+              Form expired on{" "}
+              <strong>{formatDate(status.tokenExpiresAt)}</strong>
+            </>
+          );
+        } else if (status.submitted) {
+          message = (
+            <>
+              Form submitted on{" "}
+              <strong>{formatDate(status.submittedAt)}</strong>
+            </>
+          );
+        } else if (status.activeToken) {
+          message = (
+            <>
+              Form sent on <strong>{formatDate(status.tokenCreatedAt)}</strong>{" "}
+              pending response...
+            </>
+          );
+        } else {
+          message = "Form not yet sent";
         }
 
         return (
-          <FormButtonStatus
-            key={formType}
-            formType={formType}
-            disabled={disabled}
-            title={title}
-            onSend={onSend}
-          />
+          <div key={formType} className="flex flex-col items-center">
+            <FormButtonStatus
+              formType={formType}
+              disabled={disabled}
+              onSend={onSend}
+            />
+            <div className="text-sm font-semibold text-gray-700 mt-2 text-center min-h-[1.5rem]">
+              {message}
+            </div>
+          </div>
         );
       })}
     </div>

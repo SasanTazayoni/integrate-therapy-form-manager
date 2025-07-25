@@ -4,6 +4,9 @@ import prisma from "../prisma/client";
 type FormStatus = {
   activeToken: boolean;
   submitted: boolean;
+  submittedAt?: Date | null;
+  tokenCreatedAt?: Date | null;
+  tokenExpiresAt?: Date | null;
 };
 
 type FormsStatusRecord = Record<string, FormStatus>;
@@ -66,28 +69,33 @@ export const getClientFormsStatus = async (
 
     const formTypes: string[] = ["YSQ", "SMI", "BECKS", "BURNS"];
 
-    const formsStatus: FormsStatusRecord = formTypes.reduce(
-      (acc: FormsStatusRecord, type: string): FormsStatusRecord => {
-        const formsOfType: Form[] = forms.filter(
-          (f: Form) => f.form_type === type
-        );
+    const formsStatus: Record<string, FormStatus> = {};
 
-        const activeToken: boolean = formsOfType.some(
-          (f: Form) =>
-            f.is_active === true &&
-            !f.submitted_at &&
-            new Date(f.token_expires_at) > new Date()
-        );
+    for (const type of formTypes) {
+      const formsOfType = forms
+        .filter((f) => f.form_type === type)
+        .sort((a, b) => b.token_sent_at.getTime() - a.token_sent_at.getTime());
 
-        const submitted: boolean = formsOfType.some(
-          (f: Form) => !!f.submitted_at
-        );
+      const mostRecent = formsOfType[0];
 
-        acc[type] = { activeToken, submitted };
-        return acc;
-      },
-      {} as FormsStatusRecord
-    );
+      if (mostRecent) {
+        formsStatus[type] = {
+          activeToken:
+            mostRecent.is_active &&
+            !mostRecent.submitted_at &&
+            new Date(mostRecent.token_expires_at) > new Date(),
+          submitted: !!mostRecent.submitted_at,
+          submittedAt: mostRecent.submitted_at,
+          tokenCreatedAt: mostRecent.token_sent_at,
+          tokenExpiresAt: mostRecent.token_expires_at,
+        };
+      } else {
+        formsStatus[type] = {
+          activeToken: false,
+          submitted: false,
+        };
+      }
+    }
 
     const formsCompleted = formTypes.reduce((count, type) => {
       return formsStatus[type].submitted ? count + 1 : count;
