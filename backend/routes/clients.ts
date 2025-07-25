@@ -6,7 +6,7 @@ import {
 
 const router = Router();
 
-router.post("/", createClient);
+router.post("/add", createClient);
 router.get("/form-status", getClientFormsStatus);
 
 export default router;
