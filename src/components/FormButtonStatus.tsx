@@ -1,25 +1,21 @@
 type Props = {
-  formType: string;
+  label: string;
   disabled: boolean;
-  onSend: (formType: string) => void;
+  onClick: () => void;
 };
 
-export default function FormButtonStatus({
-  formType,
-  disabled,
-  onSend,
-}: Props) {
+export default function FormButtonStatus({ label, disabled, onClick }: Props) {
   return (
     <button
       disabled={disabled}
-      className={`px-4 py-2 rounded ${
+      onClick={onClick}
+      className={`w-full px-4 py-2 rounded text-white font-medium transition-colors duration-200 ${
         disabled
           ? "bg-gray-300 cursor-not-allowed"
-          : "bg-blue-500 hover:bg-blue-600 text-white"
+          : "bg-blue-500 hover:bg-blue-600"
       }`}
-      onClick={() => onSend(formType)}
     >
-      Send {formType} Form
+      {label}
     </button>
   );
 }

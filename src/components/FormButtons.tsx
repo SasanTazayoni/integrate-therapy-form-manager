@@ -28,6 +28,13 @@ const formatDate = (iso?: string) => {
   });
 };
 
+const formMeta = {
+  YSQ: "Young Schema Questionnaire (YSQ) Forms",
+  SMI: "Schema Mode Inventory (SMI) Forms",
+  BECKS: "Beck's Depression Inventory (BDI) Forms",
+  BURNS: "Burn's Anxiety Inventory (BAI) Forms",
+};
+
 export default function FormButtons({
   clientFormsStatus,
   onSend,
@@ -38,60 +45,61 @@ export default function FormButtons({
   const formTypes = ["YSQ", "SMI", "BECKS", "BURNS"];
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-6">
       {formTypes.map((formType) => {
         const status = clientFormsStatus?.forms?.[formType];
 
-        let disabled = false;
-        if (!clientSearched || !clientExists) {
-          disabled = true;
-        } else if (formType === "SMI") {
-          disabled = status?.activeToken || false;
-        } else {
-          disabled = status?.submitted || status?.activeToken || false;
-        }
+        const disabled = !clientSearched || !clientExists;
 
-        let message: React.ReactNode = "";
-        if (!clientSearched) {
-          message = "";
-        } else if (!status) {
-          message = "No data found for this client";
-        } else if (status.submitted) {
-          message = (
-            <>
-              Form submitted on{" "}
-              <strong>{formatDate(status.submittedAt)}</strong>
-            </>
-          );
-        } else if (
-          status.tokenExpiresAt &&
-          new Date(status.tokenExpiresAt) < new Date()
-        ) {
-          message = (
-            <>
-              Form expired on{" "}
-              <strong>{formatDate(status.tokenExpiresAt)}</strong>
-            </>
-          );
-        } else if (status.activeToken) {
-          message = (
-            <>
-              Form sent on <strong>{formatDate(status.tokenCreatedAt)}</strong>{" "}
-              pending response...
-            </>
-          );
-        } else {
-          message = "Form not yet sent";
-        }
+        const message = !status ? (
+          clientSearched ? (
+            "No data found for this client"
+          ) : (
+            ""
+          )
+        ) : status.submitted ? (
+          <>
+            Form submitted on <strong>{formatDate(status.submittedAt)}</strong>
+          </>
+        ) : status.tokenExpiresAt &&
+          new Date(status.tokenExpiresAt) < new Date() ? (
+          <>
+            Form expired on <strong>{formatDate(status.tokenExpiresAt)}</strong>
+          </>
+        ) : status.activeToken ? (
+          <>
+            Form sent on <strong>{formatDate(status.tokenCreatedAt)}</strong>{" "}
+            pending response...
+          </>
+        ) : (
+          "Form not yet sent"
+        );
 
         return (
-          <div key={formType} className="flex flex-col items-center">
-            <FormButtonStatus
-              formType={formType}
-              disabled={disabled}
-              onSend={onSend}
-            />
-            <div className="text-sm font-semibold text-gray-700 mt-2 text-center min-h-[1.5rem]">
+          <div key={formType} className="flex flex-col gap-2">
+            <h2 className="font-semibold text-center">
+              {formMeta[formType as keyof typeof formMeta]}
+            </h2>
+
+            <div className="grid grid-cols-3 gap-2">
+              <FormButtonStatus
+                label="Send"
+                disabled={disabled}
+                onClick={() => onSend(formType)}
+              />
+              <FormButtonStatus
+                label="Revoke"
+                disabled={true}
+                onClick={() => {}}
+              />
+              <FormButtonStatus
+                label="Retrieve"
+                disabled={true}
+                onClick={() => {}}
+              />
+            </div>
+
+            <div className="text-sm font-semibold text-gray-700 text-center min-h-[1.5rem]">
               {message}
             </div>
           </div>
