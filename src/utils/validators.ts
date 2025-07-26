@@ -1,3 +1,3 @@
-export function validateEmail(email: string) {
+export default function validateEmail(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }

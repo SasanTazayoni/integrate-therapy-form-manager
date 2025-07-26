@@ -4,7 +4,8 @@ import EmailInput from "../components/EmailInput";
 import FormButtons from "../components/FormButtons";
 import EmailSearchControls from "../components/EmailSearchControls";
 import { fetchClientStatus, addClient, sendFormToken } from "../api/api";
-import { validateEmail } from "../utils/validators";
+import validateEmail from "../utils/validators";
+import truncateEmail from "../utils/truncateEmail";
 
 type FormStatus = {
   submitted: boolean;
@@ -19,11 +20,6 @@ type ClientFormsStatus = {
   forms: Record<string, FormStatus>;
   formsCompleted?: number;
 };
-
-function truncateEmail(email: string, maxLength = 16) {
-  if (email.length <= maxLength) return email;
-  return email.slice(0, maxLength - 1) + "…";
-}
 
 export default function Dashboard() {
   const [email, setEmail] = useState("");
