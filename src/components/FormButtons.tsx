@@ -56,6 +56,13 @@ export default function FormButtons({
           message = "";
         } else if (!status) {
           message = "No data found for this client";
+        } else if (status.submitted) {
+          message = (
+            <>
+              Form submitted on{" "}
+              <strong>{formatDate(status.submittedAt)}</strong>
+            </>
+          );
         } else if (
           status.tokenExpiresAt &&
           new Date(status.tokenExpiresAt) < new Date()
@@ -64,13 +71,6 @@ export default function FormButtons({
             <>
               Form expired on{" "}
               <strong>{formatDate(status.tokenExpiresAt)}</strong>
-            </>
-          );
-        } else if (status.submitted) {
-          message = (
-            <>
-              Form submitted on{" "}
-              <strong>{formatDate(status.submittedAt)}</strong>
             </>
           );
         } else if (status.activeToken) {
