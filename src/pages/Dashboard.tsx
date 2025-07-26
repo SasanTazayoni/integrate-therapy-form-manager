@@ -4,6 +4,7 @@ import EmailInput from "../components/EmailInput";
 import FormButtons from "../components/FormButtons";
 import EmailSearchControls from "../components/EmailSearchControls";
 import { fetchClientStatus, addClient, sendFormToken } from "../api/api";
+import { validateEmail } from "../utils/validators";
 
 type FormStatus = {
   submitted: boolean;
@@ -33,9 +34,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [showAddClientPrompt, setShowAddClientPrompt] = useState(false);
   const [confirmedEmail, setConfirmedEmail] = useState<string | null>(null);
-
-  const validateEmail = (email: string) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleEmailChange = (value: string) => {
     setEmail(value);
