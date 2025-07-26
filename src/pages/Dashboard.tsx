@@ -3,6 +3,7 @@ import ProtectedAccess from "../components/ProtectedAccess";
 import EmailInput from "../components/EmailInput";
 import FormButtons from "../components/FormButtons";
 import EmailSearchControls from "../components/EmailSearchControls";
+import { fetchClientStatus, addClient, sendFormToken } from "../api/api";
 
 type FormStatus = {
   submitted: boolean;
@@ -46,15 +47,9 @@ export default function Dashboard() {
     const normalizedEmail = email.trim().toLowerCase();
 
     try {
-      const response = await fetch("/clients/add", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: normalizedEmail }),
-      });
+      const { ok, data } = await addClient(normalizedEmail);
 
-      const data = await response.json();
-
-      if (!response.ok) {
+      if (!ok) {
         setError(data.error || "Failed to add client");
         setSuccessMessage("");
         return;
@@ -97,12 +92,9 @@ export default function Dashboard() {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        `/clients/form-status?email=${encodeURIComponent(normalizedEmail)}`
-      );
-      const data = await response.json();
+      const { ok, data } = await fetchClientStatus(normalizedEmail);
 
-      if (!response.ok) {
+      if (!ok) {
         if (data.error === "Client not found") {
           setError("No data for this email - add to database?");
           setSuccessMessage("");
@@ -150,15 +142,12 @@ export default function Dashboard() {
       if (loading) return;
 
       try {
-        const response = await fetch(`/forms/send-token/${formType}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: email.trim().toLowerCase() }),
-        });
+        const { ok, data } = await sendFormToken(
+          email.trim().toLowerCase(),
+          formType
+        );
 
-        const data = await response.json();
-
-        if (!response.ok) {
+        if (!ok) {
           setError(`${data.error || `Failed to send ${formType} form`}`);
           setSuccessMessage("");
         } else {
