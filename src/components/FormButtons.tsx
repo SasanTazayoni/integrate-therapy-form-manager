@@ -66,6 +66,9 @@ export default function FormButtons({
           !(status ? status.activeToken : false);
         const retrieveDisabled = !clientSearched || !clientExists;
 
+        const sendLabel =
+          formType === "SMI" && status?.submitted ? "Resend" : "Send";
+
         let message: React.ReactNode = "";
         if (!clientSearched) {
           message = "";
@@ -108,7 +111,7 @@ export default function FormButtons({
 
             <div className="flex space-x-3 w-full justify-center">
               <FormButtonStatus
-                label="Send"
+                label={sendLabel}
                 disabled={sendDisabled}
                 onClick={() => onSend(formType)}
               />
