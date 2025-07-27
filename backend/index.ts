@@ -1,8 +1,8 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import clientRoutes from "./routes/clients";
-import formRoutes from "./routes/forms";
+import clientRoutes from "./routes/clientsBackend";
+import formRoutes from "./routes/formsBackend";
 
 dotenv.config();
 
