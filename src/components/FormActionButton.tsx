@@ -1,5 +1,3 @@
-import { Loader2 } from "lucide-react";
-
 type Props = {
   label: string;
   disabled: boolean;
@@ -23,14 +21,7 @@ export default function FormActionButton({
           : "bg-blue-500 hover:bg-blue-600"
       }`}
     >
-      {loading ? (
-        <>
-          <Loader2 className="animate-spin h-4 w-4" />
-          Loading...
-        </>
-      ) : (
-        label
-      )}
+      {label}
     </button>
   );
 }
