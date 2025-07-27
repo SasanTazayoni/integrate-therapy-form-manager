@@ -32,6 +32,9 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [showAddClientPrompt, setShowAddClientPrompt] = useState(false);
   const [confirmedEmail, setConfirmedEmail] = useState<string | null>(null);
+  const [formActionLoading, setFormActionLoading] = useState<
+    Record<string, boolean>
+  >({});
 
   const handleEmailChange = (value: string) => {
     setEmail(value);
@@ -125,6 +128,9 @@ export default function Dashboard() {
 
       const normalizedEmail = email.trim().toLowerCase();
 
+      if (formActionLoading[formType]) return;
+
+      setFormActionLoading((prev) => ({ ...prev, [formType]: true }));
       setClientFormsStatus((prev) => ({
         ...prev!,
         forms: {
@@ -161,8 +167,10 @@ export default function Dashboard() {
           console.warn("Form sent, but failed to refresh client status");
         }
       }
+
+      setFormActionLoading((prev) => ({ ...prev, [formType]: false }));
     },
-    [email, clientFormsStatus]
+    [email, clientFormsStatus, formActionLoading]
   );
 
   const handleRevokeForm = useCallback(
@@ -171,6 +179,9 @@ export default function Dashboard() {
 
       const normalizedEmail = email.trim().toLowerCase();
 
+      if (formActionLoading[formType]) return;
+
+      setFormActionLoading((prev) => ({ ...prev, [formType]: true }));
       setClientFormsStatus((prev) => ({
         ...prev!,
         forms: {
@@ -210,8 +221,10 @@ export default function Dashboard() {
           },
         }));
       }
+
+      setFormActionLoading((prev) => ({ ...prev, [formType]: false }));
     },
-    [email, clientFormsStatus]
+    [email, clientFormsStatus, formActionLoading]
   );
 
   return (
@@ -252,6 +265,7 @@ export default function Dashboard() {
           onSend={handleSendForm}
           onRevoke={handleRevokeForm}
           onRetrieve={(formType) => console.log("Retrieve", formType)}
+          formActionLoading={formActionLoading}
         />
       </div>
     </ProtectedAccess>
