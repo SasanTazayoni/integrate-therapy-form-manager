@@ -135,6 +135,44 @@ export const validateToken = async (req: Request, res: Response) => {
   }
 };
 
+export const revokeFormToken = async (req: Request, res: Response) => {
+  const { formType } = req.params;
+  const { email } = req.body;
+
+  if (!email || !formType || !allowedFormTypes.includes(formType)) {
+    return res.status(400).json({ error: "Invalid input" });
+  }
+
+  try {
+    const client = await prisma.client.findUnique({
+      where: { email: email.toLowerCase() },
+    });
+    if (!client) {
+      return res.status(404).json({ error: "Client not found" });
+    }
+
+    const result = await prisma.form.updateMany({
+      where: {
+        clientId: client.id,
+        form_type: formType,
+        is_active: true,
+      },
+      data: { is_active: false },
+    });
+
+    if (result.count === 0) {
+      return res
+        .status(404)
+        .json({ error: "No active form tokens found to revoke" });
+    }
+
+    res.json({ message: "Form token(s) revoked successfully" });
+  } catch (error) {
+    console.error("Error revoking form token:", error);
+    res.status(500).json({ error: "Failed to revoke form token" });
+  }
+};
+
 export const submitForm = async (req: Request, res: Response) => {
   const { token, fullName, dob, result } = req.body;
 
