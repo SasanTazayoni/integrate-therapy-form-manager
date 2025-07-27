@@ -9,6 +9,7 @@ import validateEmail from "../utils/validators";
 import truncateEmail from "../utils/truncateEmail";
 import normalizeEmail from "../utils/normalizeEmail";
 import type { FormStatus } from "../types/formStatusTypes";
+import RevokeConfirmModal from "../components/modals/RevokeConfirmationModal";
 
 type ClientFormsStatus = {
   exists: boolean;
@@ -28,6 +29,8 @@ export default function Dashboard() {
   const [formActionLoading, setFormActionLoading] = useState<
     Record<string, boolean>
   >({});
+  const [showRevokeModal, setShowRevokeModal] = useState(false);
+  const [revokeFormType, setRevokeFormType] = useState<string | null>(null);
 
   const handleEmailChange = (value: string) => {
     setEmail(value);
@@ -166,6 +169,22 @@ export default function Dashboard() {
     [email, clientFormsStatus, formActionLoading]
   );
 
+  const openRevokeModal = (formType: string) => {
+    setRevokeFormType(formType);
+    setShowRevokeModal(true);
+  };
+
+  const closeRevokeModal = () => {
+    setShowRevokeModal(false);
+    setRevokeFormType(null);
+  };
+
+  const handleConfirmRevoke = async () => {
+    if (!revokeFormType) return;
+    await handleRevokeForm(revokeFormType);
+    closeRevokeModal();
+  };
+
   const handleRevokeForm = useCallback(
     async (formType: string) => {
       if (!clientFormsStatus) return;
@@ -256,10 +275,18 @@ export default function Dashboard() {
         <FormButtons
           clientFormsStatus={clientFormsStatus}
           onSend={handleSendForm}
-          onRevoke={handleRevokeForm}
+          onRevoke={openRevokeModal}
           onRetrieve={(formType) => console.log("Retrieve", formType)}
           formActionLoading={formActionLoading}
         />
+
+        {showRevokeModal && revokeFormType && (
+          <RevokeConfirmModal
+            closing={false}
+            onConfirm={handleConfirmRevoke}
+            onCancel={closeRevokeModal}
+          />
+        )}
       </div>
     </ProtectedAccess>
   );
