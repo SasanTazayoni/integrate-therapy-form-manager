@@ -81,11 +81,17 @@ export default function FormButtons({
                 onRevoke={() => onRevoke(formType)}
                 onRetrieve={() => onRetrieve(formType)}
                 sendLabel={sendLabel}
+                loadingSend={formActionLoading[formType]}
+                loadingRevoke={formActionLoading[formType]}
               />
             </div>
 
             <div className="text-sm font-semibold text-gray-700 mt-3 text-center min-h-[1.5rem]">
-              <FormStatusMessage status={status} />
+              <FormStatusMessage
+                status={status}
+                formType={formType}
+                formActionLoading={formActionLoading}
+              />
             </div>
           </div>
         );

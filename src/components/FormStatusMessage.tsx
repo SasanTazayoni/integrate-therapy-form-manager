@@ -1,20 +1,38 @@
-import { formatDate } from "../utils/formatDate";
-import { FormStatus } from "./FormButtons";
+import { Loader2 } from "lucide-react";
+import type { FormStatus } from "./FormButtons";
+
+type Props = {
+  status?: FormStatus;
+  formType: string;
+  formActionLoading: Record<string, boolean>;
+};
+
+const formatDate = (iso?: string) => {
+  if (!iso) return "";
+  const date = new Date(iso);
+  return date.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
 
 export default function FormStatusMessage({
   status,
-}: {
-  status?: FormStatus | null;
-}) {
-  if (!status) return <span>No data found for this client</span>;
-
-  if (status.activeToken) {
+  formType,
+  formActionLoading,
+}: Props) {
+  if (formActionLoading[formType]) {
     return (
-      <>
-        Form sent on <strong>{formatDate(status.tokenCreatedAt)}</strong>{" "}
-        pending response...
-      </>
+      <span className="text-blue-600 flex justify-center items-center gap-2">
+        <Loader2 className="animate-spin h-4 w-4" />
+        Loading...
+      </span>
     );
+  }
+
+  if (!status) {
+    return <>No data found for this client</>;
   }
 
   const revokedTime = status.revokedAt
@@ -24,29 +42,35 @@ export default function FormStatusMessage({
     ? new Date(status.tokenCreatedAt).getTime()
     : 0;
 
-  if (revokedTime > tokenCreatedTime) {
+  if (status.activeToken) {
+    return (
+      <>
+        Form sent on <strong>{formatDate(status.tokenCreatedAt)}</strong>{" "}
+        pending response...
+      </>
+    );
+  } else if (revokedTime > tokenCreatedTime) {
     return (
       <>
         Form revoked on <strong>{formatDate(status.revokedAt)}</strong>
       </>
     );
-  }
-
-  if (status.submitted) {
+  } else if (status.submitted) {
     return (
       <>
         Form submitted on <strong>{formatDate(status.submittedAt)}</strong>
       </>
     );
-  }
-
-  if (status.tokenExpiresAt && new Date(status.tokenExpiresAt) < new Date()) {
+  } else if (
+    status.tokenExpiresAt &&
+    new Date(status.tokenExpiresAt) < new Date()
+  ) {
     return (
       <>
         Form expired on <strong>{formatDate(status.tokenExpiresAt)}</strong>
       </>
     );
+  } else {
+    return <>Form not yet sent</>;
   }
-
-  return <>Form not yet sent</>;
 }
