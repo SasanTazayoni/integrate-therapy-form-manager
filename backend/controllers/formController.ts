@@ -157,7 +157,10 @@ export const revokeFormToken = async (req: Request, res: Response) => {
         form_type: formType,
         is_active: true,
       },
-      data: { is_active: false },
+      data: {
+        is_active: false,
+        revoked_at: new Date(),
+      },
     });
 
     if (result.count === 0) {

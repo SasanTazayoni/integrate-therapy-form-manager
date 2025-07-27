@@ -30,6 +30,7 @@ model Form {
   token_expires_at DateTime
   is_active        Boolean   @default(true)
   submitted_at     DateTime?
+  revoked_at       DateTime?
   total_score      Int?
   created_at       DateTime  @default(now())
   updated_at       DateTime  @updatedAt
