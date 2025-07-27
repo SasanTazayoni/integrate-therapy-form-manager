@@ -70,7 +70,9 @@ export default function FormButtons({
             key={formType}
             className="flex flex-col items-center border p-4 rounded"
           >
-            <h2 className="font-semibold mb-3">{formTitles[formType]}</h2>
+            <h2 className="text-lg font-semibold mb-3">
+              {formTitles[formType]}
+            </h2>
 
             <div className="flex space-x-3 w-full justify-center">
               <FormButtonGroup

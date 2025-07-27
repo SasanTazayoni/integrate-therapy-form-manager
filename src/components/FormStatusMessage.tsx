@@ -32,7 +32,7 @@ export default function FormStatusMessage({
   }
 
   if (!status) {
-    return <>No data found for this client</>;
+    return <span className="text-gray-500">No data found for this client</span>;
   }
 
   const revokedTime = status.revokedAt
@@ -44,33 +44,33 @@ export default function FormStatusMessage({
 
   if (status.activeToken) {
     return (
-      <>
+      <span className="text-gray-500">
         Form sent on <strong>{formatDate(status.tokenCreatedAt)}</strong>{" "}
         pending response...
-      </>
+      </span>
     );
   } else if (revokedTime > tokenCreatedTime) {
     return (
-      <>
+      <span className="text-gray-500">
         Form revoked on <strong>{formatDate(status.revokedAt)}</strong>
-      </>
+      </span>
     );
   } else if (status.submitted) {
     return (
-      <>
+      <span className="text-gray-500">
         Form submitted on <strong>{formatDate(status.submittedAt)}</strong>
-      </>
+      </span>
     );
   } else if (
     status.tokenExpiresAt &&
     new Date(status.tokenExpiresAt) < new Date()
   ) {
     return (
-      <>
+      <span className="text-gray-500">
         Form expired on <strong>{formatDate(status.tokenExpiresAt)}</strong>
-      </>
+      </span>
     );
   } else {
-    return <>Form not yet sent</>;
+    return <span className="text-gray-500">Form not yet sent</span>;
   }
 }
