@@ -56,7 +56,10 @@ export default function FormButtons({
         const sendDisabled =
           !clientSearched ||
           !clientExists ||
-          (status ? status.activeToken : false);
+          (status
+            ? status.activeToken || (status.submitted && formType !== "SMI")
+            : false);
+
         const revokeDisabled =
           !clientSearched ||
           !clientExists ||
