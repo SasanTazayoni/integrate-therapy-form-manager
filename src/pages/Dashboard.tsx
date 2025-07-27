@@ -7,6 +7,7 @@ import { fetchClientStatus, addClient } from "../api/clientsFrontend";
 import { sendFormToken, revokeFormToken } from "../api/formsFrontend";
 import validateEmail from "../utils/validators";
 import truncateEmail from "../utils/truncateEmail";
+import normalizeEmail from "../utils/normalizeEmail";
 
 type FormStatus = {
   submitted: boolean;
@@ -43,7 +44,7 @@ export default function Dashboard() {
   };
 
   const handleConfirmAddClient = async () => {
-    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedEmail = normalizeEmail(email);
 
     const { ok, data } = await addClient(normalizedEmail);
 
@@ -60,7 +61,7 @@ export default function Dashboard() {
   };
 
   const handleCheckProgress = useCallback(async () => {
-    const normalizedEmail = email.trim().toLowerCase();
+    const normalizedEmail = normalizeEmail(email);
 
     if (!normalizedEmail) {
       setError("Input cannot be empty");
@@ -126,7 +127,7 @@ export default function Dashboard() {
     async (formType: string) => {
       if (!clientFormsStatus) return;
 
-      const normalizedEmail = email.trim().toLowerCase();
+      const normalizedEmail = normalizeEmail(email);
 
       if (formActionLoading[formType]) return;
 
@@ -177,7 +178,7 @@ export default function Dashboard() {
     async (formType: string) => {
       if (!clientFormsStatus) return;
 
-      const normalizedEmail = email.trim().toLowerCase();
+      const normalizedEmail = normalizeEmail(email);
 
       if (formActionLoading[formType]) return;
 
