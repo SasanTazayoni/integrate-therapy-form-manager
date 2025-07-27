@@ -1,7 +1,7 @@
-import React from "react";
-import FormActionButton from "./FormActionButton";
+import FormStatusMessage from "./FormStatusMessage";
+import FormButtonGroup from "./FormButtonGroup";
 
-type FormStatus = {
+export type FormStatus = {
   submitted: boolean;
   activeToken: boolean;
   submittedAt?: string;
@@ -23,20 +23,10 @@ type FormButtonsProps = {
 };
 
 const formTitles: Record<string, string> = {
-  YSQ: "Young Schema Questionnaire (YSQ) Forms",
-  SMI: "Schema Mode Inventory (SMI) Forms",
-  BECKS: "Beck's Depression Inventory (BDI) Forms",
-  BURNS: "Burn's Anxiety Inventory (BAI) Forms",
-};
-
-const formatDate = (iso?: string) => {
-  if (!iso) return "";
-  const date = new Date(iso);
-  return date.toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
+  YSQ: "Young Schema Questionnaire (YSQ) Form",
+  SMI: "Schema Mode Inventory (SMI) Form",
+  BECKS: "Beck's Depression Inventory (BDI) Form",
+  BURNS: "Burn's Anxiety Inventory (BAI) Form",
 };
 
 export default function FormButtons({
@@ -71,55 +61,6 @@ export default function FormButtons({
         const sendLabel =
           formType === "SMI" && status?.submitted ? "Resend" : "Send";
 
-        let message: React.ReactNode = "";
-
-        if (!clientSearched) {
-          message = "";
-        } else if (!status) {
-          message = "No data found for this client";
-        } else if (status.activeToken) {
-          message = (
-            <>
-              Form sent on <strong>{formatDate(status.tokenCreatedAt)}</strong>{" "}
-              pending response...
-            </>
-          );
-        } else {
-          const revokedTime = status.revokedAt
-            ? new Date(status.revokedAt).getTime()
-            : 0;
-          const tokenCreatedTime = status.tokenCreatedAt
-            ? new Date(status.tokenCreatedAt).getTime()
-            : 0;
-
-          if (revokedTime > tokenCreatedTime) {
-            message = (
-              <>
-                Form revoked on <strong>{formatDate(status.revokedAt)}</strong>
-              </>
-            );
-          } else if (status.submitted) {
-            message = (
-              <>
-                Form submitted on{" "}
-                <strong>{formatDate(status.submittedAt)}</strong>
-              </>
-            );
-          } else if (
-            status.tokenExpiresAt &&
-            new Date(status.tokenExpiresAt) < new Date()
-          ) {
-            message = (
-              <>
-                Form expired on{" "}
-                <strong>{formatDate(status.tokenExpiresAt)}</strong>
-              </>
-            );
-          } else {
-            message = "Form not yet sent";
-          }
-        }
-
         return (
           <div
             key={formType}
@@ -128,25 +69,19 @@ export default function FormButtons({
             <h2 className="font-semibold mb-3">{formTitles[formType]}</h2>
 
             <div className="flex space-x-3 w-full justify-center">
-              <FormActionButton
-                label={sendLabel}
-                disabled={sendDisabled}
-                onClick={() => onSend(formType)}
-              />
-              <FormActionButton
-                label="Revoke"
-                disabled={revokeDisabled}
-                onClick={() => onRevoke(formType)}
-              />
-              <FormActionButton
-                label="Retrieve"
-                disabled={retrieveDisabled}
-                onClick={() => onRetrieve(formType)}
+              <FormButtonGroup
+                sendDisabled={sendDisabled}
+                revokeDisabled={revokeDisabled}
+                retrieveDisabled={retrieveDisabled}
+                onSend={() => onSend(formType)}
+                onRevoke={() => onRevoke(formType)}
+                onRetrieve={() => onRetrieve(formType)}
+                sendLabel={sendLabel}
               />
             </div>
 
             <div className="text-sm font-semibold text-gray-700 mt-3 text-center min-h-[1.5rem]">
-              {message}
+              <FormStatusMessage status={status} />
             </div>
           </div>
         );
