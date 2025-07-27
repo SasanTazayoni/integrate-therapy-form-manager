@@ -45,6 +45,7 @@ export default function FormButtons({
             ? status.activeToken || (status.submitted && formType !== "SMI")
             : false) ||
           formActionLoading[formType];
+
         const revokeDisabled =
           !clientSearched ||
           !clientExists ||
@@ -52,7 +53,10 @@ export default function FormButtons({
           formActionLoading[formType];
 
         const retrieveDisabled =
-          !clientSearched || !clientExists || formActionLoading[formType];
+          !clientSearched ||
+          !clientExists ||
+          !status?.submitted ||
+          formActionLoading[formType];
 
         const sendLabel =
           formType === "SMI" && status?.submitted ? "Resend" : "Send";
