@@ -14,6 +14,7 @@ type FormStatus = {
   submittedAt?: string;
   tokenCreatedAt?: string;
   tokenExpiresAt?: string;
+  revokedAt?: string;
 };
 
 type ClientFormsStatus = {
@@ -187,6 +188,18 @@ export default function Dashboard() {
         }));
         setError(data.error || `Failed to revoke ${formType} form`);
         setSuccessMessage("");
+      } else {
+        setClientFormsStatus((prev) => ({
+          ...prev!,
+          forms: {
+            ...prev!.forms,
+            [formType]: {
+              ...prev!.forms[formType],
+              revokedAt: data.revokedAt ?? null,
+              activeToken: false,
+            },
+          },
+        }));
       }
     },
     [email, clientFormsStatus]

@@ -7,6 +7,7 @@ type FormStatus = {
   submittedAt?: string;
   tokenCreatedAt?: string;
   tokenExpiresAt?: string;
+  revokedAt?: string;
 };
 
 type ClientFormsStatus = {
@@ -64,42 +65,60 @@ export default function FormButtons({
           !clientSearched ||
           !clientExists ||
           !(status ? status.activeToken : false);
+
         const retrieveDisabled = !clientSearched || !clientExists;
 
         const sendLabel =
           formType === "SMI" && status?.submitted ? "Resend" : "Send";
 
         let message: React.ReactNode = "";
+
         if (!clientSearched) {
           message = "";
         } else if (!status) {
           message = "No data found for this client";
-        } else if (status.submitted) {
-          message = (
-            <>
-              Form submitted on{" "}
-              <strong>{formatDate(status.submittedAt)}</strong>
-            </>
-          );
-        } else if (
-          status.tokenExpiresAt &&
-          new Date(status.tokenExpiresAt) < new Date()
-        ) {
-          message = (
-            <>
-              Form expired on{" "}
-              <strong>{formatDate(status.tokenExpiresAt)}</strong>
-            </>
-          );
-        } else if (status.activeToken) {
-          message = (
-            <>
-              Form sent on <strong>{formatDate(status.tokenCreatedAt)}</strong>{" "}
-              pending response...
-            </>
-          );
         } else {
-          message = "Form not yet sent";
+          const revokedTime = status.revokedAt
+            ? new Date(status.revokedAt).getTime()
+            : 0;
+          const tokenCreatedTime = status.tokenCreatedAt
+            ? new Date(status.tokenCreatedAt).getTime()
+            : 0;
+
+          if (revokedTime > tokenCreatedTime) {
+            message = (
+              <>
+                Form revoked on <strong>{formatDate(status.revokedAt)}</strong>
+              </>
+            );
+          } else if (status.submitted) {
+            message = (
+              <>
+                Form submitted on{" "}
+                <strong>{formatDate(status.submittedAt)}</strong>
+              </>
+            );
+          } else if (
+            status.tokenExpiresAt &&
+            new Date(status.tokenExpiresAt) < new Date()
+          ) {
+            message = (
+              <>
+                Form expired on{" "}
+                <strong>{formatDate(status.tokenExpiresAt)}</strong>
+              </>
+            );
+          } else if (tokenCreatedTime > revokedTime && status.activeToken) {
+            message = (
+              <>
+                Form sent on{" "}
+                <strong>{formatDate(status.tokenCreatedAt)}</strong> pending
+                response...
+              </>
+            );
+          } else {
+            message = "Form not yet sent";
+          }
         }
 
         return (
