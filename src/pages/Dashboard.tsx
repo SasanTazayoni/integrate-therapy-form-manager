@@ -3,7 +3,8 @@ import ProtectedAccess from "../components/ProtectedAccess";
 import EmailInput from "../components/EmailInput";
 import FormButtons from "../components/FormButtons";
 import EmailSearchControls from "../components/EmailSearchControls";
-import { fetchClientStatus, addClient, sendFormToken } from "../api/api";
+import { fetchClientStatus, addClient } from "../api/clientsFrontend";
+import { sendFormToken, revokeFormToken } from "../api/formsFrontend";
 import validateEmail from "../utils/validators";
 import truncateEmail from "../utils/truncateEmail";
 
@@ -40,24 +41,18 @@ export default function Dashboard() {
   const handleConfirmAddClient = async () => {
     const normalizedEmail = email.trim().toLowerCase();
 
-    try {
-      const { ok, data } = await addClient(normalizedEmail);
+    const { ok, data } = await addClient(normalizedEmail);
 
-      if (!ok) {
-        setError(data.error || "Failed to add client");
-        setSuccessMessage("");
-        return;
-      }
-
-      setError("");
-      setSuccessMessage("Client added successfully");
-      setShowAddClientPrompt(false);
-
-      await handleCheckProgress();
-    } catch {
-      setError("Network error, could not add client.");
+    if (!ok) {
+      setError(data.error || "Failed to add client");
       setSuccessMessage("");
+      return;
     }
+
+    setError("");
+    setSuccessMessage("Client added successfully");
+    setShowAddClientPrompt(false);
+    await handleCheckProgress();
   };
 
   const handleCheckProgress = useCallback(async () => {
@@ -85,41 +80,33 @@ export default function Dashboard() {
     setError("");
     setLoading(true);
 
-    try {
-      const { ok, data } = await fetchClientStatus(normalizedEmail);
+    const { ok, data } = await fetchClientStatus(normalizedEmail);
 
-      if (!ok) {
-        if (data.error === "Client not found") {
-          setError("No data for this email - add to database?");
-          setSuccessMessage("");
-          setConfirmedEmail(null);
-          setShowAddClientPrompt(true);
-          setClientFormsStatus(null);
-        } else {
-          setError(data.error || "Failed to fetch progress");
-          setSuccessMessage("");
-          setConfirmedEmail(null);
-          setShowAddClientPrompt(false);
-          setClientFormsStatus(null);
-        }
+    if (!ok) {
+      if (data.error === "Client not found") {
+        setError("No data for this email - add to database?");
+        setSuccessMessage("");
+        setConfirmedEmail(null);
+        setShowAddClientPrompt(true);
+        setClientFormsStatus(null);
       } else {
-        setClientFormsStatus(data);
+        setError(data.error || "Failed to fetch progress");
+        setSuccessMessage("");
+        setConfirmedEmail(null);
         setShowAddClientPrompt(false);
-        setError("");
-        setSuccessMessage(
-          `Retrieved data successfully for ${truncateEmail(normalizedEmail)}`
-        );
-        setConfirmedEmail(normalizedEmail);
+        setClientFormsStatus(null);
       }
-    } catch {
-      setError("Network error, please try again");
-      setSuccessMessage("");
-      setConfirmedEmail(null);
-      setClientFormsStatus(null);
+    } else {
+      setClientFormsStatus(data);
       setShowAddClientPrompt(false);
-    } finally {
-      setLoading(false);
+      setError("");
+      setSuccessMessage(
+        `Retrieved data successfully for ${truncateEmail(normalizedEmail)}`
+      );
+      setConfirmedEmail(normalizedEmail);
     }
+
+    setLoading(false);
   }, [email, confirmedEmail]);
 
   const handleClear = () => {
@@ -133,28 +120,76 @@ export default function Dashboard() {
 
   const handleSendForm = useCallback(
     async (formType: string) => {
-      if (loading) return;
+      if (!clientFormsStatus) return;
 
-      try {
-        const { ok, data } = await sendFormToken(
-          email.trim().toLowerCase(),
-          formType
-        );
+      const normalizedEmail = email.trim().toLowerCase();
 
-        if (!ok) {
-          setError(`${data.error || `Failed to send ${formType} form`}`);
-          setSuccessMessage("");
-        } else {
-          setError("");
-          setSuccessMessage(`${formType} form sent successfully!`);
-          await handleCheckProgress();
-        }
-      } catch {
-        setError(`Network error while sending ${formType} form.`);
+      setClientFormsStatus((prev) => ({
+        ...prev!,
+        forms: {
+          ...prev!.forms,
+          [formType]: {
+            ...prev!.forms[formType],
+            activeToken: true,
+          },
+        },
+      }));
+
+      const { ok, data } = await sendFormToken(normalizedEmail, formType);
+
+      if (!ok) {
+        setClientFormsStatus((prev) => ({
+          ...prev!,
+          forms: {
+            ...prev!.forms,
+            [formType]: {
+              ...prev!.forms[formType],
+              activeToken: false,
+            },
+          },
+        }));
+        setError(data.error || `Failed to send ${formType} form`);
         setSuccessMessage("");
       }
     },
-    [email, handleCheckProgress, loading]
+    [email, clientFormsStatus]
+  );
+
+  const handleRevokeForm = useCallback(
+    async (formType: string) => {
+      if (!clientFormsStatus) return;
+
+      const normalizedEmail = email.trim().toLowerCase();
+
+      setClientFormsStatus((prev) => ({
+        ...prev!,
+        forms: {
+          ...prev!.forms,
+          [formType]: {
+            ...prev!.forms[formType],
+            activeToken: false,
+          },
+        },
+      }));
+
+      const { ok, data } = await revokeFormToken(normalizedEmail, formType);
+
+      if (!ok) {
+        setClientFormsStatus((prev) => ({
+          ...prev!,
+          forms: {
+            ...prev!.forms,
+            [formType]: {
+              ...prev!.forms[formType],
+              activeToken: true,
+            },
+          },
+        }));
+        setError(data.error || `Failed to revoke ${formType} form`);
+        setSuccessMessage("");
+      }
+    },
+    [email, clientFormsStatus]
   );
 
   return (
@@ -193,6 +228,8 @@ export default function Dashboard() {
         <FormButtons
           clientFormsStatus={clientFormsStatus}
           onSend={handleSendForm}
+          onRevoke={handleRevokeForm}
+          onRetrieve={(formType) => console.log("Retrieve", formType)}
         />
       </div>
     </ProtectedAccess>
