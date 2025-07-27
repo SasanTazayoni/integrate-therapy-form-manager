@@ -151,6 +151,15 @@ export default function Dashboard() {
         }));
         setError(data.error || `Failed to send ${formType} form`);
         setSuccessMessage("");
+      } else {
+        const { ok: fetchOk, data: updatedStatus } = await fetchClientStatus(
+          normalizedEmail
+        );
+        if (fetchOk) {
+          setClientFormsStatus(updatedStatus);
+        } else {
+          console.warn("Form sent, but failed to refresh client status");
+        }
       }
     },
     [email, clientFormsStatus]
