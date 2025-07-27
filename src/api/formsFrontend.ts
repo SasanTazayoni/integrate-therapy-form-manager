@@ -16,8 +16,9 @@ export async function sendFormToken(email: string, formType: string) {
 }
 
 export async function revokeFormToken(email: string, formType: string) {
+  const url = `/forms/revoke-token/${formType}`;
   try {
-    const res = await fetch(`/forms/revoke-token/${formType}`, {
+    const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email }),

@@ -169,7 +169,19 @@ export const revokeFormToken = async (req: Request, res: Response) => {
         .json({ error: "No active form tokens found to revoke" });
     }
 
-    res.json({ message: "Form token(s) revoked successfully" });
+    const updatedForm = await prisma.form.findFirst({
+      where: {
+        clientId: client.id,
+        form_type: formType,
+      },
+      orderBy: { updated_at: "desc" },
+      select: { revoked_at: true },
+    });
+
+    res.json({
+      message: "Form token(s) revoked successfully",
+      revokedAt: updatedForm?.revoked_at ?? null,
+    });
   } catch (error) {
     console.error("Error revoking form token:", error);
     res.status(500).json({ error: "Failed to revoke form token" });
