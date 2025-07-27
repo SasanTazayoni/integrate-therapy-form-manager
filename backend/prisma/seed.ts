@@ -74,6 +74,7 @@ async function main() {
       submitted_at: now,
       is_active: false,
       total_score: 210,
+      revoked_at: null,
     },
   });
 
@@ -87,6 +88,7 @@ async function main() {
       submitted_at: now,
       is_active: false,
       total_score: 180,
+      revoked_at: null,
     },
   });
 
@@ -100,6 +102,7 @@ async function main() {
       is_active: true,
       submitted_at: null,
       total_score: null,
+      revoked_at: null,
     },
   });
 
@@ -113,6 +116,7 @@ async function main() {
       is_active: true,
       submitted_at: null,
       total_score: null,
+      revoked_at: null,
     },
   });
 
@@ -127,6 +131,7 @@ async function main() {
         submitted_at: now,
         is_active: false,
         total_score: 150,
+        revoked_at: null,
       },
       {
         clientId: emma.id,
@@ -137,6 +142,7 @@ async function main() {
         submitted_at: null,
         is_active: true,
         total_score: null,
+        revoked_at: null,
       },
       {
         clientId: emma.id,
@@ -147,6 +153,7 @@ async function main() {
         submitted_at: null,
         is_active: true,
         total_score: null,
+        revoked_at: null,
       },
       {
         clientId: emma.id,
@@ -157,6 +164,7 @@ async function main() {
         submitted_at: now,
         is_active: false,
         total_score: 19,
+        revoked_at: null,
       },
     ],
   });
@@ -172,6 +180,7 @@ async function main() {
         submitted_at: null,
         is_active: false,
         total_score: null,
+        revoked_at: now,
       },
       {
         clientId: frank.id,
@@ -182,6 +191,7 @@ async function main() {
         submitted_at: null,
         is_active: false,
         total_score: null,
+        revoked_at: now,
       },
     ],
   });
