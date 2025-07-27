@@ -1,5 +1,5 @@
 import React from "react";
-import FormButtonStatus from "./FormButtonStatus";
+import FormActionButton from "./FormActionButton";
 
 type FormStatus = {
   submitted: boolean;
@@ -128,17 +128,17 @@ export default function FormButtons({
             <h2 className="font-semibold mb-3">{formTitles[formType]}</h2>
 
             <div className="flex space-x-3 w-full justify-center">
-              <FormButtonStatus
+              <FormActionButton
                 label={sendLabel}
                 disabled={sendDisabled}
                 onClick={() => onSend(formType)}
               />
-              <FormButtonStatus
+              <FormActionButton
                 label="Revoke"
                 disabled={revokeDisabled}
                 onClick={() => onRevoke(formType)}
               />
-              <FormButtonStatus
+              <FormActionButton
                 label="Retrieve"
                 disabled={retrieveDisabled}
                 onClick={() => onRetrieve(formType)}

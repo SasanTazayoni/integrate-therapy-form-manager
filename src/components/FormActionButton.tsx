@@ -4,7 +4,7 @@ type Props = {
   onClick: () => void;
 };
 
-export default function FormButtonStatus({ label, disabled, onClick }: Props) {
+export default function FormActionButton({ label, disabled, onClick }: Props) {
   return (
     <button
       disabled={disabled}
