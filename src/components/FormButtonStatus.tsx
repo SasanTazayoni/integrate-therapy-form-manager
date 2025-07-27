@@ -9,7 +9,7 @@ export default function FormButtonStatus({ label, disabled, onClick }: Props) {
     <button
       disabled={disabled}
       onClick={onClick}
-      className={`w-full px-4 py-2 rounded text-white font-medium transition-colors duration-200 ${
+      className={`px-4 py-2 rounded text-white w-[100px] ${
         disabled
           ? "bg-gray-300 cursor-not-allowed"
           : "bg-blue-500 hover:bg-blue-600"
