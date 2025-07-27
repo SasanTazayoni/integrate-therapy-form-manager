@@ -1,5 +1,6 @@
 import { useEffect, useReducer } from "react";
 import { Form, useActionData } from "react-router-dom";
+import axios from "axios";
 
 type QuestionnaireFormProps = {
   title: string;
@@ -42,15 +43,10 @@ export default function QuestionnaireForm({
       return;
     }
 
-    fetch(`/forms/validate-token?token=${token}`)
-      .then(async (res) => {
-        const contentType = res.headers.get("content-type");
-        if (!contentType?.includes("application/json")) {
-          const text = await res.text();
-          throw new Error(`Expected JSON, got: ${text.slice(0, 100)}`);
-        }
-
-        const data = await res.json();
+    axios
+      .get(`/forms/validate-token`, { params: { token } })
+      .then((response) => {
+        const data = response.data;
 
         if (!(data.valid && data.questionnaire === questionnaire)) {
           throw new Error(data.message || "Invalid token for this form");
@@ -59,7 +55,13 @@ export default function QuestionnaireForm({
         dispatch({ type: "VALID" });
       })
       .catch((err) =>
-        dispatch({ type: "INVALID", payload: err.message || "Unknown error" })
+        dispatch({
+          type: "INVALID",
+          payload:
+            err.response?.data?.message ||
+            err.message ||
+            "Unknown error validating token",
+        })
       );
   }, [token, questionnaire]);
 

@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export async function handleFormSubmission({ request }: { request: Request }) {
   const formData = await request.formData();
 
@@ -7,24 +9,18 @@ export async function handleFormSubmission({ request }: { request: Request }) {
   const result = formData.get("result");
 
   try {
-    const res = await fetch("/api/submit-form", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        token,
-        fullName,
-        dob,
-        result,
-      }),
+    await axios.post("/submit-form", {
+      token,
+      fullName,
+      dob,
+      result,
     });
-
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message || "Submission failed");
-    }
 
     return { success: true };
   } catch (err: any) {
-    return { error: err.message || "Something went wrong" };
+    return {
+      error:
+        err.response?.data?.message || err.message || "Something went wrong",
+    };
   }
 }
