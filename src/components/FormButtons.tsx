@@ -77,6 +77,13 @@ export default function FormButtons({
           message = "";
         } else if (!status) {
           message = "No data found for this client";
+        } else if (status.activeToken) {
+          message = (
+            <>
+              Form sent on <strong>{formatDate(status.tokenCreatedAt)}</strong>{" "}
+              pending response...
+            </>
+          );
         } else {
           const revokedTime = status.revokedAt
             ? new Date(status.revokedAt).getTime()
@@ -106,14 +113,6 @@ export default function FormButtons({
               <>
                 Form expired on{" "}
                 <strong>{formatDate(status.tokenExpiresAt)}</strong>
-              </>
-            );
-          } else if (tokenCreatedTime > revokedTime && status.activeToken) {
-            message = (
-              <>
-                Form sent on{" "}
-                <strong>{formatDate(status.tokenCreatedAt)}</strong> pending
-                response...
               </>
             );
           } else {
