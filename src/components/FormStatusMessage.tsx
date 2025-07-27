@@ -1,5 +1,5 @@
 import { Loader2 } from "lucide-react";
-import type { FormStatus } from "./FormButtons";
+import type { FormStatus } from "../types/formStatusTypes";
 
 type Props = {
   status?: FormStatus;

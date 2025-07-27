@@ -8,15 +8,7 @@ import { sendFormToken, revokeFormToken } from "../api/formsFrontend";
 import validateEmail from "../utils/validators";
 import truncateEmail from "../utils/truncateEmail";
 import normalizeEmail from "../utils/normalizeEmail";
-
-type FormStatus = {
-  submitted: boolean;
-  activeToken: boolean;
-  submittedAt?: string;
-  tokenCreatedAt?: string;
-  tokenExpiresAt?: string;
-  revokedAt?: string;
-};
+import type { FormStatus } from "../types/formStatusTypes";
 
 type ClientFormsStatus = {
   exists: boolean;

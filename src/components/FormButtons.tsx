@@ -1,14 +1,6 @@
 import FormStatusMessage from "./FormStatusMessage";
 import FormButtonGroup from "./FormButtonGroup";
-
-export type FormStatus = {
-  submitted: boolean;
-  activeToken: boolean;
-  submittedAt?: string;
-  tokenCreatedAt?: string;
-  tokenExpiresAt?: string;
-  revokedAt?: string;
-};
+import type { FormStatus } from "../types/formStatusTypes";
 
 type ClientFormsStatus = {
   exists: boolean;
@@ -20,7 +12,7 @@ type FormButtonsProps = {
   onSend: (formType: string) => void;
   onRevoke: (formType: string) => void;
   onRetrieve: (formType: string) => void;
-  formActionLoading: Record<string, boolean>; // <- added here
+  formActionLoading: Record<string, boolean>;
 };
 
 const formTitles: Record<string, string> = {
