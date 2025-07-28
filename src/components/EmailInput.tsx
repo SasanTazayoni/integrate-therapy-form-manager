@@ -35,7 +35,7 @@ export default function EmailInput({
         }}
         placeholder="Enter client email"
         className={`w-full p-2 border rounded mb-2 ${
-          error ? "border-red-500" : "border-gray-300"
+          error && !email ? "missing border-red-500" : "border-gray-300"
         }`}
       />
 

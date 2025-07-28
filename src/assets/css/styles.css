@@ -107,6 +107,15 @@ textarea {
   background-color: #f7f7f7;
 }
 
+input.missing {
+  background: radial-gradient(
+    circle,
+    rgba(254, 202, 202, 0.2) 0%,
+    rgba(254, 202, 202, 0.6) 70%
+  );
+  border-color: #f87171;
+}
+
 input[type="text"],
 input[type="email"],
 input[type="password"],
