@@ -193,6 +193,17 @@ async function main() {
         total_score: null,
         revoked_at: now,
       },
+      {
+        clientId: frank.id,
+        form_type: "YSQ",
+        token: "frank-revoked-ysq",
+        token_sent_at: now,
+        token_expires_at: now,
+        submitted_at: null,
+        is_active: false,
+        total_score: null,
+        revoked_at: now,
+      },
     ],
   });
 
