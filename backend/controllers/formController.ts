@@ -53,7 +53,11 @@ export const sendForm = async (req: Request, res: Response) => {
         clientId: client.id,
         form_type: formType,
         is_active: true,
-        token_expires_at: { lt: new Date() },
+        OR: [
+          { token_expires_at: { lt: new Date() } },
+          { submitted_at: { not: null } },
+          { revoked_at: { not: null } },
+        ],
       },
       data: { is_active: false },
     });
