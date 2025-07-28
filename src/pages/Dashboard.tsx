@@ -271,7 +271,9 @@ export default function Dashboard() {
           onClear={handleClear}
           loading={loading}
         />
+      </div>
 
+      <div className="max-w-4xl mx-auto px-4">
         <FormButtons
           clientFormsStatus={clientFormsStatus}
           onSend={handleSendForm}
@@ -279,15 +281,15 @@ export default function Dashboard() {
           onRetrieve={(formType) => console.log("Retrieve", formType)}
           formActionLoading={formActionLoading}
         />
-
-        {showRevokeModal && revokeFormType && (
-          <RevokeConfirmModal
-            closing={false}
-            onConfirm={handleConfirmRevoke}
-            onCancel={closeRevokeModal}
-          />
-        )}
       </div>
+
+      {showRevokeModal && revokeFormType && (
+        <RevokeConfirmModal
+          closing={false}
+          onConfirm={handleConfirmRevoke}
+          onCancel={closeRevokeModal}
+        />
+      )}
     </ProtectedAccess>
   );
 }

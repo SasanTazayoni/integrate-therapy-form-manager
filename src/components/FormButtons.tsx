@@ -34,7 +34,7 @@ export default function FormButtons({
   const formTypes = ["YSQ", "SMI", "BECKS", "BURNS"];
 
   return (
-    <div className="grid gap-2">
+    <div className="grid grid-cols-2 gap-6 w-full">
       {formTypes.map((formType) => {
         const status = clientFormsStatus?.forms?.[formType];
 
@@ -64,7 +64,7 @@ export default function FormButtons({
         return (
           <div
             key={formType}
-            className="flex flex-col items-center border p-4 rounded"
+            className="flex flex-col items-center border p-4 rounded min-h-[150px]"
           >
             <h2 className="text-lg font-semibold mb-3">
               {formTitles[formType]}
