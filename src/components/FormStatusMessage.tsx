@@ -32,7 +32,7 @@ export default function FormStatusMessage({
   }
 
   if (!status) {
-    return <span className="text-gray-500">No data found for this client</span>;
+    return <span className="text-gray-500">No data found</span>;
   }
 
   const revokedTime = status.revokedAt
