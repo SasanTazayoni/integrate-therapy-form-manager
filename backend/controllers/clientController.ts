@@ -7,6 +7,7 @@ type FormStatus = {
   submittedAt?: Date | null;
   tokenCreatedAt?: Date | null;
   tokenExpiresAt?: Date | null;
+  revokedAt?: Date | null;
 };
 
 type FormsStatusRecord = Record<string, FormStatus>;
@@ -31,6 +32,7 @@ type Form = {
   token_expires_at: Date;
   is_active: boolean;
   submitted_at: Date | null;
+  revoked_at: Date | null;
   total_score?: number | null;
   created_at: Date;
   updated_at: Date;
@@ -88,11 +90,13 @@ export const getClientFormsStatus = async (
           submittedAt: mostRecent.submitted_at,
           tokenCreatedAt: mostRecent.token_sent_at,
           tokenExpiresAt: mostRecent.token_expires_at,
+          revokedAt: mostRecent.revoked_at,
         };
       } else {
         formsStatus[type] = {
           activeToken: false,
           submitted: false,
+          revokedAt: null,
         };
       }
     }
