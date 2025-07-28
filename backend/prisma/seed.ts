@@ -180,7 +180,7 @@ async function main() {
         submitted_at: null,
         is_active: false,
         total_score: null,
-        revoked_at: now,
+        revoked_at: null,
       },
       {
         clientId: frank.id,
@@ -191,7 +191,7 @@ async function main() {
         submitted_at: null,
         is_active: false,
         total_score: null,
-        revoked_at: now,
+        revoked_at: null,
       },
       {
         clientId: frank.id,
