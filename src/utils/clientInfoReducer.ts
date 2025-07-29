@@ -2,21 +2,24 @@ export type ModalState = {
   name: string;
   dob: string;
   error: string;
+  errorFading: boolean;
 };
 
 export type ModalAction =
   | { type: "SET_NAME"; payload: string }
   | { type: "SET_DOB"; payload: string }
   | { type: "SET_ERROR"; payload: string }
-  | { type: "CLEAR_ERROR" };
+  | { type: "CLEAR_ERROR" }
+  | { type: "BEGIN_ERROR_FADE_OUT" };
 
 export const modalInitialState: ModalState = {
   name: "",
   dob: "",
   error: "",
+  errorFading: false,
 };
 
-export function modalReducer(
+export function clientInfoReducer(
   state: ModalState,
   action: ModalAction
 ): ModalState {
@@ -26,9 +29,11 @@ export function modalReducer(
     case "SET_DOB":
       return { ...state, dob: action.payload };
     case "SET_ERROR":
-      return { ...state, error: action.payload };
+      return { ...state, error: action.payload, errorFading: false };
+    case "BEGIN_ERROR_FADE_OUT":
+      return { ...state, errorFading: true };
     case "CLEAR_ERROR":
-      return { ...state, error: "" };
+      return { ...state, error: "", errorFading: false };
     default:
       return state;
   }

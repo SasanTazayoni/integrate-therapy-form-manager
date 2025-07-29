@@ -2,7 +2,10 @@ import { useEffect, useReducer, useState } from "react";
 import { Form, useActionData } from "react-router-dom";
 import { validateFormToken, updateClientInfo } from "../api/formsFrontend";
 import ClientInfoModal from "./modals/ClientInfoModal";
-import { modalReducer, modalInitialState } from "../utils/clientInfoReducer";
+import {
+  clientInfoReducer,
+  modalInitialState,
+} from "../utils/clientInfoReducer";
 
 type QuestionnaireFormProps = {
   title: string;
@@ -36,9 +39,10 @@ export default function QuestionnaireForm({
   token,
 }: QuestionnaireFormProps) {
   const actionData = useActionData() as { error?: string; success?: boolean };
+
   const [state, dispatch] = useReducer(reducer, { status: "loading" });
-  const [modalState, dispatchModal] = useReducer(
-    modalReducer,
+  const [modalState, modalDispatch] = useReducer(
+    clientInfoReducer,
     modalInitialState
   );
   const [showModal, setShowModal] = useState(false);
@@ -61,8 +65,8 @@ export default function QuestionnaireForm({
         const missingDob = !data.client?.dob;
 
         if (missingName || missingDob) {
-          dispatchModal({ type: "SET_NAME", payload: data.client?.name || "" });
-          dispatchModal({ type: "SET_DOB", payload: data.client?.dob || "" });
+          modalDispatch({ type: "SET_NAME", payload: data.client?.name || "" });
+          modalDispatch({ type: "SET_DOB", payload: data.client?.dob || "" });
           setShowModal(true);
         }
 
@@ -77,45 +81,42 @@ export default function QuestionnaireForm({
   }, [token, questionnaire]);
 
   const handleClientInfoSubmit = async () => {
-    if (!modalState.name.trim() && !modalState.dob) {
-      dispatchModal({ type: "SET_ERROR", payload: "Inputs cannot be empty" });
-      return;
-    }
-    if (!modalState.name.trim()) {
-      dispatchModal({
-        type: "SET_ERROR",
-        payload: "Please enter your full name",
-      });
-      return;
-    }
-    if (!modalState.dob) {
-      dispatchModal({
-        type: "SET_ERROR",
-        payload: "Please enter your date of birth",
-      });
-      return;
-    }
-
-    dispatchModal({ type: "CLEAR_ERROR" });
-
     if (!token) return;
+
+    // simple validation -> one bold message
+    let errorMessage = "";
+    const trimmedName = modalState.name.trim();
+    const hasName = trimmedName.length > 0;
+    const hasDob = !!modalState.dob;
+
+    if (!hasName && !hasDob) errorMessage = "Inputs cannot be empty";
+    else if (!hasName) errorMessage = "Please enter your full name";
+    else if (!hasDob) errorMessage = "Please enter your date of birth";
+
+    if (errorMessage) {
+      modalDispatch({ type: "SET_ERROR", payload: errorMessage });
+      setTimeout(() => modalDispatch({ type: "BEGIN_ERROR_FADE_OUT" }), 2500);
+      setTimeout(() => modalDispatch({ type: "CLEAR_ERROR" }), 3000);
+      return;
+    }
 
     const { ok, error } = await updateClientInfo({
       token,
-      name: modalState.name,
+      name: trimmedName,
       dob: modalState.dob,
     });
 
     if (!ok) {
-      dispatchModal({
+      modalDispatch({
         type: "SET_ERROR",
-        payload: "Failed to update info: " + error,
+        payload: error || "Failed to update info",
       });
+      setTimeout(() => modalDispatch({ type: "BEGIN_ERROR_FADE_OUT" }), 2500);
+      setTimeout(() => modalDispatch({ type: "CLEAR_ERROR" }), 3000);
       return;
     }
 
     setShowModal(false);
-    dispatch({ type: "VALID" });
   };
 
   if (state.status === "loading") return <p>Checking token…</p>;
@@ -140,11 +141,12 @@ export default function QuestionnaireForm({
           name={modalState.name}
           dob={modalState.dob}
           error={modalState.error}
+          errorFading={modalState.errorFading}
           onNameChange={(val) =>
-            dispatchModal({ type: "SET_NAME", payload: val })
+            modalDispatch({ type: "SET_NAME", payload: val })
           }
           onDobChange={(val) =>
-            dispatchModal({ type: "SET_DOB", payload: val })
+            modalDispatch({ type: "SET_DOB", payload: val })
           }
           onSubmit={handleClientInfoSubmit}
         />
