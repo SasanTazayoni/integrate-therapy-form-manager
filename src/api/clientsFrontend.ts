@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getErrorDisplay } from "../utils/getErrorDisplay";
 
 export async function fetchClientStatus(email: string) {
   try {
@@ -10,9 +11,10 @@ export async function fetchClientStatus(email: string) {
     return {
       ok: false,
       data: {
-        error:
-          err.response?.data?.error ||
-          "Network error while fetching client status.",
+        error: getErrorDisplay(
+          err,
+          "Network error while fetching client status."
+        ),
       },
     };
   }
@@ -26,8 +28,7 @@ export async function addClient(email: string) {
     return {
       ok: false,
       data: {
-        error:
-          err.response?.data?.error || "Network error while adding client.",
+        error: getErrorDisplay(err, "Network error while adding client."),
       },
     };
   }

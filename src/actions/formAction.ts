@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getErrorDisplay } from "../utils/getErrorDisplay";
 
 export async function handleFormSubmission({ request }: { request: Request }) {
   const formData = await request.formData();
@@ -19,8 +20,7 @@ export async function handleFormSubmission({ request }: { request: Request }) {
     return { success: true };
   } catch (err: any) {
     return {
-      error:
-        err.response?.data?.message || err.message || "Something went wrong",
+      error: getErrorDisplay(err, "Something went wrong"),
     };
   }
 }

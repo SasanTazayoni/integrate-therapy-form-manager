@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getErrorDisplay } from "../utils/getErrorDisplay";
 
 export async function sendFormToken(email: string, formType: string) {
   try {
@@ -8,9 +9,7 @@ export async function sendFormToken(email: string, formType: string) {
     return {
       ok: false,
       data: {
-        error:
-          err.response?.data?.error ||
-          "Network error while sending form token.",
+        error: getErrorDisplay(err, "Network error while sending form token."),
       },
     };
   }
@@ -26,10 +25,7 @@ export async function validateFormToken(token: string) {
   } catch (err: any) {
     return {
       ok: false,
-      error:
-        err.response?.data?.message ||
-        err.message ||
-        "Unknown error validating token",
+      error: getErrorDisplay(err, "Unknown error validating token"),
     };
   }
 }
@@ -42,9 +38,7 @@ export async function revokeFormToken(email: string, formType: string) {
     return {
       ok: false,
       data: {
-        error:
-          err.response?.data?.error ||
-          "Network error while revoking form token.",
+        error: getErrorDisplay(err, "Network error while revoking form token."),
       },
     };
   }
@@ -65,10 +59,7 @@ export async function updateClientInfo({
   } catch (err: any) {
     return {
       ok: false,
-      error:
-        err.response?.data?.message ||
-        err.message ||
-        "Unknown error updating client info",
+      error: getErrorDisplay(err, "Unknown error updating client info"),
     };
   }
 }
