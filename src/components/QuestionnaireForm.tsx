@@ -2,6 +2,7 @@ import { useEffect, useReducer, useState } from "react";
 import { Form, useActionData } from "react-router-dom";
 import { validateFormToken, updateClientInfo } from "../api/formsFrontend";
 import ClientInfoModal from "./modals/ClientInfoModal";
+import InvalidTokenModal from "./modals/InvalidTokenModal";
 import {
   clientInfoReducer,
   modalInitialState,
@@ -40,7 +41,6 @@ export default function QuestionnaireForm({
   token,
 }: QuestionnaireFormProps) {
   const actionData = useActionData() as { error?: string; success?: boolean };
-
   const [state, dispatch] = useReducer(reducer, { status: "loading" });
   const [modalState, modalDispatch] = useReducer(
     clientInfoReducer,
@@ -50,63 +50,66 @@ export default function QuestionnaireForm({
 
   useEffect(() => {
     if (!token) {
-      dispatch({ type: "INVALID", payload: "Missing token" });
+      dispatch({
+        type: "INVALID",
+        payload:
+          "This form is not available. Please contact your therapist to receive a new form.",
+      });
       return;
     }
-
     validateFormToken(token)
       .then(({ ok, data, error }) => {
-        if (!ok || !data) throw new Error(error || "Invalid token response");
-
-        if (!(data.valid && data.questionnaire === questionnaire)) {
-          throw new Error(data.message || "Invalid token for this form");
+        if (!ok || !data) {
+          throw new Error(
+            error ||
+              "This form is not available. Please contact your therapist to receive a new form."
+          );
         }
-
+        if (!(data.valid && data.questionnaire === questionnaire)) {
+          throw new Error(
+            data.message ||
+              "This form is not available. Please contact your therapist to receive a new form."
+          );
+        }
         const missingName = !data.client?.name?.trim();
         const missingDob = !data.client?.dob;
-
         if (missingName || missingDob) {
           modalDispatch({ type: "SET_NAME", payload: data.client?.name || "" });
           modalDispatch({ type: "SET_DOB", payload: data.client?.dob || "" });
           setShowModal(true);
         }
-
         dispatch({ type: "VALID" });
       })
       .catch((err) => {
         dispatch({
           type: "INVALID",
-          payload: err.message || "Unknown error validating token",
+          payload:
+            err.message ||
+            "This form is not available. Please contact your therapist to receive a new form.",
         });
       });
   }, [token, questionnaire]);
 
   const handleClientInfoSubmit = async () => {
     if (!token) return;
-
-    // simple validation -> one bold message
     let errorMessage = "";
     const trimmedName = modalState.name.trim();
     const hasName = trimmedName.length > 0;
     const hasDob = !!modalState.dob;
-
     if (!hasName && !hasDob) errorMessage = "Inputs cannot be empty";
     else if (!hasName) errorMessage = "Please enter your full name";
     else if (!hasDob) errorMessage = "Please enter your date of birth";
-
     if (errorMessage) {
       modalDispatch({ type: "SET_ERROR", payload: errorMessage });
       setTimeout(() => modalDispatch({ type: "BEGIN_ERROR_FADE_OUT" }), 2500);
       setTimeout(() => modalDispatch({ type: "CLEAR_ERROR" }), 3000);
       return;
     }
-
     const { ok, error } = await updateClientInfo({
       token,
       name: trimmedName,
       dob: modalState.dob,
     });
-
     if (!ok) {
       modalDispatch({
         type: "SET_ERROR",
@@ -116,17 +119,28 @@ export default function QuestionnaireForm({
       setTimeout(() => modalDispatch({ type: "CLEAR_ERROR" }), 3000);
       return;
     }
-
     setShowModal(false);
   };
 
-  if (state.status === "loading")
+  if (state.status === "loading") {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Loader2 className="animate-spin text-blue-600" size={200} />
       </div>
     );
-  if (state.status === "error") return <p className="error">{state.message}</p>;
+  }
+
+  if (state.status === "error") {
+    return (
+      <div className="relative min-h-screen">
+        <div className="blurred">
+          <h1>{title}</h1>
+        </div>
+        <InvalidTokenModal message="This form is not available. Please contact your therapist to receive a new form." />
+      </div>
+    );
+  }
+
   if (actionData?.success) return <p>Submitted successfully!</p>;
 
   return (
@@ -141,7 +155,6 @@ export default function QuestionnaireForm({
           {actionData?.error && <p className="error">{actionData.error}</p>}
         </Form>
       </div>
-
       {showModal && (
         <ClientInfoModal
           name={modalState.name}
