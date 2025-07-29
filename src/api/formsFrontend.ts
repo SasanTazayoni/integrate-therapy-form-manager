@@ -49,3 +49,26 @@ export async function revokeFormToken(email: string, formType: string) {
     };
   }
 }
+
+export async function updateClientInfo({
+  token,
+  name,
+  dob,
+}: {
+  token: string;
+  name: string;
+  dob: string;
+}) {
+  try {
+    await axios.post("/forms/update-client-info", { token, name, dob });
+    return { ok: true };
+  } catch (err: any) {
+    return {
+      ok: false,
+      error:
+        err.response?.data?.message ||
+        err.message ||
+        "Unknown error updating client info",
+    };
+  }
+}
