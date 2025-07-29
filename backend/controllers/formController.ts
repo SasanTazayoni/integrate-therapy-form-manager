@@ -3,9 +3,13 @@ import prisma from "../prisma/client";
 import crypto from "crypto";
 import { sendFormLink } from "../utils/sendFormLink";
 
-const allowedFormTypes = ["YSQ", "SMI", "BECKS", "BURNS"];
+const allowedFormTypes = ["YSQ", "SMI", "BECKS", "BURNS"] as const;
+type AllowedFormType = (typeof allowedFormTypes)[number];
 
-export const createForm = async (req: Request, res: Response) => {
+export const createForm = async (
+  req: Request<{}, any, { clientId: string; formType: AllowedFormType }>,
+  res: Response
+) => {
   const { clientId, formType } = req.body;
 
   if (!clientId || !formType || !allowedFormTypes.includes(formType)) {
@@ -34,7 +38,10 @@ export const createForm = async (req: Request, res: Response) => {
   }
 };
 
-export const sendForm = async (req: Request, res: Response) => {
+export const sendForm = async (
+  req: Request<{ formType: AllowedFormType }, any, { email: string }>,
+  res: Response
+) => {
   const { email } = req.body;
   const { formType } = req.params;
 
@@ -107,7 +114,10 @@ export const sendForm = async (req: Request, res: Response) => {
   }
 };
 
-export const validateToken = async (req: Request, res: Response) => {
+export const validateToken = async (
+  req: Request<{}, any, any, { token?: string }>,
+  res: Response
+) => {
   const token = req.query.token;
 
   if (!token || typeof token !== "string") {
@@ -115,7 +125,10 @@ export const validateToken = async (req: Request, res: Response) => {
   }
 
   try {
-    const form = await prisma.form.findUnique({ where: { token } });
+    const form = await prisma.form.findUnique({
+      where: { token },
+      include: { client: true },
+    });
 
     if (!form) {
       return res.status(404).json({ valid: false, message: "Form not found" });
@@ -130,7 +143,14 @@ export const validateToken = async (req: Request, res: Response) => {
         .json({ valid: false, message: "Token is invalid or expired" });
     }
 
-    return res.json({ valid: true, questionnaire: form.form_type });
+    return res.json({
+      valid: true,
+      questionnaire: form.form_type,
+      client: {
+        name: form.client?.name ?? null,
+        dob: form.client?.dob ?? null,
+      },
+    });
   } catch (error) {
     console.error("Error validating token:", error);
     return res
@@ -139,7 +159,10 @@ export const validateToken = async (req: Request, res: Response) => {
   }
 };
 
-export const revokeFormToken = async (req: Request, res: Response) => {
+export const revokeFormToken = async (
+  req: Request<{ formType: AllowedFormType }, any, { email: string }>,
+  res: Response
+) => {
   const { formType } = req.params;
   const { email } = req.body;
 
@@ -192,7 +215,14 @@ export const revokeFormToken = async (req: Request, res: Response) => {
   }
 };
 
-export const submitForm = async (req: Request, res: Response) => {
+export const submitForm = async (
+  req: Request<
+    {},
+    any,
+    { token: string; fullName: string; dob: string; result: string }
+  >,
+  res: Response
+) => {
   const { token, fullName, dob, result } = req.body;
 
   if (!token || !fullName || !dob || !result) {
