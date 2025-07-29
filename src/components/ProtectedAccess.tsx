@@ -1,5 +1,5 @@
 import { useReducer } from "react";
-import TherapistLoginModal from "./modals/TherapistLoginModal";
+import AdminLoginModal from "./modals/AdminLoginModal";
 import { authReducer, AuthState } from "../utils/authReducer";
 
 const initialState: AuthState = {
@@ -52,7 +52,7 @@ export default function ProtectedAccess({ children }: Props) {
       <div className={state.authenticated ? "" : "blurred"}>{children}</div>
 
       {!state.authenticated && (
-        <TherapistLoginModal
+        <AdminLoginModal
           username={state.username}
           password={state.password}
           error={state.error}

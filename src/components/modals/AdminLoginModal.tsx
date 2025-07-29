@@ -14,7 +14,7 @@ type Props = {
   onRequestClose: () => void;
 };
 
-export default function TherapistLoginModal({
+export default function AdminLoginModal({
   username,
   password,
   error,
@@ -65,7 +65,7 @@ export default function TherapistLoginModal({
         open
       >
         <h2 id="login-title" className="text-xl font-bold mb-4">
-          Therapist Login
+          Admin Login
         </h2>
 
         <form
