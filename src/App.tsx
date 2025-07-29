@@ -3,8 +3,8 @@ import YSQ from "./pages/YSQ";
 import SMI from "./pages/SMI";
 import BECKS from "./pages/BECKS";
 import BURNS from "./pages/BURNS";
-import NotFound from "./pages/404";
 import Dashboard from "./pages/Dashboard";
+import NotFound from "./pages/NotFoundPage";
 
 import { SMIAction } from "./actions/SMIAction";
 import { YSQAction } from "./actions/YSQAction";
