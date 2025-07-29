@@ -1,4 +1,3 @@
-// authReducer.ts
 export type AuthState = {
   username: string;
   password: string;

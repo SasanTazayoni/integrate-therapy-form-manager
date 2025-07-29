@@ -8,7 +8,6 @@ async function main() {
   const now = new Date();
   const twoWeeksFromNow = new Date(now.getTime() + 1000 * 60 * 60 * 24 * 14);
 
-  // Dummy clients
   const alice = await prisma.client.create({
     data: {
       name: "Alice YSQ",
@@ -63,7 +62,6 @@ async function main() {
     },
   });
 
-  // Forms for each client
   await prisma.form.create({
     data: {
       clientId: alice.id,
