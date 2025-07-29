@@ -269,3 +269,37 @@ export const submitForm = async (
     res.status(500).json({ error: "Failed to submit form" });
   }
 };
+
+export const updateClientInfo = async (req: Request, res: Response) => {
+  const { token, name, dob } = req.body;
+
+  if (!token || !name || !dob) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
+
+  try {
+    const form = await prisma.form.findUnique({
+      where: { token },
+      include: { client: true },
+    });
+
+    if (!form || !form.client) {
+      return res.status(404).json({ message: "Form or client not found" });
+    }
+
+    await prisma.client.update({
+      where: { id: form.client.id },
+      data: {
+        name,
+        dob: new Date(dob),
+      },
+    });
+
+    return res.json({ success: true });
+  } catch (error) {
+    console.error("Error updating client info:", error);
+    return res
+      .status(500)
+      .json({ message: "Server error updating client info" });
+  }
+};
