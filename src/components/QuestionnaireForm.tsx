@@ -6,6 +6,7 @@ import {
   clientInfoReducer,
   modalInitialState,
 } from "../utils/clientInfoReducer";
+import { Loader2 } from "lucide-react";
 
 type QuestionnaireFormProps = {
   title: string;
@@ -119,7 +120,12 @@ export default function QuestionnaireForm({
     setShowModal(false);
   };
 
-  if (state.status === "loading") return <p>Checking token…</p>;
+  if (state.status === "loading")
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <Loader2 className="animate-spin text-blue-600" size={200} />
+      </div>
+    );
   if (state.status === "error") return <p className="error">{state.message}</p>;
   if (actionData?.success) return <p>Submitted successfully!</p>;
 
