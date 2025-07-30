@@ -1,4 +1,4 @@
-import React, { useReducer } from "react";
+import React, { useReducer, useRef } from "react";
 import AdminLoginModal from "./modals/AdminLoginModal";
 import { authReducer, AuthState } from "../utils/authReducer";
 
@@ -21,16 +21,39 @@ type Props = {
 export default function ProtectedAccess({ children }: Props) {
   const [state, dispatch] = useReducer(authReducer, initialState);
 
+  const fadeOutTimeoutRef = useRef<number | null>(null);
+  const clearErrorTimeoutRef = useRef<number | null>(null);
+
   const handleSubmit = () => {
     if (
       state.username.trim() === expectedUsername &&
       state.password.trim() === expectedPassword
     ) {
+      if (fadeOutTimeoutRef.current) {
+        clearTimeout(fadeOutTimeoutRef.current);
+        fadeOutTimeoutRef.current = null;
+      }
+      if (clearErrorTimeoutRef.current) {
+        clearTimeout(clearErrorTimeoutRef.current);
+        clearErrorTimeoutRef.current = null;
+      }
       dispatch({ type: "LOGIN_SUCCESS" });
     } else {
       dispatch({ type: "SET_ERROR", payload: "Invalid credentials" });
-      setTimeout(() => dispatch({ type: "BEGIN_ERROR_FADE_OUT" }), 2500);
-      setTimeout(() => dispatch({ type: "CLEAR_ERROR" }), 3000);
+
+      if (fadeOutTimeoutRef.current) clearTimeout(fadeOutTimeoutRef.current);
+      if (clearErrorTimeoutRef.current)
+        clearTimeout(clearErrorTimeoutRef.current);
+
+      fadeOutTimeoutRef.current = window.setTimeout(() => {
+        dispatch({ type: "BEGIN_ERROR_FADE_OUT" });
+        fadeOutTimeoutRef.current = null;
+      }, 2500);
+
+      clearErrorTimeoutRef.current = window.setTimeout(() => {
+        dispatch({ type: "CLEAR_ERROR" });
+        clearErrorTimeoutRef.current = null;
+      }, 3000);
     }
   };
 
