@@ -8,10 +8,14 @@ import {
   modalInitialState,
 } from "../utils/clientInfoReducer";
 import { Loader2 } from "lucide-react";
+import type { FormType } from "../constants/formTypes";
+
+const DEFAULT_INVALID_MSG =
+  "This form is not available. Please contact your therapist to receive a new form.";
 
 type QuestionnaireFormProps = {
   title: string;
-  questionnaire: "SMI" | "YSQ" | "BECKS" | "BURNS";
+  questionnaire: FormType;
   token?: string;
   children: React.ReactNode;
 };
@@ -47,61 +51,63 @@ export default function QuestionnaireForm({
     modalInitialState
   );
   const [showModal, setShowModal] = useState(false);
-
-  const errorFadeTimer = useRef<NodeJS.Timeout | null>(null);
-  const errorClearTimer = useRef<NodeJS.Timeout | null>(null);
+  const errorFadeTimer = useRef<number | null>(null);
+  const errorClearTimer = useRef<number | null>(null);
 
   const clearTimers = () => {
-    if (errorFadeTimer.current) {
+    if (errorFadeTimer.current != null) {
       clearTimeout(errorFadeTimer.current);
       errorFadeTimer.current = null;
     }
-    if (errorClearTimer.current) {
+    if (errorClearTimer.current != null) {
       clearTimeout(errorClearTimer.current);
       errorClearTimer.current = null;
     }
   };
 
   useEffect(() => {
+    let active = true;
+
     if (!token) {
-      dispatch({
-        type: "INVALID",
-        payload:
-          "This form is not available. Please contact your therapist to receive a new form.",
-      });
-      return;
+      dispatch({ type: "INVALID", payload: DEFAULT_INVALID_MSG });
+      return () => {
+        active = false;
+      };
     }
+
     validateFormToken(token)
       .then(({ ok, data, error }) => {
+        if (!active) return;
+
         if (!ok || !data) {
-          throw new Error(
-            error ||
-              "This form is not available. Please contact your therapist to receive a new form."
-          );
+          throw new Error(error || DEFAULT_INVALID_MSG);
         }
         if (!(data.valid && data.questionnaire === questionnaire)) {
-          throw new Error(
-            data.message ||
-              "This form is not available. Please contact your therapist to receive a new form."
-          );
+          throw new Error(data.message || DEFAULT_INVALID_MSG);
         }
+
         const missingName = !data.client?.name?.trim();
         const missingDob = !data.client?.dob;
+
         if (missingName || missingDob) {
           modalDispatch({ type: "SET_NAME", payload: data.client?.name || "" });
           modalDispatch({ type: "SET_DOB", payload: data.client?.dob || "" });
           setShowModal(true);
         }
+
         dispatch({ type: "VALID" });
       })
       .catch((err) => {
+        if (!active) return;
         dispatch({
           type: "INVALID",
-          payload:
-            err.message ||
-            "This form is not available. Please contact your therapist to receive a new form.",
+          payload: err.message || DEFAULT_INVALID_MSG,
         });
       });
+
+    return () => {
+      active = false;
+    };
   }, [token, questionnaire]);
 
   const handleClientInfoSubmit = async () => {
@@ -121,12 +127,14 @@ export default function QuestionnaireForm({
     if (errorMessage) {
       modalDispatch({ type: "SET_ERROR", payload: errorMessage });
 
-      errorFadeTimer.current = setTimeout(() => {
+      errorFadeTimer.current = window.setTimeout(() => {
         modalDispatch({ type: "BEGIN_ERROR_FADE_OUT" });
+        errorFadeTimer.current = null;
       }, 2500);
 
-      errorClearTimer.current = setTimeout(() => {
+      errorClearTimer.current = window.setTimeout(() => {
         modalDispatch({ type: "CLEAR_ERROR" });
+        errorClearTimer.current = null;
       }, 3000);
 
       return;
@@ -144,12 +152,14 @@ export default function QuestionnaireForm({
         payload: error || "Failed to update info",
       });
 
-      errorFadeTimer.current = setTimeout(() => {
+      errorFadeTimer.current = window.setTimeout(() => {
         modalDispatch({ type: "BEGIN_ERROR_FADE_OUT" });
+        errorFadeTimer.current = null;
       }, 2500);
 
-      errorClearTimer.current = setTimeout(() => {
+      errorClearTimer.current = window.setTimeout(() => {
         modalDispatch({ type: "CLEAR_ERROR" });
+        errorClearTimer.current = null;
       }, 3000);
 
       return;
@@ -166,7 +176,7 @@ export default function QuestionnaireForm({
 
   if (state.status === "loading") {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex justify-center items-center min-h-screen" aria-busy>
         <Loader2 className="animate-spin text-blue-600" size={200} />
       </div>
     );
@@ -178,7 +188,7 @@ export default function QuestionnaireForm({
         <div className="blurred">
           <h1>{title}</h1>
         </div>
-        <InvalidTokenModal message="This form is not available. Please contact your therapist to receive a new form." />
+        <InvalidTokenModal message={DEFAULT_INVALID_MSG} />
       </div>
     );
   }
