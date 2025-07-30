@@ -10,10 +10,11 @@ import truncateEmail from "../utils/truncateEmail";
 import normalizeEmail from "../utils/normalizeEmail";
 import type { FormStatus } from "../types/formStatusTypes";
 import RevokeConfirmModal from "../components/modals/RevokeConfirmationModal";
+import type { FormType } from "../constants/formTypes";
 
 type ClientFormsStatus = {
   exists: boolean;
-  forms: Record<string, FormStatus>;
+  forms: Record<FormType, FormStatus>;
   formsCompleted?: number;
 };
 
@@ -27,10 +28,10 @@ export default function Dashboard() {
   const [showAddClientPrompt, setShowAddClientPrompt] = useState(false);
   const [confirmedEmail, setConfirmedEmail] = useState<string | null>(null);
   const [formActionLoading, setFormActionLoading] = useState<
-    Record<string, boolean>
-  >({});
+    Record<FormType, boolean>
+  >({} as Record<FormType, boolean>);
   const [showRevokeModal, setShowRevokeModal] = useState(false);
-  const [revokeFormType, setRevokeFormType] = useState<string | null>(null);
+  const [revokeFormType, setRevokeFormType] = useState<FormType | null>(null);
 
   const logoUrl = `${import.meta.env.BASE_URL}logo.png`;
 
@@ -121,7 +122,7 @@ export default function Dashboard() {
   };
 
   const handleSendForm = useCallback(
-    async (formType: string) => {
+    async (formType: FormType) => {
       if (!clientFormsStatus) return;
 
       const normalizedEmail = normalizeEmail(email);
@@ -171,7 +172,7 @@ export default function Dashboard() {
     [email, clientFormsStatus, formActionLoading]
   );
 
-  const openRevokeModal = (formType: string) => {
+  const openRevokeModal = (formType: FormType) => {
     setRevokeFormType(formType);
     setShowRevokeModal(true);
   };
@@ -188,7 +189,7 @@ export default function Dashboard() {
   };
 
   const handleRevokeForm = useCallback(
-    async (formType: string) => {
+    async (formType: FormType) => {
       if (!clientFormsStatus) return;
 
       const normalizedEmail = normalizeEmail(email);
