@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import ReactDOM from "react-dom";
+import Modal from "../Modal";
 
 type Props = {
   title?: string;
@@ -16,29 +16,23 @@ export default function InvalidTokenModal({
     headingRef.current?.focus();
   }, []);
 
-  const modal = (
-    <div className="overlay" aria-hidden={false}>
-      <div
-        className="modal"
-        role="alertdialog"
-        aria-modal="true"
-        aria-labelledby="invalid-token-title"
-        aria-describedby="invalid-token-desc"
+  return (
+    <Modal
+      ariaLabelledBy="invalid-token-title"
+      ariaDescribedBy="invalid-token-desc"
+      role="alertdialog"
+    >
+      <h2
+        id="invalid-token-title"
+        className="text-xl font-bold mb-4 outline-none"
+        tabIndex={-1}
+        ref={headingRef}
       >
-        <h2
-          id="invalid-token-title"
-          className="text-xl font-bold mb-4 outline-none"
-          tabIndex={-1}
-          ref={headingRef}
-        >
-          {title}
-        </h2>
-        <p id="invalid-token-desc" className="mb-2 text-left">
-          {message}
-        </p>
-      </div>
-    </div>
+        {title}
+      </h2>
+      <p id="invalid-token-desc" className="mb-2 text-left">
+        {message}
+      </p>
+    </Modal>
   );
-
-  return ReactDOM.createPortal(modal, document.getElementById("modal-root")!);
 }
