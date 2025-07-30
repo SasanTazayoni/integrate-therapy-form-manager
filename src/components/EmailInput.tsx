@@ -56,8 +56,9 @@ export default function EmailInput({
         {!loading && showAddClientPrompt && onConfirmAddClient && (
           <button
             onClick={onConfirmAddClient}
-            className="ml-3 w-7 h-7 inline-flex items-center justify-center bg-green-500 text-white rounded hover:bg-green-600 shadow-sm"
+            className="border-button ml-3 w-7 h-7 inline-flex items-center justify-center rounded shadow-sm"
             title="Add client"
+            aria-label="Add client"
           >
             ✓
           </button>

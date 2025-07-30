@@ -1,6 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
 @import "tailwindcss";
 
+@property --gradient-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
 :root {
   --color-primary: #39b6ff;
   --color-secondary: #325aff;
@@ -136,4 +142,56 @@ input[type="tel"]:focus,
 textarea:focus {
   border-color: var(--color-secondary);
   outline: 0;
+}
+
+/* Buttons */
+
+.border-button {
+  position: relative;
+  background: #4ade80;
+  transition: all 0.3s;
+  color: #fff;
+  cursor: pointer;
+}
+
+.border-button:hover {
+  background: #16a34a;
+}
+
+.border-button::before,
+.border-button::after {
+  background: conic-gradient(
+    from var(--gradient-angle),
+    #16a34a,
+    #4ade80,
+    #16a34a,
+    #4ade80,
+    #16a34a
+  );
+  content: "";
+  position: absolute;
+  inset: -0.2rem;
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: all 0.6s ease;
+  animation: rotation 2s linear infinite;
+}
+
+.border-button:hover::before,
+.border-button:hover::after {
+  opacity: 1;
+}
+
+.border-button::after {
+  filter: blur(0.5rem);
+}
+
+@keyframes rotation {
+  0% {
+    --gradient-angle: 0deg;
+  }
+  100% {
+    --gradient-angle: 360deg;
+  }
 }
