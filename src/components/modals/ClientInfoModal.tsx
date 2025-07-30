@@ -44,7 +44,6 @@ export default function ClientInfoModal({
           />
         </div>
 
-        {/* Reserve space and fade error */}
         <p
           className={`mt-2 min-h-[2rem] text-red-600 font-bold text-center transition-opacity duration-500 ${
             error ? (errorFading ? "opacity-0" : "opacity-100") : "opacity-0"

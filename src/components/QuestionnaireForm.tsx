@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useState, useRef } from "react";
 import { Form, useActionData } from "react-router-dom";
 import { validateFormToken, updateClientInfo } from "../api/formsFrontend";
 import ClientInfoModal from "./modals/ClientInfoModal";
@@ -48,6 +48,20 @@ export default function QuestionnaireForm({
   );
   const [showModal, setShowModal] = useState(false);
 
+  const errorFadeTimer = useRef<NodeJS.Timeout | null>(null);
+  const errorClearTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const clearTimers = () => {
+    if (errorFadeTimer.current) {
+      clearTimeout(errorFadeTimer.current);
+      errorFadeTimer.current = null;
+    }
+    if (errorClearTimer.current) {
+      clearTimeout(errorClearTimer.current);
+      errorClearTimer.current = null;
+    }
+  };
+
   useEffect(() => {
     if (!token) {
       dispatch({
@@ -92,35 +106,63 @@ export default function QuestionnaireForm({
 
   const handleClientInfoSubmit = async () => {
     if (!token) return;
+
+    clearTimers();
+
     let errorMessage = "";
     const trimmedName = modalState.name.trim();
     const hasName = trimmedName.length > 0;
     const hasDob = !!modalState.dob;
+
     if (!hasName && !hasDob) errorMessage = "Inputs cannot be empty";
     else if (!hasName) errorMessage = "Please enter your full name";
     else if (!hasDob) errorMessage = "Please enter your date of birth";
+
     if (errorMessage) {
       modalDispatch({ type: "SET_ERROR", payload: errorMessage });
-      setTimeout(() => modalDispatch({ type: "BEGIN_ERROR_FADE_OUT" }), 2500);
-      setTimeout(() => modalDispatch({ type: "CLEAR_ERROR" }), 3000);
+
+      errorFadeTimer.current = setTimeout(() => {
+        modalDispatch({ type: "BEGIN_ERROR_FADE_OUT" });
+      }, 2500);
+
+      errorClearTimer.current = setTimeout(() => {
+        modalDispatch({ type: "CLEAR_ERROR" });
+      }, 3000);
+
       return;
     }
+
     const { ok, error } = await updateClientInfo({
       token,
       name: trimmedName,
       dob: modalState.dob,
     });
+
     if (!ok) {
       modalDispatch({
         type: "SET_ERROR",
         payload: error || "Failed to update info",
       });
-      setTimeout(() => modalDispatch({ type: "BEGIN_ERROR_FADE_OUT" }), 2500);
-      setTimeout(() => modalDispatch({ type: "CLEAR_ERROR" }), 3000);
+
+      errorFadeTimer.current = setTimeout(() => {
+        modalDispatch({ type: "BEGIN_ERROR_FADE_OUT" });
+      }, 2500);
+
+      errorClearTimer.current = setTimeout(() => {
+        modalDispatch({ type: "CLEAR_ERROR" });
+      }, 3000);
+
       return;
     }
+
     setShowModal(false);
   };
+
+  useEffect(() => {
+    return () => {
+      clearTimers();
+    };
+  }, []);
 
   if (state.status === "loading") {
     return (
