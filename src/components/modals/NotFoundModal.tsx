@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import ReactDOM from "react-dom";
+import Modal from "../Modal";
 
 type Props = {
   title?: string;
@@ -16,30 +16,23 @@ export default function NotFoundModal({
     headingRef.current?.focus();
   }, []);
 
-  const modal = (
-    <div className="overlay" aria-hidden={false}>
-      <div
-        className="modal"
-        role="alertdialog"
-        aria-modal="true"
-        aria-labelledby="not-found-title"
-        aria-describedby="not-found-desc"
+  return (
+    <Modal
+      ariaLabelledBy="not-found-title"
+      ariaDescribedBy="not-found-desc"
+      role="alertdialog"
+    >
+      <h2
+        id="not-found-title"
+        className="text-xl font-bold mb-4 outline-none"
+        tabIndex={-1}
+        ref={headingRef}
       >
-        <h2
-          id="not-found-title"
-          className="text-xl font-bold mb-4 outline-none"
-          tabIndex={-1}
-          ref={headingRef}
-        >
-          {title}
-        </h2>
-
-        <p id="not-found-desc" className="mb-2 text-left">
-          {message}
-        </p>
-      </div>
-    </div>
+        {title}
+      </h2>
+      <p id="not-found-desc" className="mb-2 text-left">
+        {message}
+      </p>
+    </Modal>
   );
-
-  return ReactDOM.createPortal(modal, document.getElementById("modal-root")!);
 }
