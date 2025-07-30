@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../prisma/client";
+import { FORM_TYPES, FormType } from "../utils/formTypes";
+import { normalizeEmail } from "../utils/normalizeEmail";
 
 type FormStatus = {
   activeToken: boolean;
@@ -9,8 +11,6 @@ type FormStatus = {
   tokenExpiresAt?: Date | null;
   revokedAt?: Date | null;
 };
-
-type FormsStatusRecord = Record<string, FormStatus>;
 
 type Client = {
   id: string;
@@ -26,7 +26,7 @@ type Client = {
 type Form = {
   id: string;
   clientId: string;
-  form_type: string;
+  form_type: FormType | string;
   token: string;
   token_sent_at: Date;
   token_expires_at: Date;
@@ -42,9 +42,8 @@ export const getClientFormsStatus = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const email: string | undefined = (
-    req.query.email as string | undefined
-  )?.toLowerCase();
+  const rawEmail = req.query.email as string | undefined;
+  const email = rawEmail ? normalizeEmail(rawEmail) : undefined;
 
   if (!email) {
     console.warn("❌ No email provided in query");
@@ -69,11 +68,9 @@ export const getClientFormsStatus = async (
       where: { clientId: client.id },
     });
 
-    const formTypes: string[] = ["YSQ", "SMI", "BECKS", "BURNS"];
+    const formsStatus: Record<FormType, FormStatus> = {} as any;
 
-    const formsStatus: Record<string, FormStatus> = {};
-
-    for (const type of formTypes) {
+    for (const type of FORM_TYPES) {
       const formsOfType = forms
         .filter((f) => f.form_type === type)
         .sort((a, b) => b.token_sent_at.getTime() - a.token_sent_at.getTime());
@@ -101,9 +98,10 @@ export const getClientFormsStatus = async (
       }
     }
 
-    const formsCompleted = formTypes.reduce((count, type) => {
-      return formsStatus[type].submitted ? count + 1 : count;
-    }, 0);
+    const formsCompleted = FORM_TYPES.reduce(
+      (count, type) => (formsStatus[type].submitted ? count + 1 : count),
+      0
+    );
 
     console.log(`📄 Forms status for ${email}:`, formsStatus);
 
@@ -118,7 +116,11 @@ export const createClient = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { email, name, dob } = req.body;
+  const { email, name, dob } = req.body as {
+    email?: string;
+    name?: string | null;
+    dob?: string | Date | null;
+  };
 
   if (!email) {
     res.status(400).json({ error: "Email is required" });
@@ -128,7 +130,7 @@ export const createClient = async (
   try {
     const client = await prisma.client.create({
       data: {
-        email: email.toLowerCase(),
+        email: normalizeEmail(email),
         name: name ?? null,
         dob: dob ? new Date(dob) : null,
         status: "active",
