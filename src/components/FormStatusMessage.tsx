@@ -1,16 +1,18 @@
 import { Loader2 } from "lucide-react";
 import type { FormStatus } from "../types/formStatusTypes";
+import type { FormType } from "../constants/formTypes";
 
 type Props = {
   status?: FormStatus;
-  formType: string;
-  formActionLoading: Record<string, boolean>;
+  formType: FormType;
+  formActionLoading: Record<FormType, boolean>;
 };
 
-const formatDate = (iso?: string) => {
-  if (!iso) return "";
-  const date = new Date(iso);
-  return date.toLocaleDateString(undefined, {
+const formatDate = (value?: string | Date | null) => {
+  if (!value) return "";
+  const d = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleDateString(undefined, {
     year: "numeric",
     month: "short",
     day: "numeric",
@@ -60,7 +62,10 @@ export default function FormStatusMessage({
     );
   }
 
-  if (status.tokenExpiresAt && new Date(status.tokenExpiresAt) < new Date()) {
+  const expired =
+    !!status.tokenExpiresAt && new Date(status.tokenExpiresAt) < new Date();
+
+  if (expired) {
     return (
       <span className="text-gray-500">
         Form expired on <strong>{formatDate(status.tokenExpiresAt)}</strong>
