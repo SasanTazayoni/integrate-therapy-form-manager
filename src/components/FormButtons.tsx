@@ -1,25 +1,19 @@
 import FormStatusMessage from "./FormStatusMessage";
 import FormButtonGroup from "./FormButtonGroup";
 import type { FormStatus } from "../types/formStatusTypes";
+import { FORM_TYPES, FORM_TITLES, FormType } from "../constants/formTypes";
 
 type ClientFormsStatus = {
   exists: boolean;
-  forms: Record<string, FormStatus>;
+  forms: Record<FormType, FormStatus>;
 };
 
 type FormButtonsProps = {
   clientFormsStatus: ClientFormsStatus | null;
-  onSend: (formType: string) => void;
-  onRevoke: (formType: string) => void;
-  onRetrieve: (formType: string) => void;
-  formActionLoading: Record<string, boolean>;
-};
-
-const formTitles: Record<string, string> = {
-  YSQ: "Young Schema Questionnaire (YSQ) Form",
-  SMI: "Schema Mode Inventory (SMI) Form",
-  BECKS: "Beck's Depression Inventory (BDI) Form",
-  BURNS: "Burn's Anxiety Inventory (BAI) Form",
+  onSend: (formType: FormType) => void;
+  onRevoke: (formType: FormType) => void;
+  onRetrieve: (formType: FormType) => void;
+  formActionLoading: Record<FormType, boolean>;
 };
 
 export default function FormButtons({
@@ -31,11 +25,11 @@ export default function FormButtons({
 }: FormButtonsProps) {
   const clientSearched = clientFormsStatus !== null;
   const clientExists = clientFormsStatus?.exists ?? false;
-  const formTypes = ["YSQ", "SMI", "BECKS", "BURNS"];
+  const formTypes = FORM_TYPES;
 
   return (
     <div className="grid grid-cols-2 gap-6 w-full">
-      {formTypes.map((formType) => {
+      {formTypes.map((formType: FormType) => {
         const status = clientFormsStatus?.forms?.[formType];
 
         const sendDisabled =
@@ -67,7 +61,7 @@ export default function FormButtons({
             className="flex flex-col items-center border p-4 rounded min-h-[150px]"
           >
             <h2 className="text-lg font-semibold mb-3">
-              {formTitles[formType]}
+              {FORM_TITLES[formType]}
             </h2>
 
             <div className="flex space-x-3 w-full justify-center">
@@ -81,6 +75,7 @@ export default function FormButtons({
                 sendLabel={sendLabel}
                 loadingSend={formActionLoading[formType]}
                 loadingRevoke={formActionLoading[formType]}
+                loadingRetrieve={formActionLoading[formType]} // <- now passed
               />
             </div>
 
