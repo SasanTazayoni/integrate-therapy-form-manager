@@ -1,4 +1,4 @@
-import React, { useReducer, useRef } from "react";
+import React, { useReducer, useRef, useEffect } from "react";
 import AdminLoginModal from "./modals/AdminLoginModal";
 import { authReducer, AuthState } from "../utils/authReducer";
 
@@ -23,6 +23,14 @@ export default function ProtectedAccess({ children }: Props) {
 
   const fadeOutTimeoutRef = useRef<number | null>(null);
   const clearErrorTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (fadeOutTimeoutRef.current) clearTimeout(fadeOutTimeoutRef.current);
+      if (clearErrorTimeoutRef.current)
+        clearTimeout(clearErrorTimeoutRef.current);
+    };
+  }, []);
 
   const handleSubmit = () => {
     if (
