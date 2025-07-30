@@ -58,7 +58,7 @@ export default function FormButtons({
         return (
           <div
             key={formType}
-            className="flex flex-col items-center border p-4 rounded min-h-[150px]"
+            className="flex flex-col items-center border-[4px] border-[var(--color-border)] p-4 rounded-xl min-h-[150px]"
           >
             <h2 className="text-lg font-semibold mb-3">
               {FORM_TITLES[formType]}
@@ -75,7 +75,7 @@ export default function FormButtons({
                 sendLabel={sendLabel}
                 loadingSend={formActionLoading[formType]}
                 loadingRevoke={formActionLoading[formType]}
-                loadingRetrieve={formActionLoading[formType]} // <- now passed
+                loadingRetrieve={formActionLoading[formType]}
               />
             </div>
 
