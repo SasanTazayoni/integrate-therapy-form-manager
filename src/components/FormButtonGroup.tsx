@@ -10,6 +10,7 @@ type Props = {
   sendLabel?: string;
   loadingSend?: boolean;
   loadingRevoke?: boolean;
+  loadingRetrieve?: boolean;
 };
 
 export default function FormButtonGroup({
@@ -22,6 +23,7 @@ export default function FormButtonGroup({
   sendLabel = "Send",
   loadingSend = false,
   loadingRevoke = false,
+  loadingRetrieve = false,
 }: Props) {
   return (
     <div className="flex space-x-3 justify-center w-full">
@@ -41,6 +43,7 @@ export default function FormButtonGroup({
         label="Retrieve"
         disabled={retrieveDisabled}
         onClick={onRetrieve}
+        loading={loadingRetrieve}
       />
     </div>
   );
