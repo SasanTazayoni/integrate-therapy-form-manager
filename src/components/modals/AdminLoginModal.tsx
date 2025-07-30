@@ -1,4 +1,4 @@
-import ReactDOM from "react-dom";
+import Modal from "../Modal";
 
 type Props = {
   username: string;
@@ -23,62 +23,49 @@ export default function AdminLoginModal({
   onSubmit,
   onClear,
 }: Props) {
-  const modalRoot = document.getElementById("modal-root");
-  if (!modalRoot) return null;
+  return (
+    <Modal ariaLabelledBy="login-title" role="dialog" closing={closing}>
+      <h2 id="login-title" className="text-xl font-bold mb-4">
+        Admin Login
+      </h2>
 
-  const modal = (
-    <div className={`overlay ${closing ? "fade-out" : ""}`}>
-      <dialog
-        className="modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="login-title"
-        open
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSubmit();
+        }}
       >
-        <h2 id="login-title" className="text-xl font-bold mb-4">
-          Admin Login
-        </h2>
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => onUsernameChange(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => onPasswordChange(e.target.value)}
+        />
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            onSubmit();
+        <p
+          className="mt-4 text-red-600 font-semibold text-center transition-opacity duration-500"
+          style={{
+            minHeight: "1.25rem",
+            opacity: error && !errorFading ? 1 : 0,
           }}
+          aria-live="polite"
         >
-          <input
-            type="text"
-            placeholder="Username"
-            value={username}
-            onChange={(e) => onUsernameChange(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => onPasswordChange(e.target.value)}
-          />
+          {error || "\u00A0"}
+        </p>
 
-          <p
-            className="mt-4 text-red-600 font-semibold text-center transition-opacity duration-500"
-            style={{
-              minHeight: "1.25rem",
-              opacity: error && !errorFading ? 1 : 0,
-            }}
-            aria-live="polite"
-          >
-            {error || "\u00A0"}
-          </p>
-
-          <div className="flex justify-center gap-4 mt-4">
-            <button type="submit">Login</button>
-            <button type="button" onClick={onClear}>
-              Clear
-            </button>
-          </div>
-        </form>
-      </dialog>
-    </div>
+        <div className="flex justify-center gap-4 mt-4">
+          <button type="submit">Login</button>
+          <button type="button" onClick={onClear}>
+            Clear
+          </button>
+        </div>
+      </form>
+    </Modal>
   );
-
-  return ReactDOM.createPortal(modal, modalRoot);
 }
