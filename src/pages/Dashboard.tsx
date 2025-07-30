@@ -32,6 +32,8 @@ export default function Dashboard() {
   const [showRevokeModal, setShowRevokeModal] = useState(false);
   const [revokeFormType, setRevokeFormType] = useState<string | null>(null);
 
+  const logoUrl = `${import.meta.env.BASE_URL}logo.png`;
+
   const handleEmailChange = (value: string) => {
     setEmail(value);
     setError("");
@@ -241,12 +243,28 @@ export default function Dashboard() {
 
   return (
     <ProtectedAccess>
-      <div className="p-6 max-w-md mx-auto">
-        <h1 className="text-2xl font-bold mb-4 text-center">
-          Integrate Therapy Form Manager
-        </h1>
+      <div className="p-6 max-w-xl mx-auto">
+        <div className="flex items-center justify-center gap-3">
+          <img
+            src={logoUrl}
+            alt=""
+            aria-hidden="true"
+            className="inline-block w-7 h-7 md:w-8 md:h-8 shrink-0 select-none"
+            draggable="false"
+          />
+          <h1 className="text-2xl font-bold text-center">
+            Integrate Therapy Form Manager
+          </h1>
+          <img
+            src={logoUrl}
+            alt=""
+            aria-hidden="true"
+            className="inline-block w-7 h-7 md:w-8 md:h-8 shrink-0 select-none"
+            draggable="false"
+          />
+        </div>
 
-        <label className="block mb-2 text-sm font-medium text-center">
+        <label className="block mb-2 mt-4 text-sm font-medium text-center">
           {clientFormsStatus
             ? `Client Email — Forms completed: ${
                 clientFormsStatus.formsCompleted ?? 0
