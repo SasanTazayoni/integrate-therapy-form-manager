@@ -1,25 +1,29 @@
 import { Request, Response } from "express";
 import prisma from "../prisma/client";
-import crypto from "crypto";
 import { sendFormLink } from "../utils/sendFormLink";
-
-const allowedFormTypes = ["YSQ", "SMI", "BECKS", "BURNS"] as const;
-type AllowedFormType = (typeof allowedFormTypes)[number];
+import { FORM_TYPES, FormType } from "../utils/formTypes";
+import { generateToken, computeExpiry } from "../utils/tokens";
+import { findClientByEmail } from "../utils/clientUtils";
+import {
+  isFormTokenUsable,
+  deactivateInvalidActiveForms,
+} from "../utils/formUtils";
+import { parseDateStrict } from "../utils/dates";
 
 export const createForm = async (
-  req: Request<{}, any, { clientId: string; formType: AllowedFormType }>,
+  req: Request<{}, any, { clientId: string; formType: FormType }>,
   res: Response
 ) => {
   const { clientId, formType } = req.body;
 
-  if (!clientId || !formType || !allowedFormTypes.includes(formType)) {
+  if (!clientId || !formType || !FORM_TYPES.includes(formType)) {
     return res.status(400).json({ error: "Invalid input" });
   }
 
   try {
-    const token = crypto.randomUUID();
+    const token = generateToken();
     const now = new Date();
-    const expiresAt = new Date(now.getTime() + 1000 * 60 * 60 * 24 * 14);
+    const expiresAt = computeExpiry(now);
 
     const form = await prisma.form.create({
       data: {
@@ -28,6 +32,8 @@ export const createForm = async (
         token,
         token_sent_at: now,
         token_expires_at: expiresAt,
+        is_active: true,
+        submitted_at: null,
       },
     });
 
@@ -39,35 +45,21 @@ export const createForm = async (
 };
 
 export const sendForm = async (
-  req: Request<{ formType: AllowedFormType }, any, { email: string }>,
+  req: Request<{ formType: FormType }, any, { email: string }>,
   res: Response
 ) => {
   const { email } = req.body;
   const { formType } = req.params;
 
-  if (!email || !formType || !allowedFormTypes.includes(formType)) {
+  if (!email || !formType || !FORM_TYPES.includes(formType)) {
     return res.status(400).json({ error: "Invalid input" });
   }
 
   try {
-    const client = await prisma.client.findUnique({
-      where: { email: email.toLowerCase() },
-    });
+    const client = await findClientByEmail(email);
     if (!client) return res.status(404).json({ error: "Client not found" });
 
-    await prisma.form.updateMany({
-      where: {
-        clientId: client.id,
-        form_type: formType,
-        is_active: true,
-        OR: [
-          { token_expires_at: { lt: new Date() } },
-          { submitted_at: { not: null } },
-          { revoked_at: { not: null } },
-        ],
-      },
-      data: { is_active: false },
-    });
+    await deactivateInvalidActiveForms(client.id, formType);
 
     const existingForm = await prisma.form.findFirst({
       where: {
@@ -84,9 +76,9 @@ export const sendForm = async (
         .json({ error: "Active token already exists for this form" });
     }
 
-    const token = crypto.randomUUID();
+    const token = generateToken();
     const now = new Date();
-    const expiresAt = new Date(now.getTime() + 1000 * 60 * 60 * 24 * 14);
+    const expiresAt = computeExpiry(now);
 
     const form = await prisma.form.create({
       data: {
@@ -134,10 +126,7 @@ export const validateToken = async (
       return res.status(404).json({ valid: false, message: "Form not found" });
     }
 
-    const isExpired = new Date(form.token_expires_at) < new Date();
-    const isSubmitted = !!form.submitted_at;
-
-    if (!form.is_active || isExpired || isSubmitted) {
+    if (!isFormTokenUsable(form)) {
       return res
         .status(403)
         .json({ valid: false, message: "Token is invalid or expired" });
@@ -160,20 +149,18 @@ export const validateToken = async (
 };
 
 export const revokeFormToken = async (
-  req: Request<{ formType: AllowedFormType }, any, { email: string }>,
+  req: Request<{ formType: FormType }, any, { email: string }>,
   res: Response
 ) => {
   const { formType } = req.params;
   const { email } = req.body;
 
-  if (!email || !formType || !allowedFormTypes.includes(formType)) {
+  if (!email || !formType || !FORM_TYPES.includes(formType)) {
     return res.status(400).json({ error: "Invalid input" });
   }
 
   try {
-    const client = await prisma.client.findUnique({
-      where: { email: email.toLowerCase() },
-    });
+    const client = await findClientByEmail(email);
     if (!client) {
       return res.status(404).json({ error: "Client not found" });
     }
@@ -235,11 +222,7 @@ export const submitForm = async (
       include: { client: true },
     });
 
-    if (
-      !form ||
-      !form.is_active ||
-      new Date(form.token_expires_at) < new Date()
-    ) {
+    if (!form || !isFormTokenUsable(form)) {
       return res.status(403).json({ error: "Token is invalid or expired" });
     }
 
@@ -255,11 +238,16 @@ export const submitForm = async (
       },
     });
 
+    const parsedDob = parseDateStrict(dob);
+    if (!parsedDob) {
+      return res.status(400).json({ error: "Invalid date of birth" });
+    }
+
     await prisma.client.update({
       where: { id: form.clientId },
       data: {
         name: fullName,
-        dob: new Date(dob),
+        dob: parsedDob,
       },
     });
 
@@ -287,11 +275,16 @@ export const updateClientInfo = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Form or client not found" });
     }
 
+    const parsedDob = parseDateStrict(dob);
+    if (!parsedDob) {
+      return res.status(400).json({ message: "Invalid date of birth" });
+    }
+
     await prisma.client.update({
       where: { id: form.client.id },
       data: {
         name,
-        dob: new Date(dob),
+        dob: parsedDob,
       },
     });
 
