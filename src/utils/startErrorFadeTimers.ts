@@ -9,6 +9,15 @@ export default function setErrorTimers(
   fadeTimerRef: RefObject<number | null>,
   clearTimerRef: RefObject<number | null>
 ) {
+  if (fadeTimerRef.current != null) {
+    clearTimeout(fadeTimerRef.current);
+    fadeTimerRef.current = null;
+  }
+  if (clearTimerRef.current != null) {
+    clearTimeout(clearTimerRef.current);
+    clearTimerRef.current = null;
+  }
+
   fadeTimerRef.current = window.setTimeout(() => {
     dispatch({ type: fadeOutAction });
     fadeTimerRef.current = null;
