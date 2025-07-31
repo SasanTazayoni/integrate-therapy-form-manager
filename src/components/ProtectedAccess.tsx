@@ -1,6 +1,7 @@
 import React, { useReducer, useRef, useEffect } from "react";
 import AdminLoginModal from "./modals/AdminLoginModal";
 import { authReducer, AuthState } from "../utils/authReducer";
+import setErrorTimers from "../utils/startErrorFadeTimers";
 
 const initialState: AuthState = {
   username: "",
@@ -49,19 +50,15 @@ export default function ProtectedAccess({ children }: Props) {
     } else {
       dispatch({ type: "SET_ERROR", payload: "Invalid credentials" });
 
-      if (fadeOutTimeoutRef.current) clearTimeout(fadeOutTimeoutRef.current);
-      if (clearErrorTimeoutRef.current)
-        clearTimeout(clearErrorTimeoutRef.current);
-
-      fadeOutTimeoutRef.current = window.setTimeout(() => {
-        dispatch({ type: "BEGIN_ERROR_FADE_OUT" });
-        fadeOutTimeoutRef.current = null;
-      }, 2500);
-
-      clearErrorTimeoutRef.current = window.setTimeout(() => {
-        dispatch({ type: "CLEAR_ERROR" });
-        clearErrorTimeoutRef.current = null;
-      }, 3000);
+      setErrorTimers(
+        dispatch,
+        "BEGIN_ERROR_FADE_OUT",
+        "CLEAR_ERROR",
+        2500,
+        3000,
+        fadeOutTimeoutRef,
+        clearErrorTimeoutRef
+      );
     }
   };
 
