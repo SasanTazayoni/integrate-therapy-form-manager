@@ -12,6 +12,7 @@ import { FORM_TITLES, type FormType } from "../constants/formTypes";
 
 const DEFAULT_INVALID_MSG =
   "This form is not available. Please contact your therapist to receive a new form.";
+const logoUrl = `${import.meta.env.BASE_URL}logo.png`;
 
 type QuestionnaireFormProps = {
   title: string;
@@ -207,7 +208,23 @@ export default function QuestionnaireForm({
     <div className="relative min-h-screen">
       <div className={showModal ? "blurred" : ""}>
         <div className="outer-container">
-          <h1 className="title">{FORM_TITLES.BECKS}</h1>
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <img
+              src={logoUrl}
+              alt="Integrate Therapy logo"
+              aria-hidden="true"
+              className="inline-block w-7 h-7 md:w-8 md:h-8 mb-8 shrink-0 select-none"
+              draggable="false"
+            />
+            <h1 className="title">{FORM_TITLES.BECKS}</h1>
+            <img
+              src={logoUrl}
+              alt="Integrate Therapy logo"
+              aria-hidden="true"
+              className="inline-block w-7 h-7 md:w-8 md:h-8 mb-8 shrink-0 select-none"
+              draggable="false"
+            />
+          </div>
 
           <Form method="post">
             <input type="hidden" name="token" value={token} />
