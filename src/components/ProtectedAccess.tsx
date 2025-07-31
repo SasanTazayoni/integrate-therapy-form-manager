@@ -46,7 +46,12 @@ export default function ProtectedAccess({ children }: Props) {
         clearTimeout(clearErrorTimeoutRef.current);
         clearErrorTimeoutRef.current = null;
       }
-      dispatch({ type: "LOGIN_SUCCESS" });
+
+      dispatch({ type: "BEGIN_MODAL_CLOSE" });
+
+      fadeOutTimeoutRef.current = window.setTimeout(() => {
+        dispatch({ type: "LOGIN_SUCCESS" });
+      }, 500);
     } else {
       dispatch({ type: "SET_ERROR", payload: "Invalid credentials" });
 
