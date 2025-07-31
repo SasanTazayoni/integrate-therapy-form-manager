@@ -31,6 +31,7 @@ export default function Dashboard() {
     Record<FormType, boolean>
   >({} as Record<FormType, boolean>);
   const [showRevokeModal, setShowRevokeModal] = useState(false);
+  const [closingRevokeModal, setClosingRevokeModal] = useState(false);
   const [revokeFormType, setRevokeFormType] = useState<FormType | null>(null);
 
   const logoUrl = `${import.meta.env.BASE_URL}logo.png`;
@@ -175,11 +176,17 @@ export default function Dashboard() {
   const openRevokeModal = (formType: FormType) => {
     setRevokeFormType(formType);
     setShowRevokeModal(true);
+    setClosingRevokeModal(false);
   };
 
   const closeRevokeModal = () => {
+    setClosingRevokeModal(true);
+  };
+
+  const handleCloseFinished = () => {
     setShowRevokeModal(false);
     setRevokeFormType(null);
+    setClosingRevokeModal(false);
   };
 
   const handleConfirmRevoke = async () => {
@@ -304,9 +311,10 @@ export default function Dashboard() {
 
       {showRevokeModal && revokeFormType && (
         <RevokeConfirmModal
-          closing={false}
+          closing={closingRevokeModal}
           onConfirm={handleConfirmRevoke}
           onCancel={closeRevokeModal}
+          onCloseFinished={handleCloseFinished}
         />
       )}
     </ProtectedAccess>
