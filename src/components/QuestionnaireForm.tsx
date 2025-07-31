@@ -54,6 +54,7 @@ export default function QuestionnaireForm({
     modalInitialState
   );
   const [showModal, setShowModal] = useState(false);
+  const [closing, setClosing] = useState(false);
   const errorFadeTimer = useRef<number | null>(null);
   const errorClearTimer = useRef<number | null>(null);
 
@@ -174,7 +175,12 @@ export default function QuestionnaireForm({
       return;
     }
 
-    setShowModal(false);
+    setClosing(true);
+
+    setTimeout(() => {
+      setShowModal(false);
+      setClosing(false);
+    }, 500);
   };
 
   useEffect(() => {
@@ -239,6 +245,7 @@ export default function QuestionnaireForm({
           dob={modalState.dob}
           error={modalState.error}
           errorFading={modalState.errorFading}
+          closing={closing}
           onNameChange={(val) =>
             modalDispatch({ type: "SET_NAME", payload: val })
           }
