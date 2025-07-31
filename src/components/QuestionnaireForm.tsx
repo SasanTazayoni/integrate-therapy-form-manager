@@ -9,6 +9,7 @@ import {
 } from "../utils/clientInfoReducer";
 import { Loader2 } from "lucide-react";
 import { FORM_TITLES, type FormType } from "../constants/formTypes";
+import setErrorTimers from "../utils/startErrorFadeTimers";
 
 const DEFAULT_INVALID_MSG =
   "This form is not available. Please contact your therapist to receive a new form.";
@@ -139,15 +140,15 @@ export default function QuestionnaireForm({
     if (errorMessage) {
       modalDispatch({ type: "SET_ERROR", payload: errorMessage });
 
-      errorFadeTimer.current = window.setTimeout(() => {
-        modalDispatch({ type: "BEGIN_ERROR_FADE_OUT" });
-        errorFadeTimer.current = null;
-      }, 2500);
-
-      errorClearTimer.current = window.setTimeout(() => {
-        modalDispatch({ type: "CLEAR_ERROR" });
-        errorClearTimer.current = null;
-      }, 3000);
+      setErrorTimers(
+        modalDispatch,
+        "BEGIN_ERROR_FADE_OUT",
+        "CLEAR_ERROR",
+        2500,
+        3000,
+        errorFadeTimer,
+        errorClearTimer
+      );
 
       return;
     }
@@ -164,15 +165,15 @@ export default function QuestionnaireForm({
         payload: error || "Failed to update info",
       });
 
-      errorFadeTimer.current = window.setTimeout(() => {
-        modalDispatch({ type: "BEGIN_ERROR_FADE_OUT" });
-        errorFadeTimer.current = null;
-      }, 2500);
-
-      errorClearTimer.current = window.setTimeout(() => {
-        modalDispatch({ type: "CLEAR_ERROR" });
-        errorClearTimer.current = null;
-      }, 3000);
+      setErrorTimers(
+        modalDispatch,
+        "BEGIN_ERROR_FADE_OUT",
+        "CLEAR_ERROR",
+        2500,
+        3000,
+        errorFadeTimer,
+        errorClearTimer
+      );
 
       return;
     }
