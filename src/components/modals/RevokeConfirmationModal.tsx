@@ -6,19 +6,26 @@ type Props = {
   onConfirm: () => void;
   onCancel: () => void;
   closing: boolean;
+  onCloseFinished: () => void;
 };
 
 export default function RevokeConfirmModal({
   onConfirm,
   onCancel,
   closing,
+  onCloseFinished,
 }: Props) {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useOutsideClickAndEscape(modalRef, onCancel);
 
   return (
-    <Modal closing={closing} ariaLabelledBy="revoke-title" role="dialog">
+    <Modal
+      closing={closing}
+      onCloseFinished={onCloseFinished}
+      ariaLabelledBy="revoke-title"
+      role="dialog"
+    >
       <div ref={modalRef}>
         <h2 id="revoke-title" className="text-xl font-bold mb-4">
           Confirm Revoke
