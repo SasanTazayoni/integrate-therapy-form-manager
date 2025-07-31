@@ -248,7 +248,7 @@ export default function Dashboard() {
         <div className="flex items-center justify-center gap-3">
           <img
             src={logoUrl}
-            alt=""
+            alt="Integrate Therapy logo"
             aria-hidden="true"
             className="inline-block w-7 h-7 md:w-8 md:h-8 shrink-0 select-none"
             draggable="false"
@@ -258,7 +258,7 @@ export default function Dashboard() {
           </h1>
           <img
             src={logoUrl}
-            alt=""
+            alt="Integrate Therapy logo"
             aria-hidden="true"
             className="inline-block w-7 h-7 md:w-8 md:h-8 shrink-0 select-none"
             draggable="false"
