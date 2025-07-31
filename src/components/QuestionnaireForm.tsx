@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useState, useRef } from "react";
-import { Form, useActionData } from "react-router-dom";
+import { useActionData } from "react-router-dom";
 import { validateFormToken, updateClientInfo } from "../api/formsFrontend";
 import ClientInfoModal from "./modals/ClientInfoModal";
 import InvalidTokenModal from "./modals/InvalidTokenModal";
@@ -20,6 +20,7 @@ type QuestionnaireFormProps = {
   token?: string;
   children: React.ReactNode;
   onError?: (error: string) => void;
+  onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
 };
 
 type State =
@@ -46,6 +47,7 @@ export default function QuestionnaireForm({
   children,
   token,
   onError,
+  onSubmit,
 }: QuestionnaireFormProps) {
   const actionData = useActionData() as { error?: string; success?: boolean };
   const [state, dispatch] = useReducer(reducer, { status: "loading" });
@@ -232,10 +234,10 @@ export default function QuestionnaireForm({
             />
           </div>
 
-          <Form method="post">
+          <form onSubmit={onSubmit}>
             <input type="hidden" name="token" value={token} />
             {children}
-          </Form>
+          </form>
         </div>
       </div>
 

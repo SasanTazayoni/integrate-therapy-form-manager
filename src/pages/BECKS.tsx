@@ -292,20 +292,25 @@ const BECKS = () => {
     setAnswers((prev) => ({ ...prev, [qId]: val }));
   };
 
-  const handleResetClick = () => {
-    setResetModalOpen(true);
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const allAnswered = ITEMS.every((item) => answers[item.id] !== undefined);
+
+    if (!allAnswered) {
+      setFormError("Please answer all questions before submitting");
+      return;
+    }
+    setFormError(null);
+    // TODO: Add submit logic here
   };
 
+  const handleResetClick = () => setResetModalOpen(true);
   const confirmReset = () => {
     setAnswers({});
     setFormError(null);
     setResetModalClosing(true);
   };
-
-  const cancelReset = () => {
-    setResetModalClosing(true);
-  };
-
+  const cancelReset = () => setResetModalClosing(true);
   const handleModalCloseFinished = () => {
     setResetModalOpen(false);
     setResetModalClosing(false);
@@ -317,13 +322,14 @@ const BECKS = () => {
       questionnaire="BECKS"
       token={token}
       onError={setFormError}
+      onSubmit={handleSubmit}
     >
       <div className="questionnaire">
         {ITEMS.map((item) => (
           <fieldset key={item.id} className="question">
             <legend className="question-title">{item.prompt}</legend>
             <div className="options">
-              {item.options.map((opt, idx) => {
+              {item.options.map((opt) => {
                 const inputId = `q${item.id}-${opt.value}`;
                 const name = `q${item.id}`;
                 const checked = answers[item.id] === opt.value;
@@ -350,7 +356,6 @@ const BECKS = () => {
                       value={opt.value}
                       checked={checked || false}
                       onChange={() => handleChange(item.id, opt.value)}
-                      required={idx === 0}
                     />
                     <label htmlFor={inputId} className="option-label">
                       <span className="badge">{opt.value}</span>
@@ -366,7 +371,11 @@ const BECKS = () => {
 
       <input type="hidden" name="result" value={total} />
 
-      <div className="flex justify-center mt-16 space-x-4">
+      {formError && (
+        <p className="text-red-600 text-center mt-4 font-bold">{formError}</p>
+      )}
+
+      <div className="flex justify-center mt-6 space-x-4">
         <button
           type="submit"
           className="bg-blue-500 text-white px-8 py-2 rounded hover:bg-blue-600 transition"
@@ -382,10 +391,6 @@ const BECKS = () => {
           Reset
         </button>
       </div>
-
-      {formError && (
-        <p className="text-red-600 text-center mt-4">{formError}</p>
-      )}
 
       {resetModalOpen && (
         <FormResetConfirmModal
