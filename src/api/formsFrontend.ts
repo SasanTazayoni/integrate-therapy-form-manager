@@ -44,6 +44,24 @@ export async function revokeFormToken(email: string, formType: string) {
   }
 }
 
+export async function submitBecksForm({
+  token,
+  result,
+}: {
+  token: string;
+  result: string;
+}) {
+  try {
+    const res = await axios.post("/forms/submit/becks", { token, result });
+    return { ok: true, data: res.data };
+  } catch (err: any) {
+    return {
+      ok: false,
+      error: getErrorDisplay(err, "Network error while submitting BECKS form."),
+    };
+  }
+}
+
 export async function updateClientInfo({
   token,
   name,
