@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 
 type Props = {
@@ -7,6 +7,7 @@ type Props = {
   ariaLabelledBy: string;
   ariaDescribedBy?: string;
   role?: React.AriaRole;
+  onCloseFinished?: () => void;
 };
 
 export default function Modal({
@@ -15,9 +16,29 @@ export default function Modal({
   ariaLabelledBy,
   ariaDescribedBy,
   role = "dialog",
+  onCloseFinished,
 }: Props) {
-  const modal = (
-    <div className={`overlay ${closing ? "fade-out" : ""}`} aria-hidden={false}>
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    setVisible(true);
+  }, []);
+
+  useEffect(() => {
+    if (closing) {
+      const timeout = setTimeout(() => {
+        onCloseFinished?.();
+      }, 500);
+
+      return () => clearTimeout(timeout);
+    }
+  }, [closing, onCloseFinished]);
+
+  const overlayClass =
+    visible && !closing ? "overlay fade-in" : "overlay fade-out";
+
+  return ReactDOM.createPortal(
+    <div className={overlayClass} aria-hidden={false}>
       <div
         className="modal"
         role={role}
@@ -27,8 +48,7 @@ export default function Modal({
       >
         {children}
       </div>
-    </div>
+    </div>,
+    document.getElementById("modal-root")!
   );
-
-  return ReactDOM.createPortal(modal, document.getElementById("modal-root")!);
 }
