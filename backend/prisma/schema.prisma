@@ -31,7 +31,7 @@ model Form {
   is_active        Boolean   @default(true)
   submitted_at     DateTime?
   revoked_at       DateTime?
-  total_score      Int?
+  bdi_score        String?
   created_at       DateTime  @default(now())
   updated_at       DateTime  @updatedAt
 }
