@@ -8,7 +8,7 @@ import {
   modalInitialState,
 } from "../utils/clientInfoReducer";
 import { Loader2 } from "lucide-react";
-import type { FormType } from "../constants/formTypes";
+import { FORM_TITLES, type FormType } from "../constants/formTypes";
 
 const DEFAULT_INVALID_MSG =
   "This form is not available. Please contact your therapist to receive a new form.";
@@ -18,6 +18,7 @@ type QuestionnaireFormProps = {
   questionnaire: FormType;
   token?: string;
   children: React.ReactNode;
+  onError?: (error: string) => void;
 };
 
 type State =
@@ -43,6 +44,7 @@ export default function QuestionnaireForm({
   questionnaire,
   children,
   token,
+  onError,
 }: QuestionnaireFormProps) {
   const actionData = useActionData() as { error?: string; success?: boolean };
   const [state, dispatch] = useReducer(reducer, { status: "loading" });
@@ -109,6 +111,12 @@ export default function QuestionnaireForm({
       active = false;
     };
   }, [token, questionnaire]);
+
+  useEffect(() => {
+    if (actionData?.error && onError) {
+      onError(actionData.error);
+    }
+  }, [actionData?.error, onError]);
 
   const handleClientInfoSubmit = async () => {
     if (!token) return;
@@ -198,15 +206,16 @@ export default function QuestionnaireForm({
   return (
     <div className="relative min-h-screen">
       <div className={showModal ? "blurred" : ""}>
-        <h1>{title}</h1>
-        <Form method="post">
-          <input type="hidden" name="token" value={token} />
-          {children}
-          <br />
-          <button type="submit">Submit</button>
-          {actionData?.error && <p className="error">{actionData.error}</p>}
-        </Form>
+        <div className="outer-container">
+          <h1 className="title">{FORM_TITLES.BECKS}</h1>
+
+          <Form method="post">
+            <input type="hidden" name="token" value={token} />
+            {children}
+          </Form>
+        </div>
       </div>
+
       {showModal && (
         <ClientInfoModal
           name={modalState.name}
