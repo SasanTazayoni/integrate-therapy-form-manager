@@ -6,6 +6,7 @@ const useBecksForm = () => {
   const [formError, setFormError] = useState<string | null>(null);
   const [resetModalOpen, setResetModalOpen] = useState(false);
   const [resetModalClosing, setResetModalClosing] = useState(false);
+  const [missingIds, setMissingIds] = useState<number[]>([]);
 
   const total = useMemo(
     () => BECKS_ITEMS.reduce((sum, item) => sum + (answers[item.id] ?? 0), 0),
@@ -14,20 +15,23 @@ const useBecksForm = () => {
 
   const handleChange = (qId: number, val: 0 | 1 | 2 | 3) => {
     setAnswers((prev) => ({ ...prev, [qId]: val }));
+    setMissingIds((prev) => prev.filter((id) => id !== qId));
   };
 
   const handleSubmit = (onValidSubmit: () => void) => (e: React.FormEvent) => {
     e.preventDefault();
-    const allAnswered = BECKS_ITEMS.every(
-      (item) => answers[item.id] !== undefined
-    );
+    const unansweredIds = BECKS_ITEMS.filter(
+      (item) => answers[item.id] === undefined
+    ).map((item) => item.id);
 
-    if (!allAnswered) {
+    if (unansweredIds.length > 0) {
+      setMissingIds(unansweredIds);
       setFormError("Please answer all questions before submitting");
       return;
     }
 
     setFormError(null);
+    setMissingIds([]);
     onValidSubmit();
   };
 
@@ -36,6 +40,7 @@ const useBecksForm = () => {
   const confirmReset = () => {
     setAnswers({});
     setFormError(null);
+    setMissingIds([]);
     setResetModalClosing(true);
   };
 
@@ -59,6 +64,7 @@ const useBecksForm = () => {
     cancelReset,
     handleModalCloseFinished,
     setFormError,
+    missingIds,
   };
 };
 

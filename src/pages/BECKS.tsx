@@ -19,6 +19,7 @@ const BECKS = () => {
     cancelReset,
     handleModalCloseFinished,
     setFormError,
+    missingIds,
   } = useBecksForm();
 
   return (
@@ -33,7 +34,12 @@ const BECKS = () => {
     >
       <div className="questionnaire">
         {BECKS_ITEMS.map((item) => (
-          <fieldset key={item.id} className="question">
+          <fieldset
+            key={item.id}
+            className={`question ${
+              missingIds.includes(item.id) ? "missing" : ""
+            }`}
+          >
             <legend className="question-title">{item.prompt}</legend>
             <div className="options">
               {item.options.map((opt) => {
@@ -76,9 +82,9 @@ const BECKS = () => {
 
       <input type="hidden" name="result" value={total} />
 
-      {formError && (
-        <p className="text-red-600 text-center mt-4 font-bold">{formError}</p>
-      )}
+      <div className="min-h-[1.5rem] text-center mt-4">
+        {formError && <p className="text-red-600 font-bold">{formError}</p>}
+      </div>
 
       <div className="flex justify-center mt-6 space-x-4">
         <button
