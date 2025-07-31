@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import QuestionnaireForm from "../components/QuestionnaireForm";
+import FormResetConfirmModal from "../components/modals/FormResetConfirmModal";
 
 type Item = {
   id: number;
@@ -279,6 +280,8 @@ const BECKS = () => {
   const { token } = useParams<{ token: string }>();
   const [answers, setAnswers] = useState<Record<number, 0 | 1 | 2 | 3>>({});
   const [formError, setFormError] = useState<string | null>(null);
+  const [resetModalOpen, setResetModalOpen] = useState(false);
+  const [resetModalClosing, setResetModalClosing] = useState(false);
 
   const total = useMemo(
     () => ITEMS.reduce((sum, item) => sum + (answers[item.id] ?? 0), 0),
@@ -287,6 +290,25 @@ const BECKS = () => {
 
   const handleChange = (qId: number, val: 0 | 1 | 2 | 3) => {
     setAnswers((prev) => ({ ...prev, [qId]: val }));
+  };
+
+  const handleResetClick = () => {
+    setResetModalOpen(true);
+  };
+
+  const confirmReset = () => {
+    setAnswers({});
+    setFormError(null);
+    setResetModalClosing(true);
+  };
+
+  const cancelReset = () => {
+    setResetModalClosing(true);
+  };
+
+  const handleModalCloseFinished = () => {
+    setResetModalOpen(false);
+    setResetModalClosing(false);
   };
 
   return (
@@ -355,10 +377,7 @@ const BECKS = () => {
         <button
           type="button"
           className="bg-gray-500 text-white px-8 py-2 rounded hover:bg-gray-600 transition"
-          onClick={() => {
-            setAnswers({});
-            setFormError(null);
-          }}
+          onClick={handleResetClick}
         >
           Reset
         </button>
@@ -366,6 +385,15 @@ const BECKS = () => {
 
       {formError && (
         <p className="text-red-600 text-center mt-4">{formError}</p>
+      )}
+
+      {resetModalOpen && (
+        <FormResetConfirmModal
+          onConfirm={confirmReset}
+          onCancel={cancelReset}
+          closing={resetModalClosing}
+          onCloseFinished={handleModalCloseFinished}
+        />
       )}
     </QuestionnaireForm>
   );
