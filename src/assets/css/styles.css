@@ -40,6 +40,8 @@ body {
 }
 
 .overlay {
+  opacity: 0;
+  pointer-events: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -50,15 +52,21 @@ body {
   align-items: center;
   justify-content: center;
   z-index: 11;
+  transition: opacity 0.5s ease;
+}
+
+.overlay.fade-in {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .overlay.fade-out {
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.5s ease;
 }
 
 .modal {
+  opacity: 0;
   all: unset;
   display: block;
   background: linear-gradient(
@@ -74,6 +82,15 @@ body {
   text-align: center;
   z-index: 12;
   border: 5px solid var(--color-border);
+  transition: opacity 0.5s ease;
+}
+
+.overlay.fade-in .modal {
+  opacity: 1;
+}
+
+.overlay.fade-out .modal {
+  opacity: 0;
 }
 
 .modal input {
