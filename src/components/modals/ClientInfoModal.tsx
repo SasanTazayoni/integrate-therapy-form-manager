@@ -5,9 +5,11 @@ type Props = {
   dob: string;
   error: string;
   errorFading: boolean;
+  closing: boolean;
   onNameChange: (val: string) => void;
   onDobChange: (val: string) => void;
   onSubmit: () => void;
+  onCloseFinished?: () => void;
 };
 
 export default function ClientInfoModal({
@@ -15,12 +17,18 @@ export default function ClientInfoModal({
   dob,
   error,
   errorFading,
+  closing,
   onNameChange,
   onDobChange,
   onSubmit,
+  onCloseFinished,
 }: Props) {
   return (
-    <Modal ariaLabelledBy="client-info-title">
+    <Modal
+      ariaLabelledBy="client-info-title"
+      closing={closing}
+      onCloseFinished={onCloseFinished}
+    >
       <h2 id="client-info-title" className="text-xl font-bold mb-4">
         Your information
       </h2>
