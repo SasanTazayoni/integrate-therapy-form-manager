@@ -306,7 +306,20 @@ const BECKS = () => {
                 const name = `q${item.id}`;
                 const checked = answers[item.id] === opt.value;
                 return (
-                  <div className="option" key={opt.value}>
+                  <div
+                    className="option"
+                    key={opt.value}
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      if (checked) {
+                        setAnswers((prev) => {
+                          const updated = { ...prev };
+                          delete updated[item.id];
+                          return updated;
+                        });
+                      }
+                    }}
+                  >
                     <input
                       id={inputId}
                       className="option-input"
@@ -331,7 +344,7 @@ const BECKS = () => {
 
       <input type="hidden" name="result" value={total} />
 
-      <div className="flex justify-center mt-8 space-x-4">
+      <div className="flex justify-center mt-16 space-x-4">
         <button
           type="submit"
           className="bg-blue-500 text-white px-8 py-2 rounded hover:bg-blue-600 transition"
