@@ -14,6 +14,7 @@
   --color-border: #7ccfff;
   --color-block--white: #fff;
   --color-block--grey: #f4f4f4;
+  --color-selected-bg: #e1eafc;
 }
 
 *,
@@ -144,7 +145,7 @@ textarea:focus {
   outline: 0;
 }
 
-/* Buttons */
+/* Animated border buttons */
 
 .border-button {
   position: relative;
@@ -194,4 +195,109 @@ textarea:focus {
   100% {
     --gradient-angle: 360deg;
   }
+}
+
+/* Questionnaire-specific styles */
+
+.question-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 1.5rem;
+}
+
+.questionnaire {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.question {
+  border: 2px solid #d9dce4;
+  border-radius: 10px;
+  padding: 0.75rem;
+  background: var(--color-block--white);
+}
+
+.options {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0 2rem;
+  margin-bottom: 1.25rem;
+}
+
+.option {
+  position: relative;
+}
+
+.option-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.option-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  background-color: #fcf8f8;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.option-label:hover {
+  background: #e7eaf1;
+}
+
+.option-input:checked + .option-label {
+  background: var(--color-selected-bg);
+  box-shadow: 0 0 0 3px rgba(50, 90, 255, 0.15);
+}
+
+.badge {
+  user-select: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1f2937;
+  background: var(--color-selected-bg);
+  border-radius: 8px;
+  padding: 0.15rem 0.5rem;
+  min-width: 1.75rem;
+  text-align: center;
+  line-height: 1.2rem;
+  transition: 0.3s;
+}
+
+.option-label:hover .badge,
+.option-input:checked + .option-label .badge {
+  background-color: var(--color-border);
+}
+
+.field {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 0.75rem;
+}
+
+.score-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.outer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.title {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 2rem;
 }
