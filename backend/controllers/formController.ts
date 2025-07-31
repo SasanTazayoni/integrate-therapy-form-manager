@@ -9,6 +9,7 @@ import {
   deactivateInvalidActiveForms,
 } from "../utils/formUtils";
 import { parseDateStrict } from "../utils/dates";
+import getBecksScoreCategory from "../utils/becksScoreUtils";
 
 export const createForm = async (
   req: Request<{}, any, { clientId: string; formType: FormType }>,
@@ -202,17 +203,13 @@ export const revokeFormToken = async (
   }
 };
 
-export const submitForm = async (
-  req: Request<
-    {},
-    any,
-    { token: string; fullName: string; dob: string; result: string }
-  >,
+export const submitBecksForm = async (
+  req: Request<{}, any, { token: string; result: string }>,
   res: Response
 ) => {
-  const { token, fullName, dob, result } = req.body;
+  const { token, result } = req.body;
 
-  if (!token || !fullName || !dob || !result) {
+  if (!token || !result) {
     return res.status(400).json({ error: "Missing required fields" });
   }
 
@@ -227,27 +224,17 @@ export const submitForm = async (
     }
 
     const now = new Date();
+    const score = Number.isInteger(parseInt(result)) ? parseInt(result) : 0;
+    const scoreCategory = getBecksScoreCategory(score);
+    const combinedScore = `${score}-${scoreCategory}`;
 
     await prisma.form.update({
       where: { token },
       data: {
         submitted_at: now,
-        total_score: Number.isInteger(parseInt(result)) ? parseInt(result) : 0,
+        bdi_score: combinedScore,
         is_active: false,
         token_expires_at: now,
-      },
-    });
-
-    const parsedDob = parseDateStrict(dob);
-    if (!parsedDob) {
-      return res.status(400).json({ error: "Invalid date of birth" });
-    }
-
-    await prisma.client.update({
-      where: { id: form.clientId },
-      data: {
-        name: fullName,
-        dob: parsedDob,
       },
     });
 
