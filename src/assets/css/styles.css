@@ -237,6 +237,7 @@ textarea:focus {
 }
 
 .question.missing {
+  background: rgb(255, 244, 244);
   border: 2px solid #ff4141;
   border-radius: 0.5rem;
 }
