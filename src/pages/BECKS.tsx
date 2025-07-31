@@ -3,6 +3,7 @@ import QuestionnaireForm from "../components/QuestionnaireForm";
 import FormResetConfirmModal from "../components/modals/FormResetConfirmModal";
 import BECKS_ITEMS from "../data/BECKSItems";
 import useBecksForm from "../hooks/useBECKSForm";
+import { submitBecksForm } from "../api/formsFrontend";
 
 const BECKS = () => {
   const { token } = useParams<{ token: string }>();
@@ -22,15 +23,42 @@ const BECKS = () => {
     missingIds,
   } = useBecksForm();
 
+  const getDepressionLevel = (score: number) => {
+    if (score <= 10) return "Normal";
+    if (score <= 16) return "Mild mood disturbance";
+    if (score <= 20) return "Borderline clinical depression";
+    if (score <= 30) return "Moderate depression";
+    if (score <= 40) return "Severe depression";
+    return "Extreme depression";
+  };
+
+  const onValidSubmit = async () => {
+    const totalScore = Object.values(answers).reduce<number>(
+      (sum, val) => sum + val,
+      0
+    );
+
+    const { ok, error } = await submitBecksForm({
+      token: token!,
+      result: totalScore.toString(),
+    });
+
+    if (!ok) {
+      setFormError(error ?? null);
+      return;
+    }
+
+    const category = getDepressionLevel(totalScore);
+    alert(`Submitted! Score: ${totalScore} (${category})`);
+  };
+
   return (
     <QuestionnaireForm
       title="BECKS"
       questionnaire="BECKS"
       token={token}
       onError={setFormError}
-      onSubmit={handleSubmit(() => {
-        // Handle successful submission logic here
-      })}
+      onSubmit={handleSubmit(onValidSubmit)}
     >
       <div className="questionnaire">
         {BECKS_ITEMS.map((item) => (
@@ -46,6 +74,7 @@ const BECKS = () => {
                 const inputId = `q${item.id}-${opt.value}`;
                 const name = `q${item.id}`;
                 const checked = answers[item.id] === opt.value;
+
                 return (
                   <div
                     className="option"
