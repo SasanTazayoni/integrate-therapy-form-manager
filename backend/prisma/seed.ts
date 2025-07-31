@@ -71,8 +71,8 @@ async function main() {
       token_expires_at: now,
       submitted_at: now,
       is_active: false,
-      total_score: 210,
       revoked_at: null,
+      bdi_score: null,
     },
   });
 
@@ -85,8 +85,8 @@ async function main() {
       token_expires_at: now,
       submitted_at: now,
       is_active: false,
-      total_score: 180,
       revoked_at: null,
+      bdi_score: null,
     },
   });
 
@@ -99,8 +99,8 @@ async function main() {
       token_expires_at: twoWeeksFromNow,
       is_active: true,
       submitted_at: null,
-      total_score: null,
       revoked_at: null,
+      bdi_score: null,
     },
   });
 
@@ -113,8 +113,8 @@ async function main() {
       token_expires_at: twoWeeksFromNow,
       is_active: true,
       submitted_at: null,
-      total_score: null,
       revoked_at: null,
+      bdi_score: null,
     },
   });
 
@@ -128,8 +128,8 @@ async function main() {
         token_expires_at: now,
         submitted_at: now,
         is_active: false,
-        total_score: 150,
         revoked_at: null,
+        bdi_score: null,
       },
       {
         clientId: emma.id,
@@ -139,8 +139,8 @@ async function main() {
         token_expires_at: twoWeeksFromNow,
         submitted_at: null,
         is_active: true,
-        total_score: null,
         revoked_at: null,
+        bdi_score: null,
       },
       {
         clientId: emma.id,
@@ -150,8 +150,8 @@ async function main() {
         token_expires_at: twoWeeksFromNow,
         submitted_at: null,
         is_active: true,
-        total_score: null,
         revoked_at: null,
+        bdi_score: null,
       },
       {
         clientId: emma.id,
@@ -161,8 +161,8 @@ async function main() {
         token_expires_at: now,
         submitted_at: now,
         is_active: false,
-        total_score: 19,
         revoked_at: null,
+        bdi_score: "19-Moderate depression",
       },
     ],
   });
@@ -177,8 +177,8 @@ async function main() {
         token_expires_at: new Date(now.getTime() - 1000 * 60 * 60 * 24),
         submitted_at: null,
         is_active: false,
-        total_score: null,
         revoked_at: null,
+        bdi_score: null,
       },
       {
         clientId: frank.id,
@@ -188,8 +188,8 @@ async function main() {
         token_expires_at: new Date(now.getTime() - 1000 * 60 * 60 * 24),
         submitted_at: null,
         is_active: false,
-        total_score: null,
         revoked_at: null,
+        bdi_score: null,
       },
       {
         clientId: frank.id,
@@ -199,8 +199,8 @@ async function main() {
         token_expires_at: now,
         submitted_at: null,
         is_active: false,
-        total_score: null,
         revoked_at: now,
+        bdi_score: null,
       },
     ],
   });
