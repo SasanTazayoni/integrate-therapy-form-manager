@@ -1,12 +1,18 @@
-import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import QuestionnaireForm from "../components/QuestionnaireForm";
 import FormResetConfirmModal from "../components/modals/FormResetConfirmModal";
+import InvalidTokenModal from "../components/modals/InvalidTokenModal";
 import BECKS_ITEMS from "../data/BECKSItems";
 import useBecksForm from "../hooks/useBECKSForm";
-import { submitBecksForm } from "../api/formsFrontend";
+import { submitBecksForm, validateFormToken } from "../api/formsFrontend";
 
 const BECKS = () => {
   const { token } = useParams<{ token: string }>();
+  const navigate = useNavigate();
+
+  const [showInvalidTokenModal, setShowInvalidTokenModal] = useState(false);
+
   const {
     answers,
     total,
@@ -23,34 +29,58 @@ const BECKS = () => {
     missingIds,
   } = useBecksForm();
 
-  const getDepressionLevel = (score: number) => {
-    if (score <= 10) return "Normal";
-    if (score <= 16) return "Mild mood disturbance";
-    if (score <= 20) return "Borderline clinical depression";
-    if (score <= 30) return "Moderate depression";
-    if (score <= 40) return "Severe depression";
-    return "Extreme depression";
-  };
+  useEffect(() => {
+    if (!token) {
+      setShowInvalidTokenModal(true);
+      return;
+    }
+
+    const checkToken = async () => {
+      const { ok } = await validateFormToken(token);
+
+      if (!ok) {
+        setShowInvalidTokenModal(true);
+      }
+    };
+
+    checkToken();
+  }, [token]);
 
   const onValidSubmit = async () => {
+    if (!token) {
+      setFormError("Token missing");
+      return;
+    }
+
     const totalScore = Object.values(answers).reduce<number>(
       (sum, val) => sum + val,
       0
     );
 
     const { ok, error } = await submitBecksForm({
-      token: token!,
+      token,
       result: totalScore.toString(),
     });
 
     if (!ok) {
-      setFormError(error ?? null);
+      if (
+        error?.toLowerCase().includes("token") ||
+        error?.toLowerCase().includes("invalid") ||
+        error?.toLowerCase().includes("revoked")
+      ) {
+        setShowInvalidTokenModal(true);
+        return;
+      }
+      setFormError(error ?? "Failed to submit the form.");
       return;
     }
 
-    const category = getDepressionLevel(totalScore);
-    alert(`Submitted! Score: ${totalScore} (${category})`);
+    navigate("/submitted");
   };
+
+  if (showInvalidTokenModal) {
+    return <InvalidTokenModal />;
+  }
 
   return (
     <QuestionnaireForm
