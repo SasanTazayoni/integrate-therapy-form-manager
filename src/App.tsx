@@ -5,10 +5,7 @@ import YSQ from "./pages/YSQ";
 import BECKS from "./pages/BECKS";
 import BURNS from "./pages/BURNS";
 import NotFound from "./pages/NotFoundPage";
-import { SMIAction } from "./actions/SMIAction";
-import { YSQAction } from "./actions/YSQAction";
-import { BECKSAction } from "./actions/BECKSAction";
-import { BURNSAction } from "./actions/BURNSAction";
+import SubmittedPage from "./pages/Submitted";
 
 import RouteError from "./components/RouteError";
 
@@ -19,10 +16,11 @@ const router = createBrowserRouter(
       errorElement: <RouteError />,
       children: [
         { index: true, element: <Dashboard /> },
-        { path: "SMI/:token", element: <SMI />, action: SMIAction },
-        { path: "YSQ/:token", element: <YSQ />, action: YSQAction },
-        { path: "BECKS/:token", element: <BECKS />, action: BECKSAction },
-        { path: "BURNS/:token", element: <BURNS />, action: BURNSAction },
+        { path: "SMI/:token", element: <SMI /> },
+        { path: "YSQ/:token", element: <YSQ /> },
+        { path: "BECKS/:token", element: <BECKS /> },
+        { path: "BURNS/:token", element: <BURNS /> },
+        { path: "submitted", element: <SubmittedPage /> },
         { path: "*", element: <NotFound /> },
       ],
     },
