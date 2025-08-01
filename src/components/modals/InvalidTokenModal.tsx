@@ -1,15 +1,7 @@
 import { useEffect, useRef } from "react";
 import Modal from "../Modal";
 
-type Props = {
-  title?: string;
-  message: string;
-};
-
-export default function InvalidTokenModal({
-  title = "Invalid form token",
-  message,
-}: Props) {
+export default function InvalidTokenModal() {
   const headingRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
@@ -28,10 +20,11 @@ export default function InvalidTokenModal({
         tabIndex={-1}
         ref={headingRef}
       >
-        {title}
+        Invalid Form
       </h2>
       <p id="invalid-token-desc" className="mb-2 text-left">
-        {message}
+        This form is not available. Please contact your therapist to receive a
+        new form.
       </p>
     </Modal>
   );
