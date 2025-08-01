@@ -6,6 +6,7 @@ import BECKS from "./pages/BECKS";
 import BURNS from "./pages/BURNS";
 import NotFound from "./pages/NotFoundPage";
 import SubmittedPage from "./pages/Submitted";
+import FormResultsSummary from "./pages/FormResultsSummary";
 
 import RouteError from "./components/RouteError";
 
@@ -21,6 +22,7 @@ const router = createBrowserRouter(
         { path: "BECKS/:token", element: <BECKS /> },
         { path: "BURNS/:token", element: <BURNS /> },
         { path: "submitted", element: <SubmittedPage /> },
+        { path: "summary/:submissionId", element: <FormResultsSummary /> },
         { path: "*", element: <NotFound /> },
       ],
     },
