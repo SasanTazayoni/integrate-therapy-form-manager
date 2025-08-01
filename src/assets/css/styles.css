@@ -162,6 +162,10 @@ textarea:focus {
   outline: 0;
 }
 
+.form-border {
+  border: 2px solid var(--color-border);
+}
+
 /* Animated border buttons */
 
 .border-button {
