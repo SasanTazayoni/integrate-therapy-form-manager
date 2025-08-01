@@ -210,7 +210,10 @@ export const submitBecksForm = async (
   const { token, result } = req.body;
 
   if (!token || !result) {
-    return res.status(400).json({ error: "Missing required fields" });
+    return res.status(400).json({
+      error: "Missing required fields",
+      code: "MISSING_FIELDS",
+    });
   }
 
   try {
@@ -220,13 +223,16 @@ export const submitBecksForm = async (
     });
 
     if (!form || !isFormTokenUsable(form)) {
-      return res.status(403).json({ error: "Token is invalid or expired" });
+      return res.status(403).json({
+        error: "Token is invalid or expired",
+        code: "INVALID_TOKEN",
+      });
     }
 
-    const now = new Date();
     const score = Number.isInteger(parseInt(result)) ? parseInt(result) : 0;
     const scoreCategory = getBecksScoreCategory(score);
     const combinedScore = `${score}-${scoreCategory}`;
+    const now = new Date();
 
     await prisma.form.update({
       where: { token },
@@ -238,10 +244,13 @@ export const submitBecksForm = async (
       },
     });
 
-    res.json({ success: true });
+    return res.json({ success: true });
   } catch (error) {
     console.error("Error submitting form:", error);
-    res.status(500).json({ error: "Failed to submit form" });
+    return res.status(500).json({
+      error: "Failed to submit form",
+      code: "SUBMIT_ERROR",
+    });
   }
 };
 

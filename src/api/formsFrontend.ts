@@ -55,9 +55,16 @@ export async function submitBecksForm({
     const res = await axios.post("/forms/submit/becks", { token, result });
     return { ok: true, data: res.data };
   } catch (err: any) {
+    const code = err?.response?.data?.code;
+    const message = getErrorDisplay(
+      err,
+      "Network error while submitting form."
+    );
+
     return {
       ok: false,
-      error: getErrorDisplay(err, "Network error while submitting BECKS form."),
+      error: message,
+      code,
     };
   }
 }

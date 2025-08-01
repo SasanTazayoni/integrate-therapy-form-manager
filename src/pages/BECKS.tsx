@@ -57,20 +57,17 @@ const BECKS = () => {
       0
     );
 
-    const { ok, error } = await submitBecksForm({
+    const { ok, error, code } = await submitBecksForm({
       token,
       result: totalScore.toString(),
     });
 
     if (!ok) {
-      if (
-        error?.toLowerCase().includes("token") ||
-        error?.toLowerCase().includes("invalid") ||
-        error?.toLowerCase().includes("revoked")
-      ) {
+      if (code === "INVALID_TOKEN") {
         setShowInvalidTokenModal(true);
         return;
       }
+
       setFormError(error ?? "Failed to submit the form.");
       return;
     }
