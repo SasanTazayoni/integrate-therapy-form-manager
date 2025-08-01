@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import QuestionnaireForm from "../components/QuestionnaireForm";
 import FormResetConfirmModal from "../components/modals/FormResetConfirmModal";
 import InvalidTokenModal from "../components/modals/InvalidTokenModal";
 import BECKS_ITEMS from "../data/BECKSItems";
 import useBecksForm from "../hooks/useBECKSForm";
-import { submitBecksForm, validateFormToken } from "../api/formsFrontend";
+import { submitBecksForm } from "../api/formsFrontend";
+import useValidateToken from "../hooks/useValidateToken";
+import { Loader2 } from "lucide-react";
 
 const BECKS = () => {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
-
-  const [showInvalidTokenModal, setShowInvalidTokenModal] = useState(false);
+  const { isValid, showInvalidTokenModal, setShowInvalidTokenModal } =
+    useValidateToken(token);
 
   const {
     answers,
@@ -28,23 +29,6 @@ const BECKS = () => {
     setFormError,
     missingIds,
   } = useBecksForm();
-
-  useEffect(() => {
-    if (!token) {
-      setShowInvalidTokenModal(true);
-      return;
-    }
-
-    const checkToken = async () => {
-      const { ok } = await validateFormToken(token);
-
-      if (!ok) {
-        setShowInvalidTokenModal(true);
-      }
-    };
-
-    checkToken();
-  }, [token]);
 
   const onValidSubmit = async () => {
     if (!token) {
@@ -74,6 +58,14 @@ const BECKS = () => {
 
     navigate("/submitted");
   };
+
+  if (isValid === null) {
+    return (
+      <div className="flex justify-center items-center min-h-screen" aria-busy>
+        <Loader2 className="animate-spin" size={48} />
+      </div>
+    );
+  }
 
   if (showInvalidTokenModal) {
     return <InvalidTokenModal />;
