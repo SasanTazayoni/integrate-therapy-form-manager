@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Modal from "../Modal";
-import SMIModeTable from "../tables/SMIModeTable";
+import SMIModeTable from "../tables/SMIModesTableScores";
 import { useOutsideClickAndEscape } from "../../hooks/useOutsideClickAndEscape";
 
 interface SMISummaryModalProps {
