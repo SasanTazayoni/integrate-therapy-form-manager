@@ -113,6 +113,7 @@ body {
 .wide-modal {
   max-width: 1200px;
   width: 100%;
+  background: #fff;
 }
 
 /* Forms */
