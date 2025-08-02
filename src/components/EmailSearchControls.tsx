@@ -14,7 +14,7 @@ export default function EmailSearchControls({
         className="bg-blue-500 text-white px-8 py-2 rounded hover:bg-blue-600"
         disabled={loading}
       >
-        Check
+        Search
       </button>
       <button
         onClick={onClear}
