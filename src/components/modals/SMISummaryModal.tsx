@@ -43,11 +43,14 @@ export default function SMISummaryModal({
           SMI Summary Sheet
         </h2>
 
-        <p>
-          <strong>Patient:</strong>
-          <br />
-          <strong>Date:</strong>
-        </p>
+        <div className="text-left mb-4">
+          <p>
+            <strong>Patient:</strong>
+          </p>
+          <p>
+            <strong>Date:</strong>
+          </p>
+        </div>
 
         <section className="mt-4 text-left text-sm space-y-4">
           <div>
@@ -103,7 +106,7 @@ export default function SMISummaryModal({
           <div className="flex justify-center mt-6">
             <button
               type="button"
-              className="btn-primary"
+              className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded text-white w-[100px] flex justify-center items-center gap-2"
               onClick={() => setClosing(true)}
             >
               Close
