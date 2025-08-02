@@ -15,6 +15,8 @@ const initialState: AuthState = {
 const expectedUsername = import.meta.env.VITE_THERAPIST_USERNAME;
 const expectedPassword = import.meta.env.VITE_THERAPIST_PASSWORD;
 
+const SESSION_KEY = "integrateTherapyAuthenticated";
+
 type Props = {
   children: React.ReactNode;
 };
@@ -32,6 +34,21 @@ export default function ProtectedAccess({ children }: Props) {
         clearTimeout(clearErrorTimeoutRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    const savedAuth = sessionStorage.getItem(SESSION_KEY);
+    if (savedAuth === "true") {
+      dispatch({ type: "LOGIN_SUCCESS" });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (state.authenticated) {
+      sessionStorage.setItem(SESSION_KEY, "true");
+    } else {
+      sessionStorage.removeItem(SESSION_KEY);
+    }
+  }, [state.authenticated]);
 
   const handleSubmit = () => {
     if (
