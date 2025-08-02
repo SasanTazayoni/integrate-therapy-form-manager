@@ -27,7 +27,7 @@ export default function FormStatusMessage({
   if (formActionLoading[formType]) {
     return (
       <span className="text-blue-600 flex justify-center items-center gap-2">
-        <Loader2 className="animate-spin h-4 w-4" />
+        <Loader2 className="animate-spin h-5 w-5" />
         Loading...
       </span>
     );

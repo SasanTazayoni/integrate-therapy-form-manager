@@ -42,7 +42,7 @@ export default function EmailInput({
       <div className="min-h-[2.5rem] text-center text-sm font-bold">
         {loading && !error && !successMessage && (
           <div className="text-blue-600 flex justify-center items-center gap-2">
-            <Loader2 className="animate-spin h-4 w-4" />
+            <Loader2 className="animate-spin h-5 w-5" />
             <span>Loading...</span>
           </div>
         )}

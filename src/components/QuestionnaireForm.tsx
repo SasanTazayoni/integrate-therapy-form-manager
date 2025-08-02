@@ -7,9 +7,9 @@ import {
   clientInfoReducer,
   modalInitialState,
 } from "../utils/clientInfoReducer";
-import { Loader2 } from "lucide-react";
 import { FORM_TITLES, type FormType } from "../constants/formTypes";
 import setErrorTimers from "../utils/startErrorFadeTimers";
+import { Loader2 } from "lucide-react";
 
 const DEFAULT_INVALID_MSG =
   "This form is not available. Please contact your therapist to receive a new form.";
@@ -195,7 +195,7 @@ export default function QuestionnaireForm({
   if (state.status === "loading") {
     return (
       <div className="flex justify-center items-center min-h-screen" aria-busy>
-        <Loader2 className="animate-spin text-blue-600" size={200} />
+        <Loader2 className="animate-spin text-blue-600" size={120} />
       </div>
     );
   }
