@@ -110,6 +110,11 @@ body {
   user-select: none;
 }
 
+.wide-modal {
+  max-width: 1200px;
+  width: 100%;
+}
+
 /* Forms */
 
 label {
