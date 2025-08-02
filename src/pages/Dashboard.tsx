@@ -11,6 +11,7 @@ import normalizeEmail from "../utils/normalizeEmail";
 import type { FormStatus } from "../types/formStatusTypes";
 import RevokeConfirmModal from "../components/modals/RevokeConfirmationModal";
 import type { FormType } from "../constants/formTypes";
+import { Link } from "react-router-dom";
 
 type ClientFormsStatus = {
   exists: boolean;
@@ -307,6 +308,15 @@ export default function Dashboard() {
           onRetrieve={(formType) => console.log("Retrieve", formType)}
           formActionLoading={formActionLoading}
         />
+      </div>
+
+      <div className="max-w-4xl mx-auto px-4 mt-10 flex justify-center">
+        <Link
+          to="/summary"
+          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded transition"
+        >
+          View Summary
+        </Link>
       </div>
 
       {showRevokeModal && revokeFormType && (
