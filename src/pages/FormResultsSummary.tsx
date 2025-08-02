@@ -1,4 +1,4 @@
-import { Printer } from "lucide-react";
+import { Printer, FileText } from "lucide-react";
 import { useState } from "react";
 
 const FormResultsSummary = () => {
@@ -85,12 +85,23 @@ const FormResultsSummary = () => {
                   return (
                     <td
                       key={idx}
-                      className={`border-r border-gray-300 p-3 align-top ${
+                      className={`border-r border-gray-300 p-3 align-center ${
                         isLastCell ? "bg-gray-100" : "bg-[--color-block--grey]"
                       }`}
                     >
                       <div className="font-semibold text-sm">{cell}</div>
-                      {cell && <div className="mt-6 h-6 border-b w-full"></div>}
+                      {cell && <div className="mt-6 h-6 border-b"></div>}
+                      {isLastCell && (
+                        <div className="relative inline-block group">
+                          <FileText
+                            className="w-10 h-10 text-gray-400 cursor-pointer transition-colors duration-200 hover:text-gray-600"
+                            aria-label="SMI score summary sheet"
+                          />
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-50">
+                            SMI score summary sheet
+                          </div>
+                        </div>
+                      )}
                     </td>
                   );
                 })}
