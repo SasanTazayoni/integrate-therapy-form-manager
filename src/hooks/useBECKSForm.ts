@@ -13,9 +13,25 @@ const useBecksForm = () => {
     [answers]
   );
 
-  const handleChange = (qId: number, val: 0 | 1 | 2 | 3) => {
-    setAnswers((prev) => ({ ...prev, [qId]: val }));
-    setMissingIds((prev) => prev.filter((id) => id !== qId));
+  const handleChange = (qId: number, val: number | undefined) => {
+    if (val === undefined) {
+      setAnswers((prev) => {
+        const { [qId]: _, ...rest } = prev;
+        return rest;
+      });
+    } else {
+      if (![0, 1, 2, 3].includes(val)) {
+        console.warn(`Invalid answer value: ${val}`);
+        return;
+      }
+
+      setAnswers((prev) => ({
+        ...prev,
+        [qId]: val as 0 | 1 | 2 | 3,
+      }));
+
+      setMissingIds((prev) => prev.filter((id) => id !== qId));
+    }
   };
 
   const handleSubmit = (onValidSubmit: () => void) => (e: React.FormEvent) => {
