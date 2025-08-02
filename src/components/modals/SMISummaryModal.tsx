@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Modal from "../Modal";
+import SMIModeTable from "../tables/SMIModeTable";
 import { useOutsideClickAndEscape } from "../../hooks/useOutsideClickAndEscape";
 
 interface SMISummaryModalProps {
@@ -31,6 +32,42 @@ export default function SMISummaryModal({
 
   if (!isOpen && !closing) return null;
 
+  const modeGroups = [
+    {
+      label: "Child Modes",
+      items: [
+        "Vulnerable Child",
+        "Angry Child",
+        "Enraged Child",
+        "Impulsive Child",
+        "Undisciplined Child",
+        "Contented Child *",
+      ],
+    },
+    {
+      label: "Coping Modes",
+      items: [
+        "Compliant Surrenderer",
+        "Detached Protector",
+        "Detached Self-Soother",
+        "Overcompensating Parent",
+      ],
+    },
+    {
+      label: "Parent Modes",
+      items: [
+        "Self-Aggrandizer",
+        "Bully and Attack",
+        "Punitive Parent",
+        "Demanding Parent",
+      ],
+    },
+    {
+      label: "Healthy Adult Mode",
+      items: ["Healthy Adult *"],
+    },
+  ];
+
   return (
     <Modal
       closing={closing}
@@ -56,84 +93,8 @@ export default function SMISummaryModal({
         </div>
 
         <section className="mt-4 text-sm text-left space-y-8">
-          {[
-            {
-              label: "Child Modes",
-              items: [
-                "Vulnerable Child",
-                "Angry Child",
-                "Enraged Child",
-                "Impulsive Child",
-                "Undisciplined Child",
-                "Contented Child *",
-              ],
-            },
-            {
-              label: "Coping Modes",
-              items: [
-                "Compliant Surrenderer",
-                "Detached Protector",
-                "Detached Self-Soother",
-                "Overcompensating Parent",
-              ],
-            },
-            {
-              label: "Parent Modes",
-              items: [
-                "Self-Aggrandizer",
-                "Bully and Attack",
-                "Punitive Parent",
-                "Demanding Parent",
-              ],
-            },
-            {
-              label: "Healthy Adult Mode",
-              items: ["Healthy Adult *"],
-            },
-          ].map(({ label, items }) => (
-            <div
-              key={label}
-              className="overflow-hidden rounded-lg border border-gray-500"
-            >
-              <table className="w-full table-fixed">
-                <thead className="bg-gray-100 text-sm font-semibold text-gray-800">
-                  <tr>
-                    <th className="w-1/4 px-4 py-2 text-center">{label}</th>
-                    <th className="w-1/8 px-2 py-2 text-center border-l border-gray-500">
-                      Very Low - Ave
-                    </th>
-                    <th className="w-1/8 px-2 py-2 text-center border-l border-gray-500">
-                      Ave - Mod
-                    </th>
-                    <th className="w-1/8 px-2 py-2 text-center border-l border-gray-500">
-                      Mod - High
-                    </th>
-                    <th className="w-1/8 px-2 py-2 text-center border-l border-gray-500">
-                      High – Very
-                    </th>
-                    <th className="w-1/8 px-2 py-2 text-center border-l border-gray-500">
-                      High Very
-                    </th>
-                    <th className="w-1/8 px-2 py-2 text-center border-l border-gray-500">
-                      High - Severe
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items.map((mode) => (
-                    <tr key={mode} className="border-t border-gray-400">
-                      <td className="px-4 py-2 font-normal">{mode}</td>
-                      {[...Array(6)].map((_, i) => (
-                        <td
-                          key={i}
-                          className="px-2 py-2 border-l border-gray-400"
-                        />
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          {modeGroups.map(({ label, items }) => (
+            <SMIModeTable key={label} label={label} items={items} />
           ))}
 
           <p className="mt-4 text-xs italic text-gray-600">
