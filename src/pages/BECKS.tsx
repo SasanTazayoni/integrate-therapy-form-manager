@@ -6,6 +6,7 @@ import BECKS_ITEMS from "../data/BECKSItems";
 import useBecksForm from "../hooks/useBECKSForm";
 import { submitBecksForm } from "../api/formsFrontend";
 import useValidateToken from "../hooks/useValidateToken";
+import BecksQuestions from "../components/BecksQuestions";
 import { Loader2 } from "lucide-react";
 
 const BECKS = () => {
@@ -62,7 +63,7 @@ const BECKS = () => {
   if (isValid === null) {
     return (
       <div className="flex justify-center items-center min-h-screen" aria-busy>
-        <Loader2 className="animate-spin" size={48} />
+        <Loader2 className="animate-spin text-blue-600" size={120} />
       </div>
     );
   }
@@ -81,50 +82,13 @@ const BECKS = () => {
     >
       <div className="questionnaire">
         {BECKS_ITEMS.map((item) => (
-          <fieldset
+          <BecksQuestions
             key={item.id}
-            className={`question ${
-              missingIds.includes(item.id) ? "missing" : ""
-            }`}
-          >
-            <legend className="question-title">{item.prompt}</legend>
-            <div className="options">
-              {item.options.map((opt) => {
-                const inputId = `q${item.id}-${opt.value}`;
-                const name = `q${item.id}`;
-                const checked = answers[item.id] === opt.value;
-
-                return (
-                  <div
-                    className="option"
-                    key={opt.value}
-                    onContextMenu={(e) => {
-                      e.preventDefault();
-                      if (checked) {
-                        const updated = { ...answers };
-                        delete updated[item.id];
-                        handleChange(item.id, updated[item.id]);
-                      }
-                    }}
-                  >
-                    <input
-                      id={inputId}
-                      className="option-input"
-                      type="radio"
-                      name={name}
-                      value={opt.value}
-                      checked={checked || false}
-                      onChange={() => handleChange(item.id, opt.value)}
-                    />
-                    <label htmlFor={inputId} className="option-label">
-                      <span className="badge">{opt.value}</span>
-                      <span>{opt.text}</span>
-                    </label>
-                  </div>
-                );
-              })}
-            </div>
-          </fieldset>
+            item={item}
+            answers={answers}
+            handleChange={handleChange}
+            missingIds={missingIds}
+          />
         ))}
       </div>
 
