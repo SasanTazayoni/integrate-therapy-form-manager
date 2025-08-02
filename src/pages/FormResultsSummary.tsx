@@ -1,4 +1,5 @@
 import SMISummaryModal from "../components/modals/SMISummaryModal";
+import ScoreCard from "../components/BecksBurnsScoreCard";
 import { Printer, FileText } from "lucide-react";
 import { useState } from "react";
 
@@ -204,18 +205,7 @@ const FormResultsSummary = () => {
           { title: "BAI", value: "___" },
           { title: "BDI", value: "___" },
         ].map(({ title, value }) => (
-          <div
-            key={title}
-            className="flex-1 min-w-[140px] p-6 rounded-md shadow-lg text-center border-2 border-gray-300"
-          >
-            <h3 className="text-lg font-semibold text-[--color-link] mb-2">
-              {title}
-            </h3>
-            <p className="text-3xl font-bold text-[--color-secondary] mb-1">
-              {value}
-            </p>
-            <p className="text-sm text-gray-700">(Severity)</p>
-          </div>
+          <ScoreCard key={title} title={title} value={value} />
         ))}
       </section>
 
