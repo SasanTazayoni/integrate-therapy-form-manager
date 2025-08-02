@@ -22,7 +22,7 @@ const router = createBrowserRouter(
         { path: "BECKS/:token", element: <BECKS /> },
         { path: "BURNS/:token", element: <BURNS /> },
         { path: "submitted", element: <SubmittedPage /> },
-        { path: "summary/:submissionId", element: <FormResultsSummary /> },
+        { path: "summary", element: <FormResultsSummary /> },
         { path: "*", element: <NotFound /> },
       ],
     },
