@@ -1,6 +1,29 @@
 import { Printer } from "lucide-react";
+import { useState } from "react";
 
 const FormResultsSummary = () => {
+  const [grayedOutCol, setGrayedOutCol] = useState<"raw" | "456" | null>(null);
+
+  const onHeaderClick = (col: "raw" | "456") => {
+    setGrayedOutCol(col);
+  };
+
+  const onHeaderRightClick = (
+    e: React.MouseEvent<HTMLElement>,
+    col: "raw" | "456"
+  ) => {
+    e.preventDefault();
+    if (grayedOutCol === col) {
+      setGrayedOutCol(null);
+    }
+  };
+
+  const headerTextClass = (col: "raw" | "456") =>
+    grayedOutCol === col ? "text-gray-500" : "text-gray-900";
+
+  const cellTextClass = (col: "raw" | "456") =>
+    grayedOutCol === col ? "text-gray-300" : "text-gray-900";
+
   return (
     <div className="relative outer-container bg-[var(--color-block--white)] text-[--color-link] font-sans">
       <div className="absolute top-4 right-4 no-print group">
@@ -85,8 +108,24 @@ const FormResultsSummary = () => {
           <thead>
             <tr className="text-center bg-gray-200">
               <th className="border border-gray-300 p-2 w-1/3">Schema Name</th>
-              <th className="border border-gray-300 p-2 w-1/12">Raw</th>
-              <th className="border border-gray-300 p-2 w-1/12">4/5/6</th>
+              <th
+                className={`border border-gray-300 p-2 w-1/12 cursor-pointer select-none ${headerTextClass(
+                  "raw"
+                )}`}
+                onClick={() => onHeaderClick("raw")}
+                onContextMenu={(e) => onHeaderRightClick(e, "raw")}
+              >
+                Raw
+              </th>
+              <th
+                className={`border border-gray-300 p-2 w-1/12 cursor-pointer select-none ${headerTextClass(
+                  "456"
+                )}`}
+                onClick={() => onHeaderClick("456")}
+                onContextMenu={(e) => onHeaderRightClick(e, "456")}
+              >
+                4/5/6
+              </th>
               <th className="border border-gray-300 p-2 w-1/12">Max Score</th>
               <th className="border border-gray-300 p-2 w-1/6">
                 Is this one of your schemas?
@@ -125,8 +164,20 @@ const FormResultsSummary = () => {
                 <td className="border border-gray-300 p-2 text-left font-medium">
                   {name} <strong>({code})</strong>
                 </td>
-                <td className="border border-gray-300 p-2"></td>
-                <td className="border border-gray-300 p-2"></td>
+                <td
+                  className={`border border-gray-300 p-2 ${cellTextClass(
+                    "raw"
+                  )}`}
+                >
+                  {/* Empty now */}
+                </td>
+                <td
+                  className={`border border-gray-300 p-2 ${cellTextClass(
+                    "456"
+                  )}`}
+                >
+                  {/* Empty now */}
+                </td>
                 <td className="border border-gray-300 p-2">{max}</td>
                 <td className="border border-gray-300 p-2"></td>
               </tr>
