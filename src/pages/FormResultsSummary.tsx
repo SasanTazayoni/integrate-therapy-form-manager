@@ -178,16 +178,12 @@ const FormResultsSummary = () => {
                   className={`border border-gray-300 p-2 ${cellTextClass(
                     "raw"
                   )}`}
-                >
-                  {/* Empty now */}
-                </td>
+                ></td>
                 <td
                   className={`border border-gray-300 p-2 ${cellTextClass(
                     "456"
                   )}`}
-                >
-                  {/* Empty now */}
-                </td>
+                ></td>
                 <td className="border border-gray-300 p-2">{max}</td>
                 <td className="border border-gray-300 p-2"></td>
               </tr>
@@ -203,7 +199,7 @@ const FormResultsSummary = () => {
         ].map(({ title, value }) => (
           <div
             key={title}
-            className="flex-1 min-w-[140px] p-6 rounded-md shadow-lg text-center form-border"
+            className="flex-1 min-w-[140px] p-6 rounded-md shadow-lg text-center border-2 border-gray-300"
           >
             <h3 className="text-lg font-semibold text-[--color-link] mb-2">
               {title}
