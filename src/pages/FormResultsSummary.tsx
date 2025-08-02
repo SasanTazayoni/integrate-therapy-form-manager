@@ -30,7 +30,6 @@ const FormResultsSummary = () => {
         <button
           onClick={() => window.print()}
           className="text-gray-400 hover:text-gray-600 transition-colors duration-200 cursor-pointer"
-          title="Print this page"
         >
           <Printer className="w-10 h-10" />
         </button>
