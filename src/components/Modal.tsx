@@ -8,6 +8,7 @@ type Props = {
   ariaDescribedBy?: string;
   role?: React.AriaRole;
   onCloseFinished?: () => void;
+  className?: string;
 };
 
 export default function Modal({
@@ -17,6 +18,7 @@ export default function Modal({
   ariaDescribedBy,
   role = "dialog",
   onCloseFinished,
+  className,
 }: Props) {
   const [visible, setVisible] = useState(false);
 
@@ -40,7 +42,7 @@ export default function Modal({
   return ReactDOM.createPortal(
     <div className={overlayClass} aria-hidden={false}>
       <div
-        className="modal"
+        className={`modal ${className}`}
         role={role}
         aria-modal="true"
         aria-labelledby={ariaLabelledBy}
