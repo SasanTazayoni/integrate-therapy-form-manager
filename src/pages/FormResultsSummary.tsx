@@ -98,7 +98,7 @@ const FormResultsSummary = () => {
                       {cell && <div className="mt-6 h-6 border-b"></div>}
                       {isLastCell && (
                         <div
-                          className="relative flex justify-center items-center h-full group cursor-pointer"
+                          className="relative inline-flex justify-center group cursor-pointer"
                           onClick={openModal}
                           title="Open SMI Summary Sheet"
                         >
