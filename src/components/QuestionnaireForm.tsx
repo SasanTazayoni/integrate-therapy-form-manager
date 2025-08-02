@@ -206,7 +206,7 @@ export default function QuestionnaireForm({
         <div className="blurred">
           <h1>{title}</h1>
         </div>
-        <InvalidTokenModal message={DEFAULT_INVALID_MSG} />
+        <InvalidTokenModal />
       </div>
     );
   }
