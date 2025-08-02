@@ -1,8 +1,10 @@
+import SMISummaryModal from "../components/modals/SMISummaryModal";
 import { Printer, FileText } from "lucide-react";
 import { useState } from "react";
 
 const FormResultsSummary = () => {
   const [grayedOutCol, setGrayedOutCol] = useState<"raw" | "456" | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const onHeaderClick = (col: "raw" | "456") => {
     setGrayedOutCol(col);
@@ -24,12 +26,16 @@ const FormResultsSummary = () => {
   const cellTextClass = (col: "raw" | "456") =>
     grayedOutCol === col ? "text-gray-300" : "text-gray-900";
 
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   return (
     <div className="relative outer-container bg-[var(--color-block--white)] text-[--color-link] font-sans">
       <div className="absolute top-4 right-4 no-print group">
         <button
           onClick={() => window.print()}
           className="text-gray-400 hover:text-gray-600 transition-colors duration-200 cursor-pointer"
+          aria-label="Print page"
         >
           <Printer className="w-10 h-10" />
         </button>
@@ -91,12 +97,13 @@ const FormResultsSummary = () => {
                       <div className="font-semibold text-sm">{cell}</div>
                       {cell && <div className="mt-6 h-6 border-b"></div>}
                       {isLastCell && (
-                        <div className="relative inline-block group">
-                          <FileText
-                            className="w-10 h-10 text-gray-400 cursor-pointer transition-colors duration-200 hover:text-gray-600"
-                            aria-label="SMI score summary sheet"
-                          />
-                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-50">
+                        <div
+                          className="relative flex justify-center items-center h-full group cursor-pointer"
+                          onClick={openModal}
+                          title="Open SMI Summary Sheet"
+                        >
+                          <FileText className="w-10 h-10 text-gray-400 transition-colors duration-200 hover:text-gray-600" />
+                          <div className="absolute bottom-full hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-50">
                             SMI score summary sheet
                           </div>
                         </div>
@@ -211,6 +218,8 @@ const FormResultsSummary = () => {
           </div>
         ))}
       </section>
+
+      <SMISummaryModal isOpen={isModalOpen} onClose={closeModal} />
     </div>
   );
 };
