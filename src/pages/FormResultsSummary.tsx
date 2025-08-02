@@ -5,10 +5,13 @@ import YSQSchemasTable from "../components/tables/YSQSchemasTable";
 import { Printer } from "lucide-react";
 import { useState } from "react";
 import ProtectedAccess from "../components/ProtectedAccess";
+import { useNavigate } from "react-router-dom";
 
 const FormResultsSummary = () => {
   const [grayedOutCol, setGrayedOutCol] = useState<"raw" | "456" | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const navigate = useNavigate();
 
   const onHeaderClick = (col: "raw" | "456") => {
     setGrayedOutCol(col);
@@ -30,6 +33,16 @@ const FormResultsSummary = () => {
   return (
     <ProtectedAccess>
       <div className="relative outer-container bg-[var(--color-block--white)] text-[--color-link] font-sans">
+        <div className="absolute top-6 left-4 no-print">
+          <button
+            onClick={() => navigate("/")}
+            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm cursor-pointer"
+            aria-label="Go to Dashboard"
+          >
+            Dashboard
+          </button>
+        </div>
+
         <div className="absolute top-4 right-4 no-print group">
           <button
             onClick={() => window.print()}
