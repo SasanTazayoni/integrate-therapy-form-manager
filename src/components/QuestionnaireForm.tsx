@@ -225,7 +225,7 @@ export default function QuestionnaireForm({
               className="inline-block w-7 h-7 md:w-8 md:h-8 mb-8 shrink-0 select-none"
               draggable="false"
             />
-            <h1 className="title">{FORM_TITLES.BECKS}</h1>
+            <h1 className="title">{FORM_TITLES[questionnaire]}</h1>
             <img
               src={logoUrl}
               alt="Integrate Therapy logo"
