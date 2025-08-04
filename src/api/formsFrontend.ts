@@ -69,6 +69,31 @@ export async function submitBecksForm({
   }
 }
 
+export async function submitBurnsForm({
+  token,
+  result,
+}: {
+  token: string;
+  result: string;
+}) {
+  try {
+    const res = await axios.post("/forms/submit/burns", { token, result });
+    return { ok: true, data: res.data };
+  } catch (err: any) {
+    const code = err?.response?.data?.code;
+    const message = getErrorDisplay(
+      err,
+      "Network error while submitting form."
+    );
+
+    return {
+      ok: false,
+      error: message,
+      code,
+    };
+  }
+}
+
 export async function updateClientInfo({
   token,
   name,
