@@ -292,3 +292,51 @@ export const updateClientInfo = async (req: Request, res: Response) => {
       .json({ message: "Server error updating client info" });
   }
 };
+
+export const getBecksForm = async (
+  req: Request<{ email: string }>,
+  res: Response
+) => {
+  const { email } = req.params;
+
+  if (!email) {
+    return res.status(400).json({ error: "Missing email" });
+  }
+
+  try {
+    const client = await prisma.client.findUnique({
+      where: { email },
+    });
+
+    if (!client) {
+      return res.status(404).json({ error: "Client not found" });
+    }
+
+    const form = await prisma.form.findFirst({
+      where: {
+        clientId: client.id,
+        form_type: "BECKS",
+        submitted_at: { not: null },
+      },
+      orderBy: {
+        submitted_at: "desc",
+      },
+      select: {
+        token: true,
+        bdi_score: true,
+        submitted_at: true,
+      },
+    });
+
+    if (!form) {
+      return res.status(404).json({
+        error: "No submitted BECKS form found for client",
+      });
+    }
+
+    return res.json(form);
+  } catch (error) {
+    console.error("Error fetching BECKS form by email:", error);
+    return res.status(500).json({ error: "Failed to fetch BECKS form" });
+  }
+};
