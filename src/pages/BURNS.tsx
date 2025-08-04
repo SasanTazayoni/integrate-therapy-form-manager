@@ -1,32 +1,34 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import QuestionnaireForm from "../components/QuestionnaireForm";
 import FormResetConfirmModal from "../components/modals/FormResetConfirmModal";
 import InvalidTokenModal from "../components/modals/InvalidTokenModal";
+import BURNS_ITEMS from "../data/BURNSItems";
 import useBurnsForm from "../hooks/useBURNSForm";
 import useValidateToken from "../hooks/useValidateToken";
-// import { submitBurnsForm } from "../api/formsFrontend";
 import BurnsQuestions from "../components/BurnsQuestions";
-import BURNS_ITEMS from "../data/BURNSItems";
+import { submitBurnsForm } from "../api/formsFrontend";
 import { Loader2 } from "lucide-react";
 
 const BURNS = () => {
   const { token } = useParams<{ token: string }>();
+  const navigate = useNavigate();
   const { isValid, showInvalidTokenModal, setShowInvalidTokenModal } =
     useValidateToken(token);
 
   const {
     answers,
+    total,
     formError,
-    setFormError,
-    missingIds,
-    handleChange,
-    handleSubmit,
     resetModalOpen,
     resetModalClosing,
+    handleChange,
+    handleSubmit,
     handleResetClick,
     confirmReset,
     cancelReset,
     handleModalCloseFinished,
+    setFormError,
+    missingIds,
   } = useBurnsForm();
 
   const onValidSubmit = async () => {
@@ -45,14 +47,23 @@ const BURNS = () => {
     }
 
     setFormError("");
-    const isFakeInvalidToken = token === "invalid"; // replace with whatever you want
 
-    if (isFakeInvalidToken) {
-      setShowInvalidTokenModal(true);
+    const { ok, error, code } = await submitBurnsForm({
+      token,
+      result: total.toString(),
+    });
+
+    if (!ok) {
+      if (code === "INVALID_TOKEN") {
+        setShowInvalidTokenModal(true);
+        return;
+      }
+
+      setFormError(error ?? "Failed to submit the form.");
       return;
     }
 
-    console.log("Form ready to submit:", answers);
+    navigate("/submitted");
   };
 
   if (isValid === null) {
@@ -67,28 +78,39 @@ const BURNS = () => {
     return <InvalidTokenModal />;
   }
 
-  const subtitle = BURNS_ITEMS[0]?.category || "";
-
   return (
     <QuestionnaireForm
       title="Burns Anxiety Inventory"
-      subtitle={subtitle}
       questionnaire="BURNS"
       token={token}
       onError={setFormError}
       onSubmit={handleSubmit(onValidSubmit)}
     >
       <div className="questionnaire">
-        {BURNS_ITEMS.map((item) => (
-          <BurnsQuestions
-            key={item.id}
-            item={item}
-            answers={answers}
-            handleChange={handleChange}
-            missingIds={missingIds}
-          />
-        ))}
+        {BURNS_ITEMS.map((item, index) => {
+          const isFirstOfCategory =
+            index === 0 || BURNS_ITEMS[index - 1].category !== item.category;
+
+          return (
+            <div key={item.id} className="mb-6">
+              {isFirstOfCategory && (
+                <h2 className="text-gray-600 text-base md:text-2xl mt-5 mb-6 font-semibold text-center">
+                  {item.category}
+                </h2>
+              )}
+
+              <BurnsQuestions
+                item={item}
+                answers={answers}
+                handleChange={handleChange}
+                missingIds={missingIds}
+              />
+            </div>
+          );
+        })}
       </div>
+
+      <input type="hidden" name="result" value={total} />
 
       <div className="min-h-[1.5rem] text-center mt-4">
         {formError && <p className="text-red-600 font-bold">{formError}</p>}
