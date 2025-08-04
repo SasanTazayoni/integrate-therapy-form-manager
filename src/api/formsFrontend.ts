@@ -88,3 +88,15 @@ export async function updateClientInfo({
     };
   }
 }
+
+export async function getBecksForm(email: string) {
+  try {
+    const res = await axios.get(`/forms/becks/${email}`);
+    return { ok: true, data: res.data };
+  } catch (err: any) {
+    return {
+      ok: false,
+      error: getErrorDisplay(err, "Failed to retrieve Becks form result."),
+    };
+  }
+}
