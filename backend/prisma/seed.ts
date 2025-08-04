@@ -73,6 +73,7 @@ async function main() {
       is_active: false,
       revoked_at: null,
       bdi_score: null,
+      burns_score: null,
     },
   });
 
@@ -87,6 +88,7 @@ async function main() {
       is_active: false,
       revoked_at: null,
       bdi_score: null,
+      burns_score: null,
     },
   });
 
@@ -101,6 +103,7 @@ async function main() {
       submitted_at: null,
       revoked_at: null,
       bdi_score: null,
+      burns_score: null,
     },
   });
 
@@ -115,6 +118,7 @@ async function main() {
       submitted_at: null,
       revoked_at: null,
       bdi_score: null,
+      burns_score: null,
     },
   });
 
@@ -130,6 +134,7 @@ async function main() {
         is_active: false,
         revoked_at: null,
         bdi_score: null,
+        burns_score: null,
       },
       {
         clientId: emma.id,
@@ -141,6 +146,7 @@ async function main() {
         is_active: true,
         revoked_at: null,
         bdi_score: null,
+        burns_score: null,
       },
       {
         clientId: emma.id,
@@ -152,6 +158,7 @@ async function main() {
         is_active: true,
         revoked_at: null,
         bdi_score: null,
+        burns_score: null,
       },
       {
         clientId: emma.id,
@@ -163,6 +170,7 @@ async function main() {
         is_active: false,
         revoked_at: null,
         bdi_score: "19-Moderate depression",
+        burns_score: null,
       },
     ],
   });
@@ -179,6 +187,7 @@ async function main() {
         is_active: false,
         revoked_at: null,
         bdi_score: null,
+        burns_score: null,
       },
       {
         clientId: frank.id,
@@ -190,6 +199,7 @@ async function main() {
         is_active: false,
         revoked_at: null,
         bdi_score: null,
+        burns_score: null,
       },
       {
         clientId: frank.id,
@@ -201,6 +211,7 @@ async function main() {
         is_active: false,
         revoked_at: now,
         bdi_score: null,
+        burns_score: null,
       },
     ],
   });
