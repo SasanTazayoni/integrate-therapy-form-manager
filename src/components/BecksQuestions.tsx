@@ -15,16 +15,17 @@ export default function BecksQuestions({
   handleChange,
   missingIds,
 }: BecksQuestionsProps) {
+  const isMissing = missingIds.includes(item.id);
+  const selectedValue = answers[item.id];
+
   return (
-    <fieldset
-      className={`question ${missingIds.includes(item.id) ? "missing" : ""}`}
-    >
+    <fieldset className={`question ${isMissing ? "missing" : ""}`}>
       <legend className="question-title">{item.prompt}</legend>
       <div className="options">
         {item.options.map((opt) => {
           const inputId = `q${item.id}-${opt.value}`;
           const name = `q${item.id}`;
-          const checked = answers[item.id] === opt.value;
+          const isChecked = selectedValue === opt.value;
 
           return (
             <div
@@ -32,10 +33,8 @@ export default function BecksQuestions({
               key={opt.value}
               onContextMenu={(e) => {
                 e.preventDefault();
-                if (checked) {
-                  const updated = { ...answers };
-                  delete updated[item.id];
-                  handleChange(item.id, updated[item.id]);
+                if (isChecked) {
+                  handleChange(item.id, undefined);
                 }
               }}
             >
@@ -45,7 +44,7 @@ export default function BecksQuestions({
                 type="radio"
                 name={name}
                 value={opt.value}
-                checked={checked || false}
+                checked={isChecked}
                 onChange={() => handleChange(item.id, opt.value)}
               />
               <label htmlFor={inputId} className="option-label">
