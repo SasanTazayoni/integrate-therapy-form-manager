@@ -17,6 +17,7 @@ const logoUrl = `${import.meta.env.BASE_URL}logo.png`;
 
 type QuestionnaireFormProps = {
   title: string;
+  subtitle?: string;
   questionnaire: FormType;
   token?: string;
   children: React.ReactNode;
@@ -44,6 +45,7 @@ function reducer(state: State, action: Action): State {
 
 export default function QuestionnaireForm({
   title,
+  subtitle,
   questionnaire,
   children,
   token,
@@ -217,22 +219,30 @@ export default function QuestionnaireForm({
     <div className="relative min-h-screen">
       <div className={showModal ? "blurred" : ""}>
         <div className="outer-container">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <img
-              src={logoUrl}
-              alt="Integrate Therapy logo"
-              aria-hidden="true"
-              className="inline-block w-7 h-7 md:w-8 md:h-8 mb-8 shrink-0 select-none"
-              draggable="false"
-            />
-            <h1 className="title">{FORM_TITLES[questionnaire]}</h1>
-            <img
-              src={logoUrl}
-              alt="Integrate Therapy logo"
-              aria-hidden="true"
-              className="inline-block w-7 h-7 md:w-8 md:h-8 mb-8 shrink-0 select-none"
-              draggable="false"
-            />
+          <div className="flex flex-col items-center justify-center mb-6 text-center">
+            <div className="flex items-center justify-center gap-3 mb-2">
+              <img
+                src={logoUrl}
+                alt="Integrate Therapy logo"
+                aria-hidden="true"
+                className="inline-block w-7 h-7 md:w-8 md:h-8 mb-2 shrink-0 select-none"
+                draggable="false"
+              />
+              <h1 className="title">{FORM_TITLES[questionnaire]}</h1>
+              <img
+                src={logoUrl}
+                alt="Integrate Therapy logo"
+                aria-hidden="true"
+                className="inline-block w-7 h-7 md:w-8 md:h-8 mb-2 shrink-0 select-none"
+                draggable="false"
+              />
+            </div>
+
+            {subtitle && (
+              <p className="text-gray-600 text-sm md:text-base mt-1">
+                {subtitle}
+              </p>
+            )}
           </div>
 
           <form onSubmit={onSubmit}>
