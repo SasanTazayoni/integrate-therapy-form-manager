@@ -33,6 +33,42 @@ model Form {
   revoked_at       DateTime?
   bdi_score        String?
   burns_score      String?
+  ysq_ed_score     String?
+  ysq_ab_score     String?
+  ysq_ma_score     String?
+  ysq_si_score     String?
+  ysq_ds_score     String?
+  ysq_fa_score     String?
+  ysq_di_score     String?
+  ysq_vu_score     String?
+  ysq_eu_score     String?
+  ysq_sb_score     String?
+  ysq_ss_score     String?
+  ysq_ei_score     String?
+  ysq_us_score     String?
+  ysq_et_score     String?
+  ysq_is_score     String?
+  ysq_as_score     String?
+  ysq_np_score     String?
+  ysq_pu_score     String?
+  ysq_ed_456       String?
+  ysq_ab_456       String?
+  ysq_ma_456       String?
+  ysq_si_456       String?
+  ysq_ds_456       String?
+  ysq_fa_456       String?
+  ysq_di_456       String?
+  ysq_vu_456       String?
+  ysq_eu_456       String?
+  ysq_sb_456       String?
+  ysq_ss_456       String?
+  ysq_ei_456       String?
+  ysq_us_456       String?
+  ysq_et_456       String?
+  ysq_is_456       String?
+  ysq_as_456       String?
+  ysq_np_456       String?
+  ysq_pu_456       String?
   created_at       DateTime  @default(now())
   updated_at       DateTime  @updatedAt
 }
