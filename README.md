@@ -2,9 +2,6 @@
 
 # Project plan
 
-- Colour scheme
-- Fonts
-- Modal design
 - Auth failure notif
 - Buttons?
 - Questionnaire
