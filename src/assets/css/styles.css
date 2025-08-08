@@ -331,3 +331,29 @@ textarea:focus {
   text-align: center;
   margin-bottom: 2rem;
 }
+
+input.small-square-input {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  text-align: center;
+  margin: 0;
+  border: solid 2px transparent;
+  background: var(--color-selected-bg);
+  transition: 0.3s;
+}
+
+input.small-square-input.error {
+  border: solid 2px rgb(255, 46, 46);
+  background: #ffbfbf;
+  transition: rgb(255, 155, 155) und-color 0.3s ease, border-color 0.3s ease;
+}
+
+input.small-square-input:focus {
+  border: solid 2px var(--color-secondary);
+}
+
+input.small-square-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
