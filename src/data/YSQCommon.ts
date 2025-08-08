@@ -2,6 +2,7 @@ export type Item = {
   id: number;
   prompt: string;
   options: { value: 1 | 2 | 3 | 4 | 5 | 6; text: string }[];
+  category: string;
 };
 
 export const OPTIONS: { value: 1 | 2 | 3 | 4 | 5 | 6; text: string }[] = [
