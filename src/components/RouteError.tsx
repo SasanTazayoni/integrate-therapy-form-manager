@@ -1,6 +1,17 @@
 import { isRouteErrorResponse, useRouteError } from "react-router-dom";
 import Modal from "../components/Modal";
 
+type ErrorData = { message?: string } | string | undefined;
+
+function isErrorDataObject(data: unknown): data is { message: string } {
+  return (
+    typeof data === "object" &&
+    data !== null &&
+    "message" in data &&
+    typeof (data as any).message === "string"
+  );
+}
+
 export default function RouteError() {
   const err = useRouteError();
 
@@ -9,10 +20,12 @@ export default function RouteError() {
 
   if (isRouteErrorResponse(err)) {
     title = `${err.status} ${err.statusText}`;
-    if (typeof err.data === "string") {
-      message = err.data || message;
-    } else if (err.data && typeof (err.data as any).message === "string") {
-      message = (err.data as any).message || message;
+    const data = err.data as ErrorData;
+
+    if (typeof data === "string") {
+      message = data || message;
+    } else if (isErrorDataObject(data)) {
+      message = data.message || message;
     }
   }
 
