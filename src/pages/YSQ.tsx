@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import QuestionnaireForm from "../components/QuestionnaireForm";
 import FormResetConfirmModal from "../components/modals/FormResetConfirmModal";
 import InvalidTokenModal from "../components/modals/InvalidTokenModal";
@@ -29,6 +29,7 @@ import { submitYSQForm } from "../api/formsFrontend";
 
 const YSQ = () => {
   const { token } = useParams<{ token: string }>();
+  const navigate = useNavigate();
 
   const { isValid, showInvalidTokenModal, setShowInvalidTokenModal } =
     useValidateToken(token);
@@ -86,7 +87,7 @@ const YSQ = () => {
     }
 
     setFormError("");
-    console.log("YSQ form submitted successfully");
+    navigate("/submitted");
   };
 
   if (isValid === null) {
