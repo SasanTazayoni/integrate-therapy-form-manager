@@ -20,6 +20,7 @@ import YSQAbandonment from "../data/YSQAbandonment";
 // import YSQApprovalSeeking from "../data/YSQApprovalSeeking";
 // import YSQNegativityPessimism from "../data/YSQNegativityPessimism";
 // import YSQPunitiveness from "../data/YSQPunitiveness";
+import { Item } from "../data/YSQCommon";
 import useYSQForm from "../hooks/useYSQForm";
 import useValidateToken from "../hooks/useValidateToken";
 import Question from "../components/YSQQuestions";
@@ -55,22 +56,37 @@ const YSQ = () => {
     }
 
     const emotionalDeprivationTotal = YSQEmotionalDeprivation.reduce(
-      (sum, item) => {
-        const val = answers[item.id] ?? 0;
-        return sum + val;
-      },
+      (sum, item) => sum + (answers[item.id] ?? 0),
       0
     );
 
-    const abandonmentTotal = YSQAbandonment.reduce((sum, item) => {
-      const val = answers[item.id] ?? 0;
-      return sum + val;
-    }, 0);
+    const abandonmentTotal = YSQAbandonment.reduce(
+      (sum, item) => sum + (answers[item.id] ?? 0),
+      0
+    );
 
-    console.log("Emotional Deprivation Total:", emotionalDeprivationTotal);
-    console.log("Abandonment Total:", abandonmentTotal);
+    const scores = {
+      ysq_ed_score: emotionalDeprivationTotal.toString(),
+      ysq_ab_score: abandonmentTotal.toString(),
+    };
 
-    // No submission or navigation for now
+    const { ok, error, code } = await submitYSQForm({
+      token,
+      scores,
+    });
+
+    if (!ok) {
+      if (code === "INVALID_TOKEN") {
+        setShowInvalidTokenModal(true);
+        return;
+      }
+
+      setFormError(error ?? "Failed to submit the YSQ form.");
+      return;
+    }
+
+    setFormError("");
+    console.log("YSQ form submitted successfully");
   };
 
   if (isValid === null) {
@@ -85,11 +101,7 @@ const YSQ = () => {
     return <InvalidTokenModal />;
   }
 
-  const renderQuestion = (item: {
-    id: number;
-    prompt: string;
-    options: any;
-  }) => (
+  const renderQuestion = (item: Item) => (
     <Question
       key={item.id}
       item={item}
@@ -108,95 +120,10 @@ const YSQ = () => {
         onError={setFormError}
         onSubmit={handleSubmit(onValidSubmit)}
       >
-        <section>
-          <h3>Emotional Deprivation (Items 1–9)</h3>
-          {YSQEmotionalDeprivation.map(renderQuestion)}
-        </section>
-
-        <section>
-          <h3>Abandonment (Items 10–26)</h3>
-          {YSQAbandonment.map(renderQuestion)}
-        </section>
-
-        {/* <section>
-    <h3>Mistrust / Abuse (Items 27–43)</h3>
-    {YSQMistrustAbuse.map(renderQuestion)}
-  </section>
-
-  <section>
-    <h3>Social Isolation (Items 44–53)</h3>
-    {YSQSocialIsolation.map(renderQuestion)}
-  </section>
-
-  <section>
-    <h3>Defectiveness (Items 54–68)</h3>
-    {YSQDefectiveness.map(renderQuestion)}
-  </section>
-
-  <section>
-    <h3>Failure (Items 69–77)</h3>
-    {YSQFailure.map(renderQuestion)}
-  </section>
-
-  <section>
-    <h3>Dependence (Items 78–92)</h3>
-    {YSQDependence.map(renderQuestion)}
-  </section>
-
-  <section>
-    <h3>Vulnerability (Items 93–104)</h3>
-    {YSQVulnerability.map(renderQuestion)}
-  </section>
-
-  <section>
-    <h3>Enmeshment (Items 105–115)</h3>
-    {YSQEnmeshment.map(renderQuestion)}
-  </section>
-
-  <section>
-    <h3>Subjugation (Items 116–125)</h3>
-    {YSQSubjugation.map(renderQuestion)}
-  </section>
-
-  <section>
-    <h3>Self-Sacrifice (Items 126–142)</h3>
-    {YSQSelfSacrifice.map(renderQuestion)}
-  </section>
-
-  <section>
-    <h3>Emotional Inhibition (Items 143–151)</h3>
-    {YSQEmotionalInhibition.map(renderQuestion)}
-  </section>
-
-  <section>
-    <h3>Unrelenting Standards (Items 152–167)</h3>
-    {YSQUnrelentingStandards.map(renderQuestion)}
-  </section>
-
-  <section>
-    <h3>Entitlement (Items 168-178)</h3>
-    {YSQEntitlement.map(renderQuestion)}
-  </section>
-
-  <section>
-    <h3>Insufficient Self-Control (Items 179–193)</h3>
-    {YSQInsufficientSelfControl.map(renderQuestion)}
-  </section>
-
-  <section>
-    <h3>Approval Seeking (Items 194–207)</h3>
-    {YSQApprovalSeeking.map(renderQuestion)}
-  </section>
-
-  <section>
-    <h3>Negativity/Pessimism (Items 208–218)</h3>
-    {YSQNegativityPessimism.map(renderQuestion)}
-  </section>
-
-  <section>
-    <h3>Punitiveness (Items 219–232)</h3>
-    {YSQPunitiveness.map(renderQuestion)}
-  </section> */}
+        <div className="border-2 border-gray-400 divide-y divide-gray-400 rounded-lg">
+          <section>{YSQEmotionalDeprivation.map(renderQuestion)}</section>
+          <section>{YSQAbandonment.map(renderQuestion)}</section>
+        </div>
 
         <input type="hidden" name="result" value={total} />
 
