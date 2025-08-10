@@ -10,6 +10,7 @@ import {
 } from "../utils/formUtils";
 import { parseDateStrict } from "../utils/dates";
 import getBecksScoreCategory from "../utils/becksScoreUtils";
+import getBurnsScoreCategory from "../utils/burnsScoreUtils";
 
 export const createForm = async (
   req: Request<{}, unknown, { clientId: string; formType: FormType }>,
@@ -281,13 +282,15 @@ export const submitBurnsForm = async (
     }
 
     const score = Number.isInteger(parseInt(result)) ? parseInt(result) : 0;
+    const scoreCategory = getBurnsScoreCategory(score);
+    const combinedScore = `${score}-${scoreCategory}`;
     const now = new Date();
 
     await prisma.form.update({
       where: { token },
       data: {
         submitted_at: now,
-        bai_score: score.toString(),
+        bai_score: combinedScore,
         is_active: false,
         token_expires_at: now,
       },
