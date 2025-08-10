@@ -87,8 +87,12 @@ export async function sendFormLink({
   try {
     const info = await transporter.sendMail(mailOptions);
     console.log("✅ Email sent:", info.messageId);
-  } catch (error: any) {
-    console.error("❌ Failed to send email:", error.message || error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("❌ Failed to send email:", error.message);
+    } else {
+      console.error("❌ Failed to send email:", error);
+    }
     throw new Error("Email sending failed");
   }
 }
