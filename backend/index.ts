@@ -12,6 +12,10 @@ dotenv.config();
 
 const app = express();
 
+type HttpError = Error & {
+  status?: number;
+};
+
 // --- Security / middleware ---
 app.use(helmet());
 app.use(
@@ -48,7 +52,7 @@ if (process.env.NODE_ENV === "production") {
 // --- Error handler ---
 app.use(
   (
-    err: any,
+    err: HttpError,
     _req: express.Request,
     res: express.Response,
     _next: express.NextFunction
