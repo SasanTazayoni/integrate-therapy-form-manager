@@ -1,53 +1,55 @@
-type YSQQuestionProps = {
+type YSQQuestionsProps = {
   item: {
     id: number;
     prompt: string;
-    options: { id: number; label: string }[];
+    category: string;
   };
-  value: number | null;
-  onChange: (value: number) => void;
+  value: number | undefined;
+  onChange: (value: number | undefined) => void;
   showError?: boolean;
 };
 
-const YSQQuestion = ({
+const YSQQuestions = ({
   item,
   value,
   onChange,
   showError = false,
-}: YSQQuestionProps) => {
+}: YSQQuestionsProps) => {
   return (
-    <div className={`question${showError ? " missing" : ""}`}>
-      <p className="question-title">{item.prompt}</p>
-      <div className="options">
-        {item.options.map((opt) => (
-          <div className="option" key={opt.id}>
-            <input
-              className="option-input"
-              type="radio"
-              id={`q${item.id}_opt${opt.id}`}
-              name={`q${item.id}`}
-              value={opt.id}
-              checked={value === opt.id}
-              onChange={() => onChange(opt.id)}
-              required
-            />
-            <label
-              className="option-label"
-              htmlFor={`q${item.id}_opt${opt.id}`}
-            >
-              <span className="badge">{opt.id}</span>
-              <span>{opt.label}</span>
-            </label>
-          </div>
-        ))}
+    <div className="flex items-center gap-4 p-2 border-b border-gray-300">
+      <div className="w-10 h-10 flex items-center justify-center border rounded bg-gray-100 font-semibold text-gray-400">
+        {item.id}
       </div>
-      {showError && (
-        <div className="field" style={{ color: "red", fontSize: "0.875rem" }}>
-          Please select a response.
-        </div>
-      )}
+
+      <input
+        type="number"
+        min={1}
+        max={6}
+        value={value ?? ""}
+        onFocus={(e) => e.target.select()}
+        onChange={(e) => {
+          const val = e.target.value;
+          if (val === "") {
+            onChange(undefined);
+          } else {
+            const num = parseInt(val, 10);
+            if (!isNaN(num) && num >= 1 && num <= 6) {
+              onChange(num);
+            }
+          }
+        }}
+        className={`small-square-input w-10 h-10 text-center rounded font-bold focus:outline-none ${
+          showError ? "error" : ""
+        }`}
+      />
+
+      <div className="flex-1">{item.prompt}</div>
+
+      <div className="w-12 text-sm text-center text-gray-400">
+        {item.category}
+      </div>
     </div>
   );
 };
 
-export default YSQQuestion;
+export default YSQQuestions;
