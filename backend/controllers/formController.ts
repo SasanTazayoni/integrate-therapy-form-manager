@@ -303,6 +303,59 @@ export const submitBurnsForm = async (
   }
 };
 
+export const submitYSQForm = async (
+  req: Request<
+    {},
+    any,
+    { token: string; scores: { ysq_ed_score?: string; ysq_ab_score?: string } }
+  >,
+  res: Response
+) => {
+  const { token, scores } = req.body;
+
+  if (!token || !scores) {
+    return res.status(400).json({
+      error: "Missing required fields",
+      code: "MISSING_FIELDS",
+    });
+  }
+
+  try {
+    const form = await prisma.form.findUnique({
+      where: { token },
+      include: { client: true },
+    });
+
+    if (!form || !isFormTokenUsable(form)) {
+      return res.status(403).json({
+        error: "Token is invalid or expired",
+        code: "INVALID_TOKEN",
+      });
+    }
+
+    const now = new Date();
+
+    await prisma.form.update({
+      where: { token },
+      data: {
+        submitted_at: now,
+        ysq_ed_score: scores.ysq_ed_score ?? null,
+        ysq_ab_score: scores.ysq_ab_score ?? null,
+        is_active: false,
+        token_expires_at: now,
+      },
+    });
+
+    return res.json({ success: true });
+  } catch (error) {
+    console.error("Error submitting YSQ form:", error);
+    return res.status(500).json({
+      error: "Failed to submit YSQ form",
+      code: "SUBMIT_ERROR",
+    });
+  }
+};
+
 export const updateClientInfo = async (req: Request, res: Response) => {
   const { token, name, dob } = req.body;
 
