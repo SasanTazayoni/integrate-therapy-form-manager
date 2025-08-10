@@ -96,13 +96,20 @@ export async function submitBurnsForm({
 
 export async function submitYSQForm({
   token,
-  result,
+  scores,
 }: {
   token: string;
-  result: string;
+  scores: {
+    ysq_ed_score?: string;
+    ysq_ab_score?: string;
+  };
 }) {
   try {
-    const res = await axios.post("/forms/submit/ysq", { token, result });
+    const res = await axios.post("/forms/submit/ysq", {
+      token,
+      scores,
+    });
+
     return { ok: true, data: res.data };
   } catch (err: any) {
     const code = err?.response?.data?.code;
