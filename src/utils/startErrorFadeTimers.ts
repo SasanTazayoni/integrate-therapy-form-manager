@@ -1,7 +1,7 @@
 import type { RefObject, Dispatch } from "react";
 
 export default function setErrorTimers(
-  dispatch: Dispatch<any>,
+  dispatch: Dispatch<{ type: string }>,
   fadeOutAction: string,
   clearAction: string,
   fadeOutDelay = 2500,
