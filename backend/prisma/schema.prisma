@@ -32,7 +32,7 @@ model Form {
   submitted_at     DateTime?
   revoked_at       DateTime?
   bdi_score        String?
-  burns_score      String?
+  bai_score        String?
   ysq_ed_score     String?
   ysq_ab_score     String?
   ysq_ma_score     String?
