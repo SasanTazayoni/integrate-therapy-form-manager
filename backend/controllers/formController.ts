@@ -12,7 +12,7 @@ import { parseDateStrict } from "../utils/dates";
 import getBecksScoreCategory from "../utils/becksScoreUtils";
 
 export const createForm = async (
-  req: Request<{}, any, { clientId: string; formType: FormType }>,
+  req: Request<{}, unknown, { clientId: string; formType: FormType }>,
   res: Response
 ) => {
   const { clientId, formType } = req.body;
@@ -46,7 +46,7 @@ export const createForm = async (
 };
 
 export const sendForm = async (
-  req: Request<{ formType: FormType }, any, { email: string }>,
+  req: Request<{ formType: FormType }, unknown, { email: string }>,
   res: Response
 ) => {
   const { email } = req.body;
@@ -108,7 +108,7 @@ export const sendForm = async (
 };
 
 export const validateToken = async (
-  req: Request<{}, any, any, { token?: string }>,
+  req: Request<{}, unknown, unknown, { token?: string }>,
   res: Response
 ) => {
   const token = req.query.token;
@@ -150,7 +150,7 @@ export const validateToken = async (
 };
 
 export const revokeFormToken = async (
-  req: Request<{ formType: FormType }, any, { email: string }>,
+  req: Request<{ formType: FormType }, unknown, { email: string }>,
   res: Response
 ) => {
   const { formType } = req.params;
@@ -204,7 +204,7 @@ export const revokeFormToken = async (
 };
 
 export const submitBecksForm = async (
-  req: Request<{}, any, { token: string; result: string }>,
+  req: Request<{}, unknown, { token: string; result: string }>,
   res: Response
 ) => {
   const { token, result } = req.body;
@@ -255,7 +255,7 @@ export const submitBecksForm = async (
 };
 
 export const submitBurnsForm = async (
-  req: Request<{}, any, { token: string; result: string }>,
+  req: Request<{}, unknown, { token: string; result: string }>,
   res: Response
 ) => {
   const { token, result } = req.body;
@@ -306,8 +306,8 @@ export const submitBurnsForm = async (
 export const submitYSQForm = async (
   req: Request<
     {},
-    any,
-    { token: string; scores: { ysq_ed_score?: string; ysq_ab_score?: string } }
+    unknown,
+    { token: string; scores: { ysq_ed_score?: string } }
   >,
   res: Response
 ) => {
@@ -340,7 +340,6 @@ export const submitYSQForm = async (
       data: {
         submitted_at: now,
         ysq_ed_score: scores.ysq_ed_score ?? null,
-        ysq_ab_score: scores.ysq_ab_score ?? null,
         is_active: false,
         token_expires_at: now,
       },
