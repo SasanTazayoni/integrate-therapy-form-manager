@@ -287,7 +287,7 @@ export const submitBurnsForm = async (
       where: { token },
       data: {
         submitted_at: now,
-        burns_score: score.toString(),
+        bai_score: score.toString(),
         is_active: false,
         token_expires_at: now,
       },
