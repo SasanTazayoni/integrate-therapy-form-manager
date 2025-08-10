@@ -7,14 +7,22 @@ export async function fetchClientStatus(email: string) {
       params: { email },
     });
     return { ok: true, data: res.data };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      return {
+        ok: false,
+        data: {
+          error: getErrorDisplay(
+            err,
+            "Network error while fetching client status."
+          ),
+        },
+      };
+    }
     return {
       ok: false,
       data: {
-        error: getErrorDisplay(
-          err,
-          "Network error while fetching client status."
-        ),
+        error: "An unexpected error occurred while fetching client status.",
       },
     };
   }
@@ -24,11 +32,19 @@ export async function addClient(email: string) {
   try {
     const res = await axios.post("/clients/add", { email });
     return { ok: true, data: res.data };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      return {
+        ok: false,
+        data: {
+          error: getErrorDisplay(err, "Network error while adding client."),
+        },
+      };
+    }
     return {
       ok: false,
       data: {
-        error: getErrorDisplay(err, "Network error while adding client."),
+        error: "An unexpected error occurred while adding client.",
       },
     };
   }
