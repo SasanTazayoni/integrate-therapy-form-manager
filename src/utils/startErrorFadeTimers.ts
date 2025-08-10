@@ -1,9 +1,9 @@
 import type { RefObject, Dispatch } from "react";
 
-export default function setErrorTimers(
-  dispatch: Dispatch<{ type: string }>,
-  fadeOutAction: string,
-  clearAction: string,
+export default function setErrorTimers<ActionType extends { type: string }>(
+  dispatch: Dispatch<ActionType>,
+  fadeOutAction: ActionType["type"],
+  clearAction: ActionType["type"],
   fadeOutDelay = 2500,
   clearDelay = 3000,
   fadeTimerRef: RefObject<number | null>,
@@ -19,12 +19,12 @@ export default function setErrorTimers(
   }
 
   fadeTimerRef.current = window.setTimeout(() => {
-    dispatch({ type: fadeOutAction });
+    dispatch({ type: fadeOutAction } as ActionType);
     fadeTimerRef.current = null;
   }, fadeOutDelay);
 
   clearTimerRef.current = window.setTimeout(() => {
-    dispatch({ type: clearAction });
+    dispatch({ type: clearAction } as ActionType);
     clearTimerRef.current = null;
   }, clearDelay);
 }
