@@ -1,14 +1,12 @@
 import { isRouteErrorResponse, useRouteError } from "react-router-dom";
 import Modal from "../components/Modal";
 
-type ErrorData = { message?: string } | string | undefined;
-
 function isErrorDataObject(data: unknown): data is { message: string } {
   return (
     typeof data === "object" &&
     data !== null &&
     "message" in data &&
-    typeof (data as any).message === "string"
+    typeof (data as { message?: unknown }).message === "string"
   );
 }
 
@@ -20,7 +18,7 @@ export default function RouteError() {
 
   if (isRouteErrorResponse(err)) {
     title = `${err.status} ${err.statusText}`;
-    const data = err.data as ErrorData;
+    const data = err.data;
 
     if (typeof data === "string") {
       message = data || message;
