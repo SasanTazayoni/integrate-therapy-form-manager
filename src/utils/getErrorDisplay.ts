@@ -1,5 +1,11 @@
+import type { AxiosError } from "axios";
+
 export function getErrorDisplay(
-  err: any,
+  err: AxiosError<{
+    message?: string;
+    error?: string;
+    requestId?: string;
+  }>,
   fallbackMessage = "Something went wrong"
 ): string {
   const msg =
