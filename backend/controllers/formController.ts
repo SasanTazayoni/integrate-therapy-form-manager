@@ -11,6 +11,7 @@ import {
 import { parseDateStrict } from "../utils/dates";
 import getBecksScoreCategory from "../utils/becksScoreUtils";
 import getBurnsScoreCategory from "../utils/burnsScoreUtils";
+import getEDScoreCategory from "../utils/YSQScoreUtils";
 
 export const createForm = async (
   req: Request<{}, unknown, { clientId: string; formType: FormType }>,
@@ -310,13 +311,13 @@ export const submitYSQForm = async (
   req: Request<
     {},
     unknown,
-    { token: string; scores: { ysq_ed_score?: string } }
+    { token: string; scores: { ysq_ed_answers?: number[] } }
   >,
   res: Response
 ) => {
   const { token, scores } = req.body;
 
-  if (!token || !scores) {
+  if (!token || !scores || !Array.isArray(scores.ysq_ed_answers)) {
     return res.status(400).json({
       error: "Missing required fields",
       code: "MISSING_FIELDS",
@@ -336,13 +337,26 @@ export const submitYSQForm = async (
       });
     }
 
+    const answers = scores.ysq_ed_answers.map((v) => Number(v) || 0);
+
+    const rawScore = answers.reduce((sum, val) => sum + val, 0);
+    const rawCategory = getEDScoreCategory(rawScore);
+    const rawCombined = `${rawScore}-${rawCategory}`;
+
+    const score456 = answers
+      .filter((val) => val >= 4 && val <= 6)
+      .reduce((sum, val) => sum + val, 0);
+    const score456Category = getEDScoreCategory(score456);
+    const score456Combined = `${score456}-${score456Category}`;
+
     const now = new Date();
 
     await prisma.form.update({
       where: { token },
       data: {
         submitted_at: now,
-        ysq_ed_score: scores.ysq_ed_score ?? null,
+        ysq_ed_score: rawCombined,
+        ysq_ed_456: score456Combined,
         is_active: false,
         token_expires_at: now,
       },
