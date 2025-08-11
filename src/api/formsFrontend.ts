@@ -140,7 +140,7 @@ export async function submitYSQForm({
 }: {
   token: string;
   scores: {
-    ysq_ed_score?: string;
+    ysq_ed_answers?: number[];
   };
 }) {
   try {
@@ -158,16 +158,9 @@ export async function submitYSQForm({
         "Network error while submitting YSQ form."
       );
 
-      return {
-        ok: false,
-        error: message,
-        code,
-      };
+      return { ok: false, error: message, code };
     }
-    return {
-      ok: false,
-      error: "Unexpected error occurred.",
-    };
+    return { ok: false, error: "Unexpected error occurred." };
   }
 }
 
