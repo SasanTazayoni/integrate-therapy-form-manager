@@ -4,19 +4,16 @@ import { getValidFormByToken } from "./formControllerHelpers/formTokenHelpers";
 import getBecksScoreCategory from "../utils/becksScoreUtils";
 import getBurnsScoreCategory from "../utils/burnsScoreUtils";
 import getEDScoreCategory from "../utils/YSQScoreUtils";
+import { validateRequestBodyFields } from "../utils/validationUtils";
 
 export const submitBecksForm = async (
   req: Request<{}, unknown, { token: string; result: string }>,
   res: Response
 ) => {
-  const { token, result } = req.body;
+  const validation = validateRequestBodyFields(req, res, ["token", "result"]);
+  if (!validation.valid) return;
 
-  if (!token || !result) {
-    return res.status(400).json({
-      error: "Missing required fields",
-      code: "MISSING_FIELDS",
-    });
-  }
+  const { token, result } = req.body;
 
   try {
     const form = await getValidFormByToken(token);
@@ -57,14 +54,10 @@ export const submitBurnsForm = async (
   req: Request<{}, unknown, { token: string; result: string }>,
   res: Response
 ) => {
-  const { token, result } = req.body;
+  const validation = validateRequestBodyFields(req, res, ["token", "result"]);
+  if (!validation.valid) return;
 
-  if (!token || !result) {
-    return res.status(400).json({
-      error: "Missing required fields",
-      code: "MISSING_FIELDS",
-    });
-  }
+  const { token, result } = req.body;
 
   try {
     const form = await getValidFormByToken(token);
@@ -109,9 +102,12 @@ export const submitYSQForm = async (
   >,
   res: Response
 ) => {
+  const validation = validateRequestBodyFields(req, res, ["token", "scores"]);
+  if (!validation.valid) return;
+
   const { token, scores } = req.body;
 
-  if (!token || !scores || !Array.isArray(scores.ysq_ed_answers)) {
+  if (!scores || !Array.isArray(scores.ysq_ed_answers)) {
     return res.status(400).json({
       error: "Missing required fields",
       code: "MISSING_FIELDS",
