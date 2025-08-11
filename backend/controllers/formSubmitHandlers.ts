@@ -5,6 +5,7 @@ import getBecksScoreCategory from "../utils/becksScoreUtils";
 import getBurnsScoreCategory from "../utils/burnsScoreUtils";
 import getEDScoreCategory from "../utils/YSQScoreUtils";
 import { validateRequestBodyFields } from "../utils/validationUtils";
+import { parseAndCombineScore } from "../utils/scoreUtils";
 
 export const submitBecksForm = async (
   req: Request<{}, unknown, { token: string; result: string }>,
@@ -19,9 +20,7 @@ export const submitBecksForm = async (
     const form = await validateTokenOrFail(token, res);
     if (!form) return;
 
-    const score = Number.isInteger(parseInt(result)) ? parseInt(result) : 0;
-    const scoreCategory = getBecksScoreCategory(score);
-    const combinedScore = `${score}-${scoreCategory}`;
+    const combinedScore = parseAndCombineScore(result, getBecksScoreCategory);
     const now = new Date();
 
     await prisma.form.update({
@@ -57,9 +56,7 @@ export const submitBurnsForm = async (
     const form = await validateTokenOrFail(token, res);
     if (!form) return;
 
-    const score = Number.isInteger(parseInt(result)) ? parseInt(result) : 0;
-    const scoreCategory = getBurnsScoreCategory(score);
-    const combinedScore = `${score}-${scoreCategory}`;
+    const combinedScore = parseAndCombineScore(result, getBurnsScoreCategory);
     const now = new Date();
 
     await prisma.form.update({
