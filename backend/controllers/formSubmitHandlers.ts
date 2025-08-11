@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../prisma/client";
-import { getValidFormByToken } from "./formControllerHelpers/formTokenHelpers";
+import { validateTokenOrFail } from "./formControllerHelpers/formTokenHelpers";
 import getBecksScoreCategory from "../utils/becksScoreUtils";
 import getBurnsScoreCategory from "../utils/burnsScoreUtils";
 import getEDScoreCategory from "../utils/YSQScoreUtils";
@@ -16,14 +16,8 @@ export const submitBecksForm = async (
   const { token, result } = req.body;
 
   try {
-    const form = await getValidFormByToken(token);
-
-    if (!form) {
-      return res.status(403).json({
-        error: "Token is invalid or expired",
-        code: "INVALID_TOKEN",
-      });
-    }
+    const form = await validateTokenOrFail(token, res);
+    if (!form) return;
 
     const score = Number.isInteger(parseInt(result)) ? parseInt(result) : 0;
     const scoreCategory = getBecksScoreCategory(score);
@@ -60,14 +54,8 @@ export const submitBurnsForm = async (
   const { token, result } = req.body;
 
   try {
-    const form = await getValidFormByToken(token);
-
-    if (!form) {
-      return res.status(403).json({
-        error: "Token is invalid or expired",
-        code: "INVALID_TOKEN",
-      });
-    }
+    const form = await validateTokenOrFail(token, res);
+    if (!form) return;
 
     const score = Number.isInteger(parseInt(result)) ? parseInt(result) : 0;
     const scoreCategory = getBurnsScoreCategory(score);
@@ -115,14 +103,8 @@ export const submitYSQForm = async (
   }
 
   try {
-    const form = await getValidFormByToken(token);
-
-    if (!form) {
-      return res.status(403).json({
-        error: "Token is invalid or expired",
-        code: "INVALID_TOKEN",
-      });
-    }
+    const form = await validateTokenOrFail(token, res);
+    if (!form) return;
 
     const answers = scores.ysq_ed_answers.map((v) => Number(v) || 0);
 
