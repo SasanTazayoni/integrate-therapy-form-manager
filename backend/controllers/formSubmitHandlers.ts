@@ -83,7 +83,10 @@ export const submitYSQForm = async (
   req: Request<
     {},
     unknown,
-    { token: string; scores: { ysq_ed_answers?: number[] } }
+    {
+      token: string;
+      scores: { ysq_ed_answers?: number[]; ysq_ab_answers?: number[] };
+    }
   >,
   res: Response
 ) => {
@@ -92,7 +95,11 @@ export const submitYSQForm = async (
 
   const { token, scores } = req.body;
 
-  if (!scores || !Array.isArray(scores.ysq_ed_answers)) {
+  if (
+    !scores ||
+    !Array.isArray(scores.ysq_ed_answers) ||
+    !Array.isArray(scores.ysq_ab_answers)
+  ) {
     return res.status(400).json({
       error: "Missing required fields",
       code: "MISSING_FIELDS",
@@ -103,17 +110,26 @@ export const submitYSQForm = async (
     const form = await validateTokenOrFail(token, res);
     if (!form) return;
 
-    const answers = scores.ysq_ed_answers.map((v) => Number(v) || 0);
+    const edAnswers = scores.ysq_ed_answers.map((v) => Number(v) || 0);
+    const edRawScore = edAnswers.reduce((sum, val) => sum + val, 0);
+    const edRawCategory = getScoreCategory("ED" as SchemaType, edRawScore);
+    const edRawCombined = `${edRawScore}-${edRawCategory}`;
 
-    const rawScore = answers.reduce((sum, val) => sum + val, 0);
-    const rawCategory = getScoreCategory("ED" as SchemaType, rawScore);
-    const rawCombined = `${rawScore}-${rawCategory}`;
-
-    const score456 = answers
+    const edScore456 = edAnswers
       .filter((val) => val >= 4 && val <= 6)
       .reduce((sum, val) => sum + val, 0);
-    const score456Category = getScoreCategory("ED" as SchemaType, score456);
-    const score456Combined = `${score456}-${score456Category}`;
+    const edScore456Category = getScoreCategory("ED" as SchemaType, edScore456);
+    const edScore456Combined = `${edScore456}-${edScore456Category}`;
+    const abAnswers = scores.ysq_ab_answers.map((v) => Number(v) || 0);
+    const abRawScore = abAnswers.reduce((sum, val) => sum + val, 0);
+    const abRawCategory = getScoreCategory("AB" as SchemaType, abRawScore);
+    const abRawCombined = `${abRawScore}-${abRawCategory}`;
+
+    const abScore456 = abAnswers
+      .filter((val) => val >= 4 && val <= 6)
+      .reduce((sum, val) => sum + val, 0);
+    const abScore456Category = getScoreCategory("AB" as SchemaType, abScore456);
+    const abScore456Combined = `${abScore456}-${abScore456Category}`;
 
     const now = new Date();
 
@@ -121,8 +137,10 @@ export const submitYSQForm = async (
       where: { token },
       data: {
         submitted_at: now,
-        ysq_ed_score: rawCombined,
-        ysq_ed_456: score456Combined,
+        ysq_ed_score: edRawCombined,
+        ysq_ed_456: edScore456Combined,
+        ysq_ab_score: abRawCombined,
+        ysq_ab_456: abScore456Combined,
         is_active: false,
         token_expires_at: now,
       },
