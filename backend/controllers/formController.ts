@@ -9,6 +9,7 @@ import {
   deactivateInvalidActiveForms,
 } from "../utils/formUtils";
 import { parseDateStrict } from "../utils/dates";
+import { getValidFormByToken } from "./formControllerHelpers/formTokenHelpers";
 import getBecksScoreCategory from "../utils/becksScoreUtils";
 import getBurnsScoreCategory from "../utils/burnsScoreUtils";
 import getEDScoreCategory from "../utils/YSQScoreUtils";
@@ -120,16 +121,9 @@ export const validateToken = async (
   }
 
   try {
-    const form = await prisma.form.findUnique({
-      where: { token },
-      include: { client: true },
-    });
+    const form = await getValidFormByToken(token);
 
     if (!form) {
-      return res.status(404).json({ valid: false, message: "Form not found" });
-    }
-
-    if (!isFormTokenUsable(form)) {
       return res
         .status(403)
         .json({ valid: false, message: "Token is invalid or expired" });
@@ -219,12 +213,9 @@ export const submitBecksForm = async (
   }
 
   try {
-    const form = await prisma.form.findUnique({
-      where: { token },
-      include: { client: true },
-    });
+    const form = await getValidFormByToken(token);
 
-    if (!form || !isFormTokenUsable(form)) {
+    if (!form) {
       return res.status(403).json({
         error: "Token is invalid or expired",
         code: "INVALID_TOKEN",
@@ -270,12 +261,9 @@ export const submitBurnsForm = async (
   }
 
   try {
-    const form = await prisma.form.findUnique({
-      where: { token },
-      include: { client: true },
-    });
+    const form = await getValidFormByToken(token);
 
-    if (!form || !isFormTokenUsable(form)) {
+    if (!form) {
       return res.status(403).json({
         error: "Token is invalid or expired",
         code: "INVALID_TOKEN",
@@ -325,12 +313,9 @@ export const submitYSQForm = async (
   }
 
   try {
-    const form = await prisma.form.findUnique({
-      where: { token },
-      include: { client: true },
-    });
+    const form = await getValidFormByToken(token);
 
-    if (!form || !isFormTokenUsable(form)) {
+    if (!form) {
       return res.status(403).json({
         error: "Token is invalid or expired",
         code: "INVALID_TOKEN",
