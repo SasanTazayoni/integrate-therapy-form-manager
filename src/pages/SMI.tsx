@@ -47,10 +47,27 @@ const SMI = () => {
       return;
     }
 
-    // Build scores object
-    // const scores = {
-    //   smi_answers: SMIItems.map((item) => Number(answers[item.id] ?? 0)),
-    // };
+    const scoresByCategory: Record<string, number> = {};
+    const countsByCategory: Record<string, number> = {};
+
+    SMIItems.forEach((item) => {
+      const answerValue = Number(answers[item.id] ?? 0);
+      if (!scoresByCategory[item.category]) {
+        scoresByCategory[item.category] = 0;
+        countsByCategory[item.category] = 0;
+      }
+      scoresByCategory[item.category] += answerValue;
+      countsByCategory[item.category] += 1;
+    });
+
+    const averageScoresByCategory: Record<string, number> = {};
+    for (const category in scoresByCategory) {
+      averageScoresByCategory[category] = Number(
+        (scoresByCategory[category] / countsByCategory[category]).toFixed(2)
+      );
+    }
+
+    console.log("Average scores by category:", averageScoresByCategory);
 
     // 🚧 Use placeholder submit for now
     const { ok, error, code } = await fakeSubmitSMIForm();
