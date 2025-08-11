@@ -141,6 +141,7 @@ export async function submitYSQForm({
   token: string;
   scores: {
     ysq_ed_answers?: number[];
+    ysq_ab_answers?: number[];
   };
 }) {
   try {
