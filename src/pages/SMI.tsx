@@ -1,26 +1,141 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import QuestionnaireForm from "../components/QuestionnaireForm";
+import FormResetConfirmModal from "../components/modals/FormResetConfirmModal";
+import InvalidTokenModal from "../components/modals/InvalidTokenModal";
+import SMIItems from "../data/SMIItems";
+import { Item } from "../data/SMICommon";
+import useSMIForm from "../hooks/useSMIForm";
+import useValidateToken from "../hooks/useValidateToken";
+import Question from "../components/SMIQuestions";
+import { Loader2 } from "lucide-react";
+import SMIInstructions from "../components/SMIInstructions";
+
+// 🚧 Temporary submit placeholder until API is ready
+async function fakeSubmitSMIForm() {
+  return {
+    ok: false,
+    error: "SMI form submission not yet implemented",
+    code: null,
+  };
+}
 
 const SMI = () => {
   const { token } = useParams<{ token: string }>();
+  const navigate = useNavigate();
+
+  const { isValid, showInvalidTokenModal, setShowInvalidTokenModal } =
+    useValidateToken(token);
+
+  const {
+    answers,
+    formError,
+    missingIds,
+    resetModalOpen,
+    resetModalClosing,
+    handleChange,
+    handleSubmit,
+    handleResetClick,
+    confirmReset,
+    cancelReset,
+    handleModalCloseFinished,
+    setFormError,
+  } = useSMIForm();
+
+  const onValidSubmit = async () => {
+    if (!token) {
+      setFormError("Token missing");
+      return;
+    }
+
+    // Build scores object
+    // const scores = {
+    //   smi_answers: SMIItems.map((item) => Number(answers[item.id] ?? 0)),
+    // };
+
+    // 🚧 Use placeholder submit for now
+    const { ok, error, code } = await fakeSubmitSMIForm();
+
+    if (!ok) {
+      if (code === "INVALID_TOKEN") {
+        setShowInvalidTokenModal(true);
+        return;
+      }
+      setFormError(error ?? "Failed to submit the SMI form.");
+      return;
+    }
+
+    setFormError("");
+    navigate("/submitted");
+  };
+
+  if (isValid === null) {
+    return (
+      <div className="flex justify-center items-center min-h-screen" aria-busy>
+        <Loader2 className="animate-spin text-blue-600" size={120} />
+      </div>
+    );
+  }
+
+  if (showInvalidTokenModal) {
+    return <InvalidTokenModal />;
+  }
+
+  const renderQuestion = (item: Item) => (
+    <Question
+      key={item.id}
+      item={item}
+      value={answers[item.id]}
+      onChange={(value) => handleChange(item.id, value)}
+      showError={missingIds.includes(item.id)}
+    />
+  );
 
   return (
-    <QuestionnaireForm title="SMI" questionnaire="SMI" token={token}>
-      <label>
-        Full Name:
-        <input name="fullName" type="text" required />
-      </label>
-      <br />
-      <label>
-        Date of Birth:
-        <input name="dob" type="date" required />
-      </label>
-      <br />
-      <label>
-        Score (1–6):
-        <input name="result" type="number" min="1" max="6" required />
-      </label>
-    </QuestionnaireForm>
+    <>
+      <QuestionnaireForm
+        title="SMI"
+        questionnaire="SMI"
+        token={token}
+        onError={setFormError}
+        onSubmit={handleSubmit(onValidSubmit)}
+      >
+        <SMIInstructions />
+
+        <div className="border-2 border-gray-400 divide-y divide-gray-400 rounded-lg">
+          {SMIItems.map(renderQuestion)}
+        </div>
+
+        <div className="min-h-[1.5rem] text-center mt-4">
+          {formError && <p className="text-red-600 font-bold">{formError}</p>}
+        </div>
+
+        <div className="flex justify-center mt-6 space-x-4">
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-8 py-2 rounded hover:bg-blue-600 transition"
+          >
+            Submit
+          </button>
+
+          <button
+            type="button"
+            className="bg-gray-500 text-white px-8 py-2 rounded hover:bg-gray-600 transition"
+            onClick={handleResetClick}
+          >
+            Reset
+          </button>
+        </div>
+      </QuestionnaireForm>
+
+      {resetModalOpen && (
+        <FormResetConfirmModal
+          onConfirm={confirmReset}
+          onCancel={cancelReset}
+          closing={resetModalClosing}
+          onCloseFinished={handleModalCloseFinished}
+        />
+      )}
+    </>
   );
 };
 
