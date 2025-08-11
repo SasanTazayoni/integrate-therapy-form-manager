@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import { getClientFormsStatus } from "./clientController";
+import { getClientFormsStatus } from "./clientsController";
 import * as PrismaModule from "../prisma/client";
 
 vi.mock("../prisma/client", () => ({
@@ -16,7 +16,7 @@ vi.mock("../prisma/client", () => ({
 
 const prisma = PrismaModule.default;
 
-describe("clientController", () => {
+describe("clientsController", () => {
   let req;
   let res;
 
