@@ -3,7 +3,7 @@ import QuestionnaireForm from "../components/QuestionnaireForm";
 import FormResetConfirmModal from "../components/modals/FormResetConfirmModal";
 import InvalidTokenModal from "../components/modals/InvalidTokenModal";
 import YSQEmotionalDeprivation from "../data/YSQEmotionalDeprivation";
-import YSQAbandonment from "../data/YSQAbandonment";
+// import YSQAbandonment from "../data/YSQAbandonment";
 // import YSQMistrustAbuse from "../data/YSQMistrustAbuse";
 // import YSQSocialIsolation from "../data/YSQSocialIsolation";
 // import YSQDefectiveness from "../data/YSQDefectiveness";
@@ -36,7 +36,6 @@ const YSQ = () => {
 
   const {
     answers,
-    total,
     formError,
     missingIds,
     resetModalOpen,
@@ -56,19 +55,12 @@ const YSQ = () => {
       return;
     }
 
-    const emotionalDeprivationTotal = YSQEmotionalDeprivation.reduce(
-      (sum, item) => sum + (answers[item.id] ?? 0),
-      0
-    );
-
-    const abandonmentTotal = YSQAbandonment.reduce(
-      (sum, item) => sum + (answers[item.id] ?? 0),
-      0
+    const emotionalDeprivationAnswers = YSQEmotionalDeprivation.map((item) =>
+      Number(answers[item.id] ?? 0)
     );
 
     const scores = {
-      ysq_ed_score: emotionalDeprivationTotal.toString(),
-      ysq_ab_score: abandonmentTotal.toString(),
+      ysq_ed_answers: emotionalDeprivationAnswers,
     };
 
     const { ok, error, code } = await submitYSQForm({
@@ -81,7 +73,6 @@ const YSQ = () => {
         setShowInvalidTokenModal(true);
         return;
       }
-
       setFormError(error ?? "Failed to submit the YSQ form.");
       return;
     }
@@ -157,10 +148,7 @@ const YSQ = () => {
 
         <div className="border-2 border-gray-400 divide-y divide-gray-400 rounded-lg">
           <section>{YSQEmotionalDeprivation.map(renderQuestion)}</section>
-          <section>{YSQAbandonment.map(renderQuestion)}</section>
         </div>
-
-        <input type="hidden" name="result" value={total} />
 
         <div className="min-h-[1.5rem] text-center mt-4">
           {formError && <p className="text-red-600 font-bold">{formError}</p>}
