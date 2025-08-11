@@ -1,4 +1,4 @@
-type SchemaType =
+export type SchemaType =
   | "ED" // Emotional Deprivation
   | "AB" // Abandonment
   | "MA" // Mistrust/Abuse
@@ -18,10 +18,7 @@ type SchemaType =
   | "NP" // Negativity/Pessimism
   | "PU"; // Punitiveness
 
-export default function getScoreCategory(
-  schema: SchemaType,
-  score: number
-): string {
+export function getScoreCategory(schema: SchemaType, score: number): string {
   const boundaries: Record<SchemaType, [number, number, number]> = {
     ED: [8, 18, 30],
     AB: [12, 25, 39],
