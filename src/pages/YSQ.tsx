@@ -3,7 +3,7 @@ import QuestionnaireForm from "../components/QuestionnaireForm";
 import FormResetConfirmModal from "../components/modals/FormResetConfirmModal";
 import InvalidTokenModal from "../components/modals/InvalidTokenModal";
 import YSQEmotionalDeprivation from "../data/YSQEmotionalDeprivation";
-// import YSQAbandonment from "../data/YSQAbandonment";
+import YSQAbandonment from "../data/YSQAbandonment";
 // import YSQMistrustAbuse from "../data/YSQMistrustAbuse";
 // import YSQSocialIsolation from "../data/YSQSocialIsolation";
 // import YSQDefectiveness from "../data/YSQDefectiveness";
@@ -60,8 +60,13 @@ const YSQ = () => {
       Number(answers[item.id] ?? 0)
     );
 
+    const abandonmentAnswers = YSQAbandonment.map((item) =>
+      Number(answers[item.id] ?? 0)
+    );
+
     const scores = {
       ysq_ed_answers: emotionalDeprivationAnswers,
+      ysq_ab_answers: abandonmentAnswers,
     };
 
     const { ok, error, code } = await submitYSQForm({
@@ -126,6 +131,7 @@ const YSQ = () => {
 
         <div className="border-2 border-gray-400 divide-y divide-gray-400 rounded-lg">
           <section>{YSQEmotionalDeprivation.map(renderQuestion)}</section>
+          <section>{YSQAbandonment.map(renderQuestion)}</section>
         </div>
 
         <div className="min-h-[1.5rem] text-center mt-4">
