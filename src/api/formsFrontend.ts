@@ -1,6 +1,30 @@
 import axios from "axios";
 import { getErrorDisplay } from "../utils/getErrorDisplay";
 
+type SchemaCodes =
+  | "ed"
+  | "ab"
+  | "ma"
+  | "si"
+  | "ds"
+  | "fa"
+  | "di"
+  | "vu"
+  | "eu"
+  | "sb"
+  | "ss"
+  | "ei"
+  | "us"
+  | "et"
+  | "is"
+  | "as"
+  | "np"
+  | "pu";
+
+type Scores = Partial<{
+  [K in SchemaCodes as `ysq_${K}_answers`]: number[];
+}>;
+
 export async function sendFormToken(email: string, formType: string) {
   try {
     const res = await axios.post(`/forms/send-token/${formType}`, { email });
@@ -139,10 +163,7 @@ export async function submitYSQForm({
   scores,
 }: {
   token: string;
-  scores: {
-    ysq_ed_answers?: number[];
-    ysq_ab_answers?: number[];
-  };
+  scores: Scores;
 }) {
   try {
     const res = await axios.post("/forms/submit/ysq", {
