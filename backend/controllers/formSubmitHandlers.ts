@@ -3,8 +3,8 @@ import prisma from "../prisma/client";
 import { validateTokenOrFail } from "./formControllerHelpers/formTokenHelpers";
 import getBecksScoreCategory from "../utils/becksScoreUtils";
 import getBurnsScoreCategory from "../utils/burnsScoreUtils";
-import getEDScoreCategory from "../utils/YSQScoreUtils";
 import { validateRequestBodyFields } from "../utils/validationUtils";
+import { SchemaType, getScoreCategory } from "../utils/YSQScoreUtils";
 import { parseAndCombineScore } from "../utils/scoreUtils";
 
 export const submitBecksForm = async (
@@ -106,13 +106,13 @@ export const submitYSQForm = async (
     const answers = scores.ysq_ed_answers.map((v) => Number(v) || 0);
 
     const rawScore = answers.reduce((sum, val) => sum + val, 0);
-    const rawCategory = getEDScoreCategory(rawScore);
+    const rawCategory = getScoreCategory("ED" as SchemaType, rawScore);
     const rawCombined = `${rawScore}-${rawCategory}`;
 
     const score456 = answers
       .filter((val) => val >= 4 && val <= 6)
       .reduce((sum, val) => sum + val, 0);
-    const score456Category = getEDScoreCategory(score456);
+    const score456Category = getScoreCategory("ED" as SchemaType, score456);
     const score456Combined = `${score456}-${score456Category}`;
 
     const now = new Date();
