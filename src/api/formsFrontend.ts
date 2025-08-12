@@ -186,6 +186,34 @@ export async function submitYSQForm({
   }
 }
 
+export async function submitSMIForm({
+  token,
+  results,
+}: {
+  token: string;
+  results: Record<string, { average: number; label: string }>;
+}) {
+  try {
+    const res = await axios.post("/forms/submit/smi", {
+      token,
+      results,
+    });
+
+    return { ok: true, data: res.data };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      const code = err?.response?.data?.code;
+      const message = getErrorDisplay(
+        err,
+        "Network error while submitting SMI form."
+      );
+
+      return { ok: false, error: message, code };
+    }
+    return { ok: false, error: "Unexpected error occurred." };
+  }
+}
+
 export async function updateClientInfo({
   token,
   name,
