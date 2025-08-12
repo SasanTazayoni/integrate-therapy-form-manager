@@ -6,7 +6,12 @@ import getBurnsScoreCategory from "../utils/burnsScoreUtils";
 import { validateRequestBodyFields } from "../utils/validationUtils";
 import { SchemaType, getScoreCategory } from "../utils/YSQScoreUtils";
 import { parseAndCombineScore } from "../utils/scoreUtils";
-import { smiBoundaries, labels } from "../utils/SMIScoreUtils";
+import {
+  smiBoundaries,
+  classifyScore,
+  normalizeLabel,
+  labelToBoundaryKey,
+} from "../utils/SMIScoreUtils";
 
 const YSQ_SCHEMAS = [
   "ed",
@@ -180,45 +185,6 @@ export const submitYSQForm = async (
   }
 };
 
-function classifyScore(score: number, boundaries: number[]): string {
-  let closestIndex = 0;
-  let smallestDiff = Infinity;
-  boundaries.forEach((boundary, idx) => {
-    const diff = Math.abs(score - boundary);
-    if (diff < smallestDiff) {
-      smallestDiff = diff;
-      closestIndex = idx;
-    }
-  });
-  return labels[closestIndex];
-}
-
-const labelToBoundaryKey: Record<string, string> = {
-  "vulnerable child": "smi_vc_score",
-  "angry child": "smi_ac_score",
-  "enraged child": "smi_ec_score",
-  "impulsive child": "smi_ic_score",
-  "undisciplined child": "smi_uc_score",
-  "contented child": "smi_cc_score",
-  "compliant surrenderer": "smi_cs_score",
-  "detached protector": "smi_dp_score",
-  "detached self soother": "smi_dss_score",
-  "self aggrandizer": "smi_sa_score",
-  "bully and attack": "smi_ba_score",
-  "punitive parent": "smi_pp_score",
-  "demanding parent": "smi_dc_score",
-  "healthy adult": "smi_ha_score",
-};
-
-function normalizeLabel(label: string) {
-  return label
-    .toLowerCase()
-    .replace(/[\(\)\-\–]/g, " ")
-    .replace(/[^a-z0-9\s]/g, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
 export const submitSMIForm = async (
   req: Request<
     {},
@@ -264,7 +230,6 @@ export const submitSMIForm = async (
       }
 
       let boundaryKey: string | undefined;
-
       if (incomingKey.startsWith("smi_") && smiBoundaries[incomingKey]) {
         boundaryKey = incomingKey;
       } else {
