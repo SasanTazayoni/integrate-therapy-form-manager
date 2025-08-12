@@ -69,6 +69,20 @@ model Form {
   ysq_as_456       String?
   ysq_np_456       String?
   ysq_pu_456       String?
+  smi_dp_score     String?
+  smi_dss_score    String?
+  smi_ba_score     String?
+  smi_sa_score     String?
+  smi_cs_score     String?
+  smi_ic_score     String?
+  smi_uc_score     String?
+  smi_cc_score     String?
+  smi_vc_score     String?
+  smi_dc_score     String?
+  smi_pp_score     String?
+  smi_ac_score     String?
+  smi_ec_score     String?
+  smi_ha_score     String?
   created_at       DateTime  @default(now())
   updated_at       DateTime  @updatedAt
 }

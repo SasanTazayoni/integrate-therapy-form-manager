@@ -1,0 +1,15 @@
+-- AlterTable
+ALTER TABLE "public"."Form" ADD COLUMN     "smi_ac_score" TEXT,
+ADD COLUMN     "smi_ba_score" TEXT,
+ADD COLUMN     "smi_cc_score" TEXT,
+ADD COLUMN     "smi_cs_score" TEXT,
+ADD COLUMN     "smi_dc_score" TEXT,
+ADD COLUMN     "smi_dp_score" TEXT,
+ADD COLUMN     "smi_dss_score" TEXT,
+ADD COLUMN     "smi_ec_score" TEXT,
+ADD COLUMN     "smi_ha_score" TEXT,
+ADD COLUMN     "smi_ic_score" TEXT,
+ADD COLUMN     "smi_pp_score" TEXT,
+ADD COLUMN     "smi_sa_score" TEXT,
+ADD COLUMN     "smi_uc_score" TEXT,
+ADD COLUMN     "smi_vc_score" TEXT;
