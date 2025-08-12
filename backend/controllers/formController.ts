@@ -8,12 +8,6 @@ import { deactivateInvalidActiveForms } from "../utils/formUtils";
 import { parseDateStrict } from "../utils/dates";
 import { getValidFormByToken } from "./formControllerHelpers/formTokenHelpers";
 
-import {
-  submitBecksForm,
-  submitBurnsForm,
-  submitYSQForm,
-} from "./formSubmitHandlers";
-
 export const createForm = async (
   req: Request<{}, unknown, { clientId: string; formType: FormType }>,
   res: Response
@@ -285,5 +279,3 @@ export const getBecksForm = async (
     return res.status(500).json({ error: "Failed to fetch BECKS form" });
   }
 };
-
-export { submitBecksForm, submitBurnsForm, submitYSQForm };
