@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import { smiBoundaries, labels, generateScore } from "../utils/SMIScoreUtils";
+
 const prisma = new PrismaClient();
 
 async function main() {
@@ -62,6 +64,7 @@ async function main() {
     },
   });
 
+  // Alice YSQ
   await prisma.form.create({
     data: {
       clientId: alice.id,
@@ -113,6 +116,7 @@ async function main() {
     },
   });
 
+  // Bob SMI - with randomised scores
   await prisma.form.create({
     data: {
       clientId: bob.id,
@@ -123,9 +127,13 @@ async function main() {
       submitted_at: now,
       is_active: false,
       revoked_at: null,
+      ...Object.fromEntries(
+        Object.keys(smiBoundaries).map((key) => [key, generateScore(key)])
+      ),
     },
   });
 
+  // Carol BECKS
   await prisma.form.create({
     data: {
       clientId: carol.id,
@@ -139,6 +147,7 @@ async function main() {
     },
   });
 
+  // Dave BURNS
   await prisma.form.create({
     data: {
       clientId: dave.id,
@@ -152,6 +161,7 @@ async function main() {
     },
   });
 
+  // Emma multi forms
   await prisma.form.createMany({
     data: [
       {
@@ -211,6 +221,9 @@ async function main() {
         submitted_at: null,
         is_active: true,
         revoked_at: null,
+        ...Object.fromEntries(
+          Object.keys(smiBoundaries).map((key) => [key, generateScore(key)])
+        ),
       },
       {
         clientId: emma.id,
@@ -236,6 +249,7 @@ async function main() {
     ],
   });
 
+  // Frank forms
   await prisma.form.createMany({
     data: [
       {
