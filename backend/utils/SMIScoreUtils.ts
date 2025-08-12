@@ -24,12 +24,7 @@ export const labels = [
   "Severe",
 ];
 
-function randomScoreBetween(min: number, max: number): number {
-  const val = min + Math.random() * (max - min);
-  return Math.round(val * 100) / 100;
-}
-
-function classifyScore(score: number, boundaries: number[]): string {
+export function classifyScore(score: number, boundaries: number[]): string {
   let closestIndex = 0;
   let smallestDiff = Infinity;
   boundaries.forEach((boundary, idx) => {
@@ -40,6 +35,37 @@ function classifyScore(score: number, boundaries: number[]): string {
     }
   });
   return labels[closestIndex];
+}
+
+export const labelToBoundaryKey: Record<string, string> = {
+  "vulnerable child": "smi_vc_score",
+  "angry child": "smi_ac_score",
+  "enraged child": "smi_ec_score",
+  "impulsive child": "smi_ic_score",
+  "undisciplined child": "smi_uc_score",
+  "contented child": "smi_cc_score",
+  "compliant surrenderer": "smi_cs_score",
+  "detached protector": "smi_dp_score",
+  "detached self soother": "smi_dss_score",
+  "self aggrandizer": "smi_sa_score",
+  "bully and attack": "smi_ba_score",
+  "punitive parent": "smi_pp_score",
+  "demanding parent": "smi_dc_score",
+  "healthy adult": "smi_ha_score",
+};
+
+export function normalizeLabel(label: string) {
+  return label
+    .toLowerCase()
+    .replace(/[\(\)\-\–]/g, " ")
+    .replace(/[^a-z0-9\s]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function randomScoreBetween(min: number, max: number): number {
+  const val = min + Math.random() * (max - min);
+  return Math.round(val * 100) / 100;
 }
 
 export function generateScore(scaleKey: string): string {
