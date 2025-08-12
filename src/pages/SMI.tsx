@@ -7,17 +7,14 @@ import { Item } from "../data/SMICommon";
 import useSMIForm from "../hooks/useSMIForm";
 import useValidateToken from "../hooks/useValidateToken";
 import Question from "../components/SMIQuestions";
+import { submitSMIForm } from "../api/formsFrontend";
 import { Loader2 } from "lucide-react";
 import SMIInstructions from "../components/SMIInstructions";
-
-// 🚧 Temporary submit placeholder until API is ready
-async function fakeSubmitSMIForm() {
-  return {
-    ok: false,
-    error: "SMI form submission not yet implemented",
-    code: null,
-  };
-}
+import {
+  smiBoundaries,
+  classifyScore,
+  categoryKeyMap,
+} from "../data/SMIBoundaries";
 
 const SMI = () => {
   const { token } = useParams<{ token: string }>();
@@ -60,17 +57,23 @@ const SMI = () => {
       countsByCategory[item.category] += 1;
     });
 
-    const averageScoresByCategory: Record<string, number> = {};
+    const results: Record<string, { average: number; label: string }> = {};
+
     for (const category in scoresByCategory) {
-      averageScoresByCategory[category] = Number(
+      const avg = Number(
         (scoresByCategory[category] / countsByCategory[category]).toFixed(2)
       );
+
+      const boundaryKey = categoryKeyMap[category];
+      const label =
+        boundaryKey && smiBoundaries[boundaryKey]
+          ? classifyScore(avg, smiBoundaries[boundaryKey])
+          : "Unknown";
+
+      results[category] = { average: avg, label };
     }
 
-    console.log("Average scores by category:", averageScoresByCategory);
-
-    // 🚧 Use placeholder submit for now
-    const { ok, error, code } = await fakeSubmitSMIForm();
+    const { ok, error, code } = await submitSMIForm({ token, results });
 
     if (!ok) {
       if (code === "INVALID_TOKEN") {
