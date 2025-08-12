@@ -4,12 +4,15 @@ import {
   sendForm,
   validateToken,
   revokeFormToken,
-  submitBecksForm,
-  submitBurnsForm,
-  submitYSQForm,
   updateClientInfo,
   getBecksForm,
 } from "../controllers/formController";
+import {
+  submitBecksForm,
+  submitBurnsForm,
+  submitYSQForm,
+  submitSMIForm,
+} from "../controllers/formSubmitHandlers";
 
 const router = Router();
 
@@ -21,6 +24,7 @@ router.get("/becks/:email", getBecksForm);
 router.post("/submit/becks", submitBecksForm);
 router.post("/submit/burns", submitBurnsForm);
 router.post("/submit/ysq", submitYSQForm);
+router.post("/submit/smi", submitSMIForm);
 router.post("/update-client-info", updateClientInfo);
 
 export default router;
