@@ -7,8 +7,8 @@ import BURNS from "./pages/BURNS";
 import NotFound from "./pages/NotFoundPage";
 import SubmittedPage from "./pages/Submitted";
 import FormResultsSummary from "./pages/FormResultsSummary";
-
 import RouteError from "./components/RouteError";
+import { ClientProvider } from "./context/ClientContext";
 
 const router = createBrowserRouter(
   [
@@ -33,5 +33,9 @@ const router = createBrowserRouter(
 );
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <ClientProvider>
+      <RouterProvider router={router} />
+    </ClientProvider>
+  );
 }
