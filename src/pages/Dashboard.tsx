@@ -1,30 +1,32 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { Link } from "react-router-dom";
 import ProtectedAccess from "../components/ProtectedAccess";
 import EmailInput from "../components/EmailInput";
 import FormButtons from "../components/FormButtons";
 import EmailSearchControls from "../components/EmailSearchControls";
+import RevokeConfirmModal from "../components/modals/RevokeConfirmationModal";
 import { fetchClientStatus, addClient } from "../api/clientsFrontend";
 import { sendFormToken, revokeFormToken } from "../api/formsFrontend";
 import validateEmail from "../utils/validators";
 import truncateEmail from "../utils/truncateEmail";
 import normalizeEmail from "../utils/normalizeEmail";
-import type { FormStatus } from "../types/formStatusTypes";
-import RevokeConfirmModal from "../components/modals/RevokeConfirmationModal";
 import type { FormType } from "../constants/formTypes";
-import { Link } from "react-router-dom";
-
-type ClientFormsStatus = {
-  exists: boolean;
-  forms: Record<FormType, FormStatus>;
-  formsCompleted?: number;
-};
+import type { ClientFormsStatus } from "../types/formStatusTypes";
+import { useClientContext } from "../context/ClientContext";
 
 export default function Dashboard() {
-  const [email, setEmail] = useState("");
+  const {
+    email: contextEmail,
+    setEmail: setContextEmail,
+    clientFormsStatus: contextClientFormsStatus,
+    setClientFormsStatus: setContextClientFormsStatus,
+  } = useClientContext();
+
+  const [email, setEmail] = useState(contextEmail || "");
   const [successMessage, setSuccessMessage] = useState("");
   const [error, setError] = useState("");
   const [clientFormsStatus, setClientFormsStatus] =
-    useState<ClientFormsStatus | null>(null);
+    useState<ClientFormsStatus | null>(contextClientFormsStatus || null);
   const [loading, setLoading] = useState(false);
   const [showAddClientPrompt, setShowAddClientPrompt] = useState(false);
   const [confirmedEmail, setConfirmedEmail] = useState<string | null>(null);
@@ -36,6 +38,14 @@ export default function Dashboard() {
   const [revokeFormType, setRevokeFormType] = useState<FormType | null>(null);
 
   const logoUrl = `${import.meta.env.BASE_URL}logo.png`;
+
+  useEffect(() => {
+    setContextEmail(email);
+  }, [email]);
+
+  useEffect(() => {
+    setContextClientFormsStatus(clientFormsStatus);
+  }, [clientFormsStatus]);
 
   const handleEmailChange = (value: string) => {
     setEmail(value);
