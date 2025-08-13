@@ -1,3 +1,11 @@
+import type { FormType } from "../constants/formTypes";
+
+export type ClientFormsStatus = {
+  exists: boolean;
+  forms: Record<FormType, FormStatus>;
+  formsCompleted?: number;
+};
+
 export type FormStatus = {
   submitted: boolean;
   activeToken: boolean;
