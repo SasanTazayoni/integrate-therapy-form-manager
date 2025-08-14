@@ -22,6 +22,7 @@ export const getClientFormsStatusHandler = async (
 
   res.json({
     exists: result.clientExists,
+    clientName: result.clientName ?? null,
     forms: result.formsStatus,
     formsCompleted: result.formsCompleted,
     smiScores: result.smiScoresByForm ?? {},
