@@ -11,16 +11,15 @@ export default function SMIModeTable({ label, items }: SMIModeTableProps) {
           <tr>
             <th className="w-1/4 px-4 py-2 text-center">{label}</th>
             {[
-              "Very Low - Ave",
-              "Ave - Mod",
-              "Mod - High",
-              "High – Very",
-              "High Very",
-              "High - Severe",
+              "Very Low - Average",
+              "Ave - Moderate",
+              "Moderate - High",
+              "High – Very High",
+              "High Very - Severe",
             ].map((heading) => (
               <th
                 key={heading}
-                className="w-1/8 px-2 py-2 text-center border-l border-gray-500"
+                className="w-1/5 px-2 py-2 text-center border-l border-gray-500"
               >
                 {heading}
               </th>
