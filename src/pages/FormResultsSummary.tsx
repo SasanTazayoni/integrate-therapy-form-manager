@@ -6,10 +6,20 @@ import { Printer } from "lucide-react";
 import { useState } from "react";
 import ProtectedAccess from "../components/ProtectedAccess";
 import { useNavigate } from "react-router-dom";
+import { useClientContext } from "../context/ClientContext";
+import type { ClientFormsStatus } from "../types/formStatusTypes";
+
+type ClientFormsStatusWithName = ClientFormsStatus & {
+  clientName?: string;
+};
 
 const FormResultsSummary = () => {
   const [grayedOutCol, setGrayedOutCol] = useState<"raw" | "456" | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { clientFormsStatus } = useClientContext() as {
+    clientFormsStatus: ClientFormsStatusWithName | null;
+  };
 
   const navigate = useNavigate();
 
@@ -60,10 +70,10 @@ const FormResultsSummary = () => {
 
         <div className="mb-10 text-lg font-medium space-y-2 text-[--color-link]">
           <div>
-            <strong>Client:</strong>
+            <strong>Client:</strong> {clientFormsStatus?.clientName ?? ""}
           </div>
           <div>
-            <strong>Date:</strong>
+            <strong>Date:</strong> {new Date().toLocaleDateString()}
           </div>
         </div>
 
@@ -83,7 +93,11 @@ const FormResultsSummary = () => {
           ))}
         </section>
 
-        <SMISummaryModal isOpen={isModalOpen} onClose={closeModal} />
+        <SMISummaryModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          clientName={clientFormsStatus?.clientName}
+        />
       </div>
     </ProtectedAccess>
   );
