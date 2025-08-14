@@ -3,14 +3,16 @@ import Modal from "../Modal";
 import SMIModeTable from "../tables/SMIModesTableScores";
 import { useOutsideClickAndEscape } from "../../hooks/useOutsideClickAndEscape";
 
-interface SMISummaryModalProps {
+type SMISummaryModalProps = {
   isOpen: boolean;
   onClose: () => void;
-}
+  clientName?: string;
+};
 
 export default function SMISummaryModal({
   isOpen,
   onClose,
+  clientName,
 }: SMISummaryModalProps) {
   const [closing, setClosing] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
@@ -85,10 +87,10 @@ export default function SMISummaryModal({
 
         <div className="text-left mb-4 space-y-2">
           <p className="text-sm">
-            <strong>Patient:</strong>
+            <strong>Client:</strong> {clientName ?? ""}
           </p>
           <p className="text-sm">
-            <strong>Date:</strong>
+            <strong>Date:</strong> {new Date().toLocaleDateString()}
           </p>
         </div>
 
