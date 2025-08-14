@@ -1,5 +1,5 @@
+import { Client } from "@prisma/client";
 import {
-  Client,
   findClientByEmail,
   getFormsByClientId,
   createNewClient,
