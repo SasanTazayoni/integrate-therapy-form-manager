@@ -24,6 +24,7 @@ export const getClientFormsStatusHandler = async (
     exists: result.clientExists,
     forms: result.formsStatus,
     formsCompleted: result.formsCompleted,
+    smiScores: result.smiScoresByForm ?? {},
   });
 };
 
