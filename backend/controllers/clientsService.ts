@@ -1,6 +1,5 @@
 import {
   Client,
-  Form,
   findClientByEmail,
   getFormsByClientId,
   createNewClient,
@@ -21,8 +20,10 @@ export const getClientFormsStatus = async (
   emailRaw: string | undefined
 ): Promise<{
   clientExists: boolean;
+  clientName?: string | null;
   formsStatus?: Record<FormType, FormStatus>;
   formsCompleted?: number;
+  smiScoresByForm?: Record<string, Record<string, string | null>>;
   error?: string;
 }> => {
   if (!emailRaw) {
@@ -37,6 +38,25 @@ export const getClientFormsStatus = async (
   }
 
   const forms = await getFormsByClientId(client.id);
+  const smiScoresByForm: Record<string, Record<string, string | null>> = {};
+
+  for (const form of forms) {
+    const smiScores = Object.entries(form)
+      .filter(([key]) => key.startsWith("smi_"))
+      .reduce((acc, [key, value]) => {
+        acc[key] = value !== null ? String(value) : null;
+        return acc;
+      }, {} as Record<string, string | null>);
+
+    if (Object.keys(smiScores).length > 0) {
+      smiScoresByForm[form.form_type] = {
+        ...smiScores,
+        submitted_at: form.submitted_at
+          ? form.submitted_at.toISOString()
+          : null,
+      };
+    }
+  }
 
   const formsStatus: Record<FormType, FormStatus> = {} as any;
 
@@ -52,7 +72,7 @@ export const getClientFormsStatus = async (
         activeToken:
           mostRecent.is_active &&
           !mostRecent.submitted_at &&
-          new Date(mostRecent.token_expires_at) > new Date(),
+          mostRecent.token_expires_at > new Date(),
         submitted: !!mostRecent.submitted_at,
         submittedAt: mostRecent.submitted_at,
         tokenCreatedAt: mostRecent.token_sent_at,
@@ -73,7 +93,13 @@ export const getClientFormsStatus = async (
     0
   );
 
-  return { clientExists: true, formsStatus, formsCompleted };
+  return {
+    clientExists: true,
+    clientName: client.name ?? null,
+    formsStatus,
+    formsCompleted,
+    smiScoresByForm,
+  };
 };
 
 export const createClient = async (data: {
