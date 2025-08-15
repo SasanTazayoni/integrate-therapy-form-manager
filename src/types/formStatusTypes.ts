@@ -6,7 +6,13 @@ export type ClientFormsStatus = {
   clientDob?: string;
   forms: Record<FormType, FormStatus>;
   formsCompleted?: number;
-  smiScores?: Record<string, number | null>;
+  scores?: {
+    bdi?: { bdi_score: string; submitted_at: string | null } | null;
+    bai?: { bai_score: string; submitted_at: string | null } | null;
+    smi?: Record<string, string | null>;
+    ysq?: Record<string, string | null>;
+    ysq456?: Record<string, string | null>;
+  };
 };
 
 export type FormStatus = {
