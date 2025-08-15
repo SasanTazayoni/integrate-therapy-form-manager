@@ -9,12 +9,14 @@ type YSQSchemasTableProps = {
     e: React.MouseEvent<HTMLElement>,
     col: "raw" | "456"
   ) => void;
+  ysqSubmittedAt?: string;
 };
 
 export default function YSQSchemasTable({
   grayedOutCol,
   onHeaderClick,
   onHeaderRightClick,
+  ysqSubmittedAt,
 }: YSQSchemasTableProps) {
   const headerTextClass = (col: "raw" | "456") =>
     grayedOutCol === col ? "text-gray-500" : "text-gray-900";
@@ -46,7 +48,12 @@ export default function YSQSchemasTable({
   return (
     <section className="mb-12">
       <h2 className="question-title text-[--color-primary] text-center">
-        YSQ Schemas
+        YSQ Schemas{" "}
+        {ysqSubmittedAt && (
+          <span className="text-gray-400 text-[1.5rem]">
+            ({new Date(ysqSubmittedAt).toLocaleDateString()})
+          </span>
+        )}
       </h2>
       <table className="w-full border-gray-200 text-sm rounded overflow-hidden shadow-md">
         <thead>
