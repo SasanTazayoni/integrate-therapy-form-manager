@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 
-export function validateRequestBodyFields(
-  req: Request,
+export function validateRequestBodyFields<T extends Record<string, unknown>>(
+  req: Request<{}, {}, T>,
   res: Response,
-  requiredFields: (keyof any)[]
-): { valid: boolean; missingField?: string } {
+  requiredFields: (keyof T)[]
+): { valid: boolean; missingField?: keyof T } {
   for (const field of requiredFields) {
     if (
       !(field in req.body) ||
@@ -16,7 +16,7 @@ export function validateRequestBodyFields(
         code: "MISSING_FIELDS",
         missingField: field,
       });
-      return { valid: false, missingField: String(field) };
+      return { valid: false, missingField: field };
     }
   }
   return { valid: true };
