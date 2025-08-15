@@ -2,31 +2,30 @@ import { useEffect, useRef, useState } from "react";
 import Modal from "../Modal";
 import SMIModeTable from "../../tables/SMIModesTableScores";
 import { useOutsideClickAndEscape } from "../../hooks/useOutsideClickAndEscape";
+import { useClientContext } from "../../context/ClientContext";
 
 type SMISummaryModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  clientName?: string;
-  submittedAt?: string;
 };
 
 export default function SMISummaryModal({
   isOpen,
   onClose,
-  clientName,
-  submittedAt,
 }: SMISummaryModalProps) {
   const [closing, setClosing] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
 
+  const { clientFormsStatus } = useClientContext();
+  const clientName = clientFormsStatus?.clientName ?? "";
+  const clientDob = clientFormsStatus?.clientDob ?? "";
+  const submittedAt = clientFormsStatus?.forms?.SMI?.submittedAt ?? "";
+
   useOutsideClickAndEscape(modalRef, () => setClosing(true));
 
   useEffect(() => {
-    if (!isOpen) {
-      setClosing(true);
-    } else {
-      setClosing(false);
-    }
+    if (!isOpen) setClosing(true);
+    else setClosing(false);
   }, [isOpen]);
 
   function handleCloseFinished() {
@@ -94,10 +93,11 @@ export default function SMISummaryModal({
 
         <div className="text-left mb-4 space-y-2">
           <p className="text-sm">
-            <strong>Client:</strong> {clientName ?? ""}
+            <strong>Client:</strong> {clientName}
           </p>
           <p className="text-sm">
-            <strong>Date:</strong> {new Date().toLocaleDateString()}
+            <strong>Date of Birth:</strong>{" "}
+            {clientDob ? new Date(clientDob).toLocaleDateString() : ""}
           </p>
         </div>
 
