@@ -38,10 +38,11 @@ const FormResultsSummary = () => {
   const closeModal = () => setIsModalOpen(false);
 
   const smiSubmittedAt = clientFormsStatus?.forms?.SMI?.submittedAt;
+  const ysqSubmittedAt = clientFormsStatus?.forms?.YSQ?.submittedAt;
 
   useEffect(() => {
-    if (clientFormsStatus?.smiScores) {
-      console.log("Client SMI Scores:", clientFormsStatus.smiScores);
+    if (clientFormsStatus?.scores?.smi) {
+      console.log("Client SMI Scores:", clientFormsStatus.scores.smi);
     }
   }, [clientFormsStatus]);
 
@@ -95,14 +96,30 @@ const FormResultsSummary = () => {
           grayedOutCol={grayedOutCol}
           onHeaderClick={onHeaderClick}
           onHeaderRightClick={onHeaderRightClick}
+          ysqSubmittedAt={
+            ysqSubmittedAt ? new Date(ysqSubmittedAt).toISOString() : undefined
+          }
         />
 
         <section className="flex flex-wrap justify-center gap-8 max-w-2xl mx-auto">
           {[
-            { title: "BAI", value: "___" },
-            { title: "BDI", value: "___" },
-          ].map(({ title, value }) => (
-            <ScoreCard key={title} title={title} value={value} />
+            {
+              title: "BAI",
+              value: "___",
+              submittedAt: clientFormsStatus?.forms.BURNS?.submittedAt,
+            },
+            {
+              title: "BDI",
+              value: "___",
+              submittedAt: clientFormsStatus?.forms.BECKS?.submittedAt,
+            },
+          ].map(({ title, value, submittedAt }) => (
+            <ScoreCard
+              key={title}
+              title={title}
+              value={value}
+              submittedAt={submittedAt}
+            />
           ))}
         </section>
 
