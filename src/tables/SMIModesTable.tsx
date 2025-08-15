@@ -1,10 +1,14 @@
 import { FileText } from "lucide-react";
 
-interface SMIModesTableProps {
+type SMIModesTableProps = {
   openModal: () => void;
-}
+  submittedAt?: string;
+};
 
-export default function SMIModesTable({ openModal }: SMIModesTableProps) {
+export default function SMIModesTable({
+  openModal,
+  submittedAt,
+}: SMIModesTableProps) {
   const smiModes = [
     [
       "Detached Protector",
@@ -32,7 +36,12 @@ export default function SMIModesTable({ openModal }: SMIModesTableProps) {
   return (
     <section className="mb-12">
       <h2 className="question-title text-[--color-primary] text-center">
-        SMI Modes
+        SMI Modes{" "}
+        {submittedAt && (
+          <span className="text-gray-400 text-[1.5rem]">
+            ({new Date(submittedAt).toLocaleDateString()})
+          </span>
+        )}
       </h2>
       <table className="w-full table-fixed text-center text-sm rounded overflow-hidden shadow-sm">
         <tbody>
