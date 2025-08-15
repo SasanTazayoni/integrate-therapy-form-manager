@@ -5,7 +5,6 @@ import {
   validateToken,
   revokeFormToken,
   updateClientInfo,
-  getBecksForm,
 } from "../controllers/formController";
 import {
   submitBecksForm,
@@ -20,7 +19,6 @@ router.post("/", createForm);
 router.post("/send-token/:formType", sendForm);
 router.post("/revoke-token/:formType", revokeFormToken);
 router.get("/validate-token", validateToken);
-router.get("/becks/:email", getBecksForm);
 router.post("/submit/becks", submitBecksForm);
 router.post("/submit/burns", submitBurnsForm);
 router.post("/submit/ysq", submitYSQForm);
