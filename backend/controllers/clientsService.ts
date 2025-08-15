@@ -1,4 +1,4 @@
-import { Client } from "@prisma/client";
+import { Client, Form } from "@prisma/client";
 import {
   findClientByEmail,
   getFormsByClientId,
@@ -59,10 +59,10 @@ export const getClientFormsStatus = async (
     )[0];
 
   const extractScores = (
-    form: any,
+    form: Form | undefined,
     prefix: string,
     filter?: (key: string) => boolean
-  ) => {
+  ): Record<string, string | null> => {
     const scores: Record<string, string | null> = {};
     if (!form) return scores;
 
@@ -100,7 +100,10 @@ export const getClientFormsStatus = async (
     key.endsWith("_456")
   );
 
-  const formsStatus: Record<FormType, FormStatus> = {} as any;
+  const formsStatus: Record<FormType, FormStatus> = {} as Record<
+    FormType,
+    FormStatus
+  >;
 
   for (const type of FORM_TYPES) {
     const formsOfType = forms
