@@ -16,6 +16,14 @@ export type FormStatus = {
   revokedAt?: Date | null;
 };
 
+export type Scores = {
+  bdi: { bdi_score: string; submitted_at: string | null } | null;
+  bai: { bai_score: string; submitted_at: string | null } | null;
+  ysq: Record<string, string | null>;
+  ysq456: Record<string, string | null>;
+  smi: Record<string, string | null>;
+};
+
 export const getClientFormsStatus = async (
   emailRaw: string | undefined
 ): Promise<{
@@ -23,40 +31,74 @@ export const getClientFormsStatus = async (
   clientName?: string | null;
   formsStatus?: Record<FormType, FormStatus>;
   formsCompleted?: number;
-  smiScoresByForm?: Record<string, Record<string, string | null>>;
+  scores?: Scores;
   error?: string;
 }> => {
-  if (!emailRaw) {
-    return { clientExists: false, error: "Email is required" };
-  }
+  if (!emailRaw) return { clientExists: false, error: "Email is required" };
 
   const email = normalizeEmail(emailRaw);
   const client = await findClientByEmail(email);
 
-  if (!client) {
-    return { clientExists: false, error: "Client not found" };
-  }
+  if (!client) return { clientExists: false, error: "Client not found" };
 
   const forms = await getFormsByClientId(client.id);
-  const smiScoresByForm: Record<string, Record<string, string | null>> = {};
 
-  for (const form of forms) {
-    const smiScores = Object.entries(form)
-      .filter(([key]) => key.startsWith("smi_"))
-      .reduce((acc, [key, value]) => {
-        acc[key] = value !== null ? String(value) : null;
-        return acc;
-      }, {} as Record<string, string | null>);
+  const bdiForm = forms
+    .filter((f) => f.bdi_score != null)
+    .sort(
+      (a, b) =>
+        (b.submitted_at?.getTime() || 0) - (a.submitted_at?.getTime() || 0)
+    )[0];
 
-    if (Object.keys(smiScores).length > 0) {
-      smiScoresByForm[form.form_type] = {
-        ...smiScores,
-        submitted_at: form.submitted_at
-          ? form.submitted_at.toISOString()
-          : null,
-      };
-    }
-  }
+  const baiForm = forms
+    .filter((f) => f.bai_score != null)
+    .sort(
+      (a, b) =>
+        (b.submitted_at?.getTime() || 0) - (a.submitted_at?.getTime() || 0)
+    )[0];
+
+  const extractScores = (
+    form: any,
+    prefix: string,
+    filter?: (key: string) => boolean
+  ) => {
+    const scores: Record<string, string | null> = {};
+    if (!form) return scores;
+
+    Object.entries(form).forEach(([key, value]) => {
+      if (key.startsWith(prefix) && (!filter || filter(key))) {
+        scores[key] = value !== null ? String(value) : null;
+      }
+    });
+
+    return scores;
+  };
+
+  const smiScores = extractScores(
+    forms
+      .filter((f) => f.form_type === "SMI")
+      .sort(
+        (a, b) =>
+          (b.submitted_at?.getTime() || 0) - (a.submitted_at?.getTime() || 0)
+      )[0],
+    "smi_"
+  );
+
+  // Get the latest YSQ form once
+  const latestYsqForm = forms
+    .filter((f) => f.form_type === "YSQ")
+    .sort(
+      (a, b) =>
+        (b.submitted_at?.getTime() || 0) - (a.submitted_at?.getTime() || 0)
+    )[0];
+
+  const ysqScores = extractScores(latestYsqForm, "ysq_", (key) =>
+    key.endsWith("_score")
+  );
+
+  const ysq456Scores = extractScores(latestYsqForm, "ysq_", (key) =>
+    key.endsWith("_456")
+  );
 
   const formsStatus: Record<FormType, FormStatus> = {} as any;
 
@@ -67,25 +109,23 @@ export const getClientFormsStatus = async (
 
     const mostRecent = formsOfType[0];
 
-    if (mostRecent) {
-      formsStatus[type] = {
-        activeToken:
-          mostRecent.is_active &&
-          !mostRecent.submitted_at &&
-          mostRecent.token_expires_at > new Date(),
-        submitted: !!mostRecent.submitted_at,
-        submittedAt: mostRecent.submitted_at,
-        tokenCreatedAt: mostRecent.token_sent_at,
-        tokenExpiresAt: mostRecent.token_expires_at,
-        revokedAt: mostRecent.revoked_at,
-      };
-    } else {
-      formsStatus[type] = {
-        activeToken: false,
-        submitted: false,
-        revokedAt: null,
-      };
-    }
+    formsStatus[type] = mostRecent
+      ? {
+          activeToken:
+            mostRecent.is_active &&
+            !mostRecent.submitted_at &&
+            mostRecent.token_expires_at > new Date(),
+          submitted: !!mostRecent.submitted_at,
+          submittedAt: mostRecent.submitted_at,
+          tokenCreatedAt: mostRecent.token_sent_at,
+          tokenExpiresAt: mostRecent.token_expires_at,
+          revokedAt: mostRecent.revoked_at,
+        }
+      : {
+          activeToken: false,
+          submitted: false,
+          revokedAt: null,
+        };
   }
 
   const formsCompleted = FORM_TYPES.reduce(
@@ -98,7 +138,23 @@ export const getClientFormsStatus = async (
     clientName: client.name ?? null,
     formsStatus,
     formsCompleted,
-    smiScoresByForm,
+    scores: {
+      bdi: bdiForm
+        ? {
+            bdi_score: String(bdiForm.bdi_score),
+            submitted_at: bdiForm.submitted_at?.toISOString() ?? null,
+          }
+        : null,
+      bai: baiForm
+        ? {
+            bai_score: String(baiForm.bai_score),
+            submitted_at: baiForm.submitted_at?.toISOString() ?? null,
+          }
+        : null,
+      smi: smiScores,
+      ysq: ysqScores,
+      ysq456: ysq456Scores,
+    },
   };
 };
 
@@ -107,9 +163,7 @@ export const createClient = async (data: {
   name?: string | null;
   dob?: string | Date | null;
 }): Promise<{ client?: Client; error?: string }> => {
-  if (!data.email) {
-    return { error: "Email is required" };
-  }
+  if (!data.email) return { error: "Email is required" };
 
   try {
     const client = await createNewClient({
