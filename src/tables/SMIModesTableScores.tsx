@@ -12,7 +12,7 @@ export default function SMIModeTable({ label, items }: SMIModeTableProps) {
             <th className="w-1/4 px-4 py-2 text-center">{label}</th>
             {[
               "Very Low - Average",
-              "Ave - Moderate",
+              "Average - Moderate",
               "Moderate - High",
               "High – Very High",
               "High Very - Severe",
