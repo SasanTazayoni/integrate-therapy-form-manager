@@ -3,7 +3,7 @@ import ScoreCard from "../components/BecksBurnsScoreCard";
 import SMIModesTable from "../tables/SMIModesTable";
 import YSQSchemasTable from "../tables/YSQSchemasTable";
 import { Printer } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ProtectedAccess from "../components/ProtectedAccess";
 import { useNavigate } from "react-router-dom";
 import { useClientContext } from "../context/ClientContext";
@@ -11,6 +11,7 @@ import type { ClientFormsStatus } from "../types/formStatusTypes";
 
 type ClientFormsStatusDetails = ClientFormsStatus & {
   clientName?: string;
+  smiScores?: Record<string, string | null>;
 };
 
 const FormResultsSummary = () => {
@@ -37,6 +38,12 @@ const FormResultsSummary = () => {
   const closeModal = () => setIsModalOpen(false);
 
   const smiSubmittedAt = clientFormsStatus?.forms?.SMI?.submittedAt;
+
+  useEffect(() => {
+    if (clientFormsStatus?.smiScores) {
+      console.log("Client SMI Scores:", clientFormsStatus.smiScores);
+    }
+  }, [clientFormsStatus]);
 
   return (
     <ProtectedAccess>
@@ -71,7 +78,10 @@ const FormResultsSummary = () => {
             <strong>Client:</strong> {clientFormsStatus?.clientName ?? ""}
           </div>
           <div>
-            <strong>Date:</strong> {new Date().toLocaleDateString()}
+            <strong>Date of Birth:</strong>{" "}
+            {clientFormsStatus?.clientDob
+              ? new Date(clientFormsStatus.clientDob).toLocaleDateString()
+              : ""}
           </div>
         </div>
 
@@ -96,14 +106,7 @@ const FormResultsSummary = () => {
           ))}
         </section>
 
-        <SMISummaryModal
-          isOpen={isModalOpen}
-          onClose={closeModal}
-          clientName={clientFormsStatus?.clientName}
-          submittedAt={
-            smiSubmittedAt ? new Date(smiSubmittedAt).toISOString() : undefined
-          }
-        />
+        <SMISummaryModal isOpen={isModalOpen} onClose={closeModal} />
       </div>
     </ProtectedAccess>
   );
