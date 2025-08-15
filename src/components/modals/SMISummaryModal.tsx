@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Modal from "../Modal";
 import SMIModeTable from "../../tables/SMIModesTableScores";
-import { useOutsideClickAndEscape } from "../../hooks/useOutsideClickAndEscape";
 import { useClientContext } from "../../context/ClientContext";
 
 type SMISummaryModalProps = {
@@ -20,8 +19,6 @@ export default function SMISummaryModal({
   const clientName = clientFormsStatus?.clientName ?? "";
   const clientDob = clientFormsStatus?.clientDob ?? "";
   const submittedAt = clientFormsStatus?.forms?.SMI?.submittedAt ?? "";
-
-  useOutsideClickAndEscape(modalRef, () => setClosing(true));
 
   useEffect(() => {
     if (!isOpen) setClosing(true);
@@ -77,12 +74,13 @@ export default function SMISummaryModal({
       ariaLabelledBy="smi-summary-title"
       onCloseFinished={handleCloseFinished}
       className="wide-modal"
+      onOverlayClick={() => setClosing(true)}
     >
       <div
         ref={modalRef}
         className="max-h-[80vh] overflow-y-auto p-6 text-gray-800"
       >
-        <h2 className="title">
+        <h2 className="title" id="smi-summary-title">
           SMI Score Summary Sheet{" "}
           {submittedAt && (
             <span className="text-gray-400 text-[1.5rem]">
