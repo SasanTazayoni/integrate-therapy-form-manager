@@ -1,7 +1,7 @@
 import SMISummaryModal from "../components/modals/SMISummaryModal";
 import ScoreCard from "../components/BecksBurnsScoreCard";
-import SMIModesTable from "../components/tables/SMIModesTable";
-import YSQSchemasTable from "../components/tables/YSQSchemasTable";
+import SMIModesTable from "../tables/SMIModesTable";
+import YSQSchemasTable from "../tables/YSQSchemasTable";
 import { Printer } from "lucide-react";
 import { useState } from "react";
 import ProtectedAccess from "../components/ProtectedAccess";
@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useClientContext } from "../context/ClientContext";
 import type { ClientFormsStatus } from "../types/formStatusTypes";
 
-type ClientFormsStatusWithName = ClientFormsStatus & {
+type ClientFormsStatusDetails = ClientFormsStatus & {
   clientName?: string;
 };
 
@@ -18,27 +18,25 @@ const FormResultsSummary = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { clientFormsStatus } = useClientContext() as {
-    clientFormsStatus: ClientFormsStatusWithName | null;
+    clientFormsStatus: ClientFormsStatusDetails | null;
   };
 
   const navigate = useNavigate();
 
-  const onHeaderClick = (col: "raw" | "456") => {
-    setGrayedOutCol(col);
-  };
+  const onHeaderClick = (col: "raw" | "456") => setGrayedOutCol(col);
 
   const onHeaderRightClick = (
     e: React.MouseEvent<HTMLElement>,
     col: "raw" | "456"
   ) => {
     e.preventDefault();
-    if (grayedOutCol === col) {
-      setGrayedOutCol(null);
-    }
+    if (grayedOutCol === col) setGrayedOutCol(null);
   };
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  const smiSubmittedAt = clientFormsStatus?.forms?.SMI?.submittedAt;
 
   return (
     <ProtectedAccess>
@@ -77,7 +75,12 @@ const FormResultsSummary = () => {
           </div>
         </div>
 
-        <SMIModesTable openModal={openModal} />
+        <SMIModesTable
+          openModal={openModal}
+          submittedAt={
+            smiSubmittedAt ? new Date(smiSubmittedAt).toISOString() : undefined
+          }
+        />
         <YSQSchemasTable
           grayedOutCol={grayedOutCol}
           onHeaderClick={onHeaderClick}
@@ -97,6 +100,9 @@ const FormResultsSummary = () => {
           isOpen={isModalOpen}
           onClose={closeModal}
           clientName={clientFormsStatus?.clientName}
+          submittedAt={
+            smiSubmittedAt ? new Date(smiSubmittedAt).toISOString() : undefined
+          }
         />
       </div>
     </ProtectedAccess>
