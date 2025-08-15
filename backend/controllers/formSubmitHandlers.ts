@@ -62,13 +62,12 @@ export const submitBecksForm = async (
       },
     });
 
-    return res.json({ success: true });
+    res.json({ success: true });
   } catch (error) {
     console.error("Error submitting form:", error);
-    return res.status(500).json({
-      error: "Failed to submit form",
-      code: "SUBMIT_ERROR",
-    });
+    res
+      .status(500)
+      .json({ error: "Failed to submit form", code: "SUBMIT_ERROR" });
   }
 };
 
@@ -98,13 +97,12 @@ export const submitBurnsForm = async (
       },
     });
 
-    return res.json({ success: true });
+    res.json({ success: true });
   } catch (error) {
     console.error("Error submitting BURNS form:", error);
-    return res.status(500).json({
-      error: "Failed to submit form",
-      code: "SUBMIT_ERROR",
-    });
+    res
+      .status(500)
+      .json({ error: "Failed to submit form", code: "SUBMIT_ERROR" });
   }
 };
 
@@ -125,10 +123,9 @@ export const submitYSQForm = async (
   const { token, scores } = req.body;
 
   if (!scores) {
-    return res.status(400).json({
-      error: "Missing required fields",
-      code: "MISSING_FIELDS",
-    });
+    return res
+      .status(400)
+      .json({ error: "Missing required fields", code: "MISSING_FIELDS" });
   }
 
   try {
@@ -136,7 +133,7 @@ export const submitYSQForm = async (
     if (!form) return;
 
     const now = new Date();
-    const dataUpdate: Record<string, any> = {
+    const dataUpdate: Record<string, unknown> = {
       submitted_at: now,
       is_active: false,
       token_expires_at: now,
@@ -146,9 +143,7 @@ export const submitYSQForm = async (
       const key = `ysq_${schema}_answers` as keyof typeof scores;
       const answers = scores[key];
 
-      if (!answers || !Array.isArray(answers)) {
-        continue;
-      }
+      if (!answers || !Array.isArray(answers)) continue;
 
       const numericAnswers = answers.map((v) => Number(v) || 0);
       const rawScore = numericAnswers.reduce((sum, val) => sum + val, 0);
@@ -157,6 +152,7 @@ export const submitYSQForm = async (
         rawScore
       );
       const rawCombined = `${rawScore}-${rawCategory}`;
+
       const score456 = numericAnswers
         .filter((val) => val >= 4 && val <= 6)
         .reduce((sum, val) => sum + val, 0);
@@ -170,18 +166,14 @@ export const submitYSQForm = async (
       dataUpdate[`ysq_${schema}_456`] = score456Combined;
     }
 
-    await prisma.form.update({
-      where: { token },
-      data: dataUpdate,
-    });
+    await prisma.form.update({ where: { token }, data: dataUpdate });
 
-    return res.json({ success: true });
+    res.json({ success: true });
   } catch (error) {
     console.error("Error submitting YSQ form:", error);
-    return res.status(500).json({
-      error: "Failed to submit YSQ form",
-      code: "SUBMIT_ERROR",
-    });
+    res
+      .status(500)
+      .json({ error: "Failed to submit YSQ form", code: "SUBMIT_ERROR" });
   }
 };
 
@@ -189,10 +181,7 @@ export const submitSMIForm = async (
   req: Request<
     {},
     unknown,
-    {
-      token: string;
-      results: Record<string, { average: number }>;
-    }
+    { token: string; results: Record<string, { average: number }> }
   >,
   res: Response
 ) => {
@@ -202,10 +191,12 @@ export const submitSMIForm = async (
   const { token, results } = req.body;
 
   if (!results || typeof results !== "object") {
-    return res.status(400).json({
-      error: "Invalid or missing results object",
-      code: "MISSING_FIELDS",
-    });
+    return res
+      .status(400)
+      .json({
+        error: "Invalid or missing results object",
+        code: "MISSING_FIELDS",
+      });
   }
 
   try {
@@ -213,7 +204,7 @@ export const submitSMIForm = async (
     if (!form) return;
 
     const now = new Date();
-    const dataUpdate: Record<string, any> = {
+    const dataUpdate: Record<string, unknown> = {
       submitted_at: now,
       is_active: false,
       token_expires_at: now,
@@ -246,17 +237,13 @@ export const submitSMIForm = async (
       dataUpdate[boundaryKey] = `${avg.toFixed(2)}-${category}`;
     }
 
-    await prisma.form.update({
-      where: { token },
-      data: dataUpdate,
-    });
+    await prisma.form.update({ where: { token }, data: dataUpdate });
 
-    return res.json({ success: true });
+    res.json({ success: true });
   } catch (error) {
     console.error("Error submitting SMI form:", error);
-    return res.status(500).json({
-      error: "Failed to submit SMI form",
-      code: "SUBMIT_ERROR",
-    });
+    res
+      .status(500)
+      .json({ error: "Failed to submit SMI form", code: "SUBMIT_ERROR" });
   }
 };
