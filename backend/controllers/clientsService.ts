@@ -29,6 +29,7 @@ export const getClientFormsStatus = async (
 ): Promise<{
   clientExists: boolean;
   clientName?: string | null;
+  clientDob?: string | null;
   formsStatus?: Record<FormType, FormStatus>;
   formsCompleted?: number;
   scores?: Scores;
@@ -84,7 +85,6 @@ export const getClientFormsStatus = async (
     "smi_"
   );
 
-  // Get the latest YSQ form once
   const latestYsqForm = forms
     .filter((f) => f.form_type === "YSQ")
     .sort(
@@ -136,6 +136,7 @@ export const getClientFormsStatus = async (
   return {
     clientExists: true,
     clientName: client.name ?? null,
+    clientDob: client.dob ? client.dob.toISOString() : null,
     formsStatus,
     formsCompleted,
     scores: {
