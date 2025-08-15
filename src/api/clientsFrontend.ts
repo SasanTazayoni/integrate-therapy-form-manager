@@ -1,9 +1,20 @@
 import axios from "axios";
 import { getErrorDisplay } from "../utils/getErrorDisplay";
+import type { ClientFormsStatus } from "../types/formStatusTypes";
 
-export async function fetchClientStatus(email: string) {
+type FetchClientStatusResult =
+  | { ok: true; data: ClientFormsStatus }
+  | { ok: false; data: { error: string } };
+
+type AddClientResult =
+  | { ok: true; data: ClientFormsStatus }
+  | { ok: false; data: { error: string } };
+
+export async function fetchClientStatus(
+  email: string
+): Promise<FetchClientStatusResult> {
   try {
-    const res = await axios.get("/clients/form-status", {
+    const res = await axios.get<ClientFormsStatus>("/clients/form-status", {
       params: { email },
     });
     return { ok: true, data: res.data };
@@ -28,9 +39,9 @@ export async function fetchClientStatus(email: string) {
   }
 }
 
-export async function addClient(email: string) {
+export async function addClient(email: string): Promise<AddClientResult> {
   try {
-    const res = await axios.post("/clients/add", { email });
+    const res = await axios.post<ClientFormsStatus>("/clients/add", { email });
     return { ok: true, data: res.data };
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
