@@ -1,7 +1,7 @@
-interface SMIModeTableProps {
+type SMIModeTableProps = {
   label: string;
   items: string[];
-}
+};
 
 export default function SMIModeTable({ label, items }: SMIModeTableProps) {
   return (

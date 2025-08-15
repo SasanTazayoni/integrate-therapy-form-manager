@@ -1,7 +1,7 @@
-interface ScoreCardProps {
+type ScoreCardProps = {
   title: string;
   value: string | number;
-}
+};
 
 export default function ScoreCard({ title, value }: ScoreCardProps) {
   return (

@@ -2,14 +2,14 @@ import React from "react";
 
 type GrayedOutCol = "raw" | "456" | null;
 
-interface YSQSchemasTableProps {
+type YSQSchemasTableProps = {
   grayedOutCol: GrayedOutCol;
   onHeaderClick: (col: "raw" | "456") => void;
   onHeaderRightClick: (
     e: React.MouseEvent<HTMLElement>,
     col: "raw" | "456"
   ) => void;
-}
+};
 
 export default function YSQSchemasTable({
   grayedOutCol,

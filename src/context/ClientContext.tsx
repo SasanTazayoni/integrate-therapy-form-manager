@@ -1,7 +1,7 @@
 import { createContext, useState, useContext, ReactNode } from "react";
 import type { ClientFormsStatus } from "../types/formStatusTypes";
 
-interface ClientContextType {
+type ClientContextType = {
   email: string;
   setEmail: (email: string) => void;
   clientFormsStatus: ClientFormsStatus | null;
@@ -10,7 +10,7 @@ interface ClientContextType {
   setSuccessMessage: (msg: string) => void;
   error: string;
   setError: (msg: string) => void;
-}
+};
 
 const ClientContext = createContext<ClientContextType | undefined>(undefined);
 
