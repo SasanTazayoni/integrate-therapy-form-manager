@@ -221,9 +221,6 @@ async function main() {
         submitted_at: null,
         is_active: true,
         revoked_at: null,
-        ...Object.fromEntries(
-          Object.keys(smiBoundaries).map((key) => [key, generateScore(key)])
-        ),
       },
       {
         clientId: emma.id,
