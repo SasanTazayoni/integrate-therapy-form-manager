@@ -11,13 +11,12 @@ export const getClientFormsStatusHandler = async (
 
   if (result.error) {
     if (result.error === "Email is required") {
-      res.status(400).json({ error: result.error });
+      return res.status(400).json({ error: result.error });
     } else if (result.error === "Client not found") {
-      res.status(404).json({ error: result.error });
+      return res.status(404).json({ error: result.error });
     } else {
-      res.status(500).json({ error: "Internal server error" });
+      return res.status(500).json({ error: "Internal server error" });
     }
-    return;
   }
 
   res.json({
@@ -25,7 +24,13 @@ export const getClientFormsStatusHandler = async (
     clientName: result.clientName ?? null,
     forms: result.formsStatus,
     formsCompleted: result.formsCompleted,
-    smiScores: result.smiScoresByForm ?? {},
+    scores: result.scores ?? {
+      bdi: null,
+      bai: null,
+      ysq: {},
+      ysq456: {},
+      smi: {},
+    },
   });
 };
 
@@ -36,11 +41,10 @@ export const createClientHandler = async (req: Request, res: Response) => {
 
   if (result.error) {
     if (result.error === "Email is required") {
-      res.status(400).json({ error: result.error });
+      return res.status(400).json({ error: result.error });
     } else {
-      res.status(500).json({ error: result.error });
+      return res.status(500).json({ error: result.error });
     }
-    return;
   }
 
   res.status(201).json(result.client);
