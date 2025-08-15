@@ -1,18 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import Modal from "../Modal";
-import SMIModeTable from "../tables/SMIModesTableScores";
+import SMIModeTable from "../../tables/SMIModesTableScores";
 import { useOutsideClickAndEscape } from "../../hooks/useOutsideClickAndEscape";
 
 type SMISummaryModalProps = {
   isOpen: boolean;
   onClose: () => void;
   clientName?: string;
+  submittedAt?: string;
 };
 
 export default function SMISummaryModal({
   isOpen,
   onClose,
   clientName,
+  submittedAt,
 }: SMISummaryModalProps) {
   const [closing, setClosing] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
@@ -81,8 +83,13 @@ export default function SMISummaryModal({
         ref={modalRef}
         className="max-h-[80vh] overflow-y-auto p-6 text-gray-800"
       >
-        <h2 id="smi-summary-title" className="text-xl font-bold mb-6">
-          SMI Score Summary Sheet
+        <h2 className="title">
+          SMI Score Summary Sheet{" "}
+          {submittedAt && (
+            <span className="text-gray-400 text-[1.5rem]">
+              ({new Date(submittedAt).toLocaleDateString()})
+            </span>
+          )}
         </h2>
 
         <div className="text-left mb-4 space-y-2">
