@@ -1,6 +1,4 @@
-import { useRef } from "react";
 import Modal from "../Modal";
-import { useOutsideClickAndEscape } from "../../hooks/useOutsideClickAndEscape";
 
 type Props = {
   onConfirm: () => void;
@@ -15,18 +13,15 @@ export default function RevokeConfirmModal({
   closing,
   onCloseFinished,
 }: Props) {
-  const modalRef = useRef<HTMLDivElement>(null);
-
-  useOutsideClickAndEscape(modalRef, onCancel);
-
   return (
     <Modal
       closing={closing}
       onCloseFinished={onCloseFinished}
       ariaLabelledBy="revoke-title"
       role="dialog"
+      onOverlayClick={onCancel}
     >
-      <div ref={modalRef}>
+      <div>
         <h2 id="revoke-title" className="text-xl font-bold mb-4">
           Confirm Revoke
         </h2>
