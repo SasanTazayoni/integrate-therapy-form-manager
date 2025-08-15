@@ -8,6 +8,7 @@ type Props = {
   ariaDescribedBy?: string;
   role?: React.AriaRole;
   onCloseFinished?: () => void;
+  onOverlayClick?: () => void;
   className?: string;
 };
 
@@ -18,6 +19,7 @@ export default function Modal({
   ariaDescribedBy,
   role = "dialog",
   onCloseFinished,
+  onOverlayClick,
   className,
 }: Props) {
   const [visible, setVisible] = useState(false);
@@ -40,13 +42,22 @@ export default function Modal({
     visible && !closing ? "overlay fade-in" : "overlay fade-out";
 
   return ReactDOM.createPortal(
-    <div className={overlayClass} aria-hidden={false}>
+    <div
+      className={overlayClass}
+      aria-hidden={false}
+      onClick={(e) => {
+        if ((e.target as HTMLElement).classList.contains("overlay")) {
+          onOverlayClick?.();
+        }
+      }}
+    >
       <div
         className={`modal ${className}`}
         role={role}
         aria-modal="true"
         aria-labelledby={ariaLabelledBy}
         aria-describedby={ariaDescribedBy}
+        onClick={(e) => e.stopPropagation()}
       >
         {children}
       </div>
