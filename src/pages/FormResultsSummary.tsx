@@ -8,6 +8,7 @@ import ProtectedAccess from "../components/ProtectedAccess";
 import { useNavigate } from "react-router-dom";
 import { useClientContext } from "../context/ClientContext";
 import type { ClientFormsStatus } from "../types/formStatusTypes";
+import { parseScore } from "../utils/parseScores";
 
 type ClientFormsStatusDetails = ClientFormsStatus & {
   clientName?: string;
@@ -39,6 +40,13 @@ const FormResultsSummary = () => {
 
   const smiSubmittedAt = clientFormsStatus?.forms?.SMI?.submittedAt;
   const ysqSubmittedAt = clientFormsStatus?.forms?.YSQ?.submittedAt;
+
+  const { score: bdiScore, label: bdiLabel } = parseScore(
+    clientFormsStatus?.scores?.bdi?.bdi_score ?? null
+  );
+  const { score: baiScore, label: baiLabel } = parseScore(
+    clientFormsStatus?.scores?.bai?.bai_score ?? null
+  );
 
   useEffect(() => {
     if (clientFormsStatus?.scores?.smi) {
@@ -105,20 +113,23 @@ const FormResultsSummary = () => {
           {[
             {
               title: "BAI",
-              value: "___",
+              value: baiScore !== null ? `${baiScore} (${baiLabel})` : "___",
               submittedAt: clientFormsStatus?.forms.BURNS?.submittedAt,
+              highlight: baiScore !== null && baiScore >= 31,
             },
             {
               title: "BDI",
-              value: "___",
+              value: bdiScore !== null ? `${bdiScore} (${bdiLabel})` : "___",
               submittedAt: clientFormsStatus?.forms.BECKS?.submittedAt,
+              highlight: bdiScore !== null && bdiScore >= 31,
             },
-          ].map(({ title, value, submittedAt }) => (
+          ].map(({ title, value, submittedAt, highlight }) => (
             <ScoreCard
               key={title}
               title={title}
               value={value}
               submittedAt={submittedAt}
+              highlight={highlight}
             />
           ))}
         </section>
