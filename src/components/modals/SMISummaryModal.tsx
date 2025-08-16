@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import Modal from "../Modal";
 import { useClientContext } from "../../context/ClientContext";
-import { getBoundary, categoryKeyMap } from "../../data/SMIBoundaries";
+import {
+  classifyBoundaryAndAlignment,
+  categoryKeyMap,
+} from "../../data/SMIBoundaries";
 import SMIModesScoreSummaryTable from "../../tables/SMIModesTableScores";
 
 type SMISummaryModalProps = {
@@ -34,11 +37,15 @@ export default function SMISummaryModal({
   if (!isOpen && !closing) return null;
 
   const smiScores = clientFormsStatus?.scores?.smi || {};
+  console.log("SMI Scores:", smiScores);
 
-  const smiTableData: Record<string, string | null> = Object.fromEntries(
+  const smiTableData: Record<
+    string,
+    { column: string | null; alignment: "left" | "center" | "right" | null }
+  > = Object.fromEntries(
     Object.entries(categoryKeyMap).map(([mode, key]) => [
       mode,
-      getBoundary(smiScores[key], key),
+      classifyBoundaryAndAlignment(smiScores[key], key),
     ])
   );
 
@@ -60,17 +67,15 @@ export default function SMISummaryModal({
         "Compliant Surrenderer",
         "Detached Protector",
         "Detached Self-Soother",
-        "Overcompensating Parent",
       ],
     },
     {
+      label: "Overcompensating Modes",
+      items: ["Self-Aggrandizer", "Bully and Attack"],
+    },
+    {
       label: "Parent Modes",
-      items: [
-        "Self-Aggrandizer",
-        "Bully and Attack",
-        "Punitive Parent",
-        "Demanding Parent",
-      ],
+      items: ["Punitive Parent", "Demanding Parent"],
     },
     {
       label: "Healthy Adult Mode",
