@@ -37,7 +37,6 @@ export default function SMISummaryModal({
   if (!isOpen && !closing) return null;
 
   const smiScores = clientFormsStatus?.scores?.smi || {};
-  console.log("SMI Scores:", smiScores);
 
   const smiTableData: Record<
     string,
