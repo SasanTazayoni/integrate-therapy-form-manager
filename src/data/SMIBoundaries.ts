@@ -74,3 +74,20 @@ export function getBoundary(
   const level = parts[1]?.trim();
   return boundaryMap[level as keyof typeof boundaryMap] || null;
 }
+
+export function getAlignment(
+  score: number,
+  boundaries: number[]
+): "left" | "center" | "right" {
+  for (let i = 0; i < boundaries.length - 1; i++) {
+    const lower = boundaries[i];
+    const upper = boundaries[i + 1];
+    if (score >= lower && score <= upper) {
+      const mid = (lower + upper) / 2;
+      if (Math.abs(score - lower) < Math.abs(score - mid)) return "left";
+      if (Math.abs(score - upper) < Math.abs(score - mid)) return "right";
+      return "center";
+    }
+  }
+  return "center";
+}
