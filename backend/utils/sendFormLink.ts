@@ -29,10 +29,10 @@ const pathMap: Record<string, string> = {
 };
 
 const formTitles: Record<string, string> = {
-  YSQ: "Young Schema Questionnaire (YSQ) Form",
-  SMI: "Schema Mode Inventory (SMI) Form",
-  BECKS: "Beck's Depression Inventory (BDI) Form",
-  BURNS: "Burn's Anxiety Inventory (BAI) Form",
+  YSQ: "Young Schema Questionnaire (YSQ)",
+  SMI: "Schema Mode Inventory (SMI)",
+  BECKS: "Beck's Depression Inventory (BDI)",
+  BURNS: "Burn's Anxiety Inventory (BAI)",
 };
 
 export async function sendFormLink({
