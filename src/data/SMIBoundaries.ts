@@ -56,23 +56,37 @@ export const categoryKeyMap: Record<string, string> = {
   "Healthy Adult": "smi_ha_score",
 };
 
-export const boundaryMap: Record<string, string> = {
-  "Very Low": "Very Low - Average",
-  Low: "Very Low - Average",
-  Average: "Average - Moderate",
-  Moderate: "Moderate - High",
-  High: "High – Very High",
-  "Very High": "Very High - Severe",
-  Severe: "Very High - Severe",
-};
-
 export function getBoundary(
-  scoreStr: string | null | undefined
+  scoreStr: string | null | undefined,
+  categoryKey?: string
 ): string | null {
-  if (!scoreStr) return null;
-  const parts = scoreStr.split("-");
-  const level = parts[1]?.trim();
-  return boundaryMap[level as keyof typeof boundaryMap] || null;
+  if (!scoreStr || !categoryKey) return null;
+
+  const score = parseFloat(scoreStr.split("-")[0]);
+  if (isNaN(score)) return null;
+
+  const boundaries = smiBoundaries[categoryKey];
+  if (!boundaries) return null;
+
+  const columns = [
+    "Very Low - Average",
+    "Average - Moderate",
+    "Moderate - High",
+    "High – Very High",
+    "Very High - Severe",
+  ];
+
+  for (let i = 0; i < boundaries.length - 1; i++) {
+    const lower = boundaries[i];
+    const upper = boundaries[i + 1];
+    if (boundaries[0] < boundaries[boundaries.length - 1]) {
+      if (score >= lower && score <= upper) return columns[i];
+    } else {
+      if (score <= lower && score >= upper) return columns[i];
+    }
+  }
+
+  return null;
 }
 
 export function getAlignment(
