@@ -1,9 +1,13 @@
-type SMIModeTableProps = {
+type SMIModesScoreSummaryTableProps = {
   label: string;
   items: string[];
+  smiTableData: Record<string, string | null>;
 };
 
-export default function SMIModeTable({ label, items }: SMIModeTableProps) {
+export default function SMIModesScoreSummaryTable({
+  label,
+  items,
+}: SMIModesScoreSummaryTableProps) {
   return (
     <div className="overflow-hidden rounded-lg border border-gray-500">
       <table className="w-full table-fixed">
