@@ -3,27 +3,21 @@ import FormActionButton from "./FormActionButton";
 type Props = {
   sendDisabled: boolean;
   revokeDisabled: boolean;
-  retrieveDisabled: boolean;
   onSend: () => void;
   onRevoke: () => void;
-  onRetrieve: () => void;
   sendLabel?: string;
   loadingSend?: boolean;
   loadingRevoke?: boolean;
-  loadingRetrieve?: boolean;
 };
 
 export default function FormButtonGroup({
   sendDisabled,
   revokeDisabled,
-  retrieveDisabled,
   onSend,
   onRevoke,
-  onRetrieve,
   sendLabel = "Send",
   loadingSend = false,
   loadingRevoke = false,
-  loadingRetrieve = false,
 }: Props) {
   return (
     <div className="flex space-x-3 justify-center w-full">
@@ -38,12 +32,6 @@ export default function FormButtonGroup({
         disabled={revokeDisabled}
         onClick={onRevoke}
         loading={loadingRevoke}
-      />
-      <FormActionButton
-        label="Retrieve"
-        disabled={retrieveDisabled}
-        onClick={onRetrieve}
-        loading={loadingRetrieve}
       />
     </div>
   );

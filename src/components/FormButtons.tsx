@@ -12,7 +12,6 @@ type FormButtonsProps = {
   clientFormsStatus: ClientFormsStatus | null;
   onSend: (formType: FormType) => void;
   onRevoke: (formType: FormType) => void;
-  onRetrieve: (formType: FormType) => void;
   formActionLoading: Record<FormType, boolean>;
 };
 
@@ -20,7 +19,6 @@ export default function FormButtons({
   clientFormsStatus,
   onSend,
   onRevoke,
-  onRetrieve,
   formActionLoading,
 }: FormButtonsProps) {
   const clientSearched = clientFormsStatus !== null;
@@ -46,12 +44,6 @@ export default function FormButtons({
           !(status ? status.activeToken : false) ||
           formActionLoading[formType];
 
-        const retrieveDisabled =
-          !clientSearched ||
-          !clientExists ||
-          !status?.submitted ||
-          formActionLoading[formType];
-
         const sendLabel =
           formType === "SMI" && status?.submitted ? "Resend" : "Send";
 
@@ -68,14 +60,11 @@ export default function FormButtons({
               <FormButtonGroup
                 sendDisabled={sendDisabled}
                 revokeDisabled={revokeDisabled}
-                retrieveDisabled={retrieveDisabled}
                 onSend={() => onSend(formType)}
                 onRevoke={() => onRevoke(formType)}
-                onRetrieve={() => onRetrieve(formType)}
                 sendLabel={sendLabel}
                 loadingSend={formActionLoading[formType]}
                 loadingRevoke={formActionLoading[formType]}
-                loadingRetrieve={formActionLoading[formType]}
               />
             </div>
 

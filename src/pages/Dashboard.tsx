@@ -315,7 +315,6 @@ export default function Dashboard() {
           clientFormsStatus={clientFormsStatus}
           onSend={handleSendForm}
           onRevoke={openRevokeModal}
-          onRetrieve={(formType) => console.log("Retrieve", formType)}
           formActionLoading={formActionLoading}
         />
       </div>
