@@ -10,6 +10,8 @@ type YSQSchemasTableProps = {
     col: "raw" | "456"
   ) => void;
   ysqSubmittedAt?: string;
+  ysqScores?: Record<string, string | null>;
+  ysq456Scores?: Record<string, string | null>;
 };
 
 export default function YSQSchemasTable({
@@ -17,6 +19,8 @@ export default function YSQSchemasTable({
   onHeaderClick,
   onHeaderRightClick,
   ysqSubmittedAt,
+  ysqScores = {},
+  ysq456Scores = {},
 }: YSQSchemasTableProps) {
   const headerTextClass = (col: "raw" | "456") =>
     grayedOutCol === col ? "text-gray-500" : "text-gray-900";
@@ -29,11 +33,11 @@ export default function YSQSchemasTable({
     { name: "Abandonment", code: "AB", max: 102 },
     { name: "Mistrust/Abuse", code: "MA", max: 102 },
     { name: "Social Isolation", code: "SI", max: 60 },
-    { name: "Defectiveness/Shame", code: "DS/DE", max: 90 },
+    { name: "Defectiveness/Shame", code: "DS", max: 90 },
     { name: "Failure", code: "FA", max: 54 },
     { name: "Dependence/Incompetence", code: "DI", max: 90 },
-    { name: "Vulnerability to Harm", code: "VU/VH", max: 72 },
-    { name: "Enmeshment/Under-Developed Self", code: "EU/EM", max: 66 },
+    { name: "Vulnerability to Harm", code: "VU", max: 72 },
+    { name: "Enmeshment/Under-Developed Self", code: "EU", max: 66 },
     { name: "Subjugation", code: "SB", max: 60 },
     { name: "Self-Sacrifice", code: "SS", max: 102 },
     { name: "Emotional Inhibition", code: "EI", max: 54 },
@@ -44,6 +48,18 @@ export default function YSQSchemasTable({
     { name: "Negativity/Pessimism", code: "NP", max: 66 },
     { name: "Punitiveness", code: "PU", max: 84 },
   ];
+
+  const normalizeCode = (code: string) => code.split("/")[0].toLowerCase();
+  const extractNumber = (value: string | null | undefined): string => {
+    if (!value) return "";
+    const match = value.match(/^\d+/);
+    return match ? match[0] : "";
+  };
+  const extractRating = (value: string | null | undefined): string => {
+    if (!value) return "";
+    const match = value.match(/-(.+)$/);
+    return match ? match[1] : "";
+  };
 
   return (
     <section className="mb-12">
@@ -84,24 +100,50 @@ export default function YSQSchemasTable({
           </tr>
         </thead>
         <tbody>
-          {schemas.map(({ name, code, max }) => (
-            <tr
-              key={code}
-              className="text-center bg-[--color-block--white] hover:bg-[--color-selected-bg] transition"
-            >
-              <td className="border border-gray-300 p-2 text-left font-medium">
-                {name} <strong>({code})</strong>
-              </td>
-              <td
-                className={`border border-gray-300 p-2 ${cellTextClass("raw")}`}
-              ></td>
-              <td
-                className={`border border-gray-300 p-2 ${cellTextClass("456")}`}
-              ></td>
-              <td className="border border-gray-300 p-2">{max}</td>
-              <td className="border border-gray-300 p-2"></td>
-            </tr>
-          ))}
+          {schemas.map(({ name, code, max }) => {
+            const normCode = normalizeCode(code);
+            const rawKey = `ysq_${normCode}_score`;
+            const score456Key = `ysq_${normCode}_456`;
+
+            const rawScore = extractNumber(ysqScores[rawKey]);
+            const score456 = extractNumber(ysq456Scores[score456Key]);
+
+            let rating = "";
+            if (grayedOutCol === "raw") {
+              rating = extractRating(ysq456Scores[score456Key]);
+            } else if (grayedOutCol === "456") {
+              rating = extractRating(ysqScores[rawKey]);
+            } else {
+              rating = "";
+            }
+
+            return (
+              <tr
+                key={code}
+                className="text-center bg-[--color-block--white] hover:bg-[--color-selected-bg] transition"
+              >
+                <td className="border border-gray-300 p-2 text-left font-medium">
+                  {name} <strong>({code})</strong>
+                </td>
+                <td
+                  className={`border border-gray-300 p-2 ${cellTextClass(
+                    "raw"
+                  )}`}
+                >
+                  {rawScore}
+                </td>
+                <td
+                  className={`border border-gray-300 p-2 ${cellTextClass(
+                    "456"
+                  )}`}
+                >
+                  {score456}
+                </td>
+                <td className="border border-gray-300 p-2">{max}</td>
+                <td className="border border-gray-300 p-2">{rating}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </section>
