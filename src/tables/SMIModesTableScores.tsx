@@ -15,7 +15,7 @@ export default function SMIModeTable({ label, items }: SMIModeTableProps) {
               "Average - Moderate",
               "Moderate - High",
               "High – Very High",
-              "High Very - Severe",
+              "Very High - Severe",
             ].map((heading) => (
               <th
                 key={heading}
