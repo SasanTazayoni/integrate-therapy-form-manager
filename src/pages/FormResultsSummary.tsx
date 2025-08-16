@@ -49,8 +49,9 @@ const FormResultsSummary = () => {
   );
 
   useEffect(() => {
-    if (clientFormsStatus?.scores?.smi) {
-      console.log("Client SMI Scores:", clientFormsStatus.scores.smi);
+    if (clientFormsStatus?.scores?.ysq || clientFormsStatus?.scores?.ysq456) {
+      console.log("Client YSQ (Raw):", clientFormsStatus?.scores?.ysq);
+      console.log("Client YSQ (456):", clientFormsStatus?.scores?.ysq456);
     }
   }, [clientFormsStatus]);
 
@@ -99,6 +100,7 @@ const FormResultsSummary = () => {
           submittedAt={
             smiSubmittedAt ? new Date(smiSubmittedAt).toISOString() : undefined
           }
+          smiScores={clientFormsStatus?.scores?.smi ?? {}}
         />
         <YSQSchemasTable
           grayedOutCol={grayedOutCol}
