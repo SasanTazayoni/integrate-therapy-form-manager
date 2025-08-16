@@ -3,7 +3,7 @@ import ScoreCard from "../components/BecksBurnsScoreCard";
 import SMIModesTable from "../tables/SMIModesTable";
 import YSQSchemasTable from "../tables/YSQSchemasTable";
 import { Printer } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import ProtectedAccess from "../components/ProtectedAccess";
 import { useNavigate } from "react-router-dom";
 import { useClientContext } from "../context/ClientContext";
@@ -47,13 +47,6 @@ const FormResultsSummary = () => {
   const { score: baiScore, label: baiLabel } = parseScore(
     clientFormsStatus?.scores?.bai?.bai_score ?? null
   );
-
-  useEffect(() => {
-    if (clientFormsStatus?.scores?.ysq || clientFormsStatus?.scores?.ysq456) {
-      console.log("Client YSQ (Raw):", clientFormsStatus?.scores?.ysq);
-      console.log("Client YSQ (456):", clientFormsStatus?.scores?.ysq456);
-    }
-  }, [clientFormsStatus]);
 
   return (
     <ProtectedAccess>
@@ -109,6 +102,8 @@ const FormResultsSummary = () => {
           ysqSubmittedAt={
             ysqSubmittedAt ? new Date(ysqSubmittedAt).toISOString() : undefined
           }
+          ysqScores={clientFormsStatus?.scores?.ysq}
+          ysq456Scores={clientFormsStatus?.scores?.ysq456}
         />
 
         <section className="flex flex-wrap justify-center gap-8 max-w-2xl mx-auto">
