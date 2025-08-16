@@ -66,7 +66,7 @@ export function classifyBoundaryAndAlignment(
   if (!scoreStr || !categoryKey) return { column: null, alignment: null };
 
   const score = parseFloat(scoreStr.split("-")[0]);
-  if (isNaN(score)) return { column: null, alignment: null };
+  if (Number.isNaN(score)) return { column: null, alignment: null };
 
   const boundaries = smiBoundaries[categoryKey];
   if (!boundaries) return { column: null, alignment: null };
@@ -75,40 +75,39 @@ export function classifyBoundaryAndAlignment(
     "Very Low - Average",
     "Average - Moderate",
     "Moderate - High",
-    "High – Very High",
+    "High - Very High",
     "Very High - Severe",
   ];
 
-  let column: string | null = null;
-  for (let i = 0; i < boundaries.length - 1; i++) {
-    const lower = boundaries[i];
-    const upper = boundaries[i + 1];
-    if (boundaries[0] < boundaries[boundaries.length - 1]) {
-      if (score >= lower && score <= upper) {
-        column = columns[i];
-        break;
-      }
-    } else {
-      if (score <= lower && score >= upper) {
-        column = columns[i];
-        break;
-      }
-    }
-  }
+  const isAscending = boundaries[0] < boundaries[boundaries.length - 1];
 
-  let alignment: "left" | "center" | "right" = "center";
+  let band = -1;
   for (let i = 0; i < boundaries.length - 1; i++) {
-    const lower = boundaries[i];
-    const upper = boundaries[i + 1];
-    if (score >= lower && score <= upper) {
-      const mid = (lower + upper) / 2;
-      if (Math.abs(score - lower) < Math.abs(score - mid)) alignment = "left";
-      else if (Math.abs(score - upper) < Math.abs(score - mid))
-        alignment = "right";
-      else alignment = "center";
+    const a = boundaries[i];
+    const b = boundaries[i + 1];
+    const lo = Math.min(a, b);
+    const hi = Math.max(a, b);
+    if (score >= lo && score <= hi) {
+      band = i;
       break;
     }
   }
+  if (band === -1) return { column: null, alignment: null };
+
+  const a = boundaries[band];
+  const b = boundaries[band + 1];
+  const column = columns[band];
+  const leftVal = isAscending ? Math.min(a, b) : Math.max(a, b);
+  const rightVal = isAscending ? Math.max(a, b) : Math.min(a, b);
+  const mid = (a + b) / 2;
+
+  const dLeft = Math.abs(score - leftVal);
+  const dRight = Math.abs(score - rightVal);
+  const dMid = Math.abs(score - mid);
+
+  let alignment: "left" | "center" | "right";
+  if (dMid <= Math.min(dLeft, dRight)) alignment = "center";
+  else alignment = dLeft < dRight ? "left" : "right";
 
   return { column, alignment };
 }
