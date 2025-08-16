@@ -27,6 +27,7 @@ export const labels = [
 export function classifyScore(score: number, boundaries: number[]): string {
   let closestIndex = 0;
   let smallestDiff = Infinity;
+
   boundaries.forEach((boundary, idx) => {
     const diff = Math.abs(score - boundary);
     if (diff < smallestDiff) {
@@ -34,6 +35,7 @@ export function classifyScore(score: number, boundaries: number[]): string {
       closestIndex = idx;
     }
   });
+
   return labels[closestIndex];
 }
 
@@ -53,3 +55,22 @@ export const categoryKeyMap: Record<string, string> = {
   "Demanding Parent": "smi_dc_score",
   "Healthy Adult": "smi_ha_score",
 };
+
+export const boundaryMap: Record<string, string> = {
+  "Very Low": "Very Low - Average",
+  Low: "Very Low - Average",
+  Average: "Average - Moderate",
+  Moderate: "Moderate - High",
+  High: "High – Very High",
+  "Very High": "Very High - Severe",
+  Severe: "Very High - Severe",
+};
+
+export function getBoundary(
+  scoreStr: string | null | undefined
+): string | null {
+  if (!scoreStr) return null;
+  const parts = scoreStr.split("-");
+  const level = parts[1]?.trim();
+  return boundaryMap[level as keyof typeof boundaryMap] || null;
+}
