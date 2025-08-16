@@ -27,7 +27,6 @@ export const labels = [
 export function classifyScore(score: number, boundaries: number[]): string {
   let closestIndex = 0;
   let smallestDiff = Infinity;
-
   boundaries.forEach((boundary, idx) => {
     const diff = Math.abs(score - boundary);
     if (diff < smallestDiff) {
@@ -35,7 +34,6 @@ export function classifyScore(score: number, boundaries: number[]): string {
       closestIndex = idx;
     }
   });
-
   return labels[closestIndex];
 }
 
@@ -56,17 +54,22 @@ export const categoryKeyMap: Record<string, string> = {
   "Healthy Adult": "smi_ha_score",
 };
 
-export function getBoundary(
+export type BoundaryResult = {
+  column: string | null;
+  alignment: "left" | "center" | "right" | null;
+};
+
+export function classifyBoundaryAndAlignment(
   scoreStr: string | null | undefined,
   categoryKey?: string
-): string | null {
-  if (!scoreStr || !categoryKey) return null;
+): BoundaryResult {
+  if (!scoreStr || !categoryKey) return { column: null, alignment: null };
 
   const score = parseFloat(scoreStr.split("-")[0]);
-  if (isNaN(score)) return null;
+  if (isNaN(score)) return { column: null, alignment: null };
 
   const boundaries = smiBoundaries[categoryKey];
-  if (!boundaries) return null;
+  if (!boundaries) return { column: null, alignment: null };
 
   const columns = [
     "Very Low - Average",
@@ -76,32 +79,36 @@ export function getBoundary(
     "Very High - Severe",
   ];
 
+  let column: string | null = null;
   for (let i = 0; i < boundaries.length - 1; i++) {
     const lower = boundaries[i];
     const upper = boundaries[i + 1];
     if (boundaries[0] < boundaries[boundaries.length - 1]) {
-      if (score >= lower && score <= upper) return columns[i];
+      if (score >= lower && score <= upper) {
+        column = columns[i];
+        break;
+      }
     } else {
-      if (score <= lower && score >= upper) return columns[i];
+      if (score <= lower && score >= upper) {
+        column = columns[i];
+        break;
+      }
     }
   }
 
-  return null;
-}
-
-export function getAlignment(
-  score: number,
-  boundaries: number[]
-): "left" | "center" | "right" {
+  let alignment: "left" | "center" | "right" = "center";
   for (let i = 0; i < boundaries.length - 1; i++) {
     const lower = boundaries[i];
     const upper = boundaries[i + 1];
     if (score >= lower && score <= upper) {
       const mid = (lower + upper) / 2;
-      if (Math.abs(score - lower) < Math.abs(score - mid)) return "left";
-      if (Math.abs(score - upper) < Math.abs(score - mid)) return "right";
-      return "center";
+      if (Math.abs(score - lower) < Math.abs(score - mid)) alignment = "left";
+      else if (Math.abs(score - upper) < Math.abs(score - mid))
+        alignment = "right";
+      else alignment = "center";
+      break;
     }
   }
-  return "center";
+
+  return { column, alignment };
 }
