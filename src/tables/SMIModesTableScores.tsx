@@ -16,7 +16,7 @@ export default function SMIModesScoreSummaryTable({
     "Very Low - Average",
     "Average - Moderate",
     "Moderate - High",
-    "High – Very High",
+    "High - Very High",
     "Very High - Severe",
   ];
 
