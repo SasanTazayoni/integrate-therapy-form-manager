@@ -1,7 +1,10 @@
 type SMIModesScoreSummaryTableProps = {
   label: string;
   items: string[];
-  smiTableData: Record<string, string | null>;
+  smiTableData: Record<
+    string,
+    { column: string | null; alignment: "left" | "center" | "right" | null }
+  >;
 };
 
 export default function SMIModesScoreSummaryTable({
@@ -34,19 +37,34 @@ export default function SMIModesScoreSummaryTable({
           </tr>
         </thead>
         <tbody>
-          {items.map((mode) => (
-            <tr key={mode} className="border-t border-gray-400">
-              <td className="px-4 py-2 font-normal">{mode}</td>
-              {columns.map((col) => (
-                <td
-                  key={col}
-                  className="px-2 py-2 border-l border-gray-400 text-center"
-                >
-                  {smiTableData[mode] === col ? "X" : ""}
-                </td>
-              ))}
-            </tr>
-          ))}
+          {items.map((mode) => {
+            const { column, alignment } = smiTableData[mode] || {};
+            return (
+              <tr key={mode} className="border-t border-gray-400">
+                <td className="px-4 py-2 font-normal">{mode}</td>
+                {columns.map((col) => (
+                  <td
+                    key={col}
+                    className={`px-2 py-2 border-l border-gray-400 text-center ${
+                      column === col
+                        ? alignment === "left"
+                          ? "text-left font-bold text-lg"
+                          : alignment === "right"
+                          ? "text-right font-bold text-lg"
+                          : "text-center font-bold text-lg"
+                        : ""
+                    }`}
+                  >
+                    {column === col ? (
+                      <span className="text-lg font-bold">X</span>
+                    ) : (
+                      ""
+                    )}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
