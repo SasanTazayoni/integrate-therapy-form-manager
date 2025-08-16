@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import Modal from "../Modal";
-import SMIModeTable from "../../tables/SMIModesTableScores";
 import { useClientContext } from "../../context/ClientContext";
+import { getBoundary } from "../../data/SMIBoundaries";
+import SMIModesScoreSummaryTable from "../../tables/SMIModesTableScores";
 
 type SMISummaryModalProps = {
   isOpen: boolean;
@@ -30,7 +31,36 @@ export default function SMISummaryModal({
     onClose();
   }
 
+  useEffect(() => {
+    if (clientFormsStatus?.scores?.smi) {
+      console.log("Client SMI Scores:", clientFormsStatus.scores.smi);
+    }
+  }, [clientFormsStatus]);
+
   if (!isOpen && !closing) return null;
+
+  const smiScores = clientFormsStatus?.scores?.smi || {};
+
+  const smiTableData: Record<string, string | null> = {
+    "Vulnerable Child": getBoundary(smiScores.smi_vc_score),
+    "Angry Child": getBoundary(smiScores.smi_ac_score),
+    "Enraged Child": getBoundary(smiScores.smi_ec_score),
+    "Impulsive Child": getBoundary(smiScores.smi_ic_score),
+    "Undisciplined Child": getBoundary(smiScores.smi_uc_score),
+    "Contented Child *": getBoundary(smiScores.smi_cc_score),
+
+    "Compliant Surrenderer": getBoundary(smiScores.smi_cs_score),
+    "Detached Protector": getBoundary(smiScores.smi_dp_score),
+    "Detached Self-Soother": getBoundary(smiScores.smi_dss_score),
+    "Overcompensating Parent": getBoundary(smiScores.smi_pp_score),
+
+    "Self-Aggrandizer": getBoundary(smiScores.smi_sa_score),
+    "Bully and Attack": getBoundary(smiScores.smi_ba_score),
+    "Punitive Parent": getBoundary(smiScores.smi_dc_score),
+    "Demanding Parent": getBoundary(smiScores.smi_dp_score),
+
+    "Healthy Adult *": getBoundary(smiScores.smi_ha_score),
+  };
 
   const modeGroups = [
     {
@@ -101,7 +131,12 @@ export default function SMISummaryModal({
 
         <section className="mt-4 text-sm text-left space-y-8">
           {modeGroups.map(({ label, items }) => (
-            <SMIModeTable key={label} label={label} items={items} />
+            <SMIModesScoreSummaryTable
+              key={label}
+              label={label}
+              items={items}
+              smiTableData={smiTableData}
+            />
           ))}
 
           <p className="mt-4 text-xs italic text-gray-600">
