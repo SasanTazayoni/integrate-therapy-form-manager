@@ -50,16 +50,23 @@ export default function YSQSchemasTable({
   ];
 
   const normalizeCode = (code: string) => code.split("/")[0].toLowerCase();
+
   const extractNumber = (value: string | null | undefined): string => {
     if (!value) return "";
     const match = value.match(/^\d+/);
     return match ? match[0] : "";
   };
+
   const extractRating = (value: string | null | undefined): string => {
     if (!value) return "";
     const match = value.match(/-(.+)$/);
     return match ? match[1] : "";
   };
+
+  const shouldHighlight = (rating: string) =>
+    ["high", "very high", "severe"].some((r) =>
+      rating.toLowerCase().includes(r)
+    );
 
   return (
     <section className="mb-12">
@@ -113,9 +120,9 @@ export default function YSQSchemasTable({
               rating = extractRating(ysq456Scores[score456Key]);
             } else if (grayedOutCol === "456") {
               rating = extractRating(ysqScores[rawKey]);
-            } else {
-              rating = "";
             }
+
+            const highlight = shouldHighlight(rating);
 
             return (
               <tr
@@ -140,7 +147,13 @@ export default function YSQSchemasTable({
                   {score456}
                 </td>
                 <td className="border border-gray-300 p-2">{max}</td>
-                <td className="border border-gray-300 p-2">{rating}</td>
+                <td
+                  className={`border border-gray-300 p-2 font-bold ${
+                    highlight ? "bg-yellow-200 border-yellow-400" : ""
+                  }`}
+                >
+                  {rating}
+                </td>
               </tr>
             );
           })}
