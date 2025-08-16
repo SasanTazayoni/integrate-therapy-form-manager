@@ -19,7 +19,7 @@ export default function SMIModesTable({
   const smiModes = [
     [
       "Detached Protector",
-      "Bully & Attack",
+      "Bully and Attack",
       "Self-Aggrandizer",
       "Impulsive Child",
       "Undisciplined Child",
