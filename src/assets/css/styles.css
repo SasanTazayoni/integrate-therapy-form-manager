@@ -168,6 +168,53 @@ textarea:focus {
   outline: 0;
 }
 
+/* Links */
+
+.link {
+  color: var(--color-link);
+  font-weight: 600;
+  text-decoration: none;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  height: 2px;
+  width: 0;
+  background-color: var(--color-secondary);
+  transition: all 0.3s ease;
+}
+
+.link:hover::after {
+  width: 100%;
+}
+
+.link:hover {
+  color: var(--color-secondary);
+}
+
+.link.disabled,
+.link:disabled {
+  color: gray;
+  cursor: not-allowed;
+}
+
+.link.disabled::after,
+.link:disabled::after {
+  width: 0;
+  background-color: gray;
+}
+
+.link.disabled:hover,
+.link:disabled:hover {
+  color: gray;
+}
+
 /* Animated border buttons */
 
 .border-button {
