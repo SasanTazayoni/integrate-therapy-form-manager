@@ -13,6 +13,7 @@ import normalizeEmail from "../utils/normalizeEmail";
 import type { FormType } from "../constants/formTypes";
 import type { ClientFormsStatus } from "../types/formStatusTypes";
 import { useClientContext } from "../context/ClientContext";
+import ClientActions from "../components/ClientActions";
 
 export default function Dashboard() {
   const {
@@ -307,6 +308,9 @@ export default function Dashboard() {
           onCheck={handleCheckProgress}
           onClear={handleClear}
           loading={loading}
+        />
+        <ClientActions
+          disabled={!clientFormsStatus || !clientFormsStatus.exists}
         />
       </div>
 
