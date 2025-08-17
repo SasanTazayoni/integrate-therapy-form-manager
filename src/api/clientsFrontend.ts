@@ -100,3 +100,50 @@ export async function deleteClientByEmail(
 ): Promise<DeleteClientResult> {
   return await deleteClient(email);
 }
+
+type DeactivateClientResponse = {
+  message: string;
+  client: {
+    id: string;
+    email: string;
+    name: string;
+    status: string;
+    inactivated_at: string | null;
+    delete_inactive: string | null;
+  };
+};
+
+type DeactivateClientResult =
+  | { ok: true; data: DeactivateClientResponse }
+  | { ok: false; data: { error: string } };
+
+export async function deactivateClient(
+  email: string
+): Promise<DeactivateClientResult> {
+  try {
+    const res = await axios.patch<DeactivateClientResponse>(
+      "/clients/deactivate",
+      null,
+      { params: { email } }
+    );
+    return { ok: true, data: res.data };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      return {
+        ok: false,
+        data: {
+          error: getErrorDisplay(
+            err,
+            "Network error while deactivating client."
+          ),
+        },
+      };
+    }
+    return {
+      ok: false,
+      data: {
+        error: "An unexpected error occurred while deactivating client.",
+      },
+    };
+  }
+}
