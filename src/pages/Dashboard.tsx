@@ -9,6 +9,7 @@ import {
   fetchClientStatus,
   addClient,
   deleteClient,
+  deactivateClient,
 } from "../api/clientsFrontend";
 import { sendFormToken, revokeFormToken } from "../api/formsFrontend";
 import validateEmail from "../utils/validators";
@@ -289,6 +290,31 @@ export default function Dashboard() {
     setShowAddClientPrompt(false);
   };
 
+  const handleDeactivateClient = async () => {
+    if (!confirmedEmail) {
+      setError("No confirmed email found!");
+      return;
+    }
+
+    const { ok, data } = await deactivateClient(confirmedEmail);
+
+    if (!ok) {
+      setError(data.error || "Failed to deactivate client");
+      setSuccessMessage("");
+      return;
+    }
+
+    setSuccessMessage(`Client ${confirmedEmail} deactivated successfully`);
+    setError("");
+
+    const { ok: fetchOk, data: updatedStatus } = await fetchClientStatus(
+      confirmedEmail
+    );
+    if (fetchOk) {
+      setClientFormsStatus(updatedStatus);
+    }
+  };
+
   return (
     <ProtectedAccess>
       <div className="p-6 max-w-xl mx-auto">
@@ -341,6 +367,7 @@ export default function Dashboard() {
         <ClientActions
           disabled={!clientFormsStatus || !clientFormsStatus.exists}
           onDeleteClient={handleDeleteClient}
+          onDeactivateClient={handleDeactivateClient}
         />
       </div>
 
