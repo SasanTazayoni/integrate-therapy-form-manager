@@ -57,7 +57,7 @@ export default function SMISummaryModal({
         "Enraged Child",
         "Impulsive Child",
         "Undisciplined Child",
-        "Contented Child",
+        "Contented Child *",
       ],
     },
     {
@@ -78,7 +78,7 @@ export default function SMISummaryModal({
     },
     {
       label: "Healthy Adult Mode",
-      items: ["Healthy Adult"],
+      items: ["Healthy Adult *"],
     },
   ];
 

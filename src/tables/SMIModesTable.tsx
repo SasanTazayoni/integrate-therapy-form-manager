@@ -32,10 +32,10 @@ export default function SMIModesTable({
       "Compliant Surrenderer",
     ],
     [
-      "Contented Child",
+      "Contented Child *",
       "Demanding Parent",
       "Punitive Parent",
-      "Healthy Adult",
+      "Healthy Adult *",
       "",
     ],
   ];

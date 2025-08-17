@@ -43,7 +43,7 @@ export const categoryKeyMap: Record<string, string> = {
   "Enraged Child": "smi_ec_score",
   "Impulsive Child": "smi_ic_score",
   "Undisciplined Child": "smi_uc_score",
-  "Contented Child": "smi_cc_score",
+  "Contented Child *": "smi_cc_score",
   "Compliant Surrenderer": "smi_cs_score",
   "Detached Protector": "smi_dp_score",
   "Detached Self-Soother": "smi_dss_score",
@@ -51,7 +51,7 @@ export const categoryKeyMap: Record<string, string> = {
   "Bully and Attack": "smi_ba_score",
   "Punitive Parent": "smi_pp_score",
   "Demanding Parent": "smi_dc_score",
-  "Healthy Adult": "smi_ha_score",
+  "Healthy Adult *": "smi_ha_score",
 };
 
 export type BoundaryResult = {
