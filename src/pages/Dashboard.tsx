@@ -5,7 +5,11 @@ import EmailInput from "../components/EmailInput";
 import FormButtons from "../components/FormButtons";
 import EmailSearchControls from "../components/EmailSearchControls";
 import RevokeConfirmModal from "../components/modals/RevokeConfirmationModal";
-import { fetchClientStatus, addClient } from "../api/clientsFrontend";
+import {
+  fetchClientStatus,
+  addClient,
+  deleteClient,
+} from "../api/clientsFrontend";
 import { sendFormToken, revokeFormToken } from "../api/formsFrontend";
 import validateEmail from "../utils/validators";
 import truncateEmail from "../utils/truncateEmail";
@@ -132,6 +136,7 @@ export default function Dashboard() {
     setSuccessMessage("");
     setConfirmedEmail(null);
     setShowAddClientPrompt(false);
+    setFormActionLoading({} as Record<FormType, boolean>);
   };
 
   const handleSendForm = useCallback(
@@ -261,6 +266,29 @@ export default function Dashboard() {
     [email, clientFormsStatus, formActionLoading]
   );
 
+  const handleDeleteClient = async () => {
+    if (!confirmedEmail) {
+      setError("No confirmed email found!");
+      return;
+    }
+
+    const { ok, data } = await deleteClient(confirmedEmail);
+
+    if (!ok) {
+      setError(data.error || "Failed to delete client");
+      setSuccessMessage("");
+      return;
+    }
+
+    setSuccessMessage(`Client ${confirmedEmail} deleted successfully`);
+    setError("");
+    setClientFormsStatus(null);
+    setConfirmedEmail(null);
+    setEmail("");
+    setFormActionLoading({} as Record<FormType, boolean>);
+    setShowAddClientPrompt(false);
+  };
+
   return (
     <ProtectedAccess>
       <div className="p-6 max-w-xl mx-auto">
@@ -309,8 +337,10 @@ export default function Dashboard() {
           onClear={handleClear}
           loading={loading}
         />
+
         <ClientActions
           disabled={!clientFormsStatus || !clientFormsStatus.exists}
+          onDeleteClient={handleDeleteClient}
         />
       </div>
 
