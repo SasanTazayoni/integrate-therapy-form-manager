@@ -10,6 +10,7 @@ import {
   addClient,
   deleteClient,
   deactivateClient,
+  activateClient,
 } from "../api/clientsFrontend";
 import { sendFormToken, revokeFormToken } from "../api/formsFrontend";
 import validateEmail from "../utils/validators";
@@ -42,16 +43,19 @@ export default function Dashboard() {
   const [showRevokeModal, setShowRevokeModal] = useState(false);
   const [closingRevokeModal, setClosingRevokeModal] = useState(false);
   const [revokeFormType, setRevokeFormType] = useState<FormType | null>(null);
+  const [isInactive, setIsInactive] = useState(
+    contextClientFormsStatus?.inactive ?? false
+  );
 
   const logoUrl = `${import.meta.env.BASE_URL}logo.png`;
 
   useEffect(() => {
     setContextEmail(email);
-  }, [email]);
+  }, [email, setContextEmail]);
 
   useEffect(() => {
     setContextClientFormsStatus(clientFormsStatus);
-  }, [clientFormsStatus]);
+  }, [clientFormsStatus, setContextClientFormsStatus]);
 
   const handleEmailChange = (value: string) => {
     setEmail(value);
@@ -61,7 +65,6 @@ export default function Dashboard() {
 
   const handleConfirmAddClient = async () => {
     const normalizedEmail = normalizeEmail(email);
-
     const { ok, data } = await addClient(normalizedEmail);
 
     if (!ok) {
@@ -110,12 +113,14 @@ export default function Dashboard() {
         setConfirmedEmail(null);
         setShowAddClientPrompt(true);
         setClientFormsStatus(null);
+        setIsInactive(false);
       } else {
         setError(data.error || "Failed to fetch progress");
         setSuccessMessage("");
         setConfirmedEmail(null);
         setShowAddClientPrompt(false);
         setClientFormsStatus(null);
+        setIsInactive(false);
       }
     } else {
       setClientFormsStatus(data);
@@ -125,6 +130,7 @@ export default function Dashboard() {
         `Retrieved data successfully for ${truncateEmail(normalizedEmail)}`
       );
       setConfirmedEmail(normalizedEmail);
+      setIsInactive(data.inactive ?? false);
     }
 
     setLoading(false);
@@ -138,6 +144,7 @@ export default function Dashboard() {
     setConfirmedEmail(null);
     setShowAddClientPrompt(false);
     setFormActionLoading({} as Record<FormType, boolean>);
+    setIsInactive(false);
   };
 
   const handleSendForm = useCallback(
@@ -145,7 +152,6 @@ export default function Dashboard() {
       if (!clientFormsStatus) return;
 
       const normalizedEmail = normalizeEmail(email);
-
       if (formActionLoading[formType]) return;
 
       setFormActionLoading((prev) => ({ ...prev, [formType]: true }));
@@ -181,8 +187,7 @@ export default function Dashboard() {
         );
         if (fetchOk) {
           setClientFormsStatus(updatedStatus);
-        } else {
-          console.warn("Form sent, but failed to refresh client status");
+          setIsInactive(updatedStatus.inactive ?? false);
         }
       }
 
@@ -197,9 +202,7 @@ export default function Dashboard() {
     setClosingRevokeModal(false);
   };
 
-  const closeRevokeModal = () => {
-    setClosingRevokeModal(true);
-  };
+  const closeRevokeModal = () => setClosingRevokeModal(true);
 
   const handleCloseFinished = () => {
     setShowRevokeModal(false);
@@ -218,7 +221,6 @@ export default function Dashboard() {
       if (!clientFormsStatus) return;
 
       const normalizedEmail = normalizeEmail(email);
-
       if (formActionLoading[formType]) return;
 
       setFormActionLoading((prev) => ({ ...prev, [formType]: true }));
@@ -283,11 +285,7 @@ export default function Dashboard() {
 
     setSuccessMessage(`Client ${confirmedEmail} deleted successfully`);
     setError("");
-    setClientFormsStatus(null);
-    setConfirmedEmail(null);
-    setEmail("");
-    setFormActionLoading({} as Record<FormType, boolean>);
-    setShowAddClientPrompt(false);
+    handleClear();
   };
 
   const handleDeactivateClient = async () => {
@@ -312,6 +310,37 @@ export default function Dashboard() {
     );
     if (fetchOk) {
       setClientFormsStatus(updatedStatus);
+      setIsInactive(updatedStatus.inactive ?? true);
+    } else {
+      setIsInactive(true);
+    }
+  };
+
+  const handleActivateClient = async () => {
+    if (!confirmedEmail) {
+      setError("No confirmed email found!");
+      return;
+    }
+
+    const { ok, data } = await activateClient(confirmedEmail);
+
+    if (!ok) {
+      setError(data.error || "Failed to activate client");
+      setSuccessMessage("");
+      return;
+    }
+
+    setSuccessMessage(`Client ${confirmedEmail} activated successfully`);
+    setError("");
+
+    const { ok: fetchOk, data: updatedStatus } = await fetchClientStatus(
+      confirmedEmail
+    );
+    if (fetchOk) {
+      setClientFormsStatus(updatedStatus);
+      setIsInactive(updatedStatus.inactive ?? false);
+    } else {
+      setIsInactive(false);
     }
   };
 
@@ -366,8 +395,10 @@ export default function Dashboard() {
 
         <ClientActions
           disabled={!clientFormsStatus || !clientFormsStatus.exists}
+          isInactive={isInactive}
           onDeleteClient={handleDeleteClient}
           onDeactivateClient={handleDeactivateClient}
+          onActivateClient={handleActivateClient}
         />
       </div>
 
@@ -377,6 +408,7 @@ export default function Dashboard() {
           onSend={handleSendForm}
           onRevoke={openRevokeModal}
           formActionLoading={formActionLoading}
+          clientInactive={isInactive}
         />
       </div>
 
