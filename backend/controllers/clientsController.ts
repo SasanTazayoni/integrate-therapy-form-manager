@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { getClientFormsStatus, createClient } from "./clientsService";
 import { deleteClientByEmail } from "./clientDeletion";
-import { deactivateClient } from "./clientActivation";
+import { deactivateClient, activateClient } from "./clientActivation";
 
 export const getClientFormsStatusHandler = async (
   req: Request,
@@ -96,6 +96,31 @@ export const deactivateClientHandler = async (req: Request, res: Response) => {
 
     const errorMessage =
       error instanceof Error ? error.message : "Failed to deactivate client";
+
+    res.status(500).json({ error: errorMessage });
+  }
+};
+
+export const activateClientHandler = async (req: Request, res: Response) => {
+  const email = req.query.email as string;
+
+  if (!email) {
+    return res.status(400).json({ error: "Email is required" });
+  }
+
+  try {
+    const result = await activateClient(email);
+
+    if (!result.ok) {
+      return res.status(500).json({ error: result.data.error });
+    }
+
+    res.json({ message: `Client ${email} activated`, client: result.data });
+  } catch (error: unknown) {
+    console.error("Error activating client:", error);
+
+    const errorMessage =
+      error instanceof Error ? error.message : "Failed to activate client";
 
     res.status(500).json({ error: errorMessage });
   }
