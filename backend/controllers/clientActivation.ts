@@ -28,3 +28,27 @@ export async function deactivateClient(
     return { ok: false, data: { error: "Failed to deactivate client" } };
   }
 }
+
+export type ActivateClientResult =
+  | { ok: true; data: PrismaClientType }
+  | { ok: false; data: { error: string } };
+
+export async function activateClient(
+  email: string
+): Promise<ActivateClientResult> {
+  try {
+    const client = await prisma.client.update({
+      where: { email },
+      data: {
+        status: "active",
+        inactivated_at: null,
+        delete_inactive: null,
+      },
+    });
+
+    return { ok: true, data: client };
+  } catch (error) {
+    console.error("Error activating client:", error);
+    return { ok: false, data: { error: "Failed to activate client" } };
+  }
+}
