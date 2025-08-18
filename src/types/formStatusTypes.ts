@@ -6,6 +6,7 @@ export type ClientFormsStatus = {
   clientDob?: string;
   forms: Record<FormType, FormStatus>;
   formsCompleted?: number;
+  inactive?: boolean;
   scores?: {
     bdi?: { bdi_score: string; submitted_at: string | null } | null;
     bai?: { bai_score: string; submitted_at: string | null } | null;
