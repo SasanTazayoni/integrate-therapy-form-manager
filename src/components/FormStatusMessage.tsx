@@ -6,6 +6,7 @@ type Props = {
   status?: FormStatus;
   formType: FormType;
   formActionLoading: Record<FormType, boolean>;
+  clientInactive: boolean;
 };
 
 const formatDate = (value?: string | Date | null) => {
@@ -23,6 +24,7 @@ export default function FormStatusMessage({
   status,
   formType,
   formActionLoading,
+  clientInactive,
 }: Props) {
   if (formActionLoading[formType]) {
     return (
@@ -70,6 +72,12 @@ export default function FormStatusMessage({
       <span className="text-gray-500">
         Form expired on <strong>{formatDate(status.tokenExpiresAt)}</strong>
       </span>
+    );
+  }
+
+  if (clientInactive) {
+    return (
+      <span className="text-gray-500">Client is currently deactivated</span>
     );
   }
 
