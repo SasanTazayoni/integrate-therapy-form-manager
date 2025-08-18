@@ -30,16 +30,17 @@ export const getClientFormsStatus = async (
   clientExists: boolean;
   clientName?: string | null;
   clientDob?: string | null;
+  clientStatus?: string;
+  inactivatedAt?: string | null;
+  inactive?: boolean;
   formsStatus?: Record<FormType, FormStatus>;
   formsCompleted?: number;
   scores?: Scores;
   error?: string;
 }> => {
   if (!emailRaw) return { clientExists: false, error: "Email is required" };
-
   const email = normalizeEmail(emailRaw);
   const client = await findClientByEmail(email);
-
   if (!client) return { clientExists: false, error: "Client not found" };
 
   const forms = await getFormsByClientId(client.id);
@@ -65,13 +66,11 @@ export const getClientFormsStatus = async (
   ): Record<string, string | null> => {
     const scores: Record<string, string | null> = {};
     if (!form) return scores;
-
     Object.entries(form).forEach(([key, value]) => {
       if (key.startsWith(prefix) && (!filter || filter(key))) {
         scores[key] = value !== null ? String(value) : null;
       }
     });
-
     return scores;
   };
 
@@ -95,7 +94,6 @@ export const getClientFormsStatus = async (
   const ysqScores = extractScores(latestYsqForm, "ysq_", (key) =>
     key.endsWith("_score")
   );
-
   const ysq456Scores = extractScores(latestYsqForm, "ysq_", (key) =>
     key.endsWith("_456")
   );
@@ -104,14 +102,11 @@ export const getClientFormsStatus = async (
     FormType,
     FormStatus
   >;
-
   for (const type of FORM_TYPES) {
     const formsOfType = forms
       .filter((f) => f.form_type === type)
       .sort((a, b) => b.token_sent_at.getTime() - a.token_sent_at.getTime());
-
     const mostRecent = formsOfType[0];
-
     formsStatus[type] = mostRecent
       ? {
           activeToken:
@@ -124,11 +119,7 @@ export const getClientFormsStatus = async (
           tokenExpiresAt: mostRecent.token_expires_at,
           revokedAt: mostRecent.revoked_at,
         }
-      : {
-          activeToken: false,
-          submitted: false,
-          revokedAt: null,
-        };
+      : { activeToken: false, submitted: false, revokedAt: null };
   }
 
   const formsCompleted = FORM_TYPES.reduce(
@@ -136,10 +127,15 @@ export const getClientFormsStatus = async (
     0
   );
 
+  const inactive = client.status !== "active" || Boolean(client.inactivated_at);
+
   return {
     clientExists: true,
     clientName: client.name ?? null,
     clientDob: client.dob ? client.dob.toISOString() : null,
+    clientStatus: client.status,
+    inactivatedAt: client.inactivated_at?.toISOString() ?? null,
+    inactive,
     formsStatus,
     formsCompleted,
     scores: {
