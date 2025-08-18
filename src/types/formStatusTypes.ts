@@ -4,6 +4,7 @@ export type ClientFormsStatus = {
   exists: boolean;
   clientName?: string;
   clientDob?: string;
+  clientStatus: "active" | "inactive";
   forms: Record<FormType, FormStatus>;
   formsCompleted?: number;
   inactive?: boolean;
