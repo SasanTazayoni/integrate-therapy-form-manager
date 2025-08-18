@@ -13,6 +13,7 @@ type FormButtonsProps = {
   onSend: (formType: FormType) => void;
   onRevoke: (formType: FormType) => void;
   formActionLoading: Record<FormType, boolean>;
+  clientInactive: boolean;
 };
 
 export default function FormButtons({
@@ -20,6 +21,7 @@ export default function FormButtons({
   onSend,
   onRevoke,
   formActionLoading,
+  clientInactive,
 }: FormButtonsProps) {
   const clientSearched = clientFormsStatus !== null;
   const clientExists = clientFormsStatus?.exists ?? false;
@@ -33,6 +35,7 @@ export default function FormButtons({
         const sendDisabled =
           !clientSearched ||
           !clientExists ||
+          clientInactive ||
           (status
             ? status.activeToken || (status.submitted && formType !== "SMI")
             : false) ||
@@ -41,6 +44,7 @@ export default function FormButtons({
         const revokeDisabled =
           !clientSearched ||
           !clientExists ||
+          clientInactive ||
           !(status ? status.activeToken : false) ||
           formActionLoading[formType];
 
@@ -73,6 +77,7 @@ export default function FormButtons({
                 status={status}
                 formType={formType}
                 formActionLoading={formActionLoading}
+                clientInactive={clientInactive}
               />
             </div>
           </div>
