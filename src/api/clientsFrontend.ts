@@ -147,3 +147,47 @@ export async function deactivateClient(
     };
   }
 }
+
+type ActivateClientResponse = {
+  message: string;
+  client: {
+    id: string;
+    email: string;
+    name: string;
+    status: string;
+    inactivated_at: string | null;
+    delete_inactive: string | null;
+  };
+};
+
+type ActivateClientResult =
+  | { ok: true; data: ActivateClientResponse }
+  | { ok: false; data: { error: string } };
+
+export async function activateClient(
+  email: string
+): Promise<ActivateClientResult> {
+  try {
+    const res = await axios.patch<ActivateClientResponse>(
+      "/clients/activate",
+      null,
+      { params: { email } }
+    );
+    return { ok: true, data: res.data };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      return {
+        ok: false,
+        data: {
+          error: getErrorDisplay(err, "Network error while activating client."),
+        },
+      };
+    }
+    return {
+      ok: false,
+      data: {
+        error: "An unexpected error occurred while activating client.",
+      },
+    };
+  }
+}
