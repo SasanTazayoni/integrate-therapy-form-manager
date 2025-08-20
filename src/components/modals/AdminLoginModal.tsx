@@ -84,7 +84,7 @@ export default function AdminLoginModal({
             <button type="submit" className="button">
               Login
             </button>
-            <button type="button" className="button" onClick={onClear}>
+            <button type="button" className="button--red" onClick={onClear}>
               Clear
             </button>
           </div>
