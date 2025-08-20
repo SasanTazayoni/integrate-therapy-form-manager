@@ -266,8 +266,17 @@ textarea:focus {
   background: var(--color-primary);
 }
 
+.button--red {
+  background: #ff8f8f;
+}
+
 .button:hover {
   background-color: var(--color-secondary);
+  transition: 0.6s;
+}
+
+.button--red:hover {
+  background-color: #c50000;
 }
 
 .button > span {
