@@ -1,4 +1,5 @@
 import Modal from "../Modal";
+import Button from "../ui/Button";
 
 type Props = {
   closing: boolean;
@@ -28,23 +29,15 @@ export default function ActivateClientModal({
 
         <p className="mb-4">
           This client will be <strong>activated</strong>. They will regain
-          access to log in and submit forms. Are you sure you want to activate
-          this client?
+          access to forms and will no longer be pending for deletion. Are you
+          sure you want to activate this client?
         </p>
 
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={onConfirm}
-            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-          >
-            Activate
-          </button>
-          <button
-            onClick={onCancel}
-            className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
-          >
+        <div className="flex justify-center">
+          <Button onClick={onConfirm}>Activate</Button>
+          <Button variant="danger" onClick={onCancel}>
             Cancel
-          </button>
+          </Button>
         </div>
       </div>
     </Modal>
