@@ -25,6 +25,5 @@ export default defineConfig({
       reporter: ["text"],
       exclude: ["**/server.ts", "node_modules/**"],
     },
-    exclude: ["**/server.ts", "node_modules/**"],
   },
 });
