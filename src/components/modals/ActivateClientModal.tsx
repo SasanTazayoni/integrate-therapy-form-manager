@@ -29,8 +29,8 @@ export default function ActivateClientModal({
 
         <p className="mb-4">
           This client will be <strong>activated</strong>. They will regain
-          access to forms and will no longer be pending for deletion. Are you
-          sure you want to activate this client?
+          access to forms and will no longer be pending deletion. Are you sure
+          you want to activate this client?
         </p>
 
         <div className="flex justify-center">
