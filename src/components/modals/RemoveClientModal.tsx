@@ -1,4 +1,5 @@
 import Modal from "../Modal";
+import Button from "../ui/Button";
 
 type Props = {
   closing: boolean;
@@ -18,32 +19,25 @@ export default function RemoveClientModal({
       closing={closing}
       onCloseFinished={onCloseFinished}
       ariaLabelledBy="remove-client-title"
+      ariaDescribedBy="remove-client-desc"
       role="dialog"
       onOverlayClick={onCancel}
     >
       <div>
         <h2 id="remove-client-title" className="text-xl font-bold mb-4">
-          Confirm Removal
+          Confirm Deletion
         </h2>
 
-        <p className="mb-4">
-          This client and all their details will be permanently removed. Are you
-          absolutely sure you want to delete this client data?
+        <p id="remove-client-desc" className="mb-4">
+          This client and all their details will be <strong>permanently</strong>{" "}
+          removed. Are you absolutely sure you want to delete the data?
         </p>
 
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={onConfirm}
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-          >
+        <div className="flex justify-center">
+          <Button variant="danger" onClick={onConfirm}>
             Confirm
-          </button>
-          <button
-            onClick={onCancel}
-            className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
-          >
-            Cancel
-          </button>
+          </Button>
+          <Button onClick={onCancel}>Cancel</Button>
         </div>
       </div>
     </Modal>
