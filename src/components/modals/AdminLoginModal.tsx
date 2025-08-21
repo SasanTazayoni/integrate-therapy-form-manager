@@ -36,13 +36,22 @@ export default function AdminLoginModal({
           onSubmit();
         }}
       >
+        <label htmlFor="admin-username" className="sr-only">
+          Username
+        </label>
         <input
+          id="admin-username"
           type="text"
           placeholder="Username"
           value={username}
           onChange={(e) => onUsernameChange(e.target.value)}
         />
+
+        <label htmlFor="admin-password" className="sr-only">
+          Password
+        </label>
         <input
+          id="admin-password"
           type="password"
           placeholder="Password"
           value={password}
@@ -50,6 +59,7 @@ export default function AdminLoginModal({
         />
 
         <p
+          id="admin-login-error"
           className="mt-4 sm:mt-2 text-red-600 font-semibold text-center transition-opacity duration-500"
           style={{
             minHeight: "1.25rem",
@@ -57,7 +67,7 @@ export default function AdminLoginModal({
           }}
           aria-live="polite"
         >
-          {error || "\u00A0"}
+          {error ? error : <span aria-hidden="true">&nbsp;</span>}
         </p>
 
         <div className="flex justify-center mt-4 sm:mt-2">
