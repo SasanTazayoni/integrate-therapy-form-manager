@@ -22,7 +22,7 @@ export default function SMIModesScoreSummaryTable({
 
   return (
     <div className="overflow-hidden rounded-lg border border-gray-500">
-      <table className="w-full table-fixed">
+      <table className="w-full table-fixed smi-modes-table">
         <thead className="bg-gray-100 text-sm font-semibold text-gray-800">
           <tr>
             <th className="w-1/4 px-4 py-2 text-center">{label}</th>
