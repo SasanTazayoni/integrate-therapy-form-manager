@@ -50,8 +50,8 @@ const FormResultsSummary = () => {
 
   return (
     <ProtectedAccess>
-      <div className="relative outer-container bg-[var(--color-block--white)] text-[--color-link] font-sans">
-        <div className="absolute top-6 left-4 no-print">
+      <div className="outer-container bg-[var(--color-block--white)] text-[--color-link] font-sans">
+        <div className="flex items-center justify-between px-6 py-4 no-print">
           <button
             onClick={() => navigate("/")}
             className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm cursor-pointer"
@@ -59,24 +59,24 @@ const FormResultsSummary = () => {
           >
             Dashboard
           </button>
+
+          <h1 className="title">SMI/YSQ/BAI/BDI Summary Sheet</h1>
+
+          <div className="relative group">
+            <button
+              onClick={() => window.print()}
+              className="text-gray-500 hover:text-gray-700 transition-colors duration-200 cursor-pointer"
+              aria-label="Print page"
+            >
+              <Printer className="w-8 h-8" />
+            </button>
+            <span className="absolute top-full right-0 mt-1 w-36 p-2 bg-gray-700 text-white text-xs rounded opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-300 z-50">
+              Tip: If multiple pages, try scaling to 60%
+            </span>
+          </div>
         </div>
 
-        <div className="absolute top-4 right-4 no-print group">
-          <button
-            onClick={() => window.print()}
-            className="text-gray-400 hover:text-gray-600 transition-colors duration-200 cursor-pointer"
-            aria-label="Print page"
-          >
-            <Printer className="w-10 h-10" />
-          </button>
-          <span className="absolute top-full right-0 mt-1 w-36 p-2 bg-gray-700 text-white text-xs rounded opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-300 z-50">
-            Tip: If multiple pages, try scaling to 60%
-          </span>
-        </div>
-
-        <h1 className="title">SMI/YSQ/BAI/BDI Summary Sheet</h1>
-
-        <div className="mb-10 text-lg font-medium space-y-2 text-[--color-link]">
+        <div className="mb-10 text-lg font-medium space-y-2 text-[--color-link] px-6">
           <div>
             <strong>Client:</strong> {clientFormsStatus?.clientName ?? ""}
           </div>
@@ -95,6 +95,7 @@ const FormResultsSummary = () => {
           }
           smiScores={clientFormsStatus?.scores?.smi ?? {}}
         />
+
         <YSQSchemasTable
           grayedOutCol={grayedOutCol}
           onHeaderClick={onHeaderClick}
