@@ -117,6 +117,13 @@ body {
   background: #fff;
 }
 
+@media screen and (max-width: 1440px) {
+  .wide-modal {
+    max-width: 1000px;
+    padding: 0;
+  }
+}
+
 @media screen and (max-width: 428px) {
   body {
     font-size: 14px;
