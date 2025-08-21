@@ -84,7 +84,7 @@ export default function ClientActions({
         onClick={() => setRemoveModalOpen(true)}
         disabled={disabled}
       >
-        Remove
+        Delete
       </button>
 
       {removeModalOpen && (
