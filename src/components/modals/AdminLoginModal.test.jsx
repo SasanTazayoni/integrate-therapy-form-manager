@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, fireEvent } from "@testing-library/react";
 import { vi, test, describe, beforeEach, expect } from "vitest";
 import AdminLoginModal from "./AdminLoginModal";
 
