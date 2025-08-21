@@ -1,4 +1,5 @@
 import Modal from "../Modal";
+import Button from "../ui/Button";
 
 type Props = {
   onConfirm: () => void;
@@ -7,7 +8,7 @@ type Props = {
   onCloseFinished: () => void;
 };
 
-export default function FormResetConfirmModal({
+export default function FormResetModal({
   onConfirm,
   onCancel,
   closing,
@@ -26,21 +27,13 @@ export default function FormResetConfirmModal({
           Confirm Reset
         </h2>
 
-        <p className="mb-4">Are you sure you want to erase your progress?</p>
+        <p className="mb-4">Are you sure you want to reset your progress?</p>
 
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={onConfirm}
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-          >
+        <div className="flex justify-center">
+          <Button variant="danger" onClick={onConfirm}>
             Reset
-          </button>
-          <button
-            onClick={onCancel}
-            className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
-          >
-            Cancel
-          </button>
+          </Button>
+          <Button onClick={onCancel}>Cancel</Button>
         </div>
       </div>
     </Modal>

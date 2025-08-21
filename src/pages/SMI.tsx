@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import QuestionnaireForm from "../components/QuestionnaireForm";
-import FormResetConfirmModal from "../components/modals/FormResetConfirmModal";
+import FormResetModal from "../components/modals/FormResetModal";
 import InvalidTokenModal from "../components/modals/InvalidTokenModal";
 import SMIItems from "../data/SMIItems";
 import { Item } from "../data/SMICommon";
@@ -148,7 +148,7 @@ const SMI = () => {
       </QuestionnaireForm>
 
       {resetModalOpen && (
-        <FormResetConfirmModal
+        <FormResetModal
           onConfirm={confirmReset}
           onCancel={cancelReset}
           closing={resetModalClosing}

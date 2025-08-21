@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import QuestionnaireForm from "../components/QuestionnaireForm";
-import FormResetConfirmModal from "../components/modals/FormResetConfirmModal";
+import FormResetModal from "../components/modals/FormResetModal";
 import InvalidTokenModal from "../components/modals/InvalidTokenModal";
 import YSQEmotionalDeprivation from "../data/YSQEmotionalDeprivation";
 import YSQAbandonment from "../data/YSQAbandonment";
@@ -170,7 +170,7 @@ const YSQ = () => {
       </QuestionnaireForm>
 
       {resetModalOpen && (
-        <FormResetConfirmModal
+        <FormResetModal
           onConfirm={confirmReset}
           onCancel={cancelReset}
           closing={resetModalClosing}

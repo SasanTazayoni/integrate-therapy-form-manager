@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import QuestionnaireForm from "../components/QuestionnaireForm";
-import FormResetConfirmModal from "../components/modals/FormResetConfirmModal";
+import FormResetModal from "../components/modals/FormResetModal";
 import InvalidTokenModal from "../components/modals/InvalidTokenModal";
 import BURNS_ITEMS from "../data/BURNSItems";
 import useBurnsForm from "../hooks/useBURNSForm";
@@ -134,7 +134,7 @@ const BURNS = () => {
       </div>
 
       {resetModalOpen && (
-        <FormResetConfirmModal
+        <FormResetModal
           onConfirm={confirmReset}
           onCancel={cancelReset}
           closing={resetModalClosing}
