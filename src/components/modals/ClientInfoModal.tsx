@@ -1,4 +1,5 @@
 import Modal from "../../components/Modal";
+import Button from "../ui/Button";
 
 type Props = {
   name: string;
@@ -9,6 +10,7 @@ type Props = {
   onNameChange: (val: string) => void;
   onDobChange: (val: string) => void;
   onSubmit: () => void;
+  onClear?: () => void;
   onCloseFinished?: () => void;
 };
 
@@ -21,6 +23,7 @@ export default function ClientInfoModal({
   onNameChange,
   onDobChange,
   onSubmit,
+  onClear,
   onCloseFinished,
 }: Props) {
   return (
@@ -28,47 +31,71 @@ export default function ClientInfoModal({
       ariaLabelledBy="client-info-title"
       closing={closing}
       onCloseFinished={onCloseFinished}
+      role="dialog"
     >
-      <h2 id="client-info-title" className="text-xl font-bold mb-4">
+      <h2 id="client-info-title" className="text-xl font-bold mb-4 sm:mb-2">
         Your information
       </h2>
 
-      <div className="mb-2">
-        <label className="block font-medium text-left ml-1">Full Name</label>
-        <input
-          type="text"
-          value={name}
-          onChange={(e) => onNameChange(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-      </div>
-
-      <div className="mb-2">
-        <label className="block font-medium text-left ml-1">
-          Date of Birth
-        </label>
-        <input
-          type="date"
-          value={dob}
-          onChange={(e) => onDobChange(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-      </div>
-
-      <p
-        className={`mt-2 min-h-[2rem] text-red-600 font-bold text-center transition-opacity duration-500 ${
-          error ? (errorFading ? "opacity-0" : "opacity-100") : "opacity-0"
-        }`}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSubmit();
+        }}
       >
-        {error || "\u00A0"}
-      </p>
+        <div className="mb-2">
+          <label htmlFor="name" className="block font-medium text-left ml-1">
+            Full Name
+          </label>
+          <input
+            id="name"
+            type="text"
+            value={name}
+            onChange={(e) => onNameChange(e.target.value)}
+            className="w-full p-2 border rounded"
+          />
+        </div>
 
-      <button
-        onClick={onSubmit}
-        className="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-      >
-        Submit
-      </button>
+        <div className="mb-2">
+          <label htmlFor="dob" className="block font-medium text-left ml-1">
+            Date of Birth
+          </label>
+          <input
+            id="dob"
+            type="date"
+            value={dob}
+            onChange={(e) => onDobChange(e.target.value)}
+            className="w-full p-2 border rounded"
+          />
+        </div>
+
+        <p
+          id="client-info-error"
+          className="mt-2 text-red-600 font-bold text-center transition-opacity duration-500"
+          style={{ opacity: error && !errorFading ? 1 : 0 }}
+          aria-live="polite"
+        >
+          {error ? error : <span aria-hidden="true">&nbsp;</span>}
+        </p>
+
+        <div className="flex justify-center mt-2">
+          <Button type="submit">Submit</Button>
+          <Button
+            type="button"
+            variant="danger"
+            onClick={() => {
+              if (onClear) {
+                onClear();
+              } else {
+                onNameChange("");
+                onDobChange("");
+              }
+            }}
+          >
+            Clear
+          </Button>
+        </div>
+      </form>
     </Modal>
   );
 }
