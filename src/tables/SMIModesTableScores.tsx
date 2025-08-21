@@ -21,7 +21,7 @@ export default function SMIModesScoreSummaryTable({
   ];
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-500">
+    <div className="hidden lg:block overflow-hidden rounded-lg border border-gray-500">
       <table className="w-full table-fixed smi-modes-table">
         <thead className="bg-gray-100 text-sm font-semibold text-gray-800">
           <tr>
