@@ -52,7 +52,7 @@ describe("RevokeConfirmationModal", () => {
     const revokeBtn = Array.from(container.querySelectorAll("button")).find(
       (btn) => btn.textContent === "Revoke"
     );
-    expect(revokeBtn).toBeTruthy(); // Assert it exists
+    expect(revokeBtn).toBeTruthy();
     fireEvent.click(revokeBtn);
 
     expect(defaultProps.onConfirm).toHaveBeenCalledTimes(1);

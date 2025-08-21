@@ -55,7 +55,7 @@ describe("ActivateClientModal", () => {
 
   test("calls onCancel when overlay is clicked", () => {
     const { getByRole } = render(<ActivateClientModal {...defaultProps} />);
-    const overlay = getByRole("dialog"); // modal container
+    const overlay = getByRole("dialog");
     fireEvent.click(overlay);
     expect(onCancel).toHaveBeenCalled();
   });

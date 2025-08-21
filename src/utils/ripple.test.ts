@@ -1,5 +1,5 @@
 import { describe, test, expect, beforeEach, afterEach, vi } from "vitest";
-import { initializeRippleEffect } from "./ripple"; // adjust path
+import { initializeRippleEffect } from "./ripple";
 
 describe("initializeRippleEffect", () => {
   let button: HTMLButtonElement;
