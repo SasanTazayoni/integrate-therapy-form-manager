@@ -6,6 +6,7 @@ import {
   categoryKeyMap,
 } from "../../data/SMIBoundaries";
 import SMIModesScoreSummaryTable from "../../tables/SMIModesTableScores";
+import SMIModesScoreSummaryCards from "../../tables/SMIModesScoreSummaryCards";
 
 type SMISummaryModalProps = {
   isOpen: boolean;
@@ -97,7 +98,7 @@ export default function SMISummaryModal({
         <h2 className="title" id="smi-summary-title">
           SMI Score Summary Sheet{" "}
           {submittedAt && (
-            <span className="text-gray-400 text-[1.5rem]">
+            <span className="text-gray-400 text-[1.5rem] smi-completion-date">
               ({new Date(submittedAt).toLocaleDateString()})
             </span>
           )}
@@ -122,6 +123,11 @@ export default function SMISummaryModal({
               smiTableData={smiTableData}
             />
           ))}
+
+          <SMIModesScoreSummaryCards
+            modeGroups={modeGroups}
+            smiTableData={smiTableData}
+          />
 
           <p className="mt-4 text-xs italic text-gray-600">
             * These 2 modes are scored in reverse: the higher the score, the
