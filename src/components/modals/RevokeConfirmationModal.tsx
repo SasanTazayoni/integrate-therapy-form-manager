@@ -1,4 +1,5 @@
 import Modal from "../Modal";
+import Button from "../ui/Button";
 
 type Props = {
   onConfirm: () => void;
@@ -18,6 +19,7 @@ export default function RevokeConfirmModal({
       closing={closing}
       onCloseFinished={onCloseFinished}
       ariaLabelledBy="revoke-title"
+      ariaDescribedBy="revoke-desc"
       role="dialog"
       onOverlayClick={onCancel}
     >
@@ -26,21 +28,16 @@ export default function RevokeConfirmModal({
           Confirm Revoke
         </h2>
 
-        <p className="mb-4">Are you sure you want to revoke this form?</p>
+        <p id="revoke-desc" className="mb-4">
+          This action will deactivate the form sent to the client. Are you sure
+          you want to revoke it?
+        </p>
 
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={onConfirm}
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-          >
+        <div className="flex justify-center">
+          <Button variant="danger" onClick={onConfirm}>
             Revoke
-          </button>
-          <button
-            onClick={onCancel}
-            className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
-          >
-            Cancel
-          </button>
+          </Button>
+          <Button onClick={onCancel}>Cancel</Button>
         </div>
       </div>
     </Modal>
