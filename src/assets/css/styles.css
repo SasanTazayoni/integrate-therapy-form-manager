@@ -46,8 +46,8 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  height: 100vh;
-  width: 100vw;
+  height: 100%;
+  width: 100%;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
@@ -79,7 +79,7 @@ body {
   padding: 2rem;
   border-radius: 10px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-  width: 300px;
+  max-width: 300px;
   text-align: center;
   z-index: 12;
   border: 5px solid var(--color-border);
@@ -124,6 +124,20 @@ body {
   }
 }
 
+@media (max-width: 1024px) {
+  .wide-modal {
+    margin: 2rem;
+    max-width: calc(100% - 4rem);
+  }
+}
+
+@media (max-width: 768px) {
+  .wide-modal {
+    margin: 1rem;
+    max-width: calc(100% - 2rem);
+  }
+}
+
 @media screen and (max-width: 428px) {
   body {
     font-size: 14px;
@@ -134,24 +148,20 @@ body {
   }
 
   .modal {
-    width: 250px;
+    margin: 2rem;
+    max-width: calc(100% - 4rem);
     padding: 1rem;
   }
-}
 
-@media screen and (max-width: 376px) {
-  .modal {
-    width: 250px;
+  .wide-modal {
+    margin: 1rem;
+    max-width: calc(100% - 2rem);
   }
 }
 
 @media screen and (max-width: 324px) {
   body {
     font-size: 12px;
-  }
-
-  .modal {
-    width: 200px;
   }
 }
 
@@ -518,4 +528,41 @@ input.small-square-input:focus {
 input.small-square-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
+}
+
+.card-title {
+  font-size: 1.125rem;
+}
+
+@media screen and (max-width: 1024px) {
+  .title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    line-height: 2rem;
+  }
+
+  .smi-completion-date {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .card-title {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 428px) {
+  .title {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
 }
