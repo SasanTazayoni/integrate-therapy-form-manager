@@ -1,4 +1,5 @@
 import Modal from "../Modal";
+import Button from "../ui/Button";
 
 type Props = {
   closing: boolean;
@@ -32,19 +33,11 @@ export default function DeactivateClientModal({
           system for 1 year. Are you sure you want to deactivate this client?
         </p>
 
-        <div className="flex justify-center gap-4">
-          <button
-            onClick={onConfirm}
-            className="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700"
-          >
-            Deactivate
-          </button>
-          <button
-            onClick={onCancel}
-            className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
-          >
+        <div className="flex justify-center">
+          <Button onClick={onConfirm}>Deactivate</Button>
+          <Button variant="danger" onClick={onCancel}>
             Cancel
-          </button>
+          </Button>
         </div>
       </div>
     </Modal>
