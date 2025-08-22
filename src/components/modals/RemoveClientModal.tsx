@@ -14,6 +14,14 @@ export default function RemoveClientModal({
   onCloseFinished,
   onConfirm,
 }: Props) {
+  function handleConfirm() {
+    onConfirm();
+  }
+
+  function handleCancel() {
+    onCancel();
+  }
+
   return (
     <Modal
       closing={closing}
@@ -21,7 +29,7 @@ export default function RemoveClientModal({
       ariaLabelledBy="remove-client-title"
       ariaDescribedBy="remove-client-desc"
       role="dialog"
-      onOverlayClick={onCancel}
+      onOverlayClick={handleCancel}
     >
       <div>
         <h2 id="remove-client-title" className="text-xl font-bold mb-4">
@@ -34,10 +42,10 @@ export default function RemoveClientModal({
         </p>
 
         <div className="flex justify-center">
-          <Button variant="danger" onClick={onConfirm}>
+          <Button variant="danger" onClick={handleConfirm}>
             Confirm
           </Button>
-          <Button onClick={onCancel}>Cancel</Button>
+          <Button onClick={handleCancel}>Cancel</Button>
         </div>
       </div>
     </Modal>
