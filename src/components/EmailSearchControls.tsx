@@ -1,3 +1,5 @@
+import Button from "../components/ui/Button";
+
 export default function EmailSearchControls({
   onCheck,
   onClear,
@@ -8,21 +10,13 @@ export default function EmailSearchControls({
   loading: boolean;
 }) {
   return (
-    <div className="flex justify-center gap-4 mb-10">
-      <button
-        onClick={onCheck}
-        className="bg-blue-500 text-white px-8 py-2 rounded hover:bg-blue-600"
-        disabled={loading}
-      >
+    <div className="flex justify-center mb-4">
+      <Button onClick={onCheck} disabled={loading}>
         Search
-      </button>
-      <button
-        onClick={onClear}
-        className="bg-gray-400 text-white px-8 py-2 rounded hover:bg-gray-500"
-        disabled={loading}
-      >
+      </Button>
+      <Button variant="danger" onClick={onClear} disabled={loading}>
         Clear
-      </button>
+      </Button>
     </div>
   );
 }
