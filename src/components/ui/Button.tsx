@@ -3,11 +3,14 @@ import { initializeRippleEffect } from "../../utils/ripple";
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "primary" | "danger";
+  loading?: boolean;
 };
 
 export default function Button({
   variant = "primary",
   children,
+  disabled,
+  loading = false,
   ...props
 }: ButtonProps) {
   const buttonRef = useRef<HTMLButtonElement | null>(null);
@@ -18,13 +21,22 @@ export default function Button({
     }
   }, []);
 
+  const baseClasses = `
+    button
+    ${variant === "danger" ? "button--red" : "button"}
+    ${disabled || loading ? "bg-gray-300 text-gray-600 cursor-not-allowed" : ""}
+    flex justify-center items-center gap-2 px-4 py-2 rounded w-[100px]
+  `;
+
   return (
     <button
       ref={buttonRef}
-      className={`button ${variant === "danger" ? "button--red" : ""}`}
+      className={baseClasses}
+      disabled={disabled || loading}
+      aria-disabled={disabled || loading}
       {...props}
     >
-      {children}
+      {loading ? "Loading..." : children}
     </button>
   );
 }
