@@ -81,12 +81,12 @@ describe("ClientInfoModal", () => {
 
     const errorMsg = getByText("Name is required");
     expect(errorMsg).toBeInTheDocument();
-    expect(errorMsg).toHaveStyle("opacity: 1");
+    expect(errorMsg).toHaveClass("opacity-100");
 
     rerender(
       <ClientInfoModal {...defaultProps} error="Name is required" errorFading />
     );
-    expect(getByText("Name is required")).toHaveStyle("opacity: 0");
+    expect(getByText("Name is required")).toHaveClass("opacity-0");
   });
 
   test("resets inputs if onClear is not provided", () => {
