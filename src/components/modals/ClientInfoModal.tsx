@@ -93,7 +93,7 @@ export default function ClientInfoModal({
           {error ? error : <span aria-hidden="true">&nbsp;</span>}
         </p>
 
-        <div className="flex justify-center mt-2 gap-x-2">
+        <div className="flex justify-center mt-2">
           <Button type="submit">Submit</Button>
           <Button type="button" variant="danger" onClick={handleClear}>
             Clear
