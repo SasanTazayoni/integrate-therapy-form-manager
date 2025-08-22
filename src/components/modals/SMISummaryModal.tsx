@@ -109,9 +109,9 @@ export default function SMISummaryModal({
     >
       <div
         ref={modalRef}
-        className="max-h-[80vh] overflow-y-auto p-6 text-gray-800"
+        className="max-h-[80vh] overflow-y-auto p-4 pt-0 text-gray-800"
       >
-        <h2 className="title" id="smi-summary-title">
+        <h2 className="title p-4" id="smi-summary-title">
           SMI Score Summary Sheet{" "}
           {formattedSubmittedAt && (
             <span className="text-gray-400 text-[1.5rem] smi-completion-date">
