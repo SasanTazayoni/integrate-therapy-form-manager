@@ -1,6 +1,6 @@
 import { render, fireEvent } from "@testing-library/react";
 import { describe, test, expect, vi, afterEach, beforeEach } from "vitest";
-import RevokeConfirmModal from "./RevokeConfirmationModal";
+import RevokeConfirmModal from "./RevokeConfirmModal";
 
 beforeEach(() => {
   let modalRoot = document.getElementById("modal-root");
@@ -16,7 +16,7 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-describe("RevokeConfirmationModal", () => {
+describe("RevokeConfirmModal", () => {
   const defaultProps = {
     closing: false,
     onCancel: vi.fn(),

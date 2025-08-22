@@ -4,7 +4,7 @@ import ProtectedAccess from "../components/ProtectedAccess";
 import EmailInput from "../components/EmailInput";
 import FormButtons from "../components/FormButtons";
 import EmailSearchControls from "../components/EmailSearchControls";
-import RevokeConfirmModal from "../components/modals/RevokeConfirmationModal";
+import RevokeConfirmModal from "../components/modals/RevokeConfirmModal";
 import {
   fetchClientStatus,
   addClient,
