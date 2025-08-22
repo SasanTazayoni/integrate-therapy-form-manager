@@ -58,4 +58,21 @@ describe("initializeRippleEffect", () => {
 
     expect(button.querySelector("span")).toBeNull();
   });
+
+  test("does not create ripple if button is disabled", () => {
+    vi.useFakeTimers();
+
+    button.disabled = true;
+    initializeRippleEffect(button);
+
+    const event = new MouseEvent("mouseover", {
+      bubbles: true,
+      clientX: 10,
+      clientY: 10,
+    });
+
+    button.dispatchEvent(event);
+
+    expect(button.querySelector("span")).toBeNull();
+  });
 });
