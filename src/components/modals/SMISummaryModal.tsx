@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Modal from "../Modal";
+import Button from "../ui/Button";
 import { useClientContext } from "../../context/ClientContext";
 import {
   classifyBoundaryAndAlignment,
@@ -152,13 +153,7 @@ export default function SMISummaryModal({
           </p>
 
           <div className="flex justify-center">
-            <button
-              type="button"
-              className="px-4 py-2 rounded text-white w-[100px] flex justify-center items-center bg-blue-500 hover:bg-blue-600"
-              onClick={handleCloseButtonClick}
-            >
-              Close
-            </button>
+            <Button onClick={handleCloseButtonClick}>Close</Button>
           </div>
         </section>
       </div>
