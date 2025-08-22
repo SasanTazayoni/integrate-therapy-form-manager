@@ -73,17 +73,19 @@ export default function YSQSchemasTable({
       <h2 className="question-title text-[--color-primary] text-center">
         YSQ Schemas{" "}
         {ysqSubmittedAt && (
-          <span className="text-gray-400 text-[1.5rem]">
+          <span className="text-gray-400">
             ({new Date(ysqSubmittedAt).toLocaleDateString()})
           </span>
         )}
       </h2>
-      <table className="w-full border-gray-200 text-sm rounded overflow-hidden shadow-md">
+      <table className="ysq-table w-full border-gray-200 text-sm rounded overflow-hidden shadow-md">
         <thead>
           <tr className="text-center bg-gray-200">
-            <th className="border border-gray-300 p-2 w-1/3">Schema Name</th>
+            <th className="border border-gray-300 p-2 w-1/12 md:w-1/12">
+              Schema
+            </th>
             <th
-              className={`border border-gray-300 p-2 w-1/12 cursor-pointer select-none ${headerTextClass(
+              className={`border border-gray-300 p-2 w-1/12 md:w-1/12 cursor-pointer select-none ${headerTextClass(
                 "raw"
               )}`}
               onClick={() => onHeaderClick("raw")}
@@ -92,7 +94,7 @@ export default function YSQSchemasTable({
               Raw
             </th>
             <th
-              className={`border border-gray-300 p-2 w-1/12 cursor-pointer select-none ${headerTextClass(
+              className={`border border-gray-300 p-2 w-1/12 md:w-1/12 cursor-pointer select-none ${headerTextClass(
                 "456"
               )}`}
               onClick={() => onHeaderClick("456")}
@@ -100,9 +102,9 @@ export default function YSQSchemasTable({
             >
               4/5/6
             </th>
-            <th className="border border-gray-300 p-2 w-1/12">Max Score</th>
-            <th className="border border-gray-300 p-2 w-1/6">
-              Is this one of your schemas?
+            <th className="border border-gray-300 p-2 w-1/12 md:w-1/12">Max</th>
+            <th className="border border-gray-300 p-2 w-4/12 md:w-8/12">
+              Rating
             </th>
           </tr>
         </thead>
@@ -129,8 +131,11 @@ export default function YSQSchemasTable({
                 key={code}
                 className="text-center bg-[--color-block--white] hover:bg-[--color-selected-bg] transition"
               >
-                <td className="border border-gray-300 p-2 text-left font-medium">
-                  {name} <strong>({code})</strong>
+                <td className="border border-gray-300 p-2 font-medium text-center md:text-left">
+                  <span className="hidden md:inline">
+                    {name} ({code})
+                  </span>
+                  <span className="md:hidden font-bold">{code}</span>
                 </td>
                 <td
                   className={`border border-gray-300 p-2 ${cellTextClass(
@@ -148,9 +153,10 @@ export default function YSQSchemasTable({
                 </td>
                 <td className="border border-gray-300 p-2">{max}</td>
                 <td
-                  className={`border border-gray-300 p-2 font-bold ${
+                  className={`border border-gray-300 p-2 font-bold rating-cell ${
                     highlight ? "bg-yellow-200 border-yellow-400" : ""
                   }`}
+                  data-rating={rating}
                 >
                   {rating}
                 </td>
