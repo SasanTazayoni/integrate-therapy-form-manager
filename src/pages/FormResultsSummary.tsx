@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useClientContext } from "../context/ClientContext";
 import type { ClientFormsStatus } from "../types/formStatusTypes";
 import { parseScore } from "../utils/parseScores";
+import Button from "../components/ui/Button";
 
 type ClientFormsStatusDetails = ClientFormsStatus & {
   clientName?: string;
@@ -51,32 +52,33 @@ const FormResultsSummary = () => {
   return (
     <ProtectedAccess>
       <div className="outer-container bg-[var(--color-block--white)] text-[--color-link] font-sans">
-        <div className="flex items-center justify-between px-6 py-4 no-print">
-          <button
+        <div className="flex items-center justify-between p-2 no-print">
+          <Button
+            className="button button--small"
             onClick={() => navigate("/")}
-            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition text-sm cursor-pointer"
             aria-label="Go to Dashboard"
           >
             Dashboard
-          </button>
-
-          <h1 className="title">SMI/YSQ/BAI/BDI Summary Sheet</h1>
-
+          </Button>
           <div className="relative group">
-            <button
+            <Button
               onClick={() => window.print()}
-              className="text-gray-500 hover:text-gray-700 transition-colors duration-200 cursor-pointer"
               aria-label="Print page"
+              className="p-2 text-gray-500 hover:text-gray-700 transition-colors duration-200 cursor-pointer"
             >
               <Printer className="w-8 h-8" />
-            </button>
+            </Button>
             <span className="absolute top-full right-0 mt-1 w-36 p-2 bg-gray-700 text-white text-xs rounded opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-300 z-50">
               Tip: If multiple pages, try scaling to 60%
             </span>
           </div>
         </div>
 
-        <div className="mb-10 text-lg font-medium space-y-2 text-[--color-link] px-6">
+        <h1 className="title text-center p-4 pt-0 max-w-2xl mx-auto">
+          SMI/YSQ/BAI/BDI Summary Sheet
+        </h1>
+
+        <div className="client-info mb-6 font-medium text-[--color-link] text-base md:text-lg">
           <div>
             <strong>Client:</strong> {clientFormsStatus?.clientName ?? ""}
           </div>
@@ -107,7 +109,7 @@ const FormResultsSummary = () => {
           ysq456Scores={clientFormsStatus?.scores?.ysq456}
         />
 
-        <section className="flex flex-wrap justify-center gap-8 max-w-2xl mx-auto">
+        <section className="flex flex-wrap flex-col md:flex-row justify-center items-center gap-4 max-w-xl lg:max-w-2xl mx-auto">
           {[
             {
               title: "BAI",
