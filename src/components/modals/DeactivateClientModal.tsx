@@ -14,13 +14,21 @@ export default function DeactivateClientModal({
   onCloseFinished,
   onConfirm,
 }: Props) {
+  function handleConfirm() {
+    onConfirm();
+  }
+
+  function handleCancel() {
+    onCancel();
+  }
+
   return (
     <Modal
       closing={closing}
       onCloseFinished={onCloseFinished}
       ariaLabelledBy="deactivate-client-title"
       role="dialog"
-      onOverlayClick={onCancel}
+      onOverlayClick={handleCancel}
     >
       <div>
         <h2 id="deactivate-client-title" className="text-xl font-bold mb-4">
@@ -34,8 +42,8 @@ export default function DeactivateClientModal({
         </p>
 
         <div className="flex justify-center">
-          <Button onClick={onConfirm}>Deactivate</Button>
-          <Button variant="danger" onClick={onCancel}>
+          <Button onClick={handleConfirm}>Deactivate</Button>
+          <Button variant="danger" onClick={handleCancel}>
             Cancel
           </Button>
         </div>
