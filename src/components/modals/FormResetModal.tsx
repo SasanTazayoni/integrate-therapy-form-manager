@@ -14,13 +14,21 @@ export default function FormResetModal({
   closing,
   onCloseFinished,
 }: Props) {
+  function handleConfirm() {
+    onConfirm();
+  }
+
+  function handleCancel() {
+    onCancel();
+  }
+
   return (
     <Modal
       closing={closing}
       onCloseFinished={onCloseFinished}
       ariaLabelledBy="reset-title"
       role="dialog"
-      onOverlayClick={onCancel}
+      onOverlayClick={handleCancel}
     >
       <div>
         <h2 id="reset-title" className="text-xl font-bold mb-4">
@@ -30,10 +38,10 @@ export default function FormResetModal({
         <p className="mb-4">Are you sure you want to reset your progress?</p>
 
         <div className="flex justify-center">
-          <Button variant="danger" onClick={onConfirm}>
+          <Button variant="danger" onClick={handleConfirm}>
             Reset
           </Button>
-          <Button onClick={onCancel}>Cancel</Button>
+          <Button onClick={handleCancel}>Cancel</Button>
         </div>
       </div>
     </Modal>
