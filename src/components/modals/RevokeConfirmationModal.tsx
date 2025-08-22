@@ -14,6 +14,14 @@ export default function RevokeConfirmModal({
   closing,
   onCloseFinished,
 }: Props) {
+  function handleConfirm() {
+    onConfirm();
+  }
+
+  function handleCancel() {
+    onCancel();
+  }
+
   return (
     <Modal
       closing={closing}
@@ -21,7 +29,7 @@ export default function RevokeConfirmModal({
       ariaLabelledBy="revoke-title"
       ariaDescribedBy="revoke-desc"
       role="dialog"
-      onOverlayClick={onCancel}
+      onOverlayClick={handleCancel}
     >
       <div>
         <h2 id="revoke-title" className="text-xl font-bold mb-4">
@@ -34,10 +42,10 @@ export default function RevokeConfirmModal({
         </p>
 
         <div className="flex justify-center">
-          <Button variant="danger" onClick={onConfirm}>
+          <Button variant="danger" onClick={handleConfirm}>
             Revoke
           </Button>
-          <Button onClick={onCancel}>Cancel</Button>
+          <Button onClick={handleCancel}>Cancel</Button>
         </div>
       </div>
     </Modal>
