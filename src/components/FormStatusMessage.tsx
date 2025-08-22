@@ -39,6 +39,12 @@ export default function FormStatusMessage({
     return <span className="text-gray-500">No data found</span>;
   }
 
+  if (clientInactive) {
+    return (
+      <span className="text-gray-500">Client is currently deactivated</span>
+    );
+  }
+
   if (status.revokedAt) {
     return (
       <span className="text-gray-500">
@@ -72,12 +78,6 @@ export default function FormStatusMessage({
       <span className="text-gray-500">
         Form expired on <strong>{formatDate(status.tokenExpiresAt)}</strong>
       </span>
-    );
-  }
-
-  if (clientInactive) {
-    return (
-      <span className="text-gray-500">Client is currently deactivated</span>
     );
   }
 
