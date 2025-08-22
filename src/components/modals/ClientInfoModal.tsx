@@ -26,6 +26,25 @@ export default function ClientInfoModal({
   onClear,
   onCloseFinished,
 }: Props) {
+  function handleNameChange(e: React.ChangeEvent<HTMLInputElement>) {
+    onNameChange(e.target.value);
+  }
+
+  function handleDobChange(e: React.ChangeEvent<HTMLInputElement>) {
+    onDobChange(e.target.value);
+  }
+
+  function handleClear() {
+    if (onClear) return onClear();
+    onNameChange("");
+    onDobChange("");
+  }
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    onSubmit();
+  }
+
   return (
     <Modal
       ariaLabelledBy="client-info-title"
@@ -37,13 +56,8 @@ export default function ClientInfoModal({
         Your information
       </h2>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          onSubmit();
-        }}
-      >
-        <div className="mb-2">
+      <form onSubmit={handleSubmit} className="space-y-2">
+        <div>
           <label htmlFor="name" className="block font-medium text-left ml-1">
             Full Name
           </label>
@@ -51,12 +65,12 @@ export default function ClientInfoModal({
             id="name"
             type="text"
             value={name}
-            onChange={(e) => onNameChange(e.target.value)}
+            onChange={handleNameChange}
             className="w-full p-2 border rounded"
           />
         </div>
 
-        <div className="mb-2">
+        <div>
           <label htmlFor="dob" className="block font-medium text-left ml-1">
             Date of Birth
           </label>
@@ -64,34 +78,24 @@ export default function ClientInfoModal({
             id="dob"
             type="date"
             value={dob}
-            onChange={(e) => onDobChange(e.target.value)}
+            onChange={handleDobChange}
             className="w-full p-2 border rounded"
           />
         </div>
 
         <p
           id="client-info-error"
-          className="mt-2 text-red-600 font-bold text-center transition-opacity duration-500"
-          style={{ opacity: error && !errorFading ? 1 : 0 }}
+          className={`mt-2 text-red-600 font-bold text-center transition-opacity duration-500 ${
+            error && !errorFading ? "opacity-100" : "opacity-0"
+          }`}
           aria-live="polite"
         >
           {error ? error : <span aria-hidden="true">&nbsp;</span>}
         </p>
 
-        <div className="flex justify-center mt-2">
+        <div className="flex justify-center mt-2 gap-x-2">
           <Button type="submit">Submit</Button>
-          <Button
-            type="button"
-            variant="danger"
-            onClick={() => {
-              if (onClear) {
-                onClear();
-              } else {
-                onNameChange("");
-                onDobChange("");
-              }
-            }}
-          >
+          <Button type="button" variant="danger" onClick={handleClear}>
             Clear
           </Button>
         </div>
