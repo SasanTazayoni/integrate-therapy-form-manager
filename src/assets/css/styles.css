@@ -305,6 +305,12 @@ textarea:focus {
   animation: ripple 0.6s linear infinite;
 }
 
+.button--small {
+  padding: 5px;
+  height: 40px;
+  width: 100px;
+}
+
 @keyframes ripple {
   0% {
     height: 0;
@@ -316,6 +322,12 @@ textarea:focus {
     height: 300px;
     width: 300px;
     opacity: 0;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .button--small {
+    font-size: 14px;
   }
 }
 
@@ -483,15 +495,6 @@ textarea:focus {
   margin-top: 0.75rem;
 }
 
-.score-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 1rem;
-  flex-wrap: wrap;
-}
-
 .outer-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -501,7 +504,6 @@ textarea:focus {
 .title {
   font-size: 2rem;
   text-align: center;
-  margin-bottom: 2rem;
 }
 
 input.small-square-input {
@@ -530,27 +532,155 @@ input.small-square-input::-webkit-inner-spin-button {
   margin: 0;
 }
 
+@media screen and (max-width: 1024px) {
+  h2.title {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  h2.title {
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+  }
+
+  .question-title {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 428px) {
+  h2.title {
+    font-size: 1.2rem;
+    line-height: 1.5rem;
+  }
+}
+
+/* Form Summary Results */
+
+@media (min-width: 769px) {
+  .ysq-table th:nth-child(1),
+  .ysq-table td:nth-child(1) {
+    width: 40%;
+  }
+
+  .ysq-table th:nth-child(2),
+  .ysq-table td:nth-child(2) {
+    width: 10%;
+  }
+
+  .ysq-table th:nth-child(3),
+  .ysq-table td:nth-child(3) {
+    width: 10%;
+  }
+
+  .ysq-table th:nth-child(4),
+  .ysq-table td:nth-child(4) {
+    width: 10%;
+  }
+
+  .ysq-table th:nth-child(5),
+  .ysq-table td:nth-child(5) {
+    width: 30%;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  h1.title {
+    font-size: 1.8rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  h1.title {
+    font-size: 1.5rem;
+  }
+
+  .score-card {
+    width: 280px;
+  }
+
+  .score-card h3,
+  .score-card p {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 428px) {
+  h1.title {
+    font-size: 1.2rem;
+  }
+
+  .client-info {
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .grid-cols-1-xs {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+
+  .score-card {
+    width: 240px;
+  }
+
+  .score-card h3,
+  .score-card p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 376px) {
+}
+
+@media (max-width: 324px) {
+  .ysq-table th,
+  .ysq-table td {
+    width: 20%;
+    padding: 0.25rem;
+  }
+
+  .ysq-table .rating-cell {
+    font-size: 0;
+    position: relative;
+  }
+
+  .ysq-table .rating-cell::after {
+    content: attr(data-rating);
+    font-size: 0.75rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .ysq-table .rating-cell[data-rating="Low"]::after {
+    content: "L";
+  }
+  .ysq-table .rating-cell[data-rating="Medium"]::after {
+    content: "M";
+  }
+  .ysq-table .rating-cell[data-rating="High"]::after {
+    content: "H";
+  }
+  .ysq-table .rating-cell[data-rating="Very High"]::after {
+    content: "VH";
+  }
+  .ysq-table .rating-cell[data-rating="Severe"]::after {
+    content: "S";
+  }
+}
+
+/* SMI Modal */
+
 .card-title {
   font-size: 1.125rem;
 }
 
 @media screen and (max-width: 1024px) {
-  .title {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-    line-height: 2rem;
-  }
-
   .smi-completion-date {
     font-size: 1rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .title {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-    line-height: 1.5rem;
   }
 }
 
@@ -560,9 +690,12 @@ input.small-square-input::-webkit-inner-spin-button {
   }
 }
 
-@media (max-width: 428px) {
-  .title {
-    font-size: 1rem;
-    line-height: 1.5rem;
+@media (max-width: 376px) {
+  .rating-cell .rating-full {
+    display: none;
+  }
+
+  .rating-cell .rating-abbrev {
+    display: inline;
   }
 }
