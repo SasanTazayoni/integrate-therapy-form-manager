@@ -1,10 +1,11 @@
 import { useState, useCallback, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ProtectedAccess from "../components/ProtectedAccess";
 import EmailInput from "../components/EmailInput";
 import FormButtons from "../components/FormButtons";
 import EmailSearchControls from "../components/EmailSearchControls";
 import RevokeConfirmModal from "../components/modals/RevokeConfirmModal";
+import Button from "../components/ui/Button";
 import {
   fetchClientStatus,
   addClient,
@@ -22,6 +23,7 @@ import { useClientContext } from "../context/ClientContext";
 import ClientActions from "../components/ClientActions";
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const {
     email: contextEmail,
     setEmail: setContextEmail,
@@ -409,16 +411,14 @@ export default function Dashboard() {
           onRevoke={openRevokeModal}
           formActionLoading={formActionLoading}
           clientInactive={isInactive}
+          searchLoading={loading}
         />
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 mt-10 flex justify-center">
-        <Link
-          to="/summary"
-          className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-6 rounded transition"
-        >
+      <div className="max-w-4xl mx-auto px-4 mt-6 flex justify-center">
+        <Button onClick={() => navigate("/summary")} disabled={loading}>
           Summary
-        </Link>
+        </Button>
       </div>
 
       {showRevokeModal && revokeFormType && (
