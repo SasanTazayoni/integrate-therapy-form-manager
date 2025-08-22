@@ -24,18 +24,26 @@ export default function AdminLoginModal({
   onSubmit,
   onClear,
 }: Props) {
+  function handleUsernameChange(e: React.ChangeEvent<HTMLInputElement>) {
+    onUsernameChange(e.target.value);
+  }
+
+  function handlePasswordChange(e: React.ChangeEvent<HTMLInputElement>) {
+    onPasswordChange(e.target.value);
+  }
+
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    onSubmit();
+  }
+
   return (
     <Modal ariaLabelledBy="login-title" role="dialog" closing={closing}>
       <h2 id="login-title" className="text-xl font-bold mb-4 sm:mb-2">
         Admin Login
       </h2>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          onSubmit();
-        }}
-      >
+      <form onSubmit={handleSubmit} className="space-y-2">
         <label htmlFor="admin-username" className="sr-only">
           Username
         </label>
@@ -44,7 +52,8 @@ export default function AdminLoginModal({
           type="text"
           placeholder="Username"
           value={username}
-          onChange={(e) => onUsernameChange(e.target.value)}
+          onChange={handleUsernameChange}
+          className="w-full p-2 border rounded"
         />
 
         <label htmlFor="admin-password" className="sr-only">
@@ -55,22 +64,22 @@ export default function AdminLoginModal({
           type="password"
           placeholder="Password"
           value={password}
-          onChange={(e) => onPasswordChange(e.target.value)}
+          onChange={handlePasswordChange}
+          className="w-full p-2 border rounded"
         />
 
         <p
           id="admin-login-error"
-          className="mt-4 sm:mt-2 text-red-600 font-semibold text-center transition-opacity duration-500"
-          style={{
-            minHeight: "1.25rem",
-            opacity: error && !errorFading ? 1 : 0,
-          }}
+          className={`mt-4 sm:mt-2 text-red-600 font-semibold text-center transition-opacity duration-500 ${
+            error && !errorFading ? "opacity-100" : "opacity-0"
+          }`}
+          style={{ minHeight: "1.25rem" }}
           aria-live="polite"
         >
           {error ? error : <span aria-hidden="true">&nbsp;</span>}
         </p>
 
-        <div className="flex justify-center mt-4 sm:mt-2">
+        <div className="flex justify-center mt-4 sm:mt-2 gap-x-2">
           <Button type="submit">Login</Button>
           <Button type="button" variant="danger" onClick={onClear}>
             Clear
