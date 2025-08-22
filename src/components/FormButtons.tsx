@@ -14,6 +14,7 @@ type FormButtonsProps = {
   onRevoke: (formType: FormType) => void;
   formActionLoading: Record<FormType, boolean>;
   clientInactive: boolean;
+  searchLoading?: boolean;
 };
 
 export default function FormButtons({
@@ -22,6 +23,7 @@ export default function FormButtons({
   onRevoke,
   formActionLoading,
   clientInactive,
+  searchLoading = false,
 }: FormButtonsProps) {
   const clientSearched = clientFormsStatus !== null;
   const clientExists = clientFormsStatus?.exists ?? false;
@@ -39,14 +41,16 @@ export default function FormButtons({
           (status
             ? status.activeToken || (status.submitted && formType !== "SMI")
             : false) ||
-          formActionLoading[formType];
+          formActionLoading[formType] ||
+          searchLoading;
 
         const revokeDisabled =
           !clientSearched ||
           !clientExists ||
           clientInactive ||
           !(status ? status.activeToken : false) ||
-          formActionLoading[formType];
+          formActionLoading[formType] ||
+          searchLoading;
 
         const sendLabel =
           formType === "SMI" && status?.submitted ? "Resend" : "Send";
