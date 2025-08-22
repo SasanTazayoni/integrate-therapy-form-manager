@@ -25,6 +25,13 @@ export default function SMISummaryModal({
   const clientDob = clientFormsStatus?.clientDob ?? "";
   const submittedAt = clientFormsStatus?.forms?.SMI?.submittedAt ?? "";
 
+  const formattedDob = clientDob
+    ? new Date(clientDob).toLocaleDateString()
+    : "";
+  const formattedSubmittedAt = submittedAt
+    ? `(${new Date(submittedAt).toLocaleDateString()})`
+    : "";
+
   useEffect(() => {
     if (!isOpen) setClosing(true);
     else setClosing(false);
@@ -33,6 +40,14 @@ export default function SMISummaryModal({
   function handleCloseFinished() {
     setClosing(false);
     onClose();
+  }
+
+  function handleOverlayClick() {
+    setClosing(true);
+  }
+
+  function handleCloseButtonClick() {
+    setClosing(true);
   }
 
   if (!isOpen && !closing) return null;
@@ -89,7 +104,7 @@ export default function SMISummaryModal({
       ariaLabelledBy="smi-summary-title"
       onCloseFinished={handleCloseFinished}
       className="wide-modal"
-      onOverlayClick={() => setClosing(true)}
+      onOverlayClick={handleOverlayClick}
     >
       <div
         ref={modalRef}
@@ -97,9 +112,9 @@ export default function SMISummaryModal({
       >
         <h2 className="title" id="smi-summary-title">
           SMI Score Summary Sheet{" "}
-          {submittedAt && (
+          {formattedSubmittedAt && (
             <span className="text-gray-400 text-[1.5rem] smi-completion-date">
-              ({new Date(submittedAt).toLocaleDateString()})
+              {formattedSubmittedAt}
             </span>
           )}
         </h2>
@@ -109,8 +124,7 @@ export default function SMISummaryModal({
             <strong>Client:</strong> {clientName}
           </p>
           <p className="text-sm">
-            <strong>Date of Birth:</strong>{" "}
-            {clientDob ? new Date(clientDob).toLocaleDateString() : ""}
+            <strong>Date of Birth:</strong> {formattedDob}
           </p>
         </div>
 
@@ -141,7 +155,7 @@ export default function SMISummaryModal({
             <button
               type="button"
               className="px-4 py-2 rounded text-white w-[100px] flex justify-center items-center bg-blue-500 hover:bg-blue-600"
-              onClick={() => setClosing(true)}
+              onClick={handleCloseButtonClick}
             >
               Close
             </button>
