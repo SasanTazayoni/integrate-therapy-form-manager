@@ -35,4 +35,28 @@ describe("Button component", () => {
     expect(rippleSpy.mock.calls[0][0]).toBeInstanceOf(HTMLButtonElement);
     rippleSpy.mockRestore();
   });
+
+  test("applies disabled styles correctly", () => {
+    const { getByText } = render(<Button disabled>Disabled</Button>);
+    const btn = getByText("Disabled");
+
+    expect(btn).toBeDisabled();
+
+    expect(btn).toHaveClass("bg-gray-300");
+    expect(btn).toHaveClass("text-gray-600");
+    expect(btn).toHaveClass("cursor-not-allowed");
+
+    const onClick = vi.fn();
+    fireEvent.click(btn);
+    expect(onClick).not.toHaveBeenCalled();
+  });
+
+  test("shows loading state when loading prop is true", () => {
+    const { getByText } = render(<Button loading>Click me</Button>);
+
+    expect(getByText("Loading...")).toBeInTheDocument();
+
+    const btn = getByText("Loading...");
+    expect(btn).toBeDisabled();
+  });
 });
