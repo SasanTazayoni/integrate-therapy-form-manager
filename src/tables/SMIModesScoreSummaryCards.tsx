@@ -10,6 +10,10 @@ export default function SMIModesScoreSummaryCards({
   modeGroups,
   smiTableData,
 }: SMIModesScoreSummaryCardsProps) {
+  function getColumn(mode: string) {
+    return smiTableData[mode]?.column || "";
+  }
+
   return (
     <div className="space-y-4 lg:hidden">
       {modeGroups.map(({ label, items }) => (
@@ -21,20 +25,17 @@ export default function SMIModesScoreSummaryCards({
             {label}
           </h3>
           <ul className="space-y-1">
-            {items.map((mode) => {
-              const { column } = smiTableData[mode] || {};
-              return (
-                <li
-                  key={mode}
-                  className="flex flex-row items-center max-[480px]:flex-col max-[480px]:items-start"
-                >
-                  <span className="font-medium">{mode}:</span>
-                  <span className="font-bold text-gray-500">
-                    {column || ""}
-                  </span>
-                </li>
-              );
-            })}
+            {items.map((mode) => (
+              <li
+                key={mode}
+                className="flex flex-row items-center max-[480px]:flex-col max-[480px]:items-start"
+              >
+                <span className="font-medium">{mode}:</span>
+                <span className="font-bold text-gray-500">
+                  {getColumn(mode)}
+                </span>
+              </li>
+            ))}
           </ul>
         </div>
       ))}
