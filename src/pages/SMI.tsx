@@ -127,7 +127,7 @@ const SMI = () => {
           {formError && <p className="text-red-600 font-bold">{formError}</p>}
         </div>
 
-        <div className="flex justify-center mt-6 space-x-4">
+        <div className="flex justify-center mt-2 space-x-4">
           <Button type="submit">Submit</Button>
 
           <Button type="button" variant="danger" onClick={handleResetClick}>

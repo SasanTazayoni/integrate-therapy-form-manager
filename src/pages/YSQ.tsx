@@ -151,7 +151,7 @@ const YSQ = () => {
           {formError && <p className="text-red-600 font-bold">{formError}</p>}
         </div>
 
-        <div className="flex justify-center mt-6 space-x-4">
+        <div className="flex justify-center mt-2 space-x-4">
           <button
             type="submit"
             className="bg-blue-500 text-white px-8 py-2 rounded hover:bg-blue-600 transition"
