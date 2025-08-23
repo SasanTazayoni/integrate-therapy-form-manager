@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { getClientFormsStatus, createClient } from "./clientsService";
 import { deleteClientByEmail } from "./clientDeletion";
-import { deactivateClient, activateClient } from "./clientActivation";
+import { deactivateClient, activateClient } from "./clientStatus";
 
 export const getClientFormsStatusHandler = async (
   req: Request,
