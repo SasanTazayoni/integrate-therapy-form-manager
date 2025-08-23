@@ -42,7 +42,7 @@ const useBecksForm = () => {
 
     if (unansweredIds.length > 0) {
       setMissingIds(unansweredIds);
-      setFormError("Please answer all questions before submitting");
+      setFormError("Please answer all questions");
       return;
     }
 
