@@ -7,6 +7,7 @@ import { findClientByEmail } from "../utils/clientUtils";
 import { deactivateInvalidActiveForms } from "../utils/formUtils";
 import { parseDateStrict } from "../utils/dates";
 import { getValidFormByToken } from "./formControllerHelpers/formTokenHelpers";
+import { getActiveForms, mapFormSafe } from "../utils/formHelpers";
 
 export const createForm = async (
   req: Request<{}, unknown, { clientId: string; formType: FormType }>,
@@ -35,7 +36,7 @@ export const createForm = async (
       },
     });
 
-    res.status(201).json(form);
+    res.status(201).json(mapFormSafe(form));
   } catch (error) {
     console.error("Error creating form:", error);
     res.status(500).json({ error: "Failed to create form" });
@@ -59,14 +60,10 @@ export const sendForm = async (
 
     await deactivateInvalidActiveForms(client.id, formType);
 
-    const existingForm = await prisma.form.findFirst({
-      where: {
-        clientId: client.id,
-        form_type: formType,
-        submitted_at: null,
-        is_active: true,
-      },
-    });
+    const existingForm = getActiveForms(
+      await prisma.form.findMany({ where: { clientId: client.id } }),
+      formType
+    )[0];
 
     if (existingForm) {
       return res
@@ -97,7 +94,9 @@ export const sendForm = async (
       clientName: client.name ?? undefined,
     });
 
-    res.status(201).json({ message: "Form sent via email", form });
+    res
+      .status(201)
+      .json({ message: "Form sent via email", form: mapFormSafe(form) });
   } catch (error) {
     console.error("Error sending form:", error);
     res.status(500).json({ error: "Failed to send form" });
@@ -152,9 +151,7 @@ export const revokeFormToken = async (
 
   try {
     const client = await findClientByEmail(email);
-    if (!client) {
-      return res.status(404).json({ error: "Client not found" });
-    }
+    if (!client) return res.status(404).json({ error: "Client not found" });
 
     const result = await prisma.form.updateMany({
       where: {
@@ -162,10 +159,7 @@ export const revokeFormToken = async (
         form_type: formType,
         is_active: true,
       },
-      data: {
-        is_active: false,
-        revoked_at: new Date(),
-      },
+      data: { is_active: false, revoked_at: new Date() },
     });
 
     if (result.count === 0) {
@@ -174,14 +168,13 @@ export const revokeFormToken = async (
         .json({ error: "No active form tokens found to revoke" });
     }
 
-    const updatedForm = await prisma.form.findFirst({
-      where: {
-        clientId: client.id,
-        form_type: formType,
-      },
-      orderBy: { updated_at: "desc" },
-      select: { revoked_at: true },
-    });
+    const updatedForm = getActiveForms(
+      await prisma.form.findMany({
+        where: { clientId: client.id, form_type: formType },
+      })
+    ).sort(
+      (a, b) => (b.revoked_at?.getTime() || 0) - (a.revoked_at?.getTime() || 0)
+    )[0];
 
     res.json({
       message: "Form token(s) revoked successfully",
@@ -217,10 +210,7 @@ export const updateClientInfo = async (req: Request, res: Response) => {
 
     await prisma.client.update({
       where: { id: form.client.id },
-      data: {
-        name,
-        dob: parsedDob,
-      },
+      data: { name, dob: parsedDob },
     });
 
     return res.json({ success: true });
