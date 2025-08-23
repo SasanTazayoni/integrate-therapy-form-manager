@@ -58,14 +58,14 @@ export default function ClientActions({
   };
 
   return (
-    <div className="flex justify-center">
+    <div className="flex justify-center gap-4">
       {!isInactive && (
         <button
           className={`link ${disabled ? "disabled" : ""}`}
           onClick={() => setDeactivateModalOpen(true)}
           disabled={disabled}
         >
-          Deactivate
+          <span>Deactivate</span>
         </button>
       )}
 
@@ -75,7 +75,7 @@ export default function ClientActions({
           onClick={() => setActivateModalOpen(true)}
           disabled={disabled}
         >
-          Activate
+          <span>Activate</span>
         </button>
       )}
 
@@ -84,7 +84,7 @@ export default function ClientActions({
         onClick={() => setRemoveModalOpen(true)}
         disabled={disabled}
       >
-        Delete
+        <span>Delete</span>
       </button>
 
       {removeModalOpen && (

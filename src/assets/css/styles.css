@@ -223,13 +223,21 @@ textarea:focus {
   color: var(--color-link);
   font-weight: 600;
   text-decoration: none;
-  position: relative;
   cursor: pointer;
   transition: all 0.3s ease;
   width: 120px;
+  text-align: center;
+  background: none;
+  border: none;
+  padding: 0;
 }
 
-.link::after {
+.link span {
+  position: relative;
+  display: inline-block;
+}
+
+.link span::after {
   content: "";
   position: absolute;
   left: 0;
@@ -237,10 +245,10 @@ textarea:focus {
   height: 2px;
   width: 0;
   background-color: var(--color-secondary);
-  transition: all 0.3s ease;
+  transition: width 0.3s ease;
 }
 
-.link:hover::after {
+.link:hover span::after {
   width: 100%;
 }
 
