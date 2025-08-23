@@ -2,10 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import Modal from "../Modal";
 import Button from "../ui/Button";
 import { useClientContext } from "../../context/ClientContext";
-import {
-  classifyBoundaryAndAlignment,
-  categoryKeyMap,
-} from "../../data/SMIBoundaries";
+import { categoryKeyMap } from "../../data/SMIBoundaries";
+import { classifyBoundaryAndAlignment } from "../../utils/SMIUtils";
 import SMIModesScoreSummaryTable from "../../tables/SMIModesTableScores";
 import SMIModesScoreSummaryCards from "../../tables/SMIModesScoreSummaryCards";
 
