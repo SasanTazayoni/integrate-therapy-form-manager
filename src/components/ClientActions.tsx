@@ -58,7 +58,7 @@ export default function ClientActions({
   };
 
   return (
-    <div className="flex justify-center gap-12 mb-6">
+    <div className="flex justify-center">
       {!isInactive && (
         <button
           className={`link ${disabled ? "disabled" : ""}`}
