@@ -354,17 +354,17 @@ export default function Dashboard() {
             src={logoUrl}
             alt="Integrate Therapy logo"
             aria-hidden="true"
-            className="inline-block w-7 h-7 md:w-8 md:h-8 shrink-0 select-none"
+            className="hidden md:inline-block w-7 h-7 md:w-8 md:h-8 shrink-0 select-none"
             draggable="false"
           />
-          <h1 className="text-2xl font-bold text-center">
+          <h1 className="dashboard text-2xl font-bold text-center">
             Integrate Therapy Form Manager
           </h1>
           <img
             src={logoUrl}
             alt="Integrate Therapy logo"
             aria-hidden="true"
-            className="inline-block w-7 h-7 md:w-8 md:h-8 shrink-0 select-none"
+            className="hidden md:inline-block w-7 h-7 md:w-8 md:h-8 shrink-0 select-none"
             draggable="false"
           />
         </div>
