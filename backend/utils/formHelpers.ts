@@ -23,3 +23,12 @@ export const mapFormSafe = (form: Form | null | undefined) => ({
   submittedAt: form?.submitted_at ?? null,
   isActive: form?.is_active ?? false,
 });
+
+export const defaultUpdateFields = () => {
+  const now = new Date();
+  return {
+    submitted_at: now,
+    is_active: false,
+    token_expires_at: now,
+  };
+};
