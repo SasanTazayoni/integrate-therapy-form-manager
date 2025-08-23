@@ -27,6 +27,7 @@ import Question from "../components/YSQQuestions";
 import { Loader2 } from "lucide-react";
 import { submitYSQForm } from "../api/formsFrontend";
 import YSQInstructions from "../components/YSQInstructions";
+import Button from "../components/ui/Button";
 
 const YSQ_SCHEMAS = [
   { key: "ed", label: "Emotional Deprivation", data: YSQEmotionalDeprivation },
@@ -152,20 +153,13 @@ const YSQ = () => {
         </div>
 
         <div className="flex justify-center mt-2 space-x-4">
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-8 py-2 rounded hover:bg-blue-600 transition"
-          >
+          <Button type="submit" variant="primary">
             Submit
-          </button>
+          </Button>
 
-          <button
-            type="button"
-            className="bg-gray-500 text-white px-8 py-2 rounded hover:bg-gray-600 transition"
-            onClick={handleResetClick}
-          >
+          <Button type="button" variant="danger" onClick={handleResetClick}>
             Reset
-          </button>
+          </Button>
         </div>
       </QuestionnaireForm>
 
