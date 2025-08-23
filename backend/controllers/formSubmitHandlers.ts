@@ -11,6 +11,7 @@ import {
   smiBoundaries,
   labelToBoundaryKey,
 } from "../utils/SMIBoundariesBackend";
+import { mapFormSafe, defaultUpdateFields } from "../utils/formHelpers";
 
 const YSQ_SCHEMAS = [
   "ed",
@@ -49,21 +50,18 @@ export const submitBecksForm = async (
     if (!form) return;
 
     const combinedScore = parseAndCombineScore(result, getBecksScoreCategory);
-    const now = new Date();
 
-    await prisma.form.update({
+    const updatedForm = await prisma.form.update({
       where: { token },
       data: {
-        submitted_at: now,
+        ...defaultUpdateFields(),
         bdi_score: combinedScore,
-        is_active: false,
-        token_expires_at: now,
       },
     });
 
-    res.json({ success: true });
+    res.json({ success: true, form: mapFormSafe(updatedForm) });
   } catch (error) {
-    console.error("Error submitting form:", error);
+    console.error("Error submitting Becks form:", error);
     res
       .status(500)
       .json({ error: "Failed to submit form", code: "SUBMIT_ERROR" });
@@ -84,21 +82,18 @@ export const submitBurnsForm = async (
     if (!form) return;
 
     const combinedScore = parseAndCombineScore(result, getBurnsScoreCategory);
-    const now = new Date();
 
-    await prisma.form.update({
+    const updatedForm = await prisma.form.update({
       where: { token },
       data: {
-        submitted_at: now,
+        ...defaultUpdateFields(),
         bai_score: combinedScore,
-        is_active: false,
-        token_expires_at: now,
       },
     });
 
-    res.json({ success: true });
+    res.json({ success: true, form: mapFormSafe(updatedForm) });
   } catch (error) {
-    console.error("Error submitting BURNS form:", error);
+    console.error("Error submitting Burns form:", error);
     res
       .status(500)
       .json({ error: "Failed to submit form", code: "SUBMIT_ERROR" });
@@ -131,17 +126,11 @@ export const submitYSQForm = async (
     const form = await validateTokenOrFail(token, res);
     if (!form) return;
 
-    const now = new Date();
-    const dataUpdate: Record<string, unknown> = {
-      submitted_at: now,
-      is_active: false,
-      token_expires_at: now,
-    };
+    const dataUpdate: Record<string, unknown> = { ...defaultUpdateFields() };
 
     for (const schema of YSQ_SCHEMAS) {
       const key = `ysq_${schema}_answers` as keyof typeof scores;
       const answers = scores[key];
-
       if (!answers || !Array.isArray(answers)) continue;
 
       const numericAnswers = answers.map((v) => Number(v) || 0);
@@ -150,7 +139,7 @@ export const submitYSQForm = async (
         schema.toUpperCase() as SchemaType,
         rawScore
       );
-      const rawCombined = `${rawScore}-${rawCategory}`;
+      dataUpdate[`ysq_${schema}_score`] = `${rawScore}-${rawCategory}`;
 
       const score456 = numericAnswers
         .filter((val) => val >= 4 && val <= 6)
@@ -159,15 +148,14 @@ export const submitYSQForm = async (
         schema.toUpperCase() as SchemaType,
         score456
       );
-      const score456Combined = `${score456}-${score456Category}`;
-
-      dataUpdate[`ysq_${schema}_score`] = rawCombined;
-      dataUpdate[`ysq_${schema}_456`] = score456Combined;
+      dataUpdate[`ysq_${schema}_456`] = `${score456}-${score456Category}`;
     }
 
-    await prisma.form.update({ where: { token }, data: dataUpdate });
-
-    res.json({ success: true });
+    const updatedForm = await prisma.form.update({
+      where: { token },
+      data: dataUpdate,
+    });
+    res.json({ success: true, form: mapFormSafe(updatedForm) });
   } catch (error) {
     console.error("Error submitting YSQ form:", error);
     res
@@ -200,12 +188,7 @@ export const submitSMIForm = async (
     const form = await validateTokenOrFail(token, res);
     if (!form) return;
 
-    const now = new Date();
-    const dataUpdate: Record<string, unknown> = {
-      submitted_at: now,
-      is_active: false,
-      token_expires_at: now,
-    };
+    const dataUpdate: Record<string, unknown> = { ...defaultUpdateFields() };
 
     for (const incomingKey in results) {
       const avg = Number(results[incomingKey]?.average);
@@ -234,9 +217,11 @@ export const submitSMIForm = async (
       dataUpdate[boundaryKey] = `${avg.toFixed(2)}-${category}`;
     }
 
-    await prisma.form.update({ where: { token }, data: dataUpdate });
-
-    res.json({ success: true });
+    const updatedForm = await prisma.form.update({
+      where: { token },
+      data: dataUpdate,
+    });
+    res.json({ success: true, form: mapFormSafe(updatedForm) });
   } catch (error) {
     console.error("Error submitting SMI form:", error);
     res
