@@ -30,7 +30,7 @@ export default function FormButtons({
   const formTypes = FORM_TYPES;
 
   return (
-    <div className="grid grid-cols-2 gap-6 w-full">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full justify-items-center">
       {formTypes.map((formType: FormType) => {
         const status = clientFormsStatus?.forms?.[formType];
 
@@ -58,9 +58,9 @@ export default function FormButtons({
         return (
           <div
             key={formType}
-            className="flex flex-col items-center border-[4px] border-[var(--color-border)] p-4 rounded-xl min-h-[150px]"
+            className="form-card flex flex-col items-center justify-center border-[4px] border-[var(--color-border)] py-4 px-2 rounded-xl min-h-[150px]"
           >
-            <h2 className="text-lg font-semibold mb-3">
+            <h2 className="card-title text-lg font-semibold mb-3 text-center">
               {FORM_TITLES[formType]}
             </h2>
 
