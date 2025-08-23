@@ -1,7 +1,7 @@
 const YSQInstructions = () => {
   return (
     <>
-      <div className="mb-6 p-4 border-2 border-gray-400 divide-gray-400 rounded-lg">
+      <div className="mb-2 md:mb-6 sm:mb-4 p-4 border-2 border-gray-400 divide-gray-400 rounded-lg">
         <p className="font-bold mb-2">INSTRUCTIONS:</p>
         <p className="mb-4 text-gray-900">
           Listed below are statements that you might use to describe yourself.
