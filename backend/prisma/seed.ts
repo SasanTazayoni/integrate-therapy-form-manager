@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { generateScore } from "../utils/SMIScoreUtilsBackend";
-import { smiBoundaries, labels } from "../utils/SMIBoundariesBackend";
+import { smiBoundaries } from "../utils/SMIBoundariesBackend";
 
 const prisma = new PrismaClient();
 
