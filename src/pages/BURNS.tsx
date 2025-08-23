@@ -38,15 +38,6 @@ const BURNS = () => {
       return;
     }
 
-    const unanswered = BURNS_ITEMS.filter((item) => !(item.id in answers)).map(
-      (item) => item.id
-    );
-
-    if (unanswered.length > 0) {
-      setFormError("Please answer all questions before submitting.");
-      return;
-    }
-
     setFormError("");
 
     const { ok, error, code } = await submitBurnsForm({
