@@ -159,7 +159,7 @@ body {
   }
 }
 
-@media screen and (max-width: 324px) {
+@media screen and (max-width: 428px) {
   body {
     font-size: 12px;
   }
@@ -451,7 +451,7 @@ textarea:focus {
 
 .option-label {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 0.5rem;
   border: 1px solid var(--color-border);
   border-radius: 10px;
