@@ -17,7 +17,7 @@ const YSQQuestions = ({
 }: YSQQuestionsProps) => {
   return (
     <div className="flex items-center gap-4 p-2 border-b border-gray-300">
-      <div className="w-10 h-10 flex items-center justify-center border rounded bg-gray-100 font-semibold text-gray-400">
+      <div className="ysq-question-number w-10 h-10 flex items-center justify-center border rounded bg-gray-100 font-semibold text-gray-400">
         {item.id}
       </div>
 
@@ -43,9 +43,9 @@ const YSQQuestions = ({
         }`}
       />
 
-      <div className="flex-1">{item.prompt}</div>
+      <div className="ysq-question flex-1">{item.prompt}</div>
 
-      <div className="w-12 text-sm text-center text-gray-400">
+      <div className="ysq-schema-code w-12 text-sm text-center text-gray-400">
         {item.category}
       </div>
     </div>
