@@ -216,7 +216,7 @@ export default function QuestionnaireForm({
     <div className="relative min-h-screen">
       <div className={showModal ? "blurred" : ""}>
         <div className="outer-container">
-          <div className="flex flex-col items-center justify-center mb-6 text-center">
+          <div className="flex flex-col items-center justify-center mb-4 text-center">
             <div className="flex items-center justify-center gap-3 mb-2">
               <h1 className="title">{FORM_TITLES[questionnaire]}</h1>
             </div>
