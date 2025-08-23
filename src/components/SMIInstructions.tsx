@@ -1,7 +1,7 @@
 const SMIInstructions = () => {
   return (
     <>
-      <div className="mb-6 p-4 border-2 border-gray-400 rounded-lg">
+      <div className="mb-2 md:mb-6 p-2 md:p-4 border-2 border-gray-400 rounded-lg">
         <p className="font-bold mb-2">INSTRUCTIONS:</p>
         <p className="mb-4 text-gray-900">
           Listed below are statements that people might use to describe
@@ -10,7 +10,7 @@ const SMIInstructions = () => {
         </p>
       </div>
 
-      <div className="mb-6 p-4 border-2 border-gray-400 rounded-lg">
+      <div className="mb-2 md:mb-6 p-2 md:p-4 border-2 border-gray-400 rounded-lg">
         <p className="font-bold mb-1">FREQUENCY:</p>
         <ul className="list-none space-y-1 text-gray-900">
           <li>1 = Never or Almost Never</li>
