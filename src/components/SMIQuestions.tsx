@@ -14,8 +14,8 @@ const SMIQuestion = ({
   showError = false,
 }: SMIQuestionProps) => {
   return (
-    <div className="flex items-center gap-4 p-2 border-b border-gray-300">
-      <div className="w-10 h-10 flex items-center justify-center border rounded bg-gray-100 font-semibold text-gray-400">
+    <div className="smi-question flex items-center gap-3 md:gap-4 p-2 border-b border-gray-300 text-sm md:text-base">
+      <div className="smi-question-number w-10 h-10 flex items-center justify-center border rounded bg-gray-100 font-semibold text-gray-400">
         {item.id}
       </div>
 
