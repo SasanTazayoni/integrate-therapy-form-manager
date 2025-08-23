@@ -583,6 +583,22 @@ input.small-square-input::-webkit-inner-spin-button {
   }
 }
 
+/* YSQ questionnaire */
+
+@media (max-width: 428px) {
+  .ysq-question-number {
+    display: none;
+  }
+
+  .ysq-question {
+    font-size: 12px;
+  }
+
+  .ysq-schema-code {
+    display: none;
+  }
+}
+
 /* Dashboard */
 
 .form-card {
