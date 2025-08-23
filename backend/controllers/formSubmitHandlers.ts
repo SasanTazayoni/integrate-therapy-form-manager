@@ -6,12 +6,11 @@ import getBurnsScoreCategory from "../utils/burnsScoreUtils";
 import { validateRequestBodyFields } from "../utils/validationUtils";
 import { SchemaType, getScoreCategory } from "../utils/YSQScoreUtils";
 import { parseAndCombineScore } from "../utils/scoreUtils";
+import { classifyScore, normalizeLabel } from "../utils/SMIScoreUtilsBackend";
 import {
   smiBoundaries,
-  classifyScore,
-  normalizeLabel,
   labelToBoundaryKey,
-} from "../utils/SMIScoreUtils";
+} from "../utils/SMIBoundariesBackend";
 
 const YSQ_SCHEMAS = [
   "ed",
@@ -191,12 +190,10 @@ export const submitSMIForm = async (
   const { token, results } = req.body;
 
   if (!results || typeof results !== "object") {
-    return res
-      .status(400)
-      .json({
-        error: "Invalid or missing results object",
-        code: "MISSING_FIELDS",
-      });
+    return res.status(400).json({
+      error: "Invalid or missing results object",
+      code: "MISSING_FIELDS",
+    });
   }
 
   try {
