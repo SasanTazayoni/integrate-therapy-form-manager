@@ -12,6 +12,7 @@ import { Loader2 } from "lucide-react";
 import SMIInstructions from "../components/SMIInstructions";
 import { smiBoundaries, categoryKeyMap } from "../data/SMIBoundaries";
 import { classifyScore } from "../utils/SMIUtils";
+import Button from "../components/ui/Button";
 
 const SMI = () => {
   const { token } = useParams<{ token: string }>();
@@ -127,20 +128,11 @@ const SMI = () => {
         </div>
 
         <div className="flex justify-center mt-6 space-x-4">
-          <button
-            type="submit"
-            className="bg-blue-500 text-white px-8 py-2 rounded hover:bg-blue-600 transition"
-          >
-            Submit
-          </button>
+          <Button type="submit">Submit</Button>
 
-          <button
-            type="button"
-            className="bg-gray-500 text-white px-8 py-2 rounded hover:bg-gray-600 transition"
-            onClick={handleResetClick}
-          >
+          <Button type="button" variant="danger" onClick={handleResetClick}>
             Reset
-          </button>
+          </Button>
         </div>
       </QuestionnaireForm>
 
