@@ -6,6 +6,7 @@ import {
 } from "./clientsRepository";
 import { FORM_TYPES, FormType } from "../utils/formTypes";
 import { normalizeEmail } from "../utils/normalizeEmail";
+import { getLatestForm } from "../utils/formHelpers";
 
 export type FormStatus = {
   activeToken: boolean;
@@ -45,19 +46,8 @@ export const getClientFormsStatus = async (
 
   const forms = await getFormsByClientId(client.id);
 
-  const bdiForm = forms
-    .filter((f) => f.bdi_score != null)
-    .sort(
-      (a, b) =>
-        (b.submitted_at?.getTime() || 0) - (a.submitted_at?.getTime() || 0)
-    )[0];
-
-  const baiForm = forms
-    .filter((f) => f.bai_score != null)
-    .sort(
-      (a, b) =>
-        (b.submitted_at?.getTime() || 0) - (a.submitted_at?.getTime() || 0)
-    )[0];
+  const bdiForm = getLatestForm(forms, (f) => f.bdi_score != null);
+  const baiForm = getLatestForm(forms, (f) => f.bai_score != null);
 
   const extractScores = (
     form: Form | undefined,
@@ -75,21 +65,11 @@ export const getClientFormsStatus = async (
   };
 
   const smiScores = extractScores(
-    forms
-      .filter((f) => f.form_type === "SMI")
-      .sort(
-        (a, b) =>
-          (b.submitted_at?.getTime() || 0) - (a.submitted_at?.getTime() || 0)
-      )[0],
+    getLatestForm(forms, (f) => f.form_type === "SMI"),
     "smi_"
   );
 
-  const latestYsqForm = forms
-    .filter((f) => f.form_type === "YSQ")
-    .sort(
-      (a, b) =>
-        (b.submitted_at?.getTime() || 0) - (a.submitted_at?.getTime() || 0)
-    )[0];
+  const latestYsqForm = getLatestForm(forms, (f) => f.form_type === "YSQ");
 
   const ysqScores = extractScores(latestYsqForm, "ysq_", (key) =>
     key.endsWith("_score")
@@ -102,11 +82,12 @@ export const getClientFormsStatus = async (
     FormType,
     FormStatus
   >;
+
   for (const type of FORM_TYPES) {
-    const formsOfType = forms
+    const mostRecent = forms
       .filter((f) => f.form_type === type)
-      .sort((a, b) => b.token_sent_at.getTime() - a.token_sent_at.getTime());
-    const mostRecent = formsOfType[0];
+      .sort((a, b) => b.token_sent_at.getTime() - a.token_sent_at.getTime())[0];
+
     formsStatus[type] = mostRecent
       ? {
           activeToken:
