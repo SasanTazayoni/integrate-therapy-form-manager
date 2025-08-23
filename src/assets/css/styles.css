@@ -548,12 +548,26 @@ input.small-square-input::-webkit-inner-spin-button {
   .question-title {
     font-size: 1.2rem;
   }
+
+  .options {
+    padding: 0 1rem;
+    margin-bottom: 1rem;
+  }
 }
 
 @media (max-width: 428px) {
   h2.title {
     font-size: 1.2rem;
     line-height: 1.5rem;
+  }
+
+  .question-title {
+    font-size: 1rem;
+  }
+
+  .options {
+    padding: 0;
+    margin-bottom: 0.5rem;
   }
 }
 
