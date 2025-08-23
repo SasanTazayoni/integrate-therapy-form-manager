@@ -1,9 +1,6 @@
 import { FileText } from "lucide-react";
-import {
-  smiBoundaries,
-  classifyScore,
-  categoryKeyMap,
-} from "../data/SMIBoundaries";
+import { smiBoundaries, categoryKeyMap } from "../data/SMIBoundaries";
+import { classifyScore } from "../utils/SMIUtils";
 
 type SMIModesTableProps = {
   openModal: () => void;

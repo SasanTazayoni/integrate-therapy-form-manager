@@ -10,11 +10,8 @@ import Question from "../components/SMIQuestions";
 import { submitSMIForm } from "../api/formsFrontend";
 import { Loader2 } from "lucide-react";
 import SMIInstructions from "../components/SMIInstructions";
-import {
-  smiBoundaries,
-  classifyScore,
-  categoryKeyMap,
-} from "../data/SMIBoundaries";
+import { smiBoundaries, categoryKeyMap } from "../data/SMIBoundaries";
+import { classifyScore } from "../utils/SMIUtils";
 
 const SMI = () => {
   const { token } = useParams<{ token: string }>();
