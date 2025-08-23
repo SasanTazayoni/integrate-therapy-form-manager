@@ -340,11 +340,6 @@ textarea:focus {
 @media screen and (max-width: 428px) {
   .button {
     font-size: 14px;
-  }
-}
-
-@media screen and (max-width: 376px) {
-  .button {
     width: 100px;
     height: 40px;
     margin: 8px;
@@ -353,7 +348,6 @@ textarea:focus {
 
 @media screen and (max-width: 324px) {
   .button {
-    margin: 5px;
     font-size: 12px;
   }
 }
@@ -563,17 +557,22 @@ input.small-square-input::-webkit-inner-spin-button {
   }
 }
 
+/* SMI questionnaire */
+
+@media (max-width: 428px) {
+  .smi-question {
+    font-size: 12px;
+  }
+
+  .smi-question-number {
+    display: none;
+  }
+}
+
 /* Dashboard */
 
 .form-card {
   width: 420px;
-}
-
-@media screen and (max-width: 768px) {
-  .form-card {
-    width: 300px;
-    height: 240px;
-  }
 }
 
 @media screen and (max-width: 428px) {
@@ -583,6 +582,11 @@ input.small-square-input::-webkit-inner-spin-button {
 
   .card-title {
     font-size: 16px;
+  }
+
+  .form-card {
+    width: 300px;
+    height: 240px;
   }
 }
 
@@ -664,9 +668,6 @@ input.small-square-input::-webkit-inner-spin-button {
   .score-card p {
     font-size: 14px;
   }
-}
-
-@media (max-width: 376px) {
 }
 
 @media (max-width: 324px) {
