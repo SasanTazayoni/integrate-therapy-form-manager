@@ -8,6 +8,7 @@ import useValidateToken from "../hooks/useValidateToken";
 import BurnsQuestions from "../components/BurnsQuestions";
 import { submitBurnsForm } from "../api/formsFrontend";
 import { Loader2 } from "lucide-react";
+import Button from "../components/ui/Button";
 
 const BURNS = () => {
   const { token } = useParams<{ token: string }>();
@@ -92,7 +93,7 @@ const BURNS = () => {
             index === 0 || BURNS_ITEMS[index - 1].category !== item.category;
 
           return (
-            <div key={item.id} className="mb-6">
+            <div key={item.id} className="mb-2 md:mb-6 sm:mb-4">
               {isFirstOfCategory && (
                 <h2 className="text-gray-600 text-base md:text-2xl mt-5 mb-6 font-semibold text-center">
                   {item.category}
@@ -116,21 +117,14 @@ const BURNS = () => {
         {formError && <p className="text-red-600 font-bold">{formError}</p>}
       </div>
 
-      <div className="flex justify-center mt-6 space-x-4">
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-8 py-2 rounded hover:bg-blue-600 transition"
-        >
+      <div className="flex justify-center mt-2 space-x-4">
+        <Button type="submit" variant="primary">
           Submit
-        </button>
+        </Button>
 
-        <button
-          type="button"
-          className="bg-gray-500 text-white px-8 py-2 rounded hover:bg-gray-600 transition"
-          onClick={handleResetClick}
-        >
+        <Button type="button" variant="primary" onClick={handleResetClick}>
           Reset
-        </button>
+        </Button>
       </div>
 
       {resetModalOpen && (
