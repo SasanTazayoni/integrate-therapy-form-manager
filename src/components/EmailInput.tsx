@@ -34,8 +34,8 @@ export default function EmailInput({
           setShowAddClientPrompt(false);
         }}
         placeholder="Enter client email"
-        className={`w-full p-2 border rounded mb-2 ${
-          error && !email ? "missing border-red-500" : "border-gray-300"
+        className={`w-full md:w-96 p-2 border rounded mb-2 ${
+          error && !email ? "border-red-500" : "border-gray-300"
         }`}
       />
 
@@ -50,7 +50,7 @@ export default function EmailInput({
         {error && <p className="text-red-600 inline">{error}</p>}
 
         {!error && successMessage && (
-          <p className="text-green-600 inline">{successMessage}</p>
+          <p className="text-green-600 inline mb-4">{successMessage}</p>
         )}
 
         {!loading && showAddClientPrompt && onConfirmAddClient && (
