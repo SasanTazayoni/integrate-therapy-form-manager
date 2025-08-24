@@ -9,6 +9,7 @@ import useValidateToken from "../hooks/useValidateToken";
 import BecksQuestions from "../components/BecksQuestions";
 import { Loader2 } from "lucide-react";
 import Button from "../components/ui/Button";
+import { submitFormWithToken } from "../utils/becksHelpers";
 
 const BECKS = () => {
   const { token } = useParams<{ token: string }>();
@@ -18,7 +19,6 @@ const BECKS = () => {
 
   const {
     answers,
-    total,
     formError,
     resetModalOpen,
     resetModalClosing,
@@ -32,34 +32,20 @@ const BECKS = () => {
     missingIds,
   } = useBecksForm();
 
-  const onValidSubmit = async () => {
-    if (!token) {
-      setFormError("Token missing");
-      return;
-    }
+  const totalScore = Object.values(answers).reduce<number>(
+    (sum, val) => sum + val,
+    0
+  );
 
-    const totalScore = Object.values(answers).reduce<number>(
-      (sum, val) => sum + val,
-      0
-    );
-
-    const { ok, error, code } = await submitBecksForm({
+  const onValidSubmit = () =>
+    submitFormWithToken({
       token,
       result: totalScore.toString(),
+      submitFn: submitBecksForm,
+      setFormError,
+      setShowInvalidTokenModal,
+      navigate,
     });
-
-    if (!ok) {
-      if (code === "INVALID_TOKEN") {
-        setShowInvalidTokenModal(true);
-        return;
-      }
-
-      setFormError(error ?? "Failed to submit the form.");
-      return;
-    }
-
-    navigate("/submitted");
-  };
 
   if (isValid === null) {
     return (
@@ -93,7 +79,7 @@ const BECKS = () => {
         ))}
       </div>
 
-      <input type="hidden" name="result" value={total} />
+      <input type="hidden" name="result" value={totalScore} />
 
       <div className="min-h-[1.5rem] text-center mt-4">
         {formError && <p className="text-red-600 font-bold">{formError}</p>}
