@@ -43,9 +43,9 @@ export default function BecksQuestions({
                 className="option-input"
                 type="radio"
                 name={name}
-                value={opt.value}
-                checked={isChecked}
-                onChange={() => handleChange(item.id, opt.value)}
+                value={opt.value.toString()}
+                checked={selectedValue?.toString() === opt.value.toString()}
+                onChange={(e) => handleChange(item.id, Number(e.target.value))}
               />
               <label htmlFor={inputId} className="option-label">
                 <span className="badge">{opt.value}</span>
