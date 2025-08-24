@@ -141,9 +141,9 @@ export default function Dashboard() {
 
   const handleSendForm = useCallback(
     async (formType: FormType) => {
-      if (!clientFormsStatus) return;
+      if (!clientFormsStatus || !confirmedEmail) return;
 
-      const normalizedEmail = normalizeEmail(email);
+      const normalizedEmail = normalizeEmail(confirmedEmail);
       if (formActionLoading[formType]) return;
 
       setFormActionLoading((prev) => ({ ...prev, [formType]: true }));
@@ -177,14 +177,12 @@ export default function Dashboard() {
         const { ok: fetchOk, data: updatedStatus } = await fetchClientStatus(
           normalizedEmail
         );
-        if (fetchOk) {
-          setClientFormsStatus(updatedStatus);
-        }
+        if (fetchOk) setClientFormsStatus(updatedStatus);
       }
 
       setFormActionLoading((prev) => ({ ...prev, [formType]: false }));
     },
-    [email, clientFormsStatus, formActionLoading]
+    [clientFormsStatus, confirmedEmail, formActionLoading]
   );
 
   const openRevokeModal = (formType: FormType) => {
@@ -209,9 +207,9 @@ export default function Dashboard() {
 
   const handleRevokeForm = useCallback(
     async (formType: FormType) => {
-      if (!clientFormsStatus) return;
+      if (!clientFormsStatus || !confirmedEmail) return;
 
-      const normalizedEmail = normalizeEmail(email);
+      const normalizedEmail = normalizeEmail(confirmedEmail);
       if (formActionLoading[formType]) return;
 
       setFormActionLoading((prev) => ({ ...prev, [formType]: true }));
@@ -257,7 +255,7 @@ export default function Dashboard() {
 
       setFormActionLoading((prev) => ({ ...prev, [formType]: false }));
     },
-    [email, clientFormsStatus, formActionLoading]
+    [clientFormsStatus, confirmedEmail, formActionLoading]
   );
 
   const handleDeleteClient = async () => {
