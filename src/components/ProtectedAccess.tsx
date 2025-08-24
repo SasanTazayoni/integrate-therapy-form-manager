@@ -50,6 +50,12 @@ export default function ProtectedAccess({ children }: Props) {
     }
   }, [state.authenticated]);
 
+  const handleUsernameChange = (val: string) =>
+    dispatch({ type: "SET_USERNAME", payload: val });
+  const handlePasswordChange = (val: string) =>
+    dispatch({ type: "SET_PASSWORD", payload: val });
+  const handleClearForm = () => dispatch({ type: "CLEAR_FORM" });
+
   const handleSubmit = () => {
     if (
       state.username.trim() === expectedUsername &&
@@ -95,14 +101,10 @@ export default function ProtectedAccess({ children }: Props) {
           error={state.error}
           closing={state.closing}
           errorFading={state.errorFading}
-          onUsernameChange={(val) =>
-            dispatch({ type: "SET_USERNAME", payload: val })
-          }
-          onPasswordChange={(val) =>
-            dispatch({ type: "SET_PASSWORD", payload: val })
-          }
+          onUsernameChange={handleUsernameChange}
+          onPasswordChange={handlePasswordChange}
           onSubmit={handleSubmit}
-          onClear={() => dispatch({ type: "CLEAR_FORM" })}
+          onClear={handleClearForm}
         />
       )}
     </div>
