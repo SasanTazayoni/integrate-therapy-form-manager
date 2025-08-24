@@ -9,7 +9,7 @@ import useValidateToken from "../hooks/useValidateToken";
 import BecksQuestions from "../components/BecksQuestions";
 import { Loader2 } from "lucide-react";
 import Button from "../components/ui/Button";
-import { submitFormWithToken } from "../utils/becksHelpers";
+import { submitFormWithToken } from "../utils/becksBurnsHelpers";
 
 const BECKS = () => {
   const { token } = useParams<{ token: string }>();
