@@ -45,11 +45,9 @@ export default function Dashboard() {
   const [showRevokeModal, setShowRevokeModal] = useState(false);
   const [closingRevokeModal, setClosingRevokeModal] = useState(false);
   const [revokeFormType, setRevokeFormType] = useState<FormType | null>(null);
-  const [isInactive, setIsInactive] = useState(
-    contextClientFormsStatus?.inactive ?? false
-  );
 
   const logoUrl = `${import.meta.env.BASE_URL}logo.png`;
+  const isInactive = clientFormsStatus?.inactive ?? false;
 
   useEffect(() => {
     setContextEmail(email);
@@ -111,18 +109,12 @@ export default function Dashboard() {
     if (!ok) {
       if (data.error === "Client not found") {
         setError("No data for this email - add to database?");
-        setSuccessMessage("");
-        setConfirmedEmail(null);
         setShowAddClientPrompt(true);
         setClientFormsStatus(null);
-        setIsInactive(false);
       } else {
         setError(data.error || "Failed to fetch progress");
-        setSuccessMessage("");
-        setConfirmedEmail(null);
         setShowAddClientPrompt(false);
         setClientFormsStatus(null);
-        setIsInactive(false);
       }
     } else {
       setClientFormsStatus(data);
@@ -132,7 +124,6 @@ export default function Dashboard() {
         `Retrieved data successfully for ${truncateEmail(normalizedEmail)}`
       );
       setConfirmedEmail(normalizedEmail);
-      setIsInactive(data.inactive ?? false);
     }
 
     setLoading(false);
@@ -143,10 +134,9 @@ export default function Dashboard() {
     setClientFormsStatus(null);
     setError("");
     setSuccessMessage("");
-    setConfirmedEmail(null);
     setShowAddClientPrompt(false);
     setFormActionLoading({} as Record<FormType, boolean>);
-    setIsInactive(false);
+    setConfirmedEmail(null);
   };
 
   const handleSendForm = useCallback(
@@ -189,7 +179,6 @@ export default function Dashboard() {
         );
         if (fetchOk) {
           setClientFormsStatus(updatedStatus);
-          setIsInactive(updatedStatus.inactive ?? false);
         }
       }
 
@@ -310,12 +299,7 @@ export default function Dashboard() {
     const { ok: fetchOk, data: updatedStatus } = await fetchClientStatus(
       confirmedEmail
     );
-    if (fetchOk) {
-      setClientFormsStatus(updatedStatus);
-      setIsInactive(updatedStatus.inactive ?? true);
-    } else {
-      setIsInactive(true);
-    }
+    if (fetchOk) setClientFormsStatus(updatedStatus);
   };
 
   const handleActivateClient = async () => {
@@ -338,12 +322,7 @@ export default function Dashboard() {
     const { ok: fetchOk, data: updatedStatus } = await fetchClientStatus(
       confirmedEmail
     );
-    if (fetchOk) {
-      setClientFormsStatus(updatedStatus);
-      setIsInactive(updatedStatus.inactive ?? false);
-    } else {
-      setIsInactive(false);
-    }
+    if (fetchOk) setClientFormsStatus(updatedStatus);
   };
 
   return (
