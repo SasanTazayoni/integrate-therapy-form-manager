@@ -61,6 +61,9 @@ export default function Dashboard() {
     setEmail(value);
     setError("");
     setShowAddClientPrompt(false);
+    setClientFormsStatus(null);
+    setConfirmedEmail(null);
+    setSuccessMessage("");
   };
 
   const handleConfirmAddClient = async () => {
