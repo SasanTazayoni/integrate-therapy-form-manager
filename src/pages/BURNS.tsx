@@ -9,6 +9,7 @@ import BurnsQuestions from "../components/BurnsQuestions";
 import { submitBurnsForm } from "../api/formsFrontend";
 import { Loader2 } from "lucide-react";
 import Button from "../components/ui/Button";
+import { submitFormWithToken } from "../utils/burnsHelpers";
 
 const BURNS = () => {
   const { token } = useParams<{ token: string }>();
@@ -32,31 +33,15 @@ const BURNS = () => {
     missingIds,
   } = useBurnsForm();
 
-  const onValidSubmit = async () => {
-    if (!token) {
-      setFormError("Token missing");
-      return;
-    }
-
-    setFormError("");
-
-    const { ok, error, code } = await submitBurnsForm({
+  const onValidSubmit = () =>
+    submitFormWithToken({
       token,
       result: total.toString(),
+      submitFn: submitBurnsForm,
+      setFormError,
+      setShowInvalidTokenModal,
+      navigate,
     });
-
-    if (!ok) {
-      if (code === "INVALID_TOKEN") {
-        setShowInvalidTokenModal(true);
-        return;
-      }
-
-      setFormError(error ?? "Failed to submit the form.");
-      return;
-    }
-
-    navigate("/submitted");
-  };
 
   if (isValid === null) {
     return (
