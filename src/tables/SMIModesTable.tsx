@@ -1,6 +1,5 @@
 import { FileText } from "lucide-react";
-import { smiBoundaries, categoryKeyMap } from "../data/SMIBoundaries";
-import { classifyScore } from "../utils/SMIUtils";
+import { getCellData, shouldHighlight } from "../utils/SMIHelpers";
 
 type SMIModesTableProps = {
   openModal: () => void;
@@ -29,25 +28,6 @@ export default function SMIModesTable({
     "Punitive Parent",
     "Healthy Adult *",
   ];
-
-  const getCellData = (mode: string) => {
-    const key = categoryKeyMap[mode];
-    if (!key) return null;
-
-    const raw = smiScores?.[key];
-    if (!raw) return null;
-
-    const score = parseFloat(raw);
-    if (isNaN(score)) return null;
-
-    const rating = classifyScore(score, smiBoundaries[key]);
-    return { score, rating, display: `${score} (${rating})` };
-  };
-
-  const shouldHighlight = (rating: string) =>
-    ["high", "very high", "severe"].some((r) =>
-      rating.toLowerCase().includes(r)
-    );
 
   return (
     <section className="mb-12">
@@ -88,7 +68,7 @@ export default function SMIModesTable({
             <tr key={i} className="border-b border-gray-300">
               {row.map((cell, idx) => {
                 const isLastCell = i === 2 && idx === 4;
-                const data = cell ? getCellData(cell) : null;
+                const data = cell ? getCellData(cell, smiScores) : null;
                 const highlight = data?.rating
                   ? shouldHighlight(data.rating)
                   : false;
@@ -134,7 +114,7 @@ export default function SMIModesTable({
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:hidden text-center grid-cols-1-xs">
         {smiModes.map((cell, idx) => {
-          const data = cell ? getCellData(cell) : null;
+          const data = cell ? getCellData(cell, smiScores) : null;
           const highlight = data?.rating ? shouldHighlight(data.rating) : false;
 
           return (
