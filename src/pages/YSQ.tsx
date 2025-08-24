@@ -25,11 +25,11 @@ import useYSQForm from "../hooks/useYSQForm";
 import useValidateToken from "../hooks/useValidateToken";
 import Question from "../components/YSQQuestions";
 import { Loader2 } from "lucide-react";
-import { submitYSQForm } from "../api/formsFrontend";
 import YSQInstructions from "../components/YSQInstructions";
 import Button from "../components/ui/Button";
+import { YSQSchema, submitYSQWithToken } from "../utils/YSQHelpers";
 
-const YSQ_SCHEMAS = [
+const YSQ_SCHEMAS: YSQSchema[] = [
   { key: "ed", label: "Emotional Deprivation", data: YSQEmotionalDeprivation },
   { key: "ab", label: "Abandonment", data: YSQAbandonment },
   { key: "ma", label: "Mistrust/Abuse", data: YSQMistrustAbuse },
@@ -76,36 +76,15 @@ const YSQ = () => {
     setFormError,
   } = useYSQForm();
 
-  const onValidSubmit = async () => {
-    if (!token) {
-      setFormError("Token missing");
-      return;
-    }
-
-    const scores = YSQ_SCHEMAS.reduce((acc, schema) => {
-      acc[`ysq_${schema.key}_answers`] = schema.data.map((item) =>
-        Number(answers[item.id] ?? 0)
-      );
-      return acc;
-    }, {} as Record<string, number[]>);
-
-    const { ok, error, code } = await submitYSQForm({
+  const onValidSubmit = () =>
+    submitYSQWithToken({
       token,
-      scores,
+      answers,
+      schemas: YSQ_SCHEMAS,
+      setFormError,
+      setShowInvalidTokenModal,
+      navigate,
     });
-
-    if (!ok) {
-      if (code === "INVALID_TOKEN") {
-        setShowInvalidTokenModal(true);
-        return;
-      }
-      setFormError(error ?? "Failed to submit the YSQ form.");
-      return;
-    }
-
-    setFormError("");
-    navigate("/submitted");
-  };
 
   if (isValid === null) {
     return (
