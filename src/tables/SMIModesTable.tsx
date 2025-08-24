@@ -114,7 +114,7 @@ export default function SMIModesTable({
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:hidden text-center grid-cols-1-xs">
         {smiModes.map((cell, idx) => {
-          const data = cell ? getCellData(cell, smiScores) : null;
+          const data = getCellData(cell, smiScores);
           const highlight = data?.rating ? shouldHighlight(data.rating) : false;
 
           return (
