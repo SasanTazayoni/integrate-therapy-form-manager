@@ -10,9 +10,9 @@ import Question from "../components/SMIQuestions";
 import { submitSMIForm } from "../api/formsFrontend";
 import { Loader2 } from "lucide-react";
 import SMIInstructions from "../components/SMIInstructions";
-import { smiBoundaries, categoryKeyMap } from "../data/SMIBoundaries";
-import { classifyScore } from "../utils/SMIUtils";
 import Button from "../components/ui/Button";
+import { computeSMIScores } from "../utils/SMIHelpers";
+import { smiBoundaries, categoryKeyMap } from "../data/SMIBoundaries";
 
 const SMI = () => {
   const { token } = useParams<{ token: string }>();
@@ -42,34 +42,12 @@ const SMI = () => {
       return;
     }
 
-    const scoresByCategory: Record<string, number> = {};
-    const countsByCategory: Record<string, number> = {};
-
-    SMIItems.forEach((item) => {
-      const answerValue = Number(answers[item.id] ?? 0);
-      if (!scoresByCategory[item.category]) {
-        scoresByCategory[item.category] = 0;
-        countsByCategory[item.category] = 0;
-      }
-      scoresByCategory[item.category] += answerValue;
-      countsByCategory[item.category] += 1;
-    });
-
-    const results: Record<string, { average: number; label: string }> = {};
-
-    for (const category in scoresByCategory) {
-      const avg = Number(
-        (scoresByCategory[category] / countsByCategory[category]).toFixed(2)
-      );
-
-      const boundaryKey = categoryKeyMap[category];
-      const label =
-        boundaryKey && smiBoundaries[boundaryKey]
-          ? classifyScore(avg, smiBoundaries[boundaryKey])
-          : "Unknown";
-
-      results[category] = { average: avg, label };
-    }
+    const results = computeSMIScores(
+      answers,
+      SMIItems,
+      categoryKeyMap,
+      smiBoundaries
+    );
 
     const { ok, error, code } = await submitSMIForm({ token, results });
 
