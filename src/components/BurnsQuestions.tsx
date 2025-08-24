@@ -40,9 +40,9 @@ const BurnsQuestions = ({ item, answers, handleChange, missingIds }: Props) => {
                 id={inputId}
                 type="radio"
                 name={name}
-                value={opt.value}
-                checked={isChecked}
-                onChange={() => handleChange(item.id, opt.value)}
+                value={opt.value.toString()}
+                checked={selectedValue?.toString() === opt.value.toString()}
+                onChange={(e) => handleChange(item.id, Number(e.target.value))}
                 className="option-input"
               />
               <label htmlFor={inputId} className="option-label">
