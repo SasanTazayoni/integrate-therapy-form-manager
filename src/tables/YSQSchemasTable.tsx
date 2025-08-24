@@ -1,4 +1,10 @@
 import React from "react";
+import {
+  normalizeCode,
+  extractNumber,
+  extractRating,
+  shouldHighlight,
+} from "../utils/YSQHelpers";
 
 type GrayedOutCol = "raw" | "456" | null;
 
@@ -48,25 +54,6 @@ export default function YSQSchemasTable({
     { name: "Negativity/Pessimism", code: "NP", max: 66 },
     { name: "Punitiveness", code: "PU", max: 84 },
   ];
-
-  const normalizeCode = (code: string) => code.split("/")[0].toLowerCase();
-
-  const extractNumber = (value: string | null | undefined): string => {
-    if (!value) return "";
-    const match = value.match(/^\d+/);
-    return match ? match[0] : "";
-  };
-
-  const extractRating = (value: string | null | undefined): string => {
-    if (!value) return "";
-    const match = value.match(/-(.+)$/);
-    return match ? match[1] : "";
-  };
-
-  const shouldHighlight = (rating: string) =>
-    ["high", "very high", "severe"].some((r) =>
-      rating.toLowerCase().includes(r)
-    );
 
   return (
     <section className="mb-12">
