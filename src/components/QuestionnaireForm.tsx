@@ -71,6 +71,25 @@ export default function QuestionnaireForm({
     }
   };
 
+  const showModalError = (msg: string) => {
+    modalDispatch({ type: "SET_ERROR", payload: msg });
+    setErrorTimers(
+      modalDispatch,
+      "BEGIN_ERROR_FADE_OUT",
+      "CLEAR_ERROR",
+      2500,
+      3000,
+      errorFadeTimer,
+      errorClearTimer
+    );
+  };
+
+  const populateClientInfoModal = (client: { name?: string; dob?: string }) => {
+    modalDispatch({ type: "SET_NAME", payload: client.name || "" });
+    modalDispatch({ type: "SET_DOB", payload: client.dob || "" });
+    setShowModal(true);
+  };
+
   useEffect(() => {
     let active = true;
 
@@ -85,9 +104,7 @@ export default function QuestionnaireForm({
       .then(({ ok, data, error }) => {
         if (!active) return;
 
-        if (!ok || !data) {
-          throw new Error(error || DEFAULT_INVALID_MSG);
-        }
+        if (!ok || !data) throw new Error(error || DEFAULT_INVALID_MSG);
         if (!(data.valid && data.questionnaire === questionnaire)) {
           throw new Error(data.message || DEFAULT_INVALID_MSG);
         }
@@ -96,9 +113,7 @@ export default function QuestionnaireForm({
         const missingDob = !data.client?.dob;
 
         if (missingName || missingDob) {
-          modalDispatch({ type: "SET_NAME", payload: data.client?.name || "" });
-          modalDispatch({ type: "SET_DOB", payload: data.client?.dob || "" });
-          setShowModal(true);
+          populateClientInfoModal(data.client);
         }
 
         dispatch({ type: "VALID" });
@@ -127,28 +142,17 @@ export default function QuestionnaireForm({
 
     clearTimers();
 
-    let errorMessage = "";
     const trimmedName = modalState.name.trim();
     const hasName = trimmedName.length > 0;
     const hasDob = !!modalState.dob;
+    let errorMessage = "";
 
     if (!hasName && !hasDob) errorMessage = "Inputs cannot be empty";
     else if (!hasName) errorMessage = "Please enter your full name";
     else if (!hasDob) errorMessage = "Please enter your date of birth";
 
     if (errorMessage) {
-      modalDispatch({ type: "SET_ERROR", payload: errorMessage });
-
-      setErrorTimers(
-        modalDispatch,
-        "BEGIN_ERROR_FADE_OUT",
-        "CLEAR_ERROR",
-        2500,
-        3000,
-        errorFadeTimer,
-        errorClearTimer
-      );
-
+      showModalError(errorMessage);
       return;
     }
 
@@ -159,26 +163,11 @@ export default function QuestionnaireForm({
     });
 
     if (!ok) {
-      modalDispatch({
-        type: "SET_ERROR",
-        payload: error || "Failed to update info",
-      });
-
-      setErrorTimers(
-        modalDispatch,
-        "BEGIN_ERROR_FADE_OUT",
-        "CLEAR_ERROR",
-        2500,
-        3000,
-        errorFadeTimer,
-        errorClearTimer
-      );
-
+      showModalError(error || "Failed to update info");
       return;
     }
 
     setClosing(true);
-
     setTimeout(() => {
       setShowModal(false);
       setClosing(false);
@@ -186,9 +175,7 @@ export default function QuestionnaireForm({
   };
 
   useEffect(() => {
-    return () => {
-      clearTimers();
-    };
+    return () => clearTimers();
   }, []);
 
   if (state.status === "loading") {
