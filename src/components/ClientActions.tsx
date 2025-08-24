@@ -11,6 +11,8 @@ type ClientActionsProps = {
   onActivateClient?: () => void;
 };
 
+type ModalType = "remove" | "deactivate" | "activate" | null;
+
 export default function ClientActions({
   disabled = false,
   isInactive = false,
@@ -18,99 +20,59 @@ export default function ClientActions({
   onDeactivateClient,
   onActivateClient,
 }: ClientActionsProps) {
-  const [removeModalOpen, setRemoveModalOpen] = useState(false);
-  const [removeModalClosing, setRemoveModalClosing] = useState(false);
+  const [modal, setModal] = useState<{ type: ModalType; closing: boolean }>({
+    type: null,
+    closing: false,
+  });
 
-  const [deactivateModalOpen, setDeactivateModalOpen] = useState(false);
-  const [deactivateModalClosing, setDeactivateModalClosing] = useState(false);
-
-  const [activateModalOpen, setActivateModalOpen] = useState(false);
-  const [activateModalClosing, setActivateModalClosing] = useState(false);
-
-  const handleRemoveCancel = () => setRemoveModalClosing(true);
-  const handleRemoveCloseFinished = () => {
-    setRemoveModalOpen(false);
-    setRemoveModalClosing(false);
-  };
-  const handleRemoveConfirm = () => {
-    onDeleteClient();
-    setRemoveModalClosing(true);
+  const openModal = (type: Exclude<ModalType, null>) =>
+    setModal({ type, closing: false });
+  const cancelModal = () =>
+    setModal((prev) => (prev.type ? { ...prev, closing: true } : prev));
+  const closeModalFinished = () => setModal({ type: null, closing: false });
+  const confirmModal = () => {
+    if (modal.type === "remove") onDeleteClient();
+    if (modal.type === "deactivate") onDeactivateClient?.();
+    if (modal.type === "activate") onActivateClient?.();
+    setModal((prev) => (prev.type ? { ...prev, closing: true } : prev));
   };
 
-  const handleDeactivateCancel = () => setDeactivateModalClosing(true);
-  const handleDeactivateCloseFinished = () => {
-    setDeactivateModalOpen(false);
-    setDeactivateModalClosing(false);
-  };
-  const handleDeactivateConfirm = () => {
-    onDeactivateClient?.();
-    setDeactivateModalClosing(true);
-  };
+  const modalMap = {
+    remove: RemoveClientModal,
+    deactivate: DeactivateClientModal,
+    activate: ActivateClientModal,
+  } as const;
 
-  const handleActivateCancel = () => setActivateModalClosing(true);
-  const handleActivateCloseFinished = () => {
-    setActivateModalOpen(false);
-    setActivateModalClosing(false);
-  };
-  const handleActivateConfirm = () => {
-    onActivateClient?.();
-    setActivateModalClosing(true);
-  };
+  const ActiveModal = modal.type ? modalMap[modal.type] : null;
+
+  const ModalButton = ({
+    modalType,
+    label,
+  }: {
+    modalType: Exclude<ModalType, null>;
+    label: string;
+  }) => (
+    <button
+      className={`link ${disabled ? "disabled" : ""}`}
+      onClick={() => openModal(modalType)}
+      disabled={disabled}
+    >
+      {label}
+    </button>
+  );
 
   return (
     <div className="flex justify-center gap-4">
-      {!isInactive && (
-        <button
-          className={`link ${disabled ? "disabled" : ""}`}
-          onClick={() => setDeactivateModalOpen(true)}
-          disabled={disabled}
-        >
-          <span>Deactivate</span>
-        </button>
-      )}
+      {!isInactive && <ModalButton modalType="deactivate" label="Deactivate" />}
+      {isInactive && <ModalButton modalType="activate" label="Activate" />}
+      <ModalButton modalType="remove" label="Delete" />
 
-      {isInactive && (
-        <button
-          className={`link ${disabled ? "disabled" : ""}`}
-          onClick={() => setActivateModalOpen(true)}
-          disabled={disabled}
-        >
-          <span>Activate</span>
-        </button>
-      )}
-
-      <button
-        className={`link ${disabled ? "disabled" : ""}`}
-        onClick={() => setRemoveModalOpen(true)}
-        disabled={disabled}
-      >
-        <span>Delete</span>
-      </button>
-
-      {removeModalOpen && (
-        <RemoveClientModal
-          closing={removeModalClosing}
-          onCancel={handleRemoveCancel}
-          onCloseFinished={handleRemoveCloseFinished}
-          onConfirm={handleRemoveConfirm}
-        />
-      )}
-
-      {deactivateModalOpen && (
-        <DeactivateClientModal
-          closing={deactivateModalClosing}
-          onCancel={handleDeactivateCancel}
-          onCloseFinished={handleDeactivateCloseFinished}
-          onConfirm={handleDeactivateConfirm}
-        />
-      )}
-
-      {activateModalOpen && (
-        <ActivateClientModal
-          closing={activateModalClosing}
-          onCancel={handleActivateCancel}
-          onCloseFinished={handleActivateCloseFinished}
-          onConfirm={handleActivateConfirm}
+      {ActiveModal && (
+        <ActiveModal
+          closing={modal.closing}
+          onCancel={cancelModal}
+          onCloseFinished={closeModalFinished}
+          onConfirm={confirmModal}
         />
       )}
     </div>
