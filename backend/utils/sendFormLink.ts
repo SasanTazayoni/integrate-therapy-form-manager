@@ -1,25 +1,12 @@
-import nodemailer from "nodemailer";
-import dotenv from "dotenv";
+import nodemailer, { Transporter } from "nodemailer";
 import { getEnvVar } from "./requiredEnv";
 import { getFrontendBaseUrl } from "./getFrontendBaseUrl";
 
-dotenv.config();
+const baseUrl: string = getFrontendBaseUrl();
 
-const baseUrl = getFrontendBaseUrl();
-
-function getFromEmail() {
+function getFromEmail(): string {
   return getEnvVar("FROM_EMAIL");
 }
-
-const transporter = nodemailer.createTransport({
-  host: getEnvVar("SMTP_HOST"),
-  port: Number(getEnvVar("SMTP_PORT")),
-  secure: getEnvVar("SMTP_SECURE") === "true",
-  auth: {
-    user: getEnvVar("SMTP_USER"),
-    pass: getEnvVar("SMTP_PASS"),
-  },
-});
 
 const pathMap: Record<string, string> = {
   YSQ: "/YSQ",
@@ -35,29 +22,38 @@ const formTitles: Record<string, string> = {
   BURNS: "Burn's Anxiety Inventory (BAI)",
 };
 
+export type SendFormLinkParams = {
+  to: string;
+  token: string;
+  formType: keyof typeof pathMap;
+  clientName?: string;
+};
+
 export async function sendFormLink({
   to,
   token,
   formType,
   clientName,
-}: {
-  to: string;
-  token: string;
-  formType: string;
-  clientName?: string;
-}) {
-  const formPath = pathMap[formType];
-  if (!formPath) {
-    throw new Error(`Invalid form type: ${formType}`);
-  }
+}: SendFormLinkParams): Promise<void> {
+  const transporter: Transporter = nodemailer.createTransport({
+    host: getEnvVar("SMTP_HOST"),
+    port: Number(getEnvVar("SMTP_PORT")),
+    secure: getEnvVar("SMTP_SECURE") === "true",
+    auth: {
+      user: getEnvVar("SMTP_USER"),
+      pass: getEnvVar("SMTP_PASS"),
+    },
+  });
 
-  const formTitle = formTitles[formType] ?? `${formType} Form`;
+  const formPath = pathMap[formType];
+  if (!formPath) throw new Error(`Invalid form type: ${formType}`);
+
+  const formTitle = formTitles[formType];
   const link = `${baseUrl}${formPath}/${token}`;
   const nameToUse = clientName ?? "Sir/Madam";
   const fromEmail = getFromEmail();
-  const logoUrl = `${baseUrl}/logo.png`;
 
-  const mailOptions = {
+  const mailOptions: nodemailer.SendMailOptions = {
     from: fromEmail,
     to,
     subject: `Your ${formTitle}`,
@@ -65,34 +61,17 @@ export async function sendFormLink({
       <p>Dear ${nameToUse},</p>
       <p>You have been sent a <strong>${formTitle}</strong> to complete.</p>
       <p><a href="${link}">Click here to complete your form</a></p>
-      <p>This link will expire in 2 weeks.</p>
-
-      <p><em>Please note: This is an automated message, and replies to this email are not monitored.</em></p>
-
-      <br />
-
-      <p>Best wishes,</p>
-      <p>Simon Burgess Dip MBACP</p>
-      <p>Integrate Therapy<br />
-      The Foundry Building<br />
-      2 Smiths Square<br />
-      77 Fulham Palace Road<br />
-      London<br />
-      W6 8AF</p>
-      <p>Tel: 0784 604 3703<br />
-      Email: info@integratetherapy.co.uk</p>
     `,
   };
 
   try {
     const info = await transporter.sendMail(mailOptions);
     console.log("✅ Email sent:", info.messageId);
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      console.error("❌ Failed to send email:", error.message);
-    } else {
-      console.error("❌ Failed to send email:", error);
-    }
+  } catch (error) {
+    console.error(
+      "❌ Failed to send email:",
+      error instanceof Error ? error.message : error
+    );
     throw new Error("Email sending failed");
   }
 }
