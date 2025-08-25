@@ -1,5 +1,5 @@
 import prisma from "../prisma/client";
-import { FormType } from "../utils/formTypes";
+import { FormType } from "../data/formTypes";
 
 export function isTokenExpired(expiresAt: Date, now = new Date()) {
   return new Date(expiresAt) < now;

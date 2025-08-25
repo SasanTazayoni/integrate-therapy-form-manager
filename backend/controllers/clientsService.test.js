@@ -3,7 +3,7 @@ import * as clientsRepo from "./clientsRepository";
 import * as normalizeUtils from "../utils/normalizeEmail";
 import { getClientFormsStatus, createClient } from "./clientsService";
 import { getLatestForm } from "../utils/formHelpers";
-import { FORM_TYPES } from "../utils/formTypes";
+import { FORM_TYPES } from "../data/formTypes";
 
 vi.mock("./clientsRepository");
 vi.mock("../utils/normalizeEmail");

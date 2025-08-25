@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../prisma/client";
 import { sendFormLink } from "../utils/sendFormLink";
-import { FORM_TYPES, FormType } from "../utils/formTypes";
+import { FORM_TYPES, FormType } from "../data/formTypes";
 import { generateToken, computeExpiry } from "../utils/tokens";
 import { findClientByEmail } from "../utils/clientUtils";
 import { deactivateInvalidActiveForms } from "../utils/formUtils";

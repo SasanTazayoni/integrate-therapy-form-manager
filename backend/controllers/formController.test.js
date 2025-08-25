@@ -13,7 +13,7 @@ import {
   revokeFormToken,
   updateClientInfo,
 } from "../controllers/formController";
-import { FORM_TYPES } from "../utils/formTypes";
+import { FORM_TYPES } from "../data/formTypes";
 
 vi.mock("../prisma/client", () => ({
   default: {

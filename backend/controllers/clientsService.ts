@@ -4,7 +4,7 @@ import {
   getFormsByClientId,
   createNewClient,
 } from "./clientsRepository";
-import { FORM_TYPES, FormType } from "../utils/formTypes";
+import { FORM_TYPES, FormType } from "../data/formTypes";
 import { normalizeEmail } from "../utils/normalizeEmail";
 import { getLatestForm } from "../utils/formHelpers";
 
