@@ -11,10 +11,15 @@ export default function EmailSearchControls({
 }) {
   return (
     <div className="flex justify-center mb-4">
-      <Button onClick={onCheck} disabled={loading}>
+      <Button onClick={onCheck} disabled={loading} data-testid="check-button">
         Search
       </Button>
-      <Button variant="danger" onClick={onClear} disabled={loading}>
+      <Button
+        variant="danger"
+        onClick={onClear}
+        disabled={loading}
+        data-testid="clear-button"
+      >
         Clear
       </Button>
     </div>
