@@ -1,6 +1,10 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import YSQSchemasTable from "./YSQSchemasTable";
+import YSQSchemasTable, {
+  headerTextClass,
+  cellTextClass,
+  getSchemaRowScores,
+} from "./YSQSchemasTable";
 
 const mockOnHeaderClick = vi.fn();
 const mockOnHeaderRightClick = vi.fn();
@@ -8,6 +12,51 @@ const mockOnHeaderRightClick = vi.fn();
 describe("YSQSchemasTable", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  test("headerTextClass returns correct classes", () => {
+    expect(headerTextClass("raw", "raw")).toBe("text-gray-500");
+    expect(headerTextClass("raw", "456")).toBe("text-gray-900");
+    expect(headerTextClass("raw", null)).toBe("text-gray-900");
+  });
+
+  test("cellTextClass returns correct classes", () => {
+    expect(cellTextClass("456", "456")).toBe("text-gray-300");
+    expect(cellTextClass("456", "raw")).toBe("text-gray-900");
+    expect(cellTextClass("456", null)).toBe("text-gray-900");
+  });
+
+  test("getSchemaRowScores returns correct values for raw grayedOutCol", () => {
+    const schema = { name: "Test", code: "TS", max: 50 };
+    const ysqScores = { ysq_ts_score: "10-High" };
+    const ysq456Scores = { ysq_ts_456: "5-Low" };
+
+    const result = getSchemaRowScores(schema, "raw", ysqScores, ysq456Scores);
+    expect(result.rawScore).toBe("10");
+    expect(result.score456).toBe("5");
+    expect(result.rating).toBe("Low");
+    expect(result.highlight).toBe(false);
+  });
+
+  test("getSchemaRowScores returns correct values for 456 grayedOutCol", () => {
+    const schema = { name: "Test", code: "TS", max: 50 };
+    const ysqScores = { ysq_ts_score: "10-Severe" };
+    const ysq456Scores = { ysq_ts_456: "5-Low" };
+
+    const result = getSchemaRowScores(schema, "456", ysqScores, ysq456Scores);
+    expect(result.rawScore).toBe("10");
+    expect(result.score456).toBe("5");
+    expect(result.rating).toBe("Severe");
+    expect(result.highlight).toBe(true);
+  });
+
+  test("getSchemaRowScores handles empty scores gracefully", () => {
+    const schema = { name: "Test", code: "TS", max: 50 };
+    const result = getSchemaRowScores(schema, "raw", {}, {});
+    expect(result.rawScore).toBe("");
+    expect(result.score456).toBe("");
+    expect(result.rating).toBe("");
+    expect(result.highlight).toBe(false);
   });
 
   test("renders table headers", () => {
@@ -18,12 +67,9 @@ describe("YSQSchemasTable", () => {
         onHeaderRightClick={mockOnHeaderRightClick}
       />
     );
-
-    expect(screen.getByText("Schema")).toBeInTheDocument();
-    expect(screen.getByText("Raw")).toBeInTheDocument();
-    expect(screen.getByText("4/5/6")).toBeInTheDocument();
-    expect(screen.getByText("Max")).toBeInTheDocument();
-    expect(screen.getByText("Rating")).toBeInTheDocument();
+    ["Schema", "Raw", "4/5/6", "Max", "Rating"].forEach((text) => {
+      expect(screen.getByText(text)).toBeInTheDocument();
+    });
   });
 
   test("calls onHeaderClick and onHeaderRightClick", () => {
@@ -53,7 +99,6 @@ describe("YSQSchemasTable", () => {
         ysqSubmittedAt={date}
       />
     );
-
     expect(screen.getByText(/\(24\/08\/2025\)/)).toBeInTheDocument();
   });
 
@@ -65,7 +110,6 @@ describe("YSQSchemasTable", () => {
         onHeaderRightClick={mockOnHeaderRightClick}
       />
     );
-
     expect(screen.getByText("Raw")).toHaveClass("text-gray-500");
     expect(screen.getByText("4/5/6")).toHaveClass("text-gray-900");
   });
@@ -93,21 +137,22 @@ describe("YSQSchemasTable", () => {
       />
     );
 
-    const ratingCells = screen.getAllByRole("cell", { name: /./ });
+    const ratingCells = screen
+      .getAllByRole("cell", { name: /./ })
+      .filter((cell) => cell.classList.contains("rating-cell"));
 
     ratingCells.forEach((cell) => {
-      if (cell.classList.contains("rating-cell")) {
-        const rating = cell.getAttribute("data-rating") || "";
-        const isHighlighted = ["high", "very high", "severe"].some((r) =>
-          rating.toLowerCase().includes(r)
-        );
-        if (isHighlighted) {
-          expect(cell).toHaveClass("bg-yellow-200");
-          expect(cell).toHaveClass("border-yellow-400");
-        } else {
-          expect(cell).not.toHaveClass("bg-yellow-200");
-          expect(cell).not.toHaveClass("border-yellow-400");
-        }
+      const rating = cell.getAttribute("data-rating") || "";
+      const isHighlighted = ["high", "very high", "severe"].some((r) =>
+        rating.toLowerCase().includes(r)
+      );
+
+      if (isHighlighted) {
+        expect(cell).toHaveClass("bg-yellow-200");
+        expect(cell).toHaveClass("border-yellow-400");
+      } else {
+        expect(cell).not.toHaveClass("bg-yellow-200");
+        expect(cell).not.toHaveClass("border-yellow-400");
       }
     });
   });
