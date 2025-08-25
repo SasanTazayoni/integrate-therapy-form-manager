@@ -93,7 +93,6 @@ describe("formController", () => {
     vi.clearAllMocks();
   });
 
-  // ================= createForm =================
   test("createForm returns 400 if invalid input", async () => {
     const req = { body: { clientId: "", formType: "invalid" } };
     const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
@@ -144,7 +143,6 @@ describe("formController", () => {
     expect(res.json).toHaveBeenCalledWith({ error: "Failed to create form" });
   });
 
-  // ================= sendForm =================
   test("sendForm returns 400 if input invalid", async () => {
     const req = { body: { email: "" }, params: { formType: "invalid" } };
     const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
@@ -298,7 +296,6 @@ describe("formController", () => {
     );
   });
 
-  // ================= validateToken =================
   test("validateToken returns 400 if missing token", async () => {
     const req = { query: {} };
     const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
@@ -377,7 +374,6 @@ describe("formController", () => {
     });
   });
 
-  // ================= revokeFormToken =================
   test("revokeFormToken returns 400 if input invalid", async () => {
     const req = { body: { email: "" }, params: { formType: "invalid" } };
     const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
@@ -466,7 +462,6 @@ describe("formController", () => {
     });
   });
 
-  // ================= updateClientInfo =================
   test("updateClientInfo returns 400 if missing fields", async () => {
     const req = { body: {} };
     const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
