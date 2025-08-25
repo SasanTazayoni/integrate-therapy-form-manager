@@ -107,6 +107,7 @@ export default function SMISummaryModal({
     >
       <div
         ref={modalRef}
+        data-testid="smi-modal"
         className="max-h-[80vh] overflow-y-auto p-4 pt-0 text-gray-800"
       >
         <h2 className="title p-4" id="smi-summary-title">
