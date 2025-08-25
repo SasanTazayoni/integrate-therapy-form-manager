@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, fireEvent } from "@testing-library/react";
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import YSQSchemasTable, {
   headerTextClass,
@@ -60,7 +60,7 @@ describe("YSQSchemasTable", () => {
   });
 
   test("renders table headers", () => {
-    render(
+    const { getByText } = render(
       <YSQSchemasTable
         grayedOutCol={null}
         onHeaderClick={mockOnHeaderClick}
@@ -68,12 +68,12 @@ describe("YSQSchemasTable", () => {
       />
     );
     ["Schema", "Raw", "4/5/6", "Max", "Rating"].forEach((text) => {
-      expect(screen.getByText(text)).toBeInTheDocument();
+      expect(getByText(text)).toBeInTheDocument();
     });
   });
 
   test("calls onHeaderClick and onHeaderRightClick", () => {
-    render(
+    const { getByText } = render(
       <YSQSchemasTable
         grayedOutCol={null}
         onHeaderClick={mockOnHeaderClick}
@@ -81,17 +81,17 @@ describe("YSQSchemasTable", () => {
       />
     );
 
-    fireEvent.click(screen.getByText("Raw"));
+    fireEvent.click(getByText("Raw"));
     expect(mockOnHeaderClick).toHaveBeenCalledWith("raw");
 
-    fireEvent.contextMenu(screen.getByText("4/5/6"));
+    fireEvent.contextMenu(getByText("4/5/6"));
     expect(mockOnHeaderRightClick).toHaveBeenCalled();
     expect(mockOnHeaderRightClick.mock.calls[0][1]).toBe("456");
   });
 
   test("renders submitted date if provided", () => {
     const date = "2025-08-24T12:00:00.000Z";
-    render(
+    const { getByText } = render(
       <YSQSchemasTable
         grayedOutCol={null}
         onHeaderClick={mockOnHeaderClick}
@@ -99,19 +99,19 @@ describe("YSQSchemasTable", () => {
         ysqSubmittedAt={date}
       />
     );
-    expect(screen.getByText(/\(24\/08\/2025\)/)).toBeInTheDocument();
+    expect(getByText(/\(24\/08\/2025\)/)).toBeInTheDocument();
   });
 
   test("applies gray class for grayedOutCol", () => {
-    render(
+    const { getByText } = render(
       <YSQSchemasTable
         grayedOutCol="raw"
         onHeaderClick={mockOnHeaderClick}
         onHeaderRightClick={mockOnHeaderRightClick}
       />
     );
-    expect(screen.getByText("Raw")).toHaveClass("text-gray-500");
-    expect(screen.getByText("4/5/6")).toHaveClass("text-gray-900");
+    expect(getByText("Raw")).toHaveClass("text-gray-500");
+    expect(getByText("4/5/6")).toHaveClass("text-gray-900");
   });
 
   test("applies highlight class for ratings that should be highlighted", () => {
@@ -127,7 +127,7 @@ describe("YSQSchemasTable", () => {
       ysq_ma_456: "5-Medium",
     };
 
-    render(
+    const { getAllByRole } = render(
       <YSQSchemasTable
         grayedOutCol="456"
         onHeaderClick={mockOnHeaderClick}
@@ -137,9 +137,9 @@ describe("YSQSchemasTable", () => {
       />
     );
 
-    const ratingCells = screen
-      .getAllByRole("cell", { name: /./ })
-      .filter((cell) => cell.classList.contains("rating-cell"));
+    const ratingCells = getAllByRole("cell", { name: /./ }).filter((cell) =>
+      cell.classList.contains("rating-cell")
+    );
 
     ratingCells.forEach((cell) => {
       const rating = cell.getAttribute("data-rating") || "";
