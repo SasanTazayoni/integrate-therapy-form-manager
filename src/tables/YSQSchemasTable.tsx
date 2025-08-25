@@ -20,6 +20,43 @@ type YSQSchemasTableProps = {
   ysq456Scores?: Record<string, string | null>;
 };
 
+type Schema = { name: string; code: string; max: number };
+
+export const headerTextClass = (
+  col: "raw" | "456",
+  grayedOutCol: GrayedOutCol
+): string => (grayedOutCol === col ? "text-gray-500" : "text-gray-900");
+
+export const cellTextClass = (
+  col: "raw" | "456",
+  grayedOutCol: GrayedOutCol
+): string => (grayedOutCol === col ? "text-gray-300" : "text-gray-900");
+
+export const getSchemaRowScores = (
+  schema: Schema,
+  grayedOutCol: GrayedOutCol,
+  ysqScores: Record<string, string | null>,
+  ysq456Scores: Record<string, string | null>
+) => {
+  const normCode = normalizeCode(schema.code);
+  const rawKey = `ysq_${normCode}_score`;
+  const score456Key = `ysq_${normCode}_456`;
+
+  const rawScore = extractNumber(ysqScores[rawKey]);
+  const score456 = extractNumber(ysq456Scores[score456Key]);
+
+  let rating = "";
+  if (grayedOutCol === "raw") {
+    rating = extractRating(ysq456Scores[score456Key]);
+  } else if (grayedOutCol === "456") {
+    rating = extractRating(ysqScores[rawKey]);
+  }
+
+  const highlight = shouldHighlight(rating);
+
+  return { rawScore, score456, rating, highlight };
+};
+
 export default function YSQSchemasTable({
   grayedOutCol,
   onHeaderClick,
@@ -28,13 +65,7 @@ export default function YSQSchemasTable({
   ysqScores = {},
   ysq456Scores = {},
 }: YSQSchemasTableProps) {
-  const headerTextClass = (col: "raw" | "456") =>
-    grayedOutCol === col ? "text-gray-500" : "text-gray-900";
-
-  const cellTextClass = (col: "raw" | "456") =>
-    grayedOutCol === col ? "text-gray-300" : "text-gray-900";
-
-  const schemas = [
+  const schemas: Schema[] = [
     { name: "Emotional Deprivation", code: "ED", max: 54 },
     { name: "Abandonment", code: "AB", max: 102 },
     { name: "Mistrust/Abuse", code: "MA", max: 102 },
@@ -73,7 +104,8 @@ export default function YSQSchemasTable({
             </th>
             <th
               className={`border border-gray-300 p-2 w-1/12 md:w-1/12 cursor-pointer select-none ${headerTextClass(
-                "raw"
+                "raw",
+                grayedOutCol
               )}`}
               onClick={() => onHeaderClick("raw")}
               onContextMenu={(e) => onHeaderRightClick(e, "raw")}
@@ -82,7 +114,8 @@ export default function YSQSchemasTable({
             </th>
             <th
               className={`border border-gray-300 p-2 w-1/12 md:w-1/12 cursor-pointer select-none ${headerTextClass(
-                "456"
+                "456",
+                grayedOutCol
               )}`}
               onClick={() => onHeaderClick("456")}
               onContextMenu={(e) => onHeaderRightClick(e, "456")}
@@ -96,49 +129,38 @@ export default function YSQSchemasTable({
           </tr>
         </thead>
         <tbody>
-          {schemas.map(({ name, code, max }) => {
-            const normCode = normalizeCode(code);
-            const rawKey = `ysq_${normCode}_score`;
-            const score456Key = `ysq_${normCode}_456`;
-
-            const rawScore = extractNumber(ysqScores[rawKey]);
-            const score456 = extractNumber(ysq456Scores[score456Key]);
-
-            let rating = "";
-            if (grayedOutCol === "raw") {
-              rating = extractRating(ysq456Scores[score456Key]);
-            } else if (grayedOutCol === "456") {
-              rating = extractRating(ysqScores[rawKey]);
-            }
-
-            const highlight = shouldHighlight(rating);
+          {schemas.map((schema) => {
+            const { rawScore, score456, rating, highlight } =
+              getSchemaRowScores(schema, grayedOutCol, ysqScores, ysq456Scores);
 
             return (
               <tr
-                key={code}
+                key={schema.code}
                 className="text-center bg-[--color-block--white] hover:bg-[--color-selected-bg] transition"
               >
                 <td className="border border-gray-300 p-2 font-medium text-center md:text-left">
                   <span className="hidden md:inline">
-                    {name} ({code})
+                    {schema.name} ({schema.code})
                   </span>
-                  <span className="md:hidden font-bold">{code}</span>
+                  <span className="md:hidden font-bold">{schema.code}</span>
                 </td>
                 <td
                   className={`border border-gray-300 p-2 ${cellTextClass(
-                    "raw"
+                    "raw",
+                    grayedOutCol
                   )}`}
                 >
                   {rawScore}
                 </td>
                 <td
                   className={`border border-gray-300 p-2 ${cellTextClass(
-                    "456"
+                    "456",
+                    grayedOutCol
                   )}`}
                 >
                   {score456}
                 </td>
-                <td className="border border-gray-300 p-2">{max}</td>
+                <td className="border border-gray-300 p-2">{schema.max}</td>
                 <td
                   className={`border border-gray-300 p-2 font-bold rating-cell ${
                     highlight ? "bg-yellow-200 border-yellow-400" : ""
