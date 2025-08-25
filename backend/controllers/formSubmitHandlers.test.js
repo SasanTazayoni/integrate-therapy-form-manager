@@ -16,7 +16,7 @@ import { classifyScore, normalizeLabel } from "../utils/SMIScoreUtilsBackend";
 import {
   smiBoundaries,
   labelToBoundaryKey,
-} from "../utils/SMIBoundariesBackend";
+} from "../data/SMIBoundariesBackend";
 
 vi.mock("../prisma/client");
 vi.mock("./formControllerHelpers/formTokenHelpers");
@@ -25,7 +25,7 @@ vi.mock("../utils/formHelpers");
 vi.mock("../utils/validationUtils");
 vi.mock("../utils/YSQScoreUtils");
 vi.mock("../utils/SMIScoreUtilsBackend");
-vi.mock("../utils/SMIBoundariesBackend", async () => {
+vi.mock("../data/SMIBoundariesBackend", async () => {
   return {
     smiBoundaries: {
       smi_depression: { low: 0, medium: 10, high: 20 },

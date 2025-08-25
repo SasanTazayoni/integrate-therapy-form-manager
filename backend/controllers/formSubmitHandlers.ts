@@ -10,7 +10,7 @@ import { classifyScore, normalizeLabel } from "../utils/SMIScoreUtilsBackend";
 import {
   smiBoundaries,
   labelToBoundaryKey,
-} from "../utils/SMIBoundariesBackend";
+} from "../data/SMIBoundariesBackend";
 import { mapFormSafe, defaultUpdateFields } from "../utils/formHelpers";
 
 const YSQ_SCHEMAS = [

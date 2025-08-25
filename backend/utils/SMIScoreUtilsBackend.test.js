@@ -4,7 +4,7 @@ import {
   normalizeLabel,
   generateScore,
 } from "./SMIScoreUtilsBackend";
-import { smiBoundaries, labels } from "./SMIBoundariesBackend";
+import { smiBoundaries, labels } from "../data/SMIBoundariesBackend";
 
 describe("SMI Score Utils", () => {
   describe("classifyScore with real boundaries", () => {

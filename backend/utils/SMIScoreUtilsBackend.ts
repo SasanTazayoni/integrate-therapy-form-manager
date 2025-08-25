@@ -1,4 +1,4 @@
-import { smiBoundaries, labels } from "./SMIBoundariesBackend";
+import { smiBoundaries, labels } from "../data/SMIBoundariesBackend";
 
 export function classifyScore(score: number, boundaries: number[]): string {
   let closestIndex = 0;
