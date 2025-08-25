@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, fireEvent } from "@testing-library/react";
 import { describe, test, expect, beforeEach, vi } from "vitest";
 import SMIModesTable from "./SMIModesTable";
 import * as SMIHelpers from "../utils/SMIHelpers";
@@ -24,7 +24,7 @@ describe("SMIModesTable", () => {
   });
 
   test("renders all SMI modes", () => {
-    render(
+    const { getAllByText } = render(
       <SMIModesTable
         openModal={mockOpenModal}
         submittedAt="2025-08-24"
@@ -32,30 +32,29 @@ describe("SMIModesTable", () => {
       />
     );
 
-    const detachedProtectorCells = screen.getAllByText("Detached Protector");
-    expect(detachedProtectorCells.length).toBeGreaterThan(0);
-
-    const bullyAndAttackCells = screen.getAllByText("Bully and Attack");
-    expect(bullyAndAttackCells.length).toBeGreaterThan(0);
-
-    const healthyAdultCells = screen.getAllByText("Healthy Adult *");
-    expect(healthyAdultCells.length).toBeGreaterThan(0);
+    expect(getAllByText("Detached Protector").length).toBeGreaterThan(0);
+    expect(getAllByText("Bully and Attack").length).toBeGreaterThan(0);
+    expect(getAllByText("Healthy Adult *").length).toBeGreaterThan(0);
   });
 
   test("highlights high-rated cells", () => {
-    render(<SMIModesTable openModal={mockOpenModal} smiScores={smiScores} />);
+    const { getAllByText } = render(
+      <SMIModesTable openModal={mockOpenModal} smiScores={smiScores} />
+    );
 
-    const highlightedCells = screen
-      .getAllByText("Detached Protector")
-      .map((el) => el.parentElement);
+    const highlightedCells = getAllByText("Detached Protector").map(
+      (el) => el.parentElement
+    );
     highlightedCells.forEach((cell) => {
       expect(cell).toHaveClass("bg-yellow-200");
     });
   });
 
   test("calls openModal when summary sheet button is clicked", () => {
-    render(<SMIModesTable openModal={mockOpenModal} smiScores={smiScores} />);
-    const buttons = screen.getAllByTitle("Open SMI Summary Sheet");
+    const { getAllByTitle } = render(
+      <SMIModesTable openModal={mockOpenModal} smiScores={smiScores} />
+    );
+    const buttons = getAllByTitle("Open SMI Summary Sheet");
     fireEvent.click(buttons[0]);
     expect(mockOpenModal).toHaveBeenCalled();
   });
@@ -72,16 +71,15 @@ describe("SMIModesTable", () => {
       return { display: emptyDataScores[cell], rating: "low" };
     });
 
-    render(
+    const { getAllByText } = render(
       <SMIModesTable openModal={mockOpenModal} smiScores={emptyDataScores} />
     );
 
     const vulnerableChildCell =
-      screen.getAllByText("Vulnerable Child")[0].parentElement;
+      getAllByText("Vulnerable Child")[0].parentElement;
     expect(vulnerableChildCell).toHaveTextContent("—");
 
-    const healthyAdultCell =
-      screen.getAllByText("Healthy Adult *")[0].parentElement;
+    const healthyAdultCell = getAllByText("Healthy Adult *")[0].parentElement;
     expect(healthyAdultCell).toHaveTextContent("—");
   });
 });
