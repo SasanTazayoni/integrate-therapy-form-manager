@@ -1,4 +1,4 @@
-import { SchemaType } from "./YSQBoundariesBackend";
+import { SchemaType } from "../data/YSQBoundariesBackend";
 
 export function getScoreCategory(schema: SchemaType, score: number): string {
   const boundaries: Record<SchemaType, [number, number, number]> = {
