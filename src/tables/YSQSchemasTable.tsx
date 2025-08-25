@@ -103,6 +103,7 @@ export default function YSQSchemasTable({
               Schema
             </th>
             <th
+              data-testid="raw-header"
               className={`border border-gray-300 p-2 w-1/12 md:w-1/12 cursor-pointer select-none ${headerTextClass(
                 "raw",
                 grayedOutCol
@@ -113,6 +114,7 @@ export default function YSQSchemasTable({
               Raw
             </th>
             <th
+              data-testid="456-header"
               className={`border border-gray-300 p-2 w-1/12 md:w-1/12 cursor-pointer select-none ${headerTextClass(
                 "456",
                 grayedOutCol
