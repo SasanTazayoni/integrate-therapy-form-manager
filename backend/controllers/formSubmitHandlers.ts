@@ -4,7 +4,8 @@ import { validateTokenOrFail } from "./formControllerHelpers/formTokenHelpers";
 import getBecksScoreCategory from "../utils/becksScoreUtils";
 import getBurnsScoreCategory from "../utils/burnsScoreUtils";
 import { validateRequestBodyFields } from "../utils/validationUtils";
-import { SchemaType, getScoreCategory } from "../utils/YSQScoreUtils";
+import { getScoreCategory } from "../utils/YSQScoreUtils";
+import { SchemaType } from "../data/YSQBoundariesBackend";
 import { parseAndCombineScore } from "../utils/scoreUtils";
 import { classifyScore, normalizeLabel } from "../utils/SMIScoreUtilsBackend";
 import {
