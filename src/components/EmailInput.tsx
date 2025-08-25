@@ -34,6 +34,7 @@ export default function EmailInput({
           setShowAddClientPrompt(false);
         }}
         placeholder="Enter client email"
+        data-testid="email-input"
         className={`w-full md:w-96 p-2 border rounded mb-2 ${
           error && !email ? "missing" : ""
         }`}
@@ -47,10 +48,19 @@ export default function EmailInput({
           </div>
         )}
 
-        {error && <p className="text-red-600 inline">{error}</p>}
+        {error && (
+          <p data-testid="error-message" className="text-red-600 inline">
+            {error}
+          </p>
+        )}
 
         {!error && successMessage && (
-          <p className="text-green-600 inline mb-4">{successMessage}</p>
+          <p
+            data-testid="success-message"
+            className="text-green-600 inline mb-4"
+          >
+            {successMessage}
+          </p>
         )}
 
         {!loading && showAddClientPrompt && onConfirmAddClient && (
@@ -59,6 +69,7 @@ export default function EmailInput({
             className="border-button ml-3 w-7 h-7 inline-flex items-center justify-center rounded shadow-sm"
             title="Add client"
             aria-label="Add client"
+            data-testid="add-client-button"
           >
             ✓
           </button>
