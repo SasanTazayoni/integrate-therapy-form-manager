@@ -156,4 +156,55 @@ describe("YSQSchemasTable", () => {
       }
     });
   });
+
+  test("renders rawScore and score456 in table cells", () => {
+    const ysqScores = { ysq_ed_score: "10-High" };
+    const ysq456Scores = { ysq_ed_456: "5-Low" };
+
+    const { getAllByText } = render(
+      <YSQSchemasTable
+        grayedOutCol={null}
+        onHeaderClick={mockOnHeaderClick}
+        onHeaderRightClick={mockOnHeaderRightClick}
+        ysqScores={ysqScores}
+        ysq456Scores={ysq456Scores}
+      />
+    );
+
+    expect(getAllByText("10")[0]).toBeInTheDocument();
+    expect(getAllByText("5")[0]).toBeInTheDocument();
+  });
+
+  test("applies highlight class for ratings that should be highlighted", () => {
+    const ysqScores = { ysq_ed_score: "25-High" };
+    const ysq456Scores = { ysq_ed_456: "20-Low" };
+
+    const { getAllByRole } = render(
+      <YSQSchemasTable
+        grayedOutCol="456"
+        onHeaderClick={mockOnHeaderClick}
+        onHeaderRightClick={mockOnHeaderRightClick}
+        ysqScores={ysqScores}
+        ysq456Scores={ysq456Scores}
+      />
+    );
+
+    const ratingCells = getAllByRole("cell").filter((cell) =>
+      cell.classList.contains("rating-cell")
+    );
+
+    ratingCells.forEach((cell) => {
+      const rating = cell.getAttribute("data-rating") || "";
+      const isHighlighted = ["high", "very high", "severe"].some((r) =>
+        rating.toLowerCase().includes(r)
+      );
+      if (isHighlighted) {
+        expect(cell).toHaveClass("bg-yellow-200");
+        expect(cell).toHaveClass("border-yellow-400");
+      } else {
+        expect(cell).not.toHaveClass("bg-yellow-200");
+        expect(cell).not.toHaveClass("border-yellow-400");
+      }
+    });
+  });
 });
