@@ -30,6 +30,7 @@ export default function RevokeConfirmModal({
       ariaDescribedBy="revoke-desc"
       role="dialog"
       onOverlayClick={handleCancel}
+      data-testid="revoke-modal"
     >
       <div>
         <h2 id="revoke-title" className="text-xl font-bold mb-4">
