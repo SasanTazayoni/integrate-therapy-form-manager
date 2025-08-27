@@ -77,7 +77,6 @@ export default function Dashboard() {
     }
 
     setError("");
-    setSuccessMessage("Client added successfully");
     setShowAddClientPrompt(false);
     await handleCheckProgress();
   };
@@ -337,7 +336,10 @@ export default function Dashboard() {
             className="hidden md:inline-block w-7 h-7 md:w-8 md:h-8 shrink-0 select-none"
             draggable="false"
           />
-          <h1 className="dashboard text-2xl font-bold text-center">
+          <h1
+            className="dashboard text-2xl font-bold text-center"
+            data-testid="dashboard-title"
+          >
             Integrate Therapy Form Manager
           </h1>
           <img
@@ -396,7 +398,11 @@ export default function Dashboard() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 mt-6 flex justify-center">
-        <Button onClick={() => navigate("/summary")} disabled={loading}>
+        <Button
+          onClick={() => navigate("/summary")}
+          disabled={loading}
+          data-testid="summary-button"
+        >
           Summary
         </Button>
       </div>
