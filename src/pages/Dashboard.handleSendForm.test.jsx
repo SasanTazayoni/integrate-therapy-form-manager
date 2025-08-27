@@ -2,6 +2,17 @@ import { describe, test, expect, vi } from "vitest";
 import * as formsApi from "../api/formsFrontend";
 import * as normalizeModule from "../utils/normalizeEmail";
 
+vi.mock("../api/formsFrontend", () => ({
+  sendFormToken: vi.fn(),
+  fetchClientStatus: vi.fn(),
+  revokeFormToken: vi.fn(),
+  submitBecksForm: vi.fn(),
+  submitBurnsForm: vi.fn(),
+  submitYSQForm: vi.fn(),
+  submitSMIForm: vi.fn(),
+  updateClientInfo: vi.fn(),
+}));
+
 describe("Dashboard - handleSendForm", () => {
   test("handleSendForm updates clientFormsStatus after successful send", async () => {
     const formType = "BECKS";
