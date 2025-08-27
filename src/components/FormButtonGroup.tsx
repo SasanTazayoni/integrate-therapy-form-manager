@@ -8,6 +8,8 @@ type Props = {
   sendLabel?: string;
   loadingSend?: boolean;
   loadingRevoke?: boolean;
+  sendTestId?: string;
+  revokeTestId?: string;
 };
 
 export default function FormButtonGroup({
@@ -18,6 +20,8 @@ export default function FormButtonGroup({
   sendLabel = "Send",
   loadingSend = false,
   loadingRevoke = false,
+  sendTestId,
+  revokeTestId,
 }: Props) {
   return (
     <div className="flex space-x-3 justify-center w-full">
@@ -26,12 +30,14 @@ export default function FormButtonGroup({
         disabled={sendDisabled}
         onClick={onSend}
         loading={loadingSend}
+        testId={sendTestId}
       />
       <FormActionButton
         label="Revoke"
         disabled={revokeDisabled}
         onClick={onRevoke}
         loading={loadingRevoke}
+        testId={revokeTestId}
       />
     </div>
   );
