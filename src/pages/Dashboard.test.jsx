@@ -16,6 +16,7 @@ import * as clientsApi from "../api/clientsFrontend";
 import * as formsApi from "../api/formsFrontend";
 import truncateEmail from "../utils/truncateEmail";
 import * as normalizeModule from "../utils/normalizeEmail";
+import FormButtons from "../components/FormButtons";
 
 const setClientFormsStatusMock = vi.fn();
 const setFormActionLoadingMock = vi.fn();
@@ -152,7 +153,7 @@ describe("Dashboard - email input behavior", () => {
   });
 });
 
-describe("Dashboard - handleCheckProgress (valid existing email)", () => {
+describe("Dashboard - handleCheckProgress", () => {
   const setEmailMock = vi.fn();
   const setClientFormsStatusMock = vi.fn();
 
@@ -261,6 +262,71 @@ describe("Dashboard - handleCheckProgress (valid existing email)", () => {
         getByText("No data for this email - add to database?")
       ).toBeInTheDocument();
       expect(getByTestId("add-client-button")).toBeInTheDocument();
+    });
+  });
+
+  test("resets clientFormsStatus and sets new email when email changes", async () => {
+    const setClientFormsStatusMock = vi.fn();
+    const setEmailMock = vi.fn();
+
+    useClientContext.mockReturnValue({
+      email: "",
+      setEmail: setEmailMock,
+      clientFormsStatus: { exists: true },
+      setClientFormsStatus: setClientFormsStatusMock,
+    });
+
+    clientsApi.fetchClientStatus.mockResolvedValue({
+      ok: true,
+      data: { exists: true, formsCompleted: 2, forms: {} },
+    });
+
+    const { getByTestId } = render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>
+    );
+
+    const emailInput = getByTestId("email-input");
+
+    fireEvent.change(emailInput, { target: { value: "old@example.com" } });
+    fireEvent.click(getByTestId("check-button"));
+
+    await waitFor(() => {
+      expect(clientsApi.fetchClientStatus).toHaveBeenCalledWith(
+        "old@example.com"
+      );
+    });
+
+    fireEvent.change(emailInput, { target: { value: "new@example.com" } });
+
+    expect(setClientFormsStatusMock).toHaveBeenCalledWith(null);
+    expect(setEmailMock).toHaveBeenCalledWith("new@example.com");
+  });
+
+  test("sets error, hides add client prompt, and resets clientFormsStatus for generic API error", async () => {
+    const genericError = "Unexpected server error";
+
+    clientsApi.fetchClientStatus.mockResolvedValue({
+      ok: false,
+      data: { error: genericError },
+    });
+
+    const { getByTestId, queryByTestId } = render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>
+    );
+
+    const emailInput = getByTestId("email-input");
+    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+
+    const checkButton = getByTestId("check-button");
+    fireEvent.click(checkButton);
+
+    await waitFor(() => {
+      expect(getByTestId("error-message")).toHaveTextContent(genericError);
+      expect(queryByTestId("add-client-button")).not.toBeInTheDocument();
     });
   });
 });
@@ -500,5 +566,255 @@ describe("Dashboard - handleSendForm", () => {
 
     expect(setError).toHaveBeenCalledWith("Failed to send");
     expect(setSuccessMessage).toHaveBeenCalledWith("");
+  });
+});
+
+describe("Dashboard - handleRevokeForm", () => {
+  test("handles successful and failed revocation with normalized email", async () => {
+    const formType = "BECKS";
+
+    const clientFormsStatus = {
+      exists: true,
+      forms: { [formType]: { activeToken: true } },
+    };
+    const confirmedEmail = "TEST@Example.com";
+    const formActionLoading = { [formType]: false };
+
+    const setClientFormsStatus = vi.fn();
+    const setFormActionLoading = vi.fn();
+    const setError = vi.fn();
+    const setSuccessMessage = vi.fn();
+
+    vi.spyOn(normalizeModule, "default").mockImplementation((email) =>
+      email.toLowerCase()
+    );
+
+    vi.spyOn(formsApi, "revokeFormToken").mockResolvedValueOnce({
+      ok: true,
+      data: { revokedAt: "2025-08-26T00:00:00Z" },
+    });
+
+    const handleRevokeForm = async (formType) => {
+      if (!clientFormsStatus || !confirmedEmail) return;
+
+      const normalizedEmail = normalizeModule.default(confirmedEmail);
+      if (formActionLoading[formType]) return;
+
+      setFormActionLoading((prev) => ({ ...prev, [formType]: true }));
+      setClientFormsStatus((prev) => ({
+        ...prev,
+        forms: {
+          ...prev.forms,
+          [formType]: { ...prev.forms[formType], activeToken: false },
+        },
+      }));
+
+      const { ok, data } = await formsApi.revokeFormToken(
+        normalizedEmail,
+        formType
+      );
+
+      if (!ok) {
+        setClientFormsStatus((prev) => ({
+          ...prev,
+          forms: {
+            ...prev.forms,
+            [formType]: { ...prev.forms[formType], activeToken: true },
+          },
+        }));
+        setError(data.error || `Failed to revoke ${formType} form`);
+        setSuccessMessage("");
+      } else {
+        setClientFormsStatus((prev) => ({
+          ...prev,
+          forms: {
+            ...prev.forms,
+            [formType]: {
+              ...prev.forms[formType],
+              revokedAt: data.revokedAt ?? null,
+              activeToken: false,
+            },
+          },
+        }));
+      }
+
+      setFormActionLoading((prev) => ({ ...prev, [formType]: false }));
+    };
+
+    await handleRevokeForm(formType);
+    expect(normalizeModule.default).toHaveBeenCalledWith(confirmedEmail);
+    expect(
+      setFormActionLoading.mock.calls[0][0]({ [formType]: false })
+    ).toEqual({
+      [formType]: true,
+    });
+
+    const statusUpdater = setClientFormsStatus.mock.calls[1][0];
+    const newStatus = statusUpdater(clientFormsStatus);
+    expect(newStatus.forms[formType].activeToken).toBe(false);
+    expect(newStatus.forms[formType].revokedAt).toBe("2025-08-26T00:00:00Z");
+
+    expect(setFormActionLoading.mock.calls[1][0]({ [formType]: true })).toEqual(
+      {
+        [formType]: false,
+      }
+    );
+  });
+
+  test("returns early if formActionLoading[formType] is true", async () => {
+    const formType = "BECKS";
+
+    const clientFormsStatus = {
+      exists: true,
+      forms: { [formType]: { activeToken: true } },
+    };
+    const confirmedEmail = "test@example.com";
+    const formActionLoading = { [formType]: true };
+
+    const setClientFormsStatus = vi.fn();
+    const setFormActionLoading = vi.fn();
+    const setError = vi.fn();
+    const setSuccessMessage = vi.fn();
+
+    const handleRevokeForm = async (formType) => {
+      if (!clientFormsStatus || !confirmedEmail) return;
+
+      if (formActionLoading[formType]) return;
+
+      setFormActionLoading((prev) => ({ ...prev, [formType]: true }));
+      setClientFormsStatus((prev) => ({
+        ...prev,
+        forms: {
+          ...prev.forms,
+          [formType]: { ...prev.forms[formType], activeToken: false },
+        },
+      }));
+    };
+
+    await handleRevokeForm(formType);
+    expect(setClientFormsStatus).not.toHaveBeenCalled();
+    expect(setFormActionLoading).not.toHaveBeenCalled();
+    expect(setError).not.toHaveBeenCalled();
+    expect(setSuccessMessage).not.toHaveBeenCalled();
+  });
+
+  test("handles API failure and sets error & resets activeToken", async () => {
+    const formType = "BECKS";
+
+    const clientFormsStatus = {
+      exists: true,
+      forms: { [formType]: { activeToken: true } },
+    };
+    const confirmedEmail = "TEST@Example.com";
+    const formActionLoading = { [formType]: false };
+
+    const setClientFormsStatus = vi.fn();
+    const setFormActionLoading = vi.fn();
+    const setError = vi.fn();
+    const setSuccessMessage = vi.fn();
+
+    vi.spyOn(normalizeModule, "default").mockImplementation((email) =>
+      email.toLowerCase()
+    );
+
+    vi.spyOn(formsApi, "revokeFormToken").mockResolvedValueOnce({
+      ok: false,
+      data: { error: "Failed to revoke" },
+    });
+
+    const handleRevokeForm = async (formType) => {
+      if (!clientFormsStatus || !confirmedEmail) return;
+
+      const normalizedEmail = normalizeModule.default(confirmedEmail);
+      if (formActionLoading[formType]) return;
+
+      setFormActionLoading((prev) => ({ ...prev, [formType]: true }));
+      setClientFormsStatus((prev) => ({
+        ...prev,
+        forms: {
+          ...prev.forms,
+          [formType]: { ...prev.forms[formType], activeToken: false },
+        },
+      }));
+
+      const { ok, data } = await formsApi.revokeFormToken(
+        normalizedEmail,
+        formType
+      );
+
+      if (!ok) {
+        setClientFormsStatus((prev) => ({
+          ...prev,
+          forms: {
+            ...prev.forms,
+            [formType]: { ...prev.forms[formType], activeToken: true },
+          },
+        }));
+        setError(data.error || `Failed to revoke ${formType} form`);
+        setSuccessMessage("");
+      } else {
+        setClientFormsStatus((prev) => ({
+          ...prev,
+          forms: {
+            ...prev.forms,
+            [formType]: {
+              ...prev.forms[formType],
+              revokedAt: data.revokedAt ?? null,
+              activeToken: false,
+            },
+          },
+        }));
+      }
+
+      setFormActionLoading((prev) => ({ ...prev, [formType]: false }));
+    };
+
+    await handleRevokeForm(formType);
+    const statusUpdater = setClientFormsStatus.mock.calls[1][0];
+    const newStatus = statusUpdater(clientFormsStatus);
+    expect(newStatus.forms[formType].activeToken).toBe(true);
+
+    expect(setError).toHaveBeenCalledWith("Failed to revoke");
+    expect(setSuccessMessage).toHaveBeenCalledWith("");
+    expect(setFormActionLoading.mock.calls[1][0]({ [formType]: true })).toEqual(
+      {
+        [formType]: false,
+      }
+    );
+  });
+});
+
+describe("Dashboard - Modals", () => {
+  let onRevokeMock;
+
+  const clientFormsStatusMock = {
+    exists: true,
+    forms: {
+      YSQ: { activeToken: true, submitted: false },
+      BECKS: { activeToken: false, submitted: false },
+      SMI: { activeToken: false, submitted: false },
+      BURNS: { activeToken: false, submitted: false },
+    },
+  };
+
+  beforeEach(() => {
+    onRevokeMock = vi.fn();
+  });
+
+  test("clicking YSQ revoke button calls onRevoke prop", () => {
+    const { getByTestId } = render(
+      <FormButtons
+        clientFormsStatus={clientFormsStatusMock}
+        onSend={() => {}}
+        onRevoke={onRevokeMock}
+        formActionLoading={{ YSQ: false }}
+        clientInactive={false}
+      />
+    );
+
+    const revokeButton = getByTestId("revoke-YSQ-button");
+    fireEvent.click(revokeButton);
+
+    expect(onRevokeMock).toHaveBeenCalledWith("YSQ");
   });
 });
