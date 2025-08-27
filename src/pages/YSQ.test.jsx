@@ -16,25 +16,6 @@ vi.mock("../components/modals/InvalidTokenModal", () => ({
   default: () => <div>Invalid Token</div>,
 }));
 
-vi.mock("../components/modals/FormResetModal", () => ({
-  default: ({ onConfirm, onCancel, onCloseFinished, closing }) => (
-    <div>
-      Reset Modal
-      <button data-testid="reset-confirm" onClick={onConfirm}>
-        Confirm
-      </button>
-      <button data-testid="reset-cancel" onClick={onCancel}>
-        Cancel
-      </button>
-      {closing && (
-        <button data-testid="mock-close-finished" onClick={onCloseFinished}>
-          Close Finished
-        </button>
-      )}
-    </div>
-  ),
-}));
-
 vi.mock("../components/YSQInstructions", () => ({
   default: () => <div>Instructions</div>,
 }));
