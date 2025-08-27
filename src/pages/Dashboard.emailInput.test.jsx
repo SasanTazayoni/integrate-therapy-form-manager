@@ -1,4 +1,13 @@
-import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
+import {
+  describe,
+  test,
+  expect,
+  vi,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  afterEach,
+} from "vitest";
 import { render, fireEvent } from "@testing-library/react";
 import Dashboard from "./Dashboard";
 import { useClientContext } from "../context/ClientContext";
@@ -7,6 +16,17 @@ import { MemoryRouter } from "react-router-dom";
 vi.mock("../context/ClientContext", () => ({
   useClientContext: vi.fn(),
 }));
+
+beforeAll(() => {
+  const modalRoot = document.createElement("div");
+  modalRoot.setAttribute("id", "modal-root");
+  document.body.appendChild(modalRoot);
+});
+
+afterAll(() => {
+  const modalRoot = document.getElementById("modal-root");
+  if (modalRoot) document.body.removeChild(modalRoot);
+});
 
 describe("Dashboard - email input behavior", () => {
   const setEmailMock = vi.fn();
