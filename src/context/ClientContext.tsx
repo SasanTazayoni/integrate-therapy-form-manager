@@ -12,7 +12,9 @@ type ClientContextType = {
   setError: (msg: string) => void;
 };
 
-const ClientContext = createContext<ClientContextType | undefined>(undefined);
+export const ClientContext = createContext<ClientContextType | undefined>(
+  undefined
+);
 
 export const ClientProvider = ({ children }: { children: ReactNode }) => {
   const [email, setEmail] = useState("");
