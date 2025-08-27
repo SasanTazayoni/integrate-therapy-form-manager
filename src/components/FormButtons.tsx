@@ -73,6 +73,8 @@ export default function FormButtons({
                 sendLabel={sendLabel}
                 loadingSend={formActionLoading[formType]}
                 loadingRevoke={formActionLoading[formType]}
+                sendTestId={`send-${formType}-button`}
+                revokeTestId={`revoke-${formType}-button`}
               />
             </div>
 
