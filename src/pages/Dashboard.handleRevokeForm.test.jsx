@@ -5,7 +5,6 @@ import * as normalizeModule from "../utils/normalizeEmail";
 describe("Dashboard - handleRevokeForm", () => {
   test("handles successful and failed revocation with normalized email", async () => {
     const formType = "BECKS";
-
     const clientFormsStatus = {
       exists: true,
       forms: { [formType]: { activeToken: true } },
