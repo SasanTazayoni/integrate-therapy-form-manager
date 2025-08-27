@@ -2,6 +2,17 @@ import { describe, test, expect, vi } from "vitest";
 import * as formsApi from "../api/formsFrontend";
 import * as normalizeModule from "../utils/normalizeEmail";
 
+vi.mock("../api/formsFrontend", () => ({
+  sendFormToken: vi.fn(),
+  fetchClientStatus: vi.fn(),
+  revokeFormToken: vi.fn(),
+  submitBecksForm: vi.fn(),
+  submitBurnsForm: vi.fn(),
+  submitYSQForm: vi.fn(),
+  submitSMIForm: vi.fn(),
+  updateClientInfo: vi.fn(),
+}));
+
 describe("Dashboard - handleRevokeForm", () => {
   test("handles successful and failed revocation with normalized email", async () => {
     const formType = "BECKS";
@@ -213,5 +224,23 @@ describe("Dashboard - handleRevokeForm", () => {
         [formType]: false,
       }
     );
+  });
+
+  test("handleConfirmRevoke returns early if revokeFormType is null", async () => {
+    const handleRevokeForm = vi.fn();
+    const closeRevokeModal = vi.fn();
+
+    const revokeFormType = null;
+
+    const handleConfirmRevoke = async () => {
+      if (!revokeFormType) return;
+      await handleRevokeForm(revokeFormType);
+      closeRevokeModal();
+    };
+
+    await handleConfirmRevoke();
+
+    expect(handleRevokeForm).not.toHaveBeenCalled();
+    expect(closeRevokeModal).not.toHaveBeenCalled();
   });
 });
