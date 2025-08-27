@@ -56,6 +56,7 @@ export default function ClientActions({
       className={`link ${disabled ? "disabled" : ""}`}
       onClick={() => openModal(modalType)}
       disabled={disabled}
+      data-testid={`modal-button-${modalType}`}
     >
       {label}
     </button>
