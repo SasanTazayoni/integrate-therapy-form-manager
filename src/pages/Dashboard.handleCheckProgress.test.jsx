@@ -1,4 +1,13 @@
-import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
+import {
+  describe,
+  test,
+  expect,
+  vi,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  afterEach,
+} from "vitest";
 import { render, fireEvent, waitFor } from "@testing-library/react";
 import Dashboard from "./Dashboard";
 import { useClientContext } from "../context/ClientContext";
@@ -9,6 +18,29 @@ import truncateEmail from "../utils/truncateEmail";
 vi.mock("../context/ClientContext", () => ({
   useClientContext: vi.fn(),
 }));
+
+vi.mock("../api/clientsFrontend", () => ({
+  fetchClientStatus: vi.fn(),
+}));
+
+vi.mock("react-dom", async () => {
+  const actual = await vi.importActual("react-dom");
+  return {
+    ...actual,
+    createPortal: (node) => node,
+  };
+});
+
+beforeAll(() => {
+  const modalRoot = document.createElement("div");
+  modalRoot.setAttribute("id", "modal-root");
+  document.body.appendChild(modalRoot);
+});
+
+afterAll(() => {
+  const modalRoot = document.getElementById("modal-root");
+  if (modalRoot) document.body.removeChild(modalRoot);
+});
 
 describe("Dashboard - handleCheckProgress", () => {
   const setEmailMock = vi.fn();
