@@ -218,4 +218,59 @@ describe("Dashboard - handleCheckProgress", () => {
       expect(queryByTestId("add-client-button")).not.toBeInTheDocument();
     });
   });
+
+  test("resets confirmedEmail and updates successMessage when checking a different email", async () => {
+    const setClientFormsStatusMock = vi.fn();
+    const setEmailMock = vi.fn();
+
+    useClientContext.mockReturnValue({
+      email: "",
+      setEmail: setEmailMock,
+      clientFormsStatus: { exists: true },
+      setClientFormsStatus: setClientFormsStatusMock,
+    });
+
+    const firstClientStatus = {
+      exists: true,
+      inactive: false,
+      formsCompleted: 1,
+      forms: {},
+    };
+    const secondClientStatus = {
+      exists: true,
+      inactive: false,
+      formsCompleted: 2,
+      forms: {},
+    };
+
+    clientsApi.fetchClientStatus
+      .mockResolvedValueOnce({ ok: true, data: firstClientStatus })
+      .mockResolvedValueOnce({ ok: true, data: secondClientStatus });
+
+    const { getByTestId } = render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>
+    );
+
+    const emailInput = getByTestId("email-input");
+    const checkButton = getByTestId("check-button");
+    fireEvent.change(emailInput, { target: { value: "first@example.com" } });
+    fireEvent.click(checkButton);
+
+    await waitFor(() => {
+      expect(setClientFormsStatusMock).toHaveBeenCalledWith(firstClientStatus);
+    });
+
+    fireEvent.change(emailInput, { target: { value: "second@example.com" } });
+    fireEvent.click(checkButton);
+
+    await waitFor(() => {
+      expect(setClientFormsStatusMock).toHaveBeenCalledWith(secondClientStatus);
+      const successMessage = getByTestId("success-message");
+      expect(successMessage).toHaveTextContent(
+        `Retrieved data successfully for ${truncateEmail("second@example.com")}`
+      );
+    });
+  });
 });
