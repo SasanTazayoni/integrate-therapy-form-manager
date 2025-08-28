@@ -80,4 +80,34 @@ describe("Dashboard - delete client flow", () => {
       expect(deleteClientMock).toHaveBeenCalledWith("test@example.com")
     );
   });
+
+  test("shows error if deleteClient API fails", async () => {
+    vi.spyOn(clientsApi, "fetchClientStatus").mockResolvedValue({
+      ok: true,
+      data: mockClientFormsStatus,
+    });
+
+    vi.spyOn(clientsApi, "deleteClient").mockResolvedValue({
+      ok: false,
+      data: { error: "Failed to delete client" },
+    });
+
+    const { getByTestId, findByText } = render(
+      <MemoryRouter>
+        <ClientContext.Provider value={contextValue}>
+          <Dashboard />
+        </ClientContext.Provider>
+      </MemoryRouter>
+    );
+
+    const emailInput = getByTestId("email-input");
+    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+    fireEvent.click(getByTestId("check-button"));
+    await waitFor(() =>
+      expect(getByTestId("modal-button-remove")).not.toBeDisabled()
+    );
+
+    fireEvent.click(getByTestId("modal-button-remove"));
+    await findByText("Failed to delete client");
+  });
 });
