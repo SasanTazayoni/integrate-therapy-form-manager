@@ -124,4 +124,42 @@ describe("Dashboard - handleConfirmAddClient", () => {
       expect(clientsApi.fetchClientStatus).toHaveBeenCalledWith(mockEmail);
     });
   });
+
+  test("displays success message after successfully adding a client", async () => {
+    const mockEmail = "test@example.com";
+
+    clientsApi.fetchClientStatus.mockResolvedValueOnce({
+      ok: false,
+      data: { error: "Client not found" },
+    });
+
+    clientsApi.addClient.mockResolvedValueOnce({
+      ok: true,
+      data: { exists: true, inactive: false, formsCompleted: 0, forms: {} },
+    });
+
+    clientsApi.fetchClientStatus.mockResolvedValueOnce({
+      ok: true,
+      data: { exists: true, inactive: false, formsCompleted: 0, forms: {} },
+    });
+
+    const { getByTestId, findByText } = render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>
+    );
+
+    fireEvent.change(getByTestId("email-input"), {
+      target: { value: mockEmail },
+    });
+
+    fireEvent.click(getByTestId("check-button"));
+
+    const addClientButton = await waitFor(() =>
+      getByTestId("add-client-button")
+    );
+    fireEvent.click(addClientButton);
+
+    await findByText(`Retrieved data successfully for ${mockEmail}`);
+  });
 });
