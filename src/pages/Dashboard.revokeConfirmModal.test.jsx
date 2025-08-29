@@ -17,8 +17,11 @@ afterAll(() => {
 
 vi.mock("../components/modals/RevokeConfirmModal", () => {
   return {
-    default: ({ onCloseFinished }) => (
-      <div data-testid="revoke-modal">
+    default: ({ closing, onCancel, onCloseFinished }) => (
+      <div data-testid="revoke-modal" data-closing={closing ? "true" : "false"}>
+        <button data-testid="cancel-button" onClick={onCancel}>
+          Cancel
+        </button>
         <button data-testid="close-modal" onClick={onCloseFinished}>
           Close
         </button>
@@ -111,5 +114,21 @@ describe("Dashboard - RevokeConfirmModal", () => {
 
     fireEvent.click(getByTestId("close-modal"));
     expect(handleCloseFinished).toHaveBeenCalled();
+  });
+
+  test("closeRevokeModal sets closingRevokeModal to true", () => {
+    const { getByTestId } = render(
+      <MemoryRouter>
+        <ClientContext.Provider value={contextValue}>
+          <Dashboard />
+        </ClientContext.Provider>
+      </MemoryRouter>
+    );
+
+    fireEvent.click(getByTestId("revoke-YSQ-button"));
+    const modal = getByTestId("revoke-modal");
+    expect(modal).toBeTruthy();
+    fireEvent.click(getByTestId("cancel-button"));
+    expect(modal).toHaveAttribute("data-closing", "true");
   });
 });
