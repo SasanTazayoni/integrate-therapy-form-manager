@@ -42,7 +42,9 @@ export default function ActivateClientModal({
         </p>
 
         <div className="flex justify-center">
-          <Button onClick={handleConfirm}>Activate</Button>
+          <Button data-testid="modal-button-activate" onClick={handleConfirm}>
+            Activate
+          </Button>
           <Button variant="danger" onClick={handleCancel}>
             Cancel
           </Button>
