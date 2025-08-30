@@ -209,9 +209,7 @@ export default function Dashboard() {
 
   const handleRevokeForm = useCallback(
     async (formType: FormType) => {
-      if (!clientFormsStatus || !confirmedEmail) return;
-
-      const normalizedEmail = normalizeEmail(confirmedEmail);
+      const normalizedEmail = normalizeEmail(confirmedEmail!);
       if (formActionLoading[formType]) return;
 
       setFormActionLoading((prev) => ({ ...prev, [formType]: true }));
