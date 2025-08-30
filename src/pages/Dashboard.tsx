@@ -261,68 +261,81 @@ export default function Dashboard() {
   );
 
   const handleDeleteClient = async () => {
-    if (!confirmedEmail) {
-      setError("No confirmed email found!");
-      return;
+    if (loading) return;
+    if (!confirmedEmail) return setError("No confirmed email found!");
+
+    setLoading(true);
+    try {
+      const { ok, data } = await deleteClient(confirmedEmail);
+      if (!ok) {
+        setError(data.error || "Failed to delete client");
+        setSuccessMessage("");
+        return;
+      }
+      setSuccessMessage(`Client ${confirmedEmail} deleted successfully`);
+      setError("");
+      handleClear();
+    } finally {
+      setLoading(false);
     }
-
-    const { ok, data } = await deleteClient(confirmedEmail);
-
-    if (!ok) {
-      setError(data.error || "Failed to delete client");
-      setSuccessMessage("");
-      return;
-    }
-
-    setSuccessMessage(`Client ${confirmedEmail} deleted successfully`);
-    setError("");
-    handleClear();
   };
 
   const handleDeactivateClient = async () => {
+    if (loading) return;
     if (!confirmedEmail) {
       setError("No confirmed email found!");
       return;
     }
 
-    const { ok, data } = await deactivateClient(confirmedEmail);
+    setLoading(true);
+    try {
+      const { ok, data } = await deactivateClient(confirmedEmail);
 
-    if (!ok) {
-      setError(data.error || "Failed to deactivate client");
-      setSuccessMessage("");
-      return;
+      if (!ok) {
+        setError(data.error || "Failed to deactivate client");
+        setSuccessMessage("");
+        return;
+      }
+
+      setSuccessMessage(`Client ${confirmedEmail} deactivated successfully`);
+      setError("");
+
+      const { ok: fetchOk, data: updatedStatus } = await fetchClientStatus(
+        confirmedEmail
+      );
+      if (fetchOk) setClientFormsStatus(updatedStatus);
+    } finally {
+      setLoading(false);
     }
-
-    setSuccessMessage(`Client ${confirmedEmail} deactivated successfully`);
-    setError("");
-
-    const { ok: fetchOk, data: updatedStatus } = await fetchClientStatus(
-      confirmedEmail
-    );
-    if (fetchOk) setClientFormsStatus(updatedStatus);
   };
 
   const handleActivateClient = async () => {
+    if (loading) return;
     if (!confirmedEmail) {
       setError("No confirmed email found!");
       return;
     }
 
-    const { ok, data } = await activateClient(confirmedEmail);
+    setLoading(true);
+    try {
+      const { ok, data } = await activateClient(confirmedEmail);
 
-    if (!ok) {
-      setError(data.error || "Failed to activate client");
-      setSuccessMessage("");
-      return;
+      if (!ok) {
+        setError(data.error || "Failed to activate client");
+        setSuccessMessage("");
+        return;
+      }
+
+      setSuccessMessage(`Client ${confirmedEmail} activated successfully`);
+      setError("");
+
+      const { ok: fetchOk, data: updatedStatus } = await fetchClientStatus(
+        confirmedEmail
+      );
+      if (fetchOk) setClientFormsStatus(updatedStatus);
+    } finally {
+      setLoading(false);
     }
-
-    setSuccessMessage(`Client ${confirmedEmail} activated successfully`);
-    setError("");
-
-    const { ok: fetchOk, data: updatedStatus } = await fetchClientStatus(
-      confirmedEmail
-    );
-    if (fetchOk) setClientFormsStatus(updatedStatus);
   };
 
   return (
@@ -383,6 +396,7 @@ export default function Dashboard() {
           onDeleteClient={handleDeleteClient}
           onDeactivateClient={handleDeactivateClient}
           onActivateClient={handleActivateClient}
+          loading={loading}
         />
       </div>
 
