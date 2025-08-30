@@ -116,6 +116,40 @@ describe("Dashboard - deactivate client flow", () => {
     await findByText("Failed to deactivate client");
   });
 
+  test("shows fallback error if deactivateClient API fails without error message", async () => {
+    const mockEmail = "test@example.com";
+
+    vi.spyOn(clientsApi, "fetchClientStatus").mockResolvedValue({
+      ok: true,
+      data: { exists: true, inactive: true, formsCompleted: 2, forms: {} },
+    });
+
+    vi.spyOn(clientsApi, "deactivateClient").mockResolvedValue({
+      ok: false,
+      data: {},
+    });
+
+    const { getByTestId, findByText } = render(
+      <MemoryRouter>
+        <ClientContext.Provider value={contextValue}>
+          <Dashboard />
+        </ClientContext.Provider>
+      </MemoryRouter>
+    );
+
+    fireEvent.change(getByTestId("email-input"), {
+      target: { value: mockEmail },
+    });
+    fireEvent.click(getByTestId("check-button"));
+
+    await waitFor(() =>
+      expect(clientsApi.fetchClientStatus).toHaveBeenCalledWith(mockEmail)
+    );
+
+    fireEvent.click(getByTestId("modal-button-deactivate"));
+    await findByText("Failed to deactivate client");
+  });
+
   test("skips deactivation immediately if loading is true", async () => {
     const deactivateClientMock = vi
       .spyOn(clientsApi, "deactivateClient")
@@ -135,5 +169,46 @@ describe("Dashboard - deactivate client flow", () => {
     expect(deactivateClientMock).not.toHaveBeenCalled();
     expect(contextValue.setSuccessMessage).not.toHaveBeenCalled();
     expect(contextValue.setError).not.toHaveBeenCalled();
+  });
+
+  test("prevents a second deactivation while loading is true", async () => {
+    const deactivateClientMock = vi
+      .spyOn(clientsApi, "deactivateClient")
+      .mockResolvedValue({ ok: true, data: {} });
+
+    const mockEmail = "test@example.com";
+    const mockClientStatus = {
+      exists: true,
+      inactive: true,
+      formsCompleted: 2,
+      forms: {},
+    };
+    vi.spyOn(clientsApi, "fetchClientStatus").mockResolvedValue({
+      ok: true,
+      data: mockClientStatus,
+    });
+
+    const { getByTestId } = render(
+      <MemoryRouter>
+        <ClientContext.Provider value={contextValue}>
+          <Dashboard />
+        </ClientContext.Provider>
+      </MemoryRouter>
+    );
+
+    const emailInput = getByTestId("email-input");
+    fireEvent.change(emailInput, { target: { value: mockEmail } });
+    fireEvent.click(getByTestId("check-button"));
+
+    await waitFor(() => {
+      expect(clientsApi.fetchClientStatus).toHaveBeenCalledWith(mockEmail);
+    });
+
+    fireEvent.click(getByTestId("modal-button-deactivate"));
+    fireEvent.click(getByTestId("modal-button-deactivate"));
+
+    await waitFor(() => {
+      expect(deactivateClientMock).toHaveBeenCalledTimes(1);
+    });
   });
 });
