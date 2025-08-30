@@ -43,7 +43,11 @@ export default function RevokeConfirmModal({
         </p>
 
         <div className="flex justify-center">
-          <Button variant="danger" onClick={handleConfirm}>
+          <Button
+            variant="danger"
+            data-testid="revoke-confirm-button"
+            onClick={handleConfirm}
+          >
             Revoke
           </Button>
           <Button onClick={handleCancel}>Cancel</Button>
