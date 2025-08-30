@@ -42,7 +42,9 @@ export default function DeactivateClientModal({
         </p>
 
         <div className="flex justify-center">
-          <Button onClick={handleConfirm}>Deactivate</Button>
+          <Button data-testid="modal-button-deactivate" onClick={handleConfirm}>
+            Deactivate
+          </Button>
           <Button variant="danger" onClick={handleCancel}>
             Cancel
           </Button>
