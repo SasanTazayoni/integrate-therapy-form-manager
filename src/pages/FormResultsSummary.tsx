@@ -109,7 +109,7 @@ const FormResultsSummary = () => {
           ysq456Scores={clientFormsStatus?.scores?.ysq456}
         />
 
-        <section className="flex flex-wrap flex-col md:flex-row justify-center items-center gap-4 max-w-xl lg:max-w-2xl mx-auto">
+        <section className="score-cards-container flex flex-row justify-center items-center gap-4 max-w-xl lg:max-w-2xl mx-auto">
           {[
             {
               title: "BAI",

@@ -636,6 +636,10 @@ input.small-square-input::-webkit-inner-spin-button {
 
 /* Form Results Summary */
 
+.score-card {
+  width: 330px;
+}
+
 @media (min-width: 769px) {
   .ysq-table th:nth-child(1),
   .ysq-table td:nth-child(1) {
@@ -667,6 +671,10 @@ input.small-square-input::-webkit-inner-spin-button {
   h1.title {
     font-size: 1.8rem;
   }
+
+  .score-card {
+    width: 280px;
+  }
 }
 
 @media screen and (max-width: 768px) {
@@ -674,17 +682,23 @@ input.small-square-input::-webkit-inner-spin-button {
     font-size: 1.5rem;
   }
 
-  .score-card {
-    width: 280px;
-  }
-
   .score-card h3,
   .score-card p {
-    font-size: 16px;
+    font-size: 14px;
+  }
+
+  .score-card {
+    width: 240px;
   }
 }
 
-@media (max-width: 428px) {
+@media screen and (max-width: 540px) {
+  .score-cards-container {
+    flex-wrap: wrap;
+  }
+}
+
+@media screen and (max-width: 428px) {
   h1.title {
     font-size: 1.2rem;
   }
@@ -696,15 +710,6 @@ input.small-square-input::-webkit-inner-spin-button {
 
   .grid-cols-1-xs {
     grid-template-columns: repeat(1, minmax(0, 1fr));
-  }
-
-  .score-card {
-    width: 240px;
-  }
-
-  .score-card h3,
-  .score-card p {
-    font-size: 14px;
   }
 }
 
