@@ -7,14 +7,23 @@ import {
   beforeAll,
   afterAll,
 } from "vitest";
-import { render } from "@testing-library/react";
+import { render, fireEvent } from "@testing-library/react";
 import Dashboard from "./Dashboard";
 import { useClientContext } from "../context/ClientContext";
 import { MemoryRouter } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 vi.mock("../context/ClientContext", () => ({
   useClientContext: vi.fn(),
 }));
+
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
+  return {
+    ...actual,
+    useNavigate: vi.fn(),
+  };
+});
 
 beforeAll(() => {
   const modalRoot = document.createElement("div");
@@ -62,5 +71,19 @@ describe("Dashboard - render checks", () => {
       </MemoryRouter>
     );
     expect(getByTestId("summary-button")).toBeInTheDocument();
+  });
+
+  test("Summary button triggers navigate call", () => {
+    const navigateMock = vi.fn();
+    useNavigate.mockReturnValue(navigateMock);
+
+    const { getByTestId } = render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(getByTestId("summary-button"));
+    expect(navigateMock).toHaveBeenCalledWith("/summary");
   });
 });
