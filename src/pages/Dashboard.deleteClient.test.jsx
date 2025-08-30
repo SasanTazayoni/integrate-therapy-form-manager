@@ -110,4 +110,24 @@ describe("Dashboard - delete client flow", () => {
     fireEvent.click(getByTestId("modal-button-remove"));
     await findByText("Failed to delete client");
   });
+
+  test("skips delete immediately if loading is true", () => {
+    const deleteClientMock = vi
+      .spyOn(clientsApi, "deleteClient")
+      .mockResolvedValue({ ok: true, data: {} });
+
+    const { getByTestId } = render(
+      <MemoryRouter>
+        <ClientContext.Provider value={contextValue}>
+          <Dashboard />
+        </ClientContext.Provider>
+      </MemoryRouter>
+    );
+
+    contextValue.loading = true;
+    fireEvent.click(getByTestId("modal-button-remove"));
+    expect(deleteClientMock).not.toHaveBeenCalled();
+    expect(contextValue.setSuccessMessage).not.toHaveBeenCalled();
+    expect(contextValue.setError).not.toHaveBeenCalled();
+  });
 });
