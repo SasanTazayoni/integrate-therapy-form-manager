@@ -116,7 +116,41 @@ describe("Dashboard - activate client flow", () => {
     await findByText("Failed to activate client");
   });
 
-  test("does nothing if loading is true", async () => {
+  test("shows fallback error if activateClient API fails without error message", async () => {
+    const mockEmail = "test@example.com";
+
+    vi.spyOn(clientsApi, "fetchClientStatus").mockResolvedValue({
+      ok: true,
+      data: { exists: true, inactive: false, formsCompleted: 2, forms: {} },
+    });
+
+    vi.spyOn(clientsApi, "activateClient").mockResolvedValue({
+      ok: false,
+      data: {},
+    });
+
+    const { getByTestId, findByText } = render(
+      <MemoryRouter>
+        <ClientContext.Provider value={contextValue}>
+          <Dashboard />
+        </ClientContext.Provider>
+      </MemoryRouter>
+    );
+
+    fireEvent.change(getByTestId("email-input"), {
+      target: { value: mockEmail },
+    });
+    fireEvent.click(getByTestId("check-button"));
+
+    await waitFor(() =>
+      expect(clientsApi.fetchClientStatus).toHaveBeenCalledWith(mockEmail)
+    );
+
+    fireEvent.click(getByTestId("modal-button-activate"));
+    await findByText("Failed to activate client");
+  });
+
+  test("skips activation immediately if loading is true", async () => {
     const activateClientMock = vi
       .spyOn(clientsApi, "activateClient")
       .mockResolvedValue({ ok: true, data: {} });
@@ -134,5 +168,46 @@ describe("Dashboard - activate client flow", () => {
     expect(activateClientMock).not.toHaveBeenCalled();
     expect(contextValue.setSuccessMessage).not.toHaveBeenCalled();
     expect(contextValue.setError).not.toHaveBeenCalled();
+  });
+
+  test("prevents a second activation while loading is true", async () => {
+    const activateClientMock = vi
+      .spyOn(clientsApi, "activateClient")
+      .mockResolvedValue({ ok: true, data: {} });
+
+    const mockEmail = "test@example.com";
+    const mockClientStatus = {
+      exists: true,
+      inactive: false,
+      formsCompleted: 2,
+      forms: {},
+    };
+    vi.spyOn(clientsApi, "fetchClientStatus").mockResolvedValue({
+      ok: true,
+      data: mockClientStatus,
+    });
+
+    const { getByTestId } = render(
+      <MemoryRouter>
+        <ClientContext.Provider value={contextValue}>
+          <Dashboard />
+        </ClientContext.Provider>
+      </MemoryRouter>
+    );
+
+    const emailInput = getByTestId("email-input");
+    fireEvent.change(emailInput, { target: { value: mockEmail } });
+    fireEvent.click(getByTestId("check-button"));
+
+    await waitFor(() => {
+      expect(clientsApi.fetchClientStatus).toHaveBeenCalledWith(mockEmail);
+    });
+
+    fireEvent.click(getByTestId("modal-button-activate"));
+    fireEvent.click(getByTestId("modal-button-activate"));
+
+    await waitFor(() => {
+      expect(activateClientMock).toHaveBeenCalledTimes(1);
+    });
   });
 });
