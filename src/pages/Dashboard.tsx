@@ -202,8 +202,7 @@ export default function Dashboard() {
   };
 
   const handleConfirmRevoke = async () => {
-    if (!revokeFormType) return;
-    await handleRevokeForm(revokeFormType);
+    await handleRevokeForm(revokeFormType!);
     closeRevokeModal();
   };
 
