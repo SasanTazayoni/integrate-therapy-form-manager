@@ -20,6 +20,7 @@ const SMIQuestion = ({
       </div>
 
       <input
+        data-testid={`input-${item.id}`}
         type="number"
         min={1}
         max={6}
