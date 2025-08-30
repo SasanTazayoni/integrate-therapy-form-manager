@@ -116,7 +116,7 @@ describe("Dashboard - deactivate client flow", () => {
     await findByText("Failed to deactivate client");
   });
 
-  test("does nothing if loading is true", async () => {
+  test("skips deactivation immediately if loading is true", async () => {
     const deactivateClientMock = vi
       .spyOn(clientsApi, "deactivateClient")
       .mockResolvedValue({ ok: true, data: {} });
