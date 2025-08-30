@@ -9,6 +9,7 @@ type ClientActionsProps = {
   onDeleteClient: () => void;
   onDeactivateClient?: () => void;
   onActivateClient?: () => void;
+  loading: boolean;
 };
 
 type ModalType = "remove" | "deactivate" | "activate" | null;
@@ -19,6 +20,7 @@ export default function ClientActions({
   onDeleteClient,
   onDeactivateClient,
   onActivateClient,
+  loading,
 }: ClientActionsProps) {
   const [modal, setModal] = useState<{ type: ModalType; closing: boolean }>({
     type: null,
@@ -55,7 +57,7 @@ export default function ClientActions({
     <button
       className={`link ${disabled ? "disabled" : ""}`}
       onClick={() => openModal(modalType)}
-      disabled={disabled}
+      disabled={disabled || loading}
       data-testid={`modal-button-${modalType}`}
     >
       {label}
