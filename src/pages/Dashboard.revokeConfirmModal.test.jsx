@@ -264,4 +264,124 @@ describe("Dashboard - RevokeConfirmModal", () => {
       expect(revokeSpy).toHaveBeenCalledWith(normalizedEmail, "YSQ");
     });
   });
+
+  test("shows fallback error if revokeFormToken API fails without error message", async () => {
+    const mockEmail = "test@example.com";
+
+    vi.spyOn(clientsApi, "fetchClientStatus").mockResolvedValue({
+      ok: true,
+      data: {
+        exists: true,
+        inactive: false,
+        formsCompleted: 2,
+        forms: { YSQ: { submitted: false, activeToken: true } },
+      },
+    });
+
+    vi.spyOn(formsApi, "revokeFormToken").mockResolvedValue({
+      ok: false,
+      data: {},
+    });
+
+    const { getByTestId, findByText } = render(
+      <MemoryRouter>
+        <ClientContext.Provider value={contextValue}>
+          <Dashboard />
+        </ClientContext.Provider>
+      </MemoryRouter>
+    );
+
+    fireEvent.change(getByTestId("email-input"), {
+      target: { value: mockEmail },
+    });
+    fireEvent.click(getByTestId("check-button"));
+
+    await waitFor(() =>
+      expect(clientsApi.fetchClientStatus).toHaveBeenCalledWith(mockEmail)
+    );
+
+    fireEvent.click(getByTestId("revoke-YSQ-button"));
+    fireEvent.click(getByTestId("revoke-confirm-button"));
+    await findByText("Failed to revoke YSQ form");
+  });
+
+  test("sets revokedAt to null if revokeFormToken returns undefined", async () => {
+    const mockEmail = "TEST@Example.com";
+    const normalizedEmail = mockEmail.toLowerCase();
+
+    const mockClientFormsStatus = {
+      exists: true,
+      forms: {
+        YSQ: {
+          submitted: false,
+          activeToken: true,
+          revokedAt: "2025-01-01T00:00:00.000Z",
+        },
+      },
+    };
+
+    const setClientFormsStatus = vi.fn();
+    const setFormActionLoading = vi.fn();
+    const setError = vi.fn();
+    const setSuccessMessage = vi.fn();
+
+    clientsApi.fetchClientStatus.mockResolvedValue({
+      ok: true,
+      data: mockClientFormsStatus,
+    });
+
+    formsApi.revokeFormToken.mockResolvedValue({
+      ok: true,
+      data: {},
+    });
+
+    const { getByTestId } = render(
+      <MemoryRouter>
+        <ClientContext.Provider
+          value={{
+            email: mockEmail,
+            setEmail: vi.fn(),
+            clientFormsStatus: mockClientFormsStatus,
+            setClientFormsStatus,
+            formActionLoading: { YSQ: false },
+            setFormActionLoading,
+            error: "",
+            setError,
+            successMessage: "",
+            setSuccessMessage,
+          }}
+        >
+          <Dashboard />
+        </ClientContext.Provider>
+      </MemoryRouter>
+    );
+
+    fireEvent.change(getByTestId("email-input"), {
+      target: { value: mockEmail },
+    });
+    fireEvent.click(getByTestId("check-button"));
+
+    await waitFor(() => {
+      expect(clientsApi.fetchClientStatus).toHaveBeenCalledWith(
+        normalizedEmail
+      );
+    });
+
+    fireEvent.click(getByTestId("revoke-YSQ-button"));
+    fireEvent.click(getByTestId("revoke-confirm-button"));
+
+    await waitFor(() => {
+      expect(formsApi.revokeFormToken).toHaveBeenCalledWith(
+        normalizedEmail,
+        "YSQ"
+      );
+
+      const lastCall =
+        setClientFormsStatus.mock.calls[
+          setClientFormsStatus.mock.calls.length - 1
+        ][0];
+      expect(lastCall.forms.YSQ.revokedAt).toBeNull();
+      expect(lastCall.forms.YSQ.activeToken).toBe(false);
+    });
+  });
 });
