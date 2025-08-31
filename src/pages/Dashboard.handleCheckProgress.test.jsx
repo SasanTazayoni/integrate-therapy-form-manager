@@ -273,4 +273,25 @@ describe("Dashboard - handleCheckProgress", () => {
       );
     });
   });
+
+  test("shows fallback error if fetchClientStatus fails without error message", async () => {
+    const mockEmail = "test@example.com";
+
+    clientsApi.fetchClientStatus.mockResolvedValue({
+      ok: false,
+      data: {},
+    });
+
+    const { getByTestId, findByText } = render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>
+    );
+
+    fireEvent.change(getByTestId("email-input"), {
+      target: { value: mockEmail },
+    });
+    fireEvent.click(getByTestId("check-button"));
+    await findByText("Failed to fetch progress");
+  });
 });
