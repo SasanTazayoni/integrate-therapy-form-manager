@@ -162,4 +162,36 @@ describe("Dashboard - handleConfirmAddClient", () => {
 
     await findByText(`Retrieved data successfully for ${mockEmail}`);
   });
+
+  test("shows fallback error if addClient fails without error message", async () => {
+    const mockEmail = "test@example.com";
+
+    clientsApi.fetchClientStatus.mockResolvedValueOnce({
+      ok: false,
+      data: { error: "Client not found" },
+    });
+
+    clientsApi.addClient.mockResolvedValueOnce({
+      ok: false,
+      data: {},
+    });
+
+    const { getByTestId, findByText } = render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>
+    );
+
+    fireEvent.change(getByTestId("email-input"), {
+      target: { value: mockEmail },
+    });
+    fireEvent.click(getByTestId("check-button"));
+
+    const addClientButton = await waitFor(() =>
+      getByTestId("add-client-button")
+    );
+
+    fireEvent.click(addClientButton);
+    await findByText("Failed to add client");
+  });
 });
