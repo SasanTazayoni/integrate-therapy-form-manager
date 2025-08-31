@@ -52,7 +52,7 @@ afterAll(() => {
 describe("Dashboard - handleSendForm", () => {
   const setEmailMock = vi.fn();
   const setClientFormsStatusMock = vi.fn();
-  const FORM_TYPE = FORM_TYPES[2]; // "BECKS"
+  const FORM_TYPE = FORM_TYPES[2];
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -231,5 +231,47 @@ describe("Dashboard - handleSendForm", () => {
       const updatedStatus = lastCall[0];
       expect(updatedStatus.forms[FORM_TYPE].activeToken).toBe(false);
     });
+  });
+
+  test("shows fallback error and resets activeToken if sendFormToken fails without error message", async () => {
+    const mockEmail = "test@example.com";
+    const FORM_TYPE = "YSQ";
+
+    clientsApi.fetchClientStatus.mockResolvedValue({
+      ok: true,
+      data: {
+        exists: true,
+        inactive: false,
+        formsCompleted: 2,
+        forms: {
+          [FORM_TYPE]: { submitted: false, activeToken: false },
+        },
+      },
+    });
+
+    formsApi.sendFormToken.mockResolvedValue({
+      ok: false,
+      data: {},
+    });
+
+    const { getByTestId, findByText } = render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>
+    );
+
+    fireEvent.change(getByTestId("email-input"), {
+      target: { value: mockEmail },
+    });
+    fireEvent.click(getByTestId("check-button"));
+
+    await waitFor(() =>
+      expect(clientsApi.fetchClientStatus).toHaveBeenCalledWith(mockEmail)
+    );
+
+    const sendButton = getByTestId(`send-${FORM_TYPE}-button`);
+    fireEvent.click(sendButton);
+    await findByText(`Failed to send ${FORM_TYPE} form`);
+    expect(sendButton).not.toBeDisabled();
   });
 });

@@ -439,7 +439,6 @@ describe("Dashboard - RevokeConfirmModal", () => {
 
     const emailInput = getByTestId("email-input");
     fireEvent.change(emailInput, { target: { value: "TEST@Example.com" } });
-
     fireEvent.click(getByTestId("check-button"));
 
     await waitFor(() => {
