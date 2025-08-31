@@ -65,7 +65,7 @@ describe("SMIHelpers", () => {
 
   test("defaults undefined answer to 0", () => {
     const items = [{ id: "q1", category: "Test Category" }];
-    const answers = {}; // q1 missing
+    const answers = {};
 
     const result = computeSMIScores(
       answers,
@@ -78,7 +78,7 @@ describe("SMIHelpers", () => {
 
   test("parses numeric string answer correctly", () => {
     const items = [{ id: "q1", category: "Test Category" }];
-    const answers = { q1: "3" }; // simulate string from JSON
+    const answers = { q1: "3" };
 
     const result = computeSMIScores(
       answers,
