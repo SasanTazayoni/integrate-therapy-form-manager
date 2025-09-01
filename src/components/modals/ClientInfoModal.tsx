@@ -51,6 +51,7 @@ export default function ClientInfoModal({
       closing={closing}
       onCloseFinished={onCloseFinished}
       role="dialog"
+      data-testid="client-info-modal"
     >
       <h2 id="client-info-title" className="text-xl font-bold mb-4 sm:mb-2">
         Your information
