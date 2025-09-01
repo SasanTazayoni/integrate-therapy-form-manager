@@ -9,7 +9,7 @@ type Props = {
   clientInactive: boolean;
 };
 
-const formatDate = (value?: string | Date | null) => {
+export const formatDate = (value?: string | Date | null) => {
   if (!value) return "";
   const d = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(d.getTime())) return "";
