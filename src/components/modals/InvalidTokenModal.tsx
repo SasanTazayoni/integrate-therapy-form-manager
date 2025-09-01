@@ -13,6 +13,7 @@ export default function InvalidTokenModal() {
       ariaLabelledBy="invalid-token-title"
       ariaDescribedBy="invalid-token-desc"
       role="alertdialog"
+      data-testid="invalid-modal"
     >
       <h2
         id="invalid-token-title"
