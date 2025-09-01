@@ -30,7 +30,7 @@ type State =
 
 type Action = { type: "INVALID"; payload: string } | { type: "VALID" };
 
-function reducer(state: State, action: Action): State {
+export function reducer(state: State, action: Action): State {
   switch (action.type) {
     case "INVALID":
       return { status: "error", message: action.payload };
@@ -196,8 +196,6 @@ export default function QuestionnaireForm({
       </div>
     );
   }
-
-  if (actionData?.success) return <p>Submitted successfully!</p>;
 
   return (
     <div className="relative min-h-screen">
