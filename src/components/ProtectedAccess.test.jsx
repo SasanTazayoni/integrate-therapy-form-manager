@@ -153,8 +153,6 @@ describe("ProtectedAccess", () => {
       fireEvent.click(submitButton);
     });
 
-    const componentDiv = document.querySelector("div");
-
     act(() => {
       fireEvent.change(usernameInput, { target: { value: "admin" } });
       fireEvent.change(passwordInput, { target: { value: "password" } });
