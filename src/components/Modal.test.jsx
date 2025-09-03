@@ -3,7 +3,6 @@ import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
 import Modal from "./Modal";
 
 beforeEach(() => {
-  // Ensure modal-root exists in DOM
   const modalRoot = document.createElement("div");
   modalRoot.setAttribute("id", "modal-root");
   document.body.appendChild(modalRoot);
@@ -92,7 +91,6 @@ describe("Modal", () => {
 
     expect(overlay).toHaveClass("overlay fade-in");
 
-    // Rerender with closing
     rerender(
       <Modal ariaLabelledBy="modal-title" closing>
         <div>Content</div>

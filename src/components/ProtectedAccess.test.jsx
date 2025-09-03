@@ -1,4 +1,4 @@
-import { render, fireEvent, act, waitFor } from "@testing-library/react";
+import { render, fireEvent, act } from "@testing-library/react";
 import { describe, vi, beforeEach, test, afterEach, expect } from "vitest";
 import ProtectedAccess from "./ProtectedAccess";
 

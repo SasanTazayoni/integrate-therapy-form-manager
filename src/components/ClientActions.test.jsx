@@ -2,7 +2,6 @@ import { render, fireEvent } from "@testing-library/react";
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import ClientActions from "./ClientActions";
 
-// RemoveClientModal mock
 vi.mock("../components/modals/RemoveClientModal", () => ({
   default: ({ onConfirm, onCancel, onCloseFinished, closing }) => (
     <div data-testid="remove-modal">
@@ -12,10 +11,7 @@ vi.mock("../components/modals/RemoveClientModal", () => ({
       <button data-testid="remove-cancel-btn" onClick={onCancel}>
         Cancel
       </button>
-      <button
-        data-testid="remove-close-finished-btn"
-        onClick={onCloseFinished} // triggers closeModalFinished
-      >
+      <button data-testid="remove-close-finished-btn" onClick={onCloseFinished}>
         Trigger Close
       </button>
       <span data-testid="remove-closing">{closing ? "true" : "false"}</span>
@@ -23,7 +19,6 @@ vi.mock("../components/modals/RemoveClientModal", () => ({
   ),
 }));
 
-// DeactivateClientModal mock
 vi.mock("../components/modals/DeactivateClientModal", () => ({
   default: ({ onConfirm, onCancel, onCloseFinished, closing }) => (
     <div data-testid="deactivate-modal">
@@ -35,7 +30,7 @@ vi.mock("../components/modals/DeactivateClientModal", () => ({
       </button>
       <button
         data-testid="deactivate-close-finished-btn"
-        onClick={onCloseFinished} // triggers closeModalFinished
+        onClick={onCloseFinished}
       >
         Trigger Close
       </button>
@@ -44,7 +39,6 @@ vi.mock("../components/modals/DeactivateClientModal", () => ({
   ),
 }));
 
-// ActivateClientModal mock
 vi.mock("../components/modals/ActivateClientModal", () => ({
   default: ({ onConfirm, onCancel, onCloseFinished, closing }) => (
     <div data-testid="activate-modal">
@@ -56,7 +50,7 @@ vi.mock("../components/modals/ActivateClientModal", () => ({
       </button>
       <button
         data-testid="activate-close-finished-btn"
-        onClick={onCloseFinished} // triggers closeModalFinished
+        onClick={onCloseFinished}
       >
         Trigger Close
       </button>
