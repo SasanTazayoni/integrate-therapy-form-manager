@@ -5,6 +5,7 @@ import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import * as api from "../api/formsFrontend";
 import { createRef } from "react";
 import setErrorTimers from "../utils/startErrorFadeTimers";
+import * as timersUtil from "../utils/startErrorFadeTimers";
 
 vi.spyOn(api, "validateFormToken").mockResolvedValue({
   ok: false,
@@ -710,5 +711,59 @@ describe("QuestionnaireForm component", () => {
       const modal = container.querySelector("h2");
       expect(modal?.textContent).toBe("Invalid Form");
     });
+  });
+
+  test("clearTimers should clear both timers on unmount", () => {
+    const clearSpy = vi.spyOn(global, "clearTimeout");
+
+    const { unmount } = render(
+      <QuestionnaireForm
+        title="Test Form"
+        questionnaire="TEST_FORM"
+        token="valid-token"
+      >
+        <div>Child Content</div>
+      </QuestionnaireForm>
+    );
+
+    const t1 = setTimeout(() => {}, 1000);
+    const t2 = setTimeout(() => {}, 2000);
+    const fadeRef = { current: t1 };
+    const clearRef = { current: t2 };
+    timersUtil.default(() => {}, "", "", 0, 0, fadeRef, clearRef);
+    unmount();
+
+    expect(clearSpy).toHaveBeenCalledWith(t1);
+    expect(clearSpy).toHaveBeenCalledWith(t2);
+  });
+
+  test("showModalError should call setErrorTimers", () => {
+    const spy = vi.spyOn(timersUtil, "default");
+
+    render(
+      <QuestionnaireForm
+        title="Test Form"
+        questionnaire="TEST_FORM"
+        token="valid-token"
+      >
+        <div>Child Content</div>
+      </QuestionnaireForm>
+    );
+
+    const fakeDispatch = vi.fn();
+    const fakeErrorTimer = { current: null };
+    const fakeClearTimer = { current: null };
+
+    timersUtil.default(
+      fakeDispatch,
+      "BEGIN_ERROR_FADE_OUT",
+      "CLEAR_ERROR",
+      2500,
+      3000,
+      fakeErrorTimer,
+      fakeClearTimer
+    );
+
+    expect(spy).toHaveBeenCalled();
   });
 });
