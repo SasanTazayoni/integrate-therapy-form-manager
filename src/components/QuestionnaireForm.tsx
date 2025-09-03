@@ -175,7 +175,9 @@ export default function QuestionnaireForm({
   };
 
   useEffect(() => {
-    return () => clearTimers();
+    return () => {
+      clearTimers();
+    };
   }, []);
 
   if (state.status === "loading") {
