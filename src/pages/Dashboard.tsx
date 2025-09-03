@@ -48,6 +48,7 @@ export default function Dashboard() {
 
   const logoUrl = `${import.meta.env.BASE_URL}logo.png`;
   const isInactive = clientFormsStatus?.inactive ?? false;
+  const isFormActionInProgress = Object.values(formActionLoading).some(Boolean);
 
   useEffect(() => {
     setContextEmail(email);
@@ -375,7 +376,7 @@ export default function Dashboard() {
           successMessage={successMessage}
           error={error}
           setError={setError}
-          loading={loading}
+          loading={loading || isFormActionInProgress}
           showAddClientPrompt={showAddClientPrompt}
           setShowAddClientPrompt={setShowAddClientPrompt}
           onConfirmAddClient={handleConfirmAddClient}
@@ -384,7 +385,7 @@ export default function Dashboard() {
         <EmailSearchControls
           onCheck={handleCheckProgress}
           onClear={handleClear}
-          loading={loading}
+          loading={loading || isFormActionInProgress}
         />
 
         <ClientActions
@@ -393,7 +394,7 @@ export default function Dashboard() {
           onDeleteClient={handleDeleteClient}
           onDeactivateClient={handleDeactivateClient}
           onActivateClient={handleActivateClient}
-          loading={loading}
+          loading={loading || isFormActionInProgress}
         />
       </div>
 
@@ -411,7 +412,7 @@ export default function Dashboard() {
       <div className="max-w-4xl mx-auto px-4 mt-6 flex justify-center">
         <Button
           onClick={() => navigate("/summary")}
-          disabled={loading}
+          disabled={loading || isFormActionInProgress}
           data-testid="summary-button"
         >
           Summary
