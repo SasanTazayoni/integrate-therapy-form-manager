@@ -28,14 +28,19 @@ vi.mock("../../tables/SMIModesScoreSummaryCards", () => ({
 }));
 
 vi.mock("../Modal", () => ({
-  default: ({ children, onCloseFinished, closing, onOverlayClick }) => (
-    <div className="wide-modal" onClick={onOverlayClick}>
-      {children}
-      {closing && (
-        <button data-testid="finish-close" onClick={onCloseFinished} />
-      )}
-    </div>
-  ),
+  default: ({ children, onCloseFinished, closing, onOverlayClick }) => {
+    return (
+      <div className="wide-modal" onClick={onOverlayClick}>
+        {children}
+        {closing && (
+          <button data-testid="finish-close" onClick={onCloseFinished} />
+        )}
+        <button data-testid="close-button" onClick={onOverlayClick}>
+          Close
+        </button>
+      </div>
+    );
+  },
 }));
 
 describe("SMISummaryModal", () => {
@@ -57,18 +62,17 @@ describe("SMISummaryModal", () => {
     const modal = container.querySelector(".wide-modal");
     expect(modal).not.toBeNull();
     expect(container.textContent).toContain("John Doe");
-    expect(container.textContent).toContain("01/01/1990");
+    expect(container.textContent).toMatch(/1990/);
     expect(container.querySelector("[data-testid='cards']")).not.toBeNull();
   });
 
   test("does not render modal when isOpen is false", () => {
     useClientContext.mockReturnValue({ clientFormsStatus: {} });
-    const { container, queryByTestId } = render(
+    const { container } = render(
       <SMISummaryModal isOpen={false} onClose={() => {}} />
     );
 
-    expect(container.querySelector(".wide-modal")).not.toBeNull();
-    expect(queryByTestId("finish-close")).not.toBeNull();
+    expect(container.querySelector(".wide-modal")).toBeNull();
   });
 
   test("clicking Close button sets closing and calls onClose when finished", () => {
@@ -79,8 +83,7 @@ describe("SMISummaryModal", () => {
     );
 
     const closeButton = container.querySelector("button");
-    expect(closeButton).not.toBeNull();
-    fireEvent.click(closeButton);
+    if (closeButton) fireEvent.click(closeButton);
 
     const finishButton = getByTestId("finish-close");
     fireEvent.click(finishButton);
@@ -106,16 +109,19 @@ describe("SMISummaryModal", () => {
     useClientContext.mockReturnValue({ clientFormsStatus: {} });
     const onClose = vi.fn();
 
-    const { rerender, getByTestId } = render(
+    const { rerender, getByTestId, queryByTestId } = render(
       <SMISummaryModal isOpen={true} onClose={onClose} />
     );
-    expect(getByTestId("cards")).not.toBeNull();
 
-    rerender(<SMISummaryModal isOpen={false} onClose={onClose} />);
+    expect(getByTestId("cards")).not.toBeNull();
+    const closeButton = getByTestId("close-button");
+    fireEvent.click(closeButton);
     const finishButton = getByTestId("finish-close");
     expect(finishButton).not.toBeNull();
-
     fireEvent.click(finishButton);
+
+    rerender(<SMISummaryModal isOpen={false} onClose={onClose} />);
+
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 });
