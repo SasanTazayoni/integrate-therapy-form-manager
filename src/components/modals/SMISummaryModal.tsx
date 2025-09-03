@@ -49,7 +49,7 @@ export default function SMISummaryModal({
     setClosing(true);
   }
 
-  if (!isOpen && !closing) return null;
+  if (!isOpen) return null;
 
   const smiScores = clientFormsStatus?.scores?.smi || {};
 
