@@ -29,9 +29,12 @@ export default function ClientActions({
 
   const openModal = (type: Exclude<ModalType, null>) =>
     setModal({ type, closing: false });
+
   const cancelModal = () =>
     setModal((prev) => (prev.type ? { ...prev, closing: true } : prev));
+
   const closeModalFinished = () => setModal({ type: null, closing: false });
+
   const confirmModal = () => {
     if (modal.type === "remove") onDeleteClient();
     if (modal.type === "deactivate") onDeactivateClient?.();
@@ -65,7 +68,12 @@ export default function ClientActions({
   );
 
   return (
-    <div className="flex justify-center gap-4">
+    <div
+      className="flex justify-center gap-4"
+      data-testid="client-actions-wrapper"
+      data-modal-type={modal.type ?? ""}
+      data-modal-closing={modal.closing}
+    >
       {!isInactive && <ModalButton modalType="deactivate" label="Deactivate" />}
       {isInactive && <ModalButton modalType="activate" label="Activate" />}
       <ModalButton modalType="remove" label="Delete" />
