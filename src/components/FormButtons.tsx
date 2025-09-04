@@ -1,5 +1,6 @@
 import FormStatusMessage from "./FormStatusMessage";
 import FormButtonGroup from "./FormButtonGroup";
+import FormActionButton from "./FormActionButton";
 import type { FormStatus } from "../types/formStatusTypes";
 import { FORM_TYPES, FORM_TITLES, FormType } from "../constants/formTypes";
 
@@ -15,6 +16,7 @@ type FormButtonsProps = {
   formActionLoading: Record<FormType, boolean>;
   clientInactive: boolean;
   searchLoading?: boolean;
+  onSendAll?: (formTypes: FormType[]) => void;
 };
 
 export default function FormButtons({
@@ -24,71 +26,100 @@ export default function FormButtons({
   formActionLoading,
   clientInactive,
   searchLoading = false,
+  onSendAll,
 }: FormButtonsProps) {
-  const clientSearched = clientFormsStatus !== null;
   const clientExists = clientFormsStatus?.exists ?? false;
   const formTypes = FORM_TYPES;
 
+  const sendableFormTypes = formTypes.filter((formType) => {
+    const status = clientFormsStatus?.forms?.[formType];
+    return (
+      clientExists &&
+      !clientInactive &&
+      !(status
+        ? status.activeToken || (status.submitted && formType !== "SMI")
+        : false) &&
+      !formActionLoading[formType] &&
+      !searchLoading
+    );
+  });
+
+  const sendAllDisabled =
+    !clientExists ||
+    sendableFormTypes.length === 0 ||
+    Object.values(formActionLoading).some(Boolean) ||
+    searchLoading;
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full justify-items-center">
-      {formTypes.map((formType: FormType) => {
-        const status = clientFormsStatus?.forms?.[formType];
+    <>
+      {onSendAll && (
+        <div className="flex justify-center mb-4 w-full">
+          <FormActionButton
+            label="Send all"
+            disabled={sendAllDisabled}
+            onClick={() => onSendAll(sendableFormTypes)}
+          />
+        </div>
+      )}
 
-        const sendDisabled =
-          !clientSearched ||
-          !clientExists ||
-          clientInactive ||
-          (status
-            ? status.activeToken || (status.submitted && formType !== "SMI")
-            : false) ||
-          formActionLoading[formType] ||
-          searchLoading;
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 w-full justify-items-center">
+        {formTypes.map((formType: FormType) => {
+          const status = clientFormsStatus?.forms?.[formType];
 
-        const revokeDisabled =
-          !clientSearched ||
-          !clientExists ||
-          clientInactive ||
-          !(status ? status.activeToken : false) ||
-          formActionLoading[formType] ||
-          searchLoading;
+          const sendDisabled =
+            !clientExists ||
+            clientInactive ||
+            (status
+              ? status.activeToken || (status.submitted && formType !== "SMI")
+              : false) ||
+            formActionLoading[formType] ||
+            searchLoading;
 
-        const sendLabel =
-          formType === "SMI" && status?.submitted ? "Resend" : "Send";
+          const revokeDisabled =
+            !clientExists ||
+            clientInactive ||
+            !(status?.activeToken ?? false) ||
+            formActionLoading[formType] ||
+            searchLoading;
 
-        return (
-          <div
-            key={formType}
-            className="form-card flex flex-col items-center justify-center border-[4px] border-[var(--color-border)] py-4 px-2 rounded-xl min-h-[150px]"
-          >
-            <h2 className="card-title text-lg font-semibold mb-3 text-center">
-              {FORM_TITLES[formType]}
-            </h2>
+          const sendLabel =
+            formType === "SMI" && status?.submitted ? "Resend" : "Send";
 
-            <div className="flex space-x-3 w-full justify-center">
-              <FormButtonGroup
-                sendDisabled={sendDisabled}
-                revokeDisabled={revokeDisabled}
-                onSend={() => onSend(formType)}
-                onRevoke={() => onRevoke(formType)}
-                sendLabel={sendLabel}
-                loadingSend={formActionLoading[formType]}
-                loadingRevoke={formActionLoading[formType]}
-                sendTestId={`send-${formType}-button`}
-                revokeTestId={`revoke-${formType}-button`}
-              />
+          return (
+            <div
+              key={formType}
+              className="form-card flex flex-col items-center justify-center border-[4px] border-[var(--color-border)] py-4 px-2 rounded-xl min-h-[150px]"
+            >
+              <h2 className="card-title text-lg font-semibold mb-3 text-center">
+                {FORM_TITLES[formType]}
+              </h2>
+
+              <div className="flex space-x-3 w-full justify-center">
+                <FormButtonGroup
+                  sendDisabled={sendDisabled}
+                  revokeDisabled={revokeDisabled}
+                  onSend={() => onSend(formType)}
+                  onRevoke={() => onRevoke(formType)}
+                  sendLabel={sendLabel}
+                  loadingSend={formActionLoading[formType]}
+                  loadingRevoke={formActionLoading[formType]}
+                  sendTestId={`send-${formType}-button`}
+                  revokeTestId={`revoke-${formType}-button`}
+                />
+              </div>
+
+              <div className="text-sm font-semibold text-gray-700 mt-3 text-center min-h-[1.5rem]">
+                <FormStatusMessage
+                  status={status}
+                  formType={formType}
+                  formActionLoading={formActionLoading}
+                  clientInactive={clientInactive}
+                />
+              </div>
             </div>
-
-            <div className="text-sm font-semibold text-gray-700 mt-3 text-center min-h-[1.5rem]">
-              <FormStatusMessage
-                status={status}
-                formType={formType}
-                formActionLoading={formActionLoading}
-                clientInactive={clientInactive}
-              />
-            </div>
-          </div>
-        );
-      })}
-    </div>
+          );
+        })}
+      </div>
+    </>
   );
 }
