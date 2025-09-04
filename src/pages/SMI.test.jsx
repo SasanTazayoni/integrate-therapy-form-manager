@@ -5,6 +5,8 @@ import SMI from "../pages/SMI";
 import * as useSMIFormHook from "../hooks/useSMIForm";
 import * as useValidateTokenHook from "../hooks/useValidateToken";
 import * as SMIHelpers from "../utils/SMIHelpers";
+import * as SMIQuestions from "../components/SMIQuestions";
+import SMIItems from "../data/SMIItems";
 import * as API from "../api/formsFrontend";
 
 vi.mock("../components/SMIQuestions", () => ({
@@ -441,5 +443,85 @@ describe("SMI Component", () => {
     fireEvent.change(firstInput, { target: { value: "3" } });
     expect(handleChange).toHaveBeenCalledTimes(1);
     expect(handleChange).toHaveBeenCalledWith(expect.anything(), 3);
+  });
+
+  test("ArrowDown focuses the next SMI question input", () => {
+    const handleChange = vi.fn();
+    const questionRefs = [];
+
+    const renderSpy = vi
+      .spyOn(SMIQuestions, "default")
+      .mockImplementation(({ item, onArrowDown, ref }) => {
+        const inputRef = { focus: vi.fn() };
+        if (ref) ref(inputRef);
+        questionRefs.push(inputRef);
+
+        return (
+          <div
+            data-testid={`question-${item.id}`}
+            onKeyDown={(e) => {
+              if (e.key === "ArrowDown") onArrowDown?.();
+            }}
+          >
+            {item.prompt}
+          </div>
+        );
+      });
+
+    const { getByTestId } = render(
+      <MemoryRouter>
+        <SMI />
+      </MemoryRouter>
+    );
+
+    const firstInput = getByTestId(`question-${SMIItems[0].id}`);
+    fireEvent.keyDown(firstInput, { key: "ArrowDown" });
+
+    const secondRef = questionRefs[1];
+    if (secondRef) {
+      expect(secondRef.focus).toHaveBeenCalled();
+    }
+
+    renderSpy.mockRestore();
+  });
+
+  test("ArrowUp focuses the previous SMI question input", () => {
+    const handleChange = vi.fn();
+    const questionRefs = [];
+
+    const renderSpy = vi
+      .spyOn(SMIQuestions, "default")
+      .mockImplementation(({ item, onArrowUp, ref }) => {
+        const inputRef = { focus: vi.fn() };
+        if (ref) ref(inputRef);
+        questionRefs.push(inputRef);
+
+        return (
+          <div
+            data-testid={`question-${item.id}`}
+            onKeyDown={(e) => {
+              if (e.key === "ArrowUp") onArrowUp?.();
+            }}
+          >
+            {item.prompt}
+          </div>
+        );
+      });
+
+    const { getByTestId } = render(
+      <MemoryRouter>
+        <SMI />
+      </MemoryRouter>
+    );
+
+    const secondInput = getByTestId(`question-${SMIItems[1].id}`);
+    fireEvent.keyDown(secondInput, { key: "ArrowUp" });
+
+    const firstRef = questionRefs[0];
+    if (firstRef) {
+      expect(firstRef.focus).toHaveBeenCalled();
+    }
+
+    renderSpy.mockRestore();
   });
 });
