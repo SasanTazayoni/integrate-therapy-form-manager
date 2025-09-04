@@ -16,30 +16,30 @@ export const getCellData = (
   if (!raw) return null;
 
   const score = parseFloat(raw);
-  if (isNaN(score)) return null;
+  if (Number.isNaN(score)) return null;
 
   const rating = classifyScore(score, smiBoundaries[key]);
   return { score, rating, display: `${score} (${rating})` };
 };
 
+export type SmiBoundaries = Record<string, number[]>;
+
 export const computeSMIScores = (
   answers: Record<string, number>,
   items: Item[],
   categoryKeyMap: Record<string, string>,
-  smiBoundaries: Record<string, any>
-) => {
+  smiBoundaries: SmiBoundaries
+): Record<string, { average: number; label: string }> => {
   const scoresByCategory: Record<string, number> = {};
   const countsByCategory: Record<string, number> = {};
 
-  items.forEach((item) => {
+  for (const item of items) {
     const value = Number(answers[item.id] ?? 0);
-    if (!scoresByCategory[item.category]) {
-      scoresByCategory[item.category] = 0;
-      countsByCategory[item.category] = 0;
-    }
+    scoresByCategory[item.category] ??= 0;
+    countsByCategory[item.category] ??= 0;
     scoresByCategory[item.category] += value;
     countsByCategory[item.category] += 1;
-  });
+  }
 
   const results: Record<string, { average: number; label: string }> = {};
   for (const category in scoresByCategory) {
