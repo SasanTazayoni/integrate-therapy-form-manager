@@ -1,9 +1,18 @@
+export type SubmitPayload = {
+  token: string;
+  result: string | number;
+};
+
+export type SubmitResponse = {
+  ok: boolean;
+  error?: string;
+  code?: string;
+};
+
 export type SubmitFormParams = {
   token?: string;
   result: string | number;
-  submitFn: (
-    payload: any
-  ) => Promise<{ ok: boolean; error?: string; code?: string }>;
+  submitFn: (payload: SubmitPayload) => Promise<SubmitResponse>;
   setFormError: (msg: string) => void;
   setShowInvalidTokenModal: (show: boolean) => void;
   navigate: (path: string) => void;
