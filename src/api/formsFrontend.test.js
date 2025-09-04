@@ -1,6 +1,7 @@
 import axios from "axios";
 import {
   sendFormToken,
+  sendMultipleFormTokens,
   validateFormToken,
   revokeFormToken,
   submitBecksForm,
@@ -448,6 +449,56 @@ describe("updateClientInfo", () => {
     expect(result).toEqual({
       ok: false,
       error: "Unexpected error occurred.",
+    });
+  });
+});
+
+describe("sendMultipleFormTokens", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const email = "test@example.com";
+
+  test("returns ok true with data when axios POST succeeds", async () => {
+    const mockData = { sent: ["YSQ", "SMI"] };
+    mockedAxios.post.mockResolvedValueOnce({ data: mockData });
+
+    const result = await sendMultipleFormTokens(email);
+
+    expect(mockedAxios.post).toHaveBeenCalledWith("/forms/send-multiple", {
+      email,
+    });
+    expect(result).toEqual({ ok: true, data: mockData });
+  });
+
+  test("returns ok false with error from getErrorDisplay for axios error", async () => {
+    const mockError = new Error("Network error");
+    mockedAxios.post.mockRejectedValueOnce(mockError);
+    axios.isAxiosError = vi.fn().mockReturnValue(true);
+
+    vi.spyOn(getErrorDisplayModule, "getErrorDisplay").mockReturnValue(
+      "Mocked error display"
+    );
+
+    const result = await sendMultipleFormTokens(email);
+
+    expect(result).toEqual({
+      ok: false,
+      data: { error: "Mocked error display" },
+    });
+  });
+
+  test("returns ok false with generic error for non-axios error", async () => {
+    const nonAxiosError = "Unexpected error";
+    mockedAxios.post.mockRejectedValueOnce(nonAxiosError);
+    axios.isAxiosError = vi.fn().mockReturnValue(false);
+
+    const result = await sendMultipleFormTokens(email);
+
+    expect(result).toEqual({
+      ok: false,
+      data: { error: "Unexpected error occurred." },
     });
   });
 });
