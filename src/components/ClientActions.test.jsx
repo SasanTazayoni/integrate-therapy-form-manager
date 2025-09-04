@@ -1,5 +1,5 @@
 import { render, fireEvent } from "@testing-library/react";
-import { describe, test, expect, vi, beforeEach } from "vitest";
+import { describe, test, expect, vi } from "vitest";
 import ClientActions from "./ClientActions";
 
 vi.mock("../components/modals/RemoveClientModal", () => ({
