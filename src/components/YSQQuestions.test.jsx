@@ -78,12 +78,42 @@ describe("YSQQuestions", () => {
     const { getByRole } = render(
       <YSQQuestions item={item} value={3} onChange={() => {}} />
     );
+
     const input = getByRole("spinbutton");
-
     input.select = vi.fn();
-
     fireEvent.focus(input);
-
     expect(input.select).toHaveBeenCalled();
+  });
+
+  test("calls onArrowDown when ArrowDown key is pressed", () => {
+    const onArrowDown = vi.fn();
+    const { getByRole } = render(
+      <YSQQuestions
+        item={item}
+        value={3}
+        onChange={() => {}}
+        onArrowDown={onArrowDown}
+      />
+    );
+
+    const input = getByRole("spinbutton");
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+    expect(onArrowDown).toHaveBeenCalled();
+  });
+
+  test("calls onArrowUp when ArrowUp key is pressed", () => {
+    const onArrowUp = vi.fn();
+    const { getByRole } = render(
+      <YSQQuestions
+        item={item}
+        value={3}
+        onChange={() => {}}
+        onArrowUp={onArrowUp}
+      />
+    );
+
+    const input = getByRole("spinbutton");
+    fireEvent.keyDown(input, { key: "ArrowUp" });
+    expect(onArrowUp).toHaveBeenCalled();
   });
 });
