@@ -170,43 +170,47 @@ export default function Dashboard() {
     [clientFormsStatus, confirmedEmail, formActionLoading]
   );
 
-  const handleSendAllForms = async (formTypes: FormType[]) => {
-    if (!confirmedEmail) return;
+  const handleSendAllForms = useCallback(
+    async (formTypes: FormType[]) => {
+      if (!clientFormsStatus || !confirmedEmail) return;
 
-    const normalizedEmail = normalizeEmail(confirmedEmail);
+      const normalizedEmail = normalizeEmail(confirmedEmail);
 
-    setFormActionLoading((prev) => {
-      const updated = { ...prev };
-      formTypes.forEach((type) => (updated[type] = true));
-      return updated;
-    });
-
-    try {
-      const { ok, data } = await sendMultipleFormTokens(normalizedEmail);
-
-      if (!ok) {
-        setError(data.error || "Failed to send multiple forms");
-        return;
-      }
-
-      const { ok: fetchOk, data: updatedStatus } = await fetchClientStatus(
-        normalizedEmail
-      );
-      if (fetchOk) setClientFormsStatus(updatedStatus);
-
-      setSuccessMessage("All eligible forms have been sent successfully");
-      setError("");
-    } catch (err) {
-      setError("Unexpected error occurred while sending all forms");
-      setSuccessMessage("");
-    } finally {
       setFormActionLoading((prev) => {
         const updated = { ...prev };
-        formTypes.forEach((type) => (updated[type] = false));
+        formTypes.forEach((type) => (updated[type] = true));
         return updated;
       });
-    }
-  };
+
+      try {
+        const { ok, data } = await sendMultipleFormTokens(normalizedEmail);
+
+        if (!ok) {
+          setError(data.error || "Failed to send multiple forms");
+          setSuccessMessage("");
+          return;
+        }
+
+        const { ok: fetchOk, data: updatedStatus } = await fetchClientStatus(
+          normalizedEmail
+        );
+        if (fetchOk) setClientFormsStatus(updatedStatus);
+
+        setSuccessMessage("All eligible forms have been sent successfully");
+        setError("");
+      } catch (err) {
+        setError("Unexpected error occurred while sending all forms");
+        setSuccessMessage("");
+      } finally {
+        setFormActionLoading((prev) => {
+          const updated = { ...prev };
+          formTypes.forEach((type) => (updated[type] = false));
+          return updated;
+        });
+      }
+    },
+    [clientFormsStatus, confirmedEmail]
+  );
 
   const openRevokeModal = (formType: FormType) => {
     setRevokeFormType(formType);
