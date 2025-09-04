@@ -13,7 +13,11 @@ import {
   deactivateClient,
   activateClient,
 } from "../api/clientsFrontend";
-import { sendFormToken, revokeFormToken } from "../api/formsFrontend";
+import {
+  sendFormToken,
+  revokeFormToken,
+  sendMultipleFormTokens,
+} from "../api/formsFrontend";
 import validateEmail from "../utils/validators";
 import truncateEmail from "../utils/truncateEmail";
 import normalizeEmail from "../utils/normalizeEmail";
@@ -36,12 +40,20 @@ export default function Dashboard() {
   const [error, setError] = useState("");
   const [clientFormsStatus, setClientFormsStatus] =
     useState<ClientFormsStatus | null>(contextClientFormsStatus || null);
+
+  const initialFormActionLoading: Record<FormType, boolean> = {
+    YSQ: false,
+    SMI: false,
+    BECKS: false,
+    BURNS: false,
+  };
+
+  const [formActionLoading, setFormActionLoading] = useState(
+    initialFormActionLoading
+  );
   const [loading, setLoading] = useState(false);
   const [showAddClientPrompt, setShowAddClientPrompt] = useState(false);
   const [confirmedEmail, setConfirmedEmail] = useState<string | null>(null);
-  const [formActionLoading, setFormActionLoading] = useState<
-    Record<FormType, boolean>
-  >({} as Record<FormType, boolean>);
   const [showRevokeModal, setShowRevokeModal] = useState(false);
   const [closingRevokeModal, setClosingRevokeModal] = useState(false);
   const [revokeFormType, setRevokeFormType] = useState<FormType | null>(null);
@@ -50,13 +62,11 @@ export default function Dashboard() {
   const isInactive = clientFormsStatus?.inactive ?? false;
   const isFormActionInProgress = Object.values(formActionLoading).some(Boolean);
 
-  useEffect(() => {
-    setContextEmail(email);
-  }, [email, setContextEmail]);
-
-  useEffect(() => {
-    setContextClientFormsStatus(clientFormsStatus);
-  }, [clientFormsStatus, setContextClientFormsStatus]);
+  useEffect(() => setContextEmail(email), [email, setContextEmail]);
+  useEffect(
+    () => setContextClientFormsStatus(clientFormsStatus),
+    [clientFormsStatus, setContextClientFormsStatus]
+  );
 
   const handleEmailChange = (value: string) => {
     setEmail(value);
@@ -70,12 +80,7 @@ export default function Dashboard() {
   const handleConfirmAddClient = async () => {
     const normalizedEmail = normalizeEmail(email);
     const { ok, data } = await addClient(normalizedEmail);
-
-    if (!ok) {
-      setError(data.error || "Failed to add client");
-      setSuccessMessage("");
-      return;
-    }
+    if (!ok) return setError(data.error || "Failed to add client");
 
     setError("");
     setShowAddClientPrompt(false);
@@ -84,31 +89,17 @@ export default function Dashboard() {
 
   const handleCheckProgress = useCallback(async () => {
     const normalizedEmail = normalizeEmail(email);
+    if (!normalizedEmail) return setError("Input cannot be empty");
 
-    if (!normalizedEmail) {
-      setError("Input cannot be empty");
-      setSuccessMessage("");
-      setShowAddClientPrompt(false);
-      return;
-    }
+    if (!validateEmail(normalizedEmail))
+      return setError("This email is not valid");
 
-    if (!validateEmail(normalizedEmail)) {
-      setError("This email is not valid");
-      setSuccessMessage("");
-      setShowAddClientPrompt(false);
-      return;
-    }
-
-    if (confirmedEmail !== normalizedEmail) {
-      setSuccessMessage("");
-      setConfirmedEmail(null);
-    }
+    if (confirmedEmail !== normalizedEmail) setConfirmedEmail(null);
 
     setError("");
     setLoading(true);
 
     const { ok, data } = await fetchClientStatus(normalizedEmail);
-
     if (!ok) {
       if (data.error === "Client not found") {
         setError("No data for this email - add to database?");
@@ -116,13 +107,11 @@ export default function Dashboard() {
         setClientFormsStatus(null);
       } else {
         setError(data.error || "Failed to fetch progress");
-        setShowAddClientPrompt(false);
         setClientFormsStatus(null);
       }
     } else {
       setClientFormsStatus(data);
       setShowAddClientPrompt(false);
-      setError("");
       setSuccessMessage(
         `Retrieved data successfully for ${truncateEmail(normalizedEmail)}`
       );
@@ -138,7 +127,7 @@ export default function Dashboard() {
     setError("");
     setSuccessMessage("");
     setShowAddClientPrompt(false);
-    setFormActionLoading({} as Record<FormType, boolean>);
+    setFormActionLoading(initialFormActionLoading);
     setConfirmedEmail(null);
   };
 
@@ -154,10 +143,7 @@ export default function Dashboard() {
         ...prev!,
         forms: {
           ...prev!.forms,
-          [formType]: {
-            ...prev!.forms[formType],
-            activeToken: true,
-          },
+          [formType]: { ...prev!.forms[formType], activeToken: true },
         },
       }));
 
@@ -168,14 +154,10 @@ export default function Dashboard() {
           ...prev!,
           forms: {
             ...prev!.forms,
-            [formType]: {
-              ...prev!.forms[formType],
-              activeToken: false,
-            },
+            [formType]: { ...prev!.forms[formType], activeToken: false },
           },
         }));
         setError(data.error || `Failed to send ${formType} form`);
-        setSuccessMessage("");
       } else {
         const { ok: fetchOk, data: updatedStatus } = await fetchClientStatus(
           normalizedEmail
@@ -187,6 +169,44 @@ export default function Dashboard() {
     },
     [clientFormsStatus, confirmedEmail, formActionLoading]
   );
+
+  const handleSendAllForms = async (formTypes: FormType[]) => {
+    if (!confirmedEmail) return;
+
+    const normalizedEmail = normalizeEmail(confirmedEmail);
+
+    setFormActionLoading((prev) => {
+      const updated = { ...prev };
+      formTypes.forEach((type) => (updated[type] = true));
+      return updated;
+    });
+
+    try {
+      const { ok, data } = await sendMultipleFormTokens(normalizedEmail);
+
+      if (!ok) {
+        setError(data.error || "Failed to send multiple forms");
+        return;
+      }
+
+      const { ok: fetchOk, data: updatedStatus } = await fetchClientStatus(
+        normalizedEmail
+      );
+      if (fetchOk) setClientFormsStatus(updatedStatus);
+
+      setSuccessMessage("All eligible forms have been sent successfully");
+      setError("");
+    } catch (err) {
+      setError("Unexpected error occurred while sending all forms");
+      setSuccessMessage("");
+    } finally {
+      setFormActionLoading((prev) => {
+        const updated = { ...prev };
+        formTypes.forEach((type) => (updated[type] = false));
+        return updated;
+      });
+    }
+  };
 
   const openRevokeModal = (formType: FormType) => {
     setRevokeFormType(formType);
@@ -203,24 +223,23 @@ export default function Dashboard() {
   };
 
   const handleConfirmRevoke = async () => {
-    await handleRevokeForm(revokeFormType!);
+    if (!revokeFormType) return;
+    await handleRevokeForm(revokeFormType);
     closeRevokeModal();
   };
 
   const handleRevokeForm = useCallback(
     async (formType: FormType) => {
-      const normalizedEmail = normalizeEmail(confirmedEmail!);
-      if (formActionLoading[formType]) return;
+      if (!confirmedEmail || formActionLoading[formType]) return;
+
+      const normalizedEmail = normalizeEmail(confirmedEmail);
 
       setFormActionLoading((prev) => ({ ...prev, [formType]: true }));
       setClientFormsStatus((prev) => ({
         ...prev!,
         forms: {
           ...prev!.forms,
-          [formType]: {
-            ...prev!.forms[formType],
-            activeToken: false,
-          },
+          [formType]: { ...prev!.forms[formType], activeToken: false },
         },
       }));
 
@@ -231,14 +250,10 @@ export default function Dashboard() {
           ...prev!,
           forms: {
             ...prev!.forms,
-            [formType]: {
-              ...prev!.forms[formType],
-              activeToken: true,
-            },
+            [formType]: { ...prev!.forms[formType], activeToken: true },
           },
         }));
         setError(data.error || `Failed to revoke ${formType} form`);
-        setSuccessMessage("");
       } else {
         setClientFormsStatus((prev) => ({
           ...prev!,
@@ -246,8 +261,8 @@ export default function Dashboard() {
             ...prev!.forms,
             [formType]: {
               ...prev!.forms[formType],
-              revokedAt: data.revokedAt ?? null,
               activeToken: false,
+              revokedAt: data.revokedAt ?? null,
             },
           },
         }));
@@ -255,7 +270,7 @@ export default function Dashboard() {
 
       setFormActionLoading((prev) => ({ ...prev, [formType]: false }));
     },
-    [clientFormsStatus, confirmedEmail, formActionLoading]
+    [confirmedEmail, formActionLoading]
   );
 
   const handleDeleteClient = async () => {
@@ -338,7 +353,7 @@ export default function Dashboard() {
 
   return (
     <ProtectedAccess>
-      <div className="p-6 max-w-xl mx-auto">
+      <div className="p-4 pt-6 max-w-xl mx-auto">
         <div className="flex items-center justify-center gap-3">
           <img
             src={logoUrl}
@@ -406,6 +421,7 @@ export default function Dashboard() {
           formActionLoading={formActionLoading}
           clientInactive={isInactive}
           searchLoading={loading}
+          onSendAll={handleSendAllForms}
         />
       </div>
 

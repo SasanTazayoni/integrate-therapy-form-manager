@@ -1,4 +1,5 @@
 export const FORM_TYPES = ["YSQ", "SMI", "BECKS", "BURNS"] as const;
+
 export type FormType = (typeof FORM_TYPES)[number];
 
 export const FORM_TITLES: Record<FormType, string> = {

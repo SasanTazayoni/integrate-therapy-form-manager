@@ -40,6 +40,7 @@ export default function ClientActions({
     });
     return result;
   };
+
   const closeModalFinished = () => setModal({ type: null, closing: false });
   const confirmModal = () => {
     let result = false;
