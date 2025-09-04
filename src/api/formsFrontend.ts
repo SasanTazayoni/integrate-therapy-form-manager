@@ -50,6 +50,31 @@ export async function sendFormToken(email: string, formType: string) {
   }
 }
 
+export async function sendMultipleFormTokens(email: string) {
+  try {
+    const res = await axios.post("/forms/send-multiple", { email });
+    return { ok: true, data: res.data };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      return {
+        ok: false,
+        data: {
+          error: getErrorDisplay(
+            err,
+            "Network error while sending multiple form tokens."
+          ),
+        },
+      };
+    }
+    return {
+      ok: false,
+      data: {
+        error: "Unexpected error occurred.",
+      },
+    };
+  }
+}
+
 export async function validateFormToken(token: string) {
   try {
     const res = await axios.get("/forms/validate-token", {
