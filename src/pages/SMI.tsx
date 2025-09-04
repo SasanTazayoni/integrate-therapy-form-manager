@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useRef } from "react";
 import QuestionnaireForm from "../components/QuestionnaireForm";
 import FormResetModal from "../components/modals/FormResetModal";
 import InvalidTokenModal from "../components/modals/InvalidTokenModal";
@@ -35,6 +36,32 @@ const SMI = () => {
     handleModalCloseFinished,
     setFormError,
   } = useSMIForm();
+
+  const questionRefs = useRef<HTMLInputElement[]>([]);
+
+  const registerRef = (input: HTMLInputElement | null) => {
+    if (input && !questionRefs.current.includes(input)) {
+      questionRefs.current.push(input);
+    }
+  };
+
+  const focusQuestion = (index: number) => {
+    const input = questionRefs.current[index];
+    input?.focus();
+  };
+
+  const renderQuestion = (item: Item, index: number) => (
+    <Question
+      key={item.id}
+      item={item}
+      value={answers[item.id]}
+      onChange={(value) => handleChange(item.id, value)}
+      showError={missingIds.includes(item.id)}
+      ref={registerRef}
+      onArrowDown={() => focusQuestion(index + 1)}
+      onArrowUp={() => focusQuestion(index - 1)}
+    />
+  );
 
   const onValidSubmit = async () => {
     if (!token) {
@@ -76,16 +103,6 @@ const SMI = () => {
     return <InvalidTokenModal />;
   }
 
-  const renderQuestion = (item: Item) => (
-    <Question
-      key={item.id}
-      item={item}
-      value={answers[item.id]}
-      onChange={(value) => handleChange(item.id, value)}
-      showError={missingIds.includes(item.id)}
-    />
-  );
-
   return (
     <>
       <QuestionnaireForm
@@ -98,7 +115,7 @@ const SMI = () => {
         <SMIInstructions />
 
         <div className="border-2 border-gray-400 divide-y divide-gray-400 rounded-lg">
-          {SMIItems.map(renderQuestion)}
+          {SMIItems.map((item, index) => renderQuestion(item, index))}
         </div>
 
         <div className="min-h-[1.5rem] text-center mt-4">
