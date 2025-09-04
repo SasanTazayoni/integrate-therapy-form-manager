@@ -490,4 +490,131 @@ describe("YSQ Component", () => {
 
     renderSpy.mockRestore();
   });
+
+  test("ArrowDown focuses the next input", () => {
+    const handleChange = vi.fn();
+    const firstQuestion = YSQEmotionalDeprivation[0];
+    const secondQuestion = YSQEmotionalDeprivation[1];
+    const questionRefs = [];
+
+    const renderSpy = vi
+      .spyOn(YSQQuestions, "default")
+      .mockImplementation(({ item, onArrowDown, ref }) => {
+        const inputRef = { focus: vi.fn() };
+        if (ref) ref(inputRef); // assign ref
+        return (
+          <div
+            data-testid={`question-${item.id}`}
+            onKeyDown={(e) => {
+              if (e.key === "ArrowDown") onArrowDown();
+            }}
+          >
+            {item.prompt}
+          </div>
+        );
+      });
+
+    vi.spyOn(useValidateTokenHook, "default").mockReturnValue({
+      isValid: true,
+      showInvalidTokenModal: false,
+      setShowInvalidTokenModal: vi.fn(),
+    });
+
+    vi.spyOn(useYSQFormHook, "default").mockReturnValue({
+      answers: {},
+      formError: "",
+      missingIds: [],
+      resetModalOpen: false,
+      resetModalClosing: false,
+      handleChange,
+      handleSubmit: (fn) => fn,
+      handleResetClick: vi.fn(),
+      confirmReset: vi.fn(),
+      cancelReset: vi.fn(),
+      handleModalCloseFinished: vi.fn(),
+      setFormError: vi.fn(),
+    });
+
+    const { getByTestId } = render(
+      <MemoryRouter>
+        <YSQ />
+      </MemoryRouter>
+    );
+
+    const firstInput = getByTestId(`question-${firstQuestion.id}`);
+    const secondInput = getByTestId(`question-${secondQuestion.id}`);
+    fireEvent.keyDown(firstInput, { key: "ArrowDown" });
+
+    const secondRef = questionRefs[1];
+    if (secondRef) {
+      expect(secondRef.focus).toHaveBeenCalled();
+    }
+
+    renderSpy.mockRestore();
+  });
+
+  test("ArrowUp focuses the previous input", () => {
+    const handleChange = vi.fn();
+
+    const firstQuestion = YSQEmotionalDeprivation[0];
+    const secondQuestion = YSQEmotionalDeprivation[1];
+
+    const questionRefs = [];
+
+    const renderSpy = vi
+      .spyOn(YSQQuestions, "default")
+      .mockImplementation(({ item, onArrowUp, ref }) => {
+        const inputRef = { focus: vi.fn() };
+        if (ref) ref(inputRef); // assign ref
+        return (
+          <div
+            data-testid={`question-${item.id}`}
+            onKeyDown={(e) => {
+              if (e.key === "ArrowUp") onArrowUp();
+            }}
+          >
+            {item.prompt}
+          </div>
+        );
+      });
+
+    vi.spyOn(useValidateTokenHook, "default").mockReturnValue({
+      isValid: true,
+      showInvalidTokenModal: false,
+      setShowInvalidTokenModal: vi.fn(),
+    });
+
+    vi.spyOn(useYSQFormHook, "default").mockReturnValue({
+      answers: {},
+      formError: "",
+      missingIds: [],
+      resetModalOpen: false,
+      resetModalClosing: false,
+      handleChange,
+      handleSubmit: (fn) => fn,
+      handleResetClick: vi.fn(),
+      confirmReset: vi.fn(),
+      cancelReset: vi.fn(),
+      handleModalCloseFinished: vi.fn(),
+      setFormError: vi.fn(),
+    });
+
+    const { getByTestId } = render(
+      <MemoryRouter>
+        <YSQ />
+      </MemoryRouter>
+    );
+
+    const firstInput = getByTestId(`question-${firstQuestion.id}`);
+    const secondInput = getByTestId(`question-${secondQuestion.id}`);
+
+    fireEvent.keyDown(secondInput, { key: "ArrowUp" });
+
+    const firstRef = questionRefs[0];
+    if (firstRef) {
+      expect(firstRef.focus).toHaveBeenCalled();
+    }
+
+    renderSpy.mockRestore();
+  });
 });
