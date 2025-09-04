@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../prisma/client";
+import { Form } from "@prisma/client";
 import { sendFormLink } from "../utils/sendFormLink";
 import { FORM_TYPES, FormType } from "../data/formTypes";
 import { generateToken, computeExpiry } from "../utils/tokens";
@@ -8,6 +9,7 @@ import { deactivateInvalidActiveForms } from "../utils/formUtils";
 import { parseDateStrict } from "../utils/dates";
 import { getValidFormByToken } from "./formControllerHelpers/formTokenHelpers";
 import { getActiveForms, mapFormSafe } from "../utils/formHelpers";
+import { sendMultipleFormLinks } from "../utils/sendMultipleFormLinks";
 
 export const createForm = async (
   req: Request<{}, unknown, { clientId: string; formType: FormType }>,
@@ -100,6 +102,82 @@ export const sendForm = async (
   } catch (error) {
     console.error("Error sending form:", error);
     res.status(500).json({ error: "Failed to send form" });
+  }
+};
+
+export const sendMultipleForms = async (
+  req: Request<{}, unknown, { email: string }>,
+  res: Response
+) => {
+  const { email } = req.body;
+  if (!email) return res.status(400).json({ error: "Email required" });
+
+  try {
+    const client = await findClientByEmail(email);
+    if (!client) return res.status(404).json({ error: "Client not found" });
+
+    const now = new Date();
+    const createdForms: Form[] = [];
+
+    const allForms = await prisma.form.findMany({
+      where: { clientId: client.id },
+    });
+
+    for (const formType of FORM_TYPES) {
+      await deactivateInvalidActiveForms(client.id, formType);
+
+      const existingActiveForm = allForms.find(
+        (f) => f.form_type === formType && f.is_active
+      );
+
+      const submittedForm = allForms.find(
+        (f) => f.form_type === formType && f.submitted_at !== null
+      );
+
+      if (existingActiveForm || (submittedForm && formType !== "SMI")) continue;
+
+      const token = generateToken();
+      const expiresAt = computeExpiry(now);
+
+      const form = await prisma.form.create({
+        data: {
+          token,
+          clientId: client.id,
+          form_type: formType,
+          token_sent_at: now,
+          token_expires_at: expiresAt,
+          is_active: true,
+          submitted_at: null,
+        },
+      });
+
+      createdForms.push(form);
+    }
+
+    if (createdForms.length === 0) {
+      console.log(
+        `No forms to send for ${client.email}: all forms are either active or already submitted.`
+      );
+
+      return res.status(409).json({
+        message:
+          "No forms to send. Active tokens or submitted forms already exist.",
+      });
+    }
+
+    await sendMultipleFormLinks({
+      email: client.email,
+      clientName: client.name ?? undefined,
+      forms: createdForms,
+    });
+
+    res.status(201).json({
+      message: "Forms sent via email",
+      sentForms: createdForms.map(mapFormSafe),
+    });
+  } catch (error) {
+    console.error("Error sending multiple forms:", error);
+    res.status(500).json({ error: "Failed to send multiple forms" });
   }
 };
 
