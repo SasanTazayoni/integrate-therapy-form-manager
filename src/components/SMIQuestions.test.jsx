@@ -65,4 +65,36 @@ describe("SMIQuestions", () => {
     fireEvent.focus(input);
     expect(input.select).toHaveBeenCalled();
   });
+
+  test("calls onArrowDown when ArrowDown key is pressed", () => {
+    const onArrowDown = vi.fn();
+    const { getByTestId } = render(
+      <SMIQuestion
+        item={item}
+        value={3}
+        onChange={vi.fn()}
+        onArrowDown={onArrowDown}
+      />
+    );
+
+    const input = getByTestId("input-1");
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+    expect(onArrowDown).toHaveBeenCalled();
+  });
+
+  test("calls onArrowUp when ArrowUp key is pressed", () => {
+    const onArrowUp = vi.fn();
+    const { getByTestId } = render(
+      <SMIQuestion
+        item={item}
+        value={3}
+        onChange={vi.fn()}
+        onArrowUp={onArrowUp}
+      />
+    );
+
+    const input = getByTestId("input-1");
+    fireEvent.keyDown(input, { key: "ArrowUp" });
+    expect(onArrowUp).toHaveBeenCalled();
+  });
 });
