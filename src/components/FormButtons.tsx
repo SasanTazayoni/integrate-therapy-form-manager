@@ -58,6 +58,7 @@ export default function FormButtons({
             label="Send all"
             disabled={sendAllDisabled}
             onClick={() => onSendAll(sendableFormTypes)}
+            testId="send-all-forms-button"
           />
         </div>
       )}
