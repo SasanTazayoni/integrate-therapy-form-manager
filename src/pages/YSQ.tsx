@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useRef } from "react";
 import QuestionnaireForm from "../components/QuestionnaireForm";
 import FormResetModal from "../components/modals/FormResetModal";
 import InvalidTokenModal from "../components/modals/InvalidTokenModal";
@@ -76,6 +77,18 @@ const YSQ = () => {
     setFormError,
   } = useYSQForm();
 
+  const questionInputRefs = useRef<HTMLInputElement[]>([]);
+
+  const handleArrowDown = (currentIndex: number) => {
+    const nextInput = questionInputRefs.current[currentIndex + 1];
+    nextInput?.focus();
+  };
+
+  const handleArrowUp = (currentIndex: number) => {
+    const previousInput = questionInputRefs.current[currentIndex - 1];
+    previousInput?.focus();
+  };
+
   const onValidSubmit = () =>
     submitYSQWithToken({
       token,
@@ -98,13 +111,22 @@ const YSQ = () => {
     return <InvalidTokenModal />;
   }
 
-  const renderQuestion = (item: Item) => (
+  const allQuestions: Item[] = YSQ_SCHEMAS.flatMap((schema) => schema.data);
+
+  const renderQuestion = (question: Item, index: number) => (
     <Question
-      key={item.id}
-      item={item}
-      value={answers[item.id]}
-      onChange={(value) => handleChange(item.id, value)}
-      showError={missingIds.includes(item.id)}
+      key={question.id}
+      item={question}
+      value={answers[question.id]}
+      onChange={(value) => handleChange(question.id, value)}
+      showError={missingIds.includes(question.id)}
+      ref={(inputRef) => {
+        if (inputRef && !questionInputRefs.current.includes(inputRef)) {
+          questionInputRefs.current.push(inputRef);
+        }
+      }}
+      onArrowDown={() => handleArrowDown(index)}
+      onArrowUp={() => handleArrowUp(index)}
     />
   );
 
@@ -120,11 +142,9 @@ const YSQ = () => {
         <YSQInstructions />
 
         <div className="border-2 border-gray-400 divide-y divide-gray-400 rounded-lg">
-          {YSQ_SCHEMAS.map((schema) => (
-            <section key={schema.key} aria-label={schema.label}>
-              {schema.data.map(renderQuestion)}
-            </section>
-          ))}
+          {allQuestions.map((question, index) =>
+            renderQuestion(question, index)
+          )}
         </div>
 
         <div className="min-h-[1.5rem] text-center mt-4">
@@ -135,7 +155,6 @@ const YSQ = () => {
           <Button type="submit" variant="primary">
             Submit
           </Button>
-
           <Button type="button" variant="danger" onClick={handleResetClick}>
             Reset
           </Button>
