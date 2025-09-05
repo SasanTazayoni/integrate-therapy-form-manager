@@ -98,6 +98,16 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
+vi.mock("../components/RatingScaleToolTip", () => ({
+  default: ({ title, items }) => (
+    <div data-testid="rating-scale-tooltip" data-title={title}>
+      {items.map((item, index) => (
+        <div key={index}>{item}</div>
+      ))}
+    </div>
+  ),
+}));
+
 describe("SMI Component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -523,5 +533,40 @@ describe("SMI Component", () => {
     }
 
     renderSpy.mockRestore();
+  });
+
+  test("renders RatingScaleTooltip with correct items", () => {
+    vi.spyOn(useValidateTokenHook, "default").mockReturnValue({
+      isValid: true,
+      showInvalidTokenModal: false,
+      setShowInvalidTokenModal: vi.fn(),
+    });
+
+    vi.spyOn(useSMIFormHook, "default").mockReturnValue({
+      answers: {},
+      formError: "",
+      missingIds: [],
+      resetModalOpen: false,
+      resetModalClosing: false,
+      handleChange: vi.fn(),
+      handleSubmit: (fn) => fn,
+      handleResetClick: vi.fn(),
+      confirmReset: vi.fn(),
+      cancelReset: vi.fn(),
+      handleModalCloseFinished: vi.fn(),
+      setFormError: vi.fn(),
+    });
+
+    const { getByTestId, getByText } = render(
+      <MemoryRouter>
+        <SMI />
+      </MemoryRouter>
+    );
+
+    const tooltip = getByTestId("rating-scale-tooltip");
+    expect(tooltip).toBeInTheDocument();
+    expect(tooltip.dataset.title).toBe("SMI Frequency Scale");
+    expect(getByText("1 = Never or Almost Never")).toBeInTheDocument();
+    expect(getByText("6 = All of the time")).toBeInTheDocument();
   });
 });
