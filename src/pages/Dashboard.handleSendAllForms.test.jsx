@@ -68,6 +68,7 @@ describe("Dashboard - handleSendAllForms", () => {
       error: "",
       setError: setErrorMock,
     });
+    clientsApi.fetchClientStatus.mockResolvedValue({ ok: true, data: {} });
   });
 
   test("button does nothing if confirmedEmail is missing", async () => {
