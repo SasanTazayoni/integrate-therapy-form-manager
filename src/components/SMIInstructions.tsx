@@ -6,7 +6,9 @@ const SMIInstructions = () => {
         <p className="mb-4 text-gray-900">
           Listed below are statements that people might use to describe
           themselves. Please rate each item on how often you have believed or
-          felt each statement in general using the frequency scale.
+          felt each statement in general using the frequency scale. If you
+          forget the rating scale, you can check the icon at the top right of
+          the screen.
         </p>
       </div>
 
