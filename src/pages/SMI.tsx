@@ -14,6 +14,16 @@ import SMIInstructions from "../components/SMIInstructions";
 import Button from "../components/ui/Button";
 import { computeSMIScores } from "../utils/SMIHelpers";
 import { smiBoundaries, categoryKeyMap } from "../data/SMIBoundaries";
+import RatingScaleTooltip from "../components/RatingScaleToolTip";
+
+const SMI_RATING_SCALE = [
+  "1 = Never or Almost Never",
+  "2 = Rarely",
+  "3 = Occasionally",
+  "4 = Frequently",
+  "5 = Most of the time",
+  "6 = All of the time",
+];
 
 const SMI = () => {
   const { token } = useParams<{ token: string }>();
@@ -105,6 +115,11 @@ const SMI = () => {
 
   return (
     <>
+      <RatingScaleTooltip
+        title="SMI Frequency Scale"
+        items={SMI_RATING_SCALE}
+      />
+
       <QuestionnaireForm
         title="SMI"
         questionnaire="SMI"
