@@ -11,40 +11,6 @@ import { getValidFormByToken } from "./formControllerHelpers/formTokenHelpers";
 import { getActiveForms, mapFormSafe } from "../utils/formHelpers";
 import { sendMultipleFormLinks } from "../utils/sendMultipleFormLinks";
 
-export const createForm = async (
-  req: Request<{}, unknown, { clientId: string; formType: FormType }>,
-  res: Response
-) => {
-  const { clientId, formType } = req.body;
-
-  if (!clientId || !formType || !FORM_TYPES.includes(formType)) {
-    return res.status(400).json({ error: "Invalid input" });
-  }
-
-  try {
-    const token = generateToken();
-    const now = new Date();
-    const expiresAt = computeExpiry(now);
-
-    const form = await prisma.form.create({
-      data: {
-        clientId,
-        form_type: formType,
-        token,
-        token_sent_at: now,
-        token_expires_at: expiresAt,
-        is_active: true,
-        submitted_at: null,
-      },
-    });
-
-    res.status(201).json(mapFormSafe(form));
-  } catch (error) {
-    console.error("Error creating form:", error);
-    res.status(500).json({ error: "Failed to create form" });
-  }
-};
-
 export const sendForm = async (
   req: Request<{ formType: FormType }, unknown, { email: string }>,
   res: Response

@@ -103,56 +103,6 @@ describe("formController", () => {
     vi.clearAllMocks();
   });
 
-  test("createForm returns 400 if invalid input", async () => {
-    const req = { body: { clientId: "", formType: "invalid" } };
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
-
-    await createForm(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ error: "Invalid input" });
-  });
-
-  test("createForm creates form successfully", async () => {
-    const mockForm = { id: "1", clientId: "123", form_type: FORM_TYPES[0] };
-    prisma.form.create.mockResolvedValue(mockForm);
-
-    const req = { body: { clientId: "123", formType: FORM_TYPES[0] } };
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
-
-    await createForm(req, res);
-
-    expect(tokens.generateToken).toHaveBeenCalled();
-    expect(tokens.computeExpiry).toHaveBeenCalled();
-    expect(prisma.form.create).toHaveBeenCalled();
-    expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith(mockForm);
-  });
-
-  test("createForm handles errors and returns 500", async () => {
-    prisma.form.create.mockRejectedValue(new Error("DB error"));
-    const req = { body: { clientId: "123", formType: FORM_TYPES[0] } };
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
-
-    await createForm(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ error: "Failed to create form" });
-  });
-
-  test("createForm handles token generation errors", async () => {
-    tokens.generateToken.mockImplementation(() => {
-      throw new Error("Token failed");
-    });
-    const req = { body: { clientId: "123", formType: FORM_TYPES[0] } };
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
-
-    await createForm(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({ error: "Failed to create form" });
-  });
-
   test("sendForm returns 400 if input invalid", async () => {
     const req = { body: { email: "" }, params: { formType: "invalid" } };
     const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };

@@ -1,6 +1,5 @@
 import { Router } from "express";
 import {
-  createForm,
   sendForm,
   sendMultipleForms,
   validateToken,
@@ -16,7 +15,6 @@ import {
 
 const router = Router();
 
-router.post("/", createForm);
 router.post("/send-token/:formType", sendForm);
 router.post("/send-multiple", sendMultipleForms);
 router.post("/revoke-token/:formType", revokeFormToken);
