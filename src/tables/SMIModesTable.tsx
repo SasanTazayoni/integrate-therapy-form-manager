@@ -1,4 +1,4 @@
-import { FileText } from "lucide-react";
+import { FileText, Database } from "lucide-react";
 import { getCellData, shouldHighlight } from "../utils/SMIHelpers";
 
 type SMIModesTableProps = {
@@ -93,14 +93,26 @@ export default function SMIModesTable({
                       </div>
                     )}
                     {isLastCell && (
-                      <div
-                        className="relative inline-flex justify-center group cursor-pointer mt-4"
-                        onClick={openModal}
-                        title="Open SMI Summary Sheet"
-                      >
-                        <FileText className="w-10 h-10 text-gray-400 transition-colors duration-200 hover:text-gray-600" />
-                        <div className="absolute bottom-full hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-50">
-                          SMI score summary sheet
+                      <div className="flex justify-center gap-4 mt-4">
+                        <div
+                          className="relative inline-flex justify-center group cursor-pointer"
+                          onClick={openModal}
+                          title="Open SMI Summary Sheet"
+                        >
+                          <FileText className="w-10 h-10 text-gray-400 transition-colors duration-200 hover:text-gray-600" />
+                          <div className="absolute bottom-full hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-50">
+                            SMI score summary sheet
+                          </div>
+                        </div>
+
+                        <div
+                          className="relative inline-flex justify-center group cursor-pointer"
+                          title="Retrieve all SMI submissions"
+                        >
+                          <Database className="w-10 h-10 text-gray-400 transition-colors duration-200 hover:text-gray-600" />
+                          <div className="absolute bottom-full hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-50">
+                            Retrieve all submissions
+                          </div>
                         </div>
                       </div>
                     )}
@@ -136,7 +148,7 @@ export default function SMIModesTable({
           );
         })}
 
-        <div className="p-4 rounded bg-gray-100 border border-gray-300 flex flex-col items-center justify-center">
+        <div className="p-4 rounded bg-gray-100 border border-gray-300 flex flex-col items-center justify-center space-y-3">
           <div
             className="relative inline-flex justify-center group cursor-pointer"
             onClick={openModal}
@@ -145,6 +157,16 @@ export default function SMIModesTable({
             <FileText className="w-10 h-10 text-gray-400 transition-colors duration-200 hover:text-gray-600" />
             <div className="absolute bottom-full hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-50">
               SMI score summary sheet
+            </div>
+          </div>
+
+          <div
+            className="relative inline-flex justify-center group cursor-pointer"
+            title="Retrieve all SMI submissions"
+          >
+            <Database className="w-10 h-10 text-gray-400 transition-colors duration-200 hover:text-gray-600" />
+            <div className="absolute bottom-full hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-50">
+              Retrieve all submissions
             </div>
           </div>
         </div>
