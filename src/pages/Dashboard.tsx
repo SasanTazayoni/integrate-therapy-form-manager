@@ -28,6 +28,7 @@ import ClientActions from "../components/ClientActions";
 
 export default function Dashboard() {
   const navigate = useNavigate();
+
   const {
     email: contextEmail,
     setEmail: setContextEmail,
@@ -62,7 +63,15 @@ export default function Dashboard() {
   const isInactive = clientFormsStatus?.inactive ?? false;
   const isFormActionInProgress = Object.values(formActionLoading).some(Boolean);
 
+  useEffect(() => {
+    if (contextEmail) {
+      setEmail(contextEmail);
+      handleCheckProgress();
+    }
+  }, []);
+
   useEffect(() => setContextEmail(email), [email, setContextEmail]);
+
   useEffect(
     () => setContextClientFormsStatus(clientFormsStatus),
     [clientFormsStatus, setContextClientFormsStatus]
@@ -70,6 +79,7 @@ export default function Dashboard() {
 
   const handleEmailChange = (value: string) => {
     setEmail(value);
+    setContextEmail(value);
     setError("");
     setShowAddClientPrompt(false);
     setClientFormsStatus(null);
