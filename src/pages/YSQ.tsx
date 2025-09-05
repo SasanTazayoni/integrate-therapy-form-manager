@@ -29,6 +29,7 @@ import { Loader2 } from "lucide-react";
 import YSQInstructions from "../components/YSQInstructions";
 import Button from "../components/ui/Button";
 import { YSQSchema, submitYSQWithToken } from "../utils/YSQHelpers";
+import RatingScaleTooltip from "../components/RatingScaleToolTip";
 
 const YSQ_SCHEMAS: YSQSchema[] = [
   { key: "ed", label: "Emotional Deprivation", data: YSQEmotionalDeprivation },
@@ -53,6 +54,15 @@ const YSQ_SCHEMAS: YSQSchema[] = [
   { key: "as", label: "Approval Seeking", data: YSQApprovalSeeking },
   { key: "np", label: "Negativity/Pessimism", data: YSQNegativityPessimism },
   { key: "pu", label: "Punitiveness", data: YSQPunitiveness },
+];
+
+const YSQ_RATING_SCALE = [
+  "1 – Completely untrue of me",
+  "2 – Mostly untrue of me",
+  "3 – Slightly more true than untrue",
+  "4 – Moderately true of me",
+  "5 – Mostly true of me",
+  "6 – Describes me perfectly",
 ];
 
 const YSQ = () => {
@@ -132,6 +142,8 @@ const YSQ = () => {
 
   return (
     <>
+      <RatingScaleTooltip title="YSQ Rating Scale" items={YSQ_RATING_SCALE} />
+
       <QuestionnaireForm
         title="YSQ"
         questionnaire="YSQ"
