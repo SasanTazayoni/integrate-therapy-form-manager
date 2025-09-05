@@ -39,9 +39,11 @@ vi.mock("react-dom", async () => {
 });
 
 beforeAll(() => {
+  vi.clearAllMocks();
   const modalRoot = document.createElement("div");
   modalRoot.setAttribute("id", "modal-root");
   document.body.appendChild(modalRoot);
+  clientsApi.fetchClientStatus.mockResolvedValue({ ok: true, data: {} });
 });
 
 afterAll(() => {
