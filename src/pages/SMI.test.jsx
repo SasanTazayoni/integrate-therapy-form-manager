@@ -98,7 +98,7 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-vi.mock("../components/RatingScaleToolTip", () => ({
+vi.mock("../components/RatingScaleTooltip", () => ({
   default: ({ title, items }) => (
     <div data-testid="rating-scale-tooltip" data-title={title}>
       {items.map((item, index) => (

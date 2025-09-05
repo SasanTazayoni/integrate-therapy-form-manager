@@ -29,7 +29,7 @@ import { Loader2 } from "lucide-react";
 import YSQInstructions from "../components/YSQInstructions";
 import Button from "../components/ui/Button";
 import { YSQSchema, submitYSQWithToken } from "../utils/YSQHelpers";
-import RatingScaleTooltip from "../components/RatingScaleToolTip";
+import RatingScaleTooltip from "../components/RatingScaleTooltip";
 
 const YSQ_SCHEMAS: YSQSchema[] = [
   { key: "ed", label: "Emotional Deprivation", data: YSQEmotionalDeprivation },

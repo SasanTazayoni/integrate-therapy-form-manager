@@ -14,7 +14,7 @@ import SMIInstructions from "../components/SMIInstructions";
 import Button from "../components/ui/Button";
 import { computeSMIScores } from "../utils/SMIHelpers";
 import { smiBoundaries, categoryKeyMap } from "../data/SMIBoundaries";
-import RatingScaleTooltip from "../components/RatingScaleToolTip";
+import RatingScaleTooltip from "../components/RatingScaleTooltip";
 
 const SMI_RATING_SCALE = [
   "1 = Never or Almost Never",
