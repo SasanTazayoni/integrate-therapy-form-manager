@@ -11,7 +11,9 @@ const YSQInstructions = () => {
           that it would be even more accurate in describing you (but do not
           change the basic meaning of the question). Then choose the highest
           rating from 1 to 6 that best describes you (including your revisions)
-          and write the number on the line before each statement.
+          and write the number on the line before each statement. If you forget
+          the rating scale, you can check the icon at the top right of the
+          screen.
         </p>
 
         <p className="font-bold mb-1">Rating Scale:</p>
