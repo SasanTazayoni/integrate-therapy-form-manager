@@ -1,6 +1,6 @@
 export type SubmitPayload = {
   token: string;
-  result: string | number;
+  result: string;
 };
 
 export type SubmitResponse = {
@@ -11,7 +11,7 @@ export type SubmitResponse = {
 
 export type SubmitFormParams = {
   token?: string;
-  result: string | number;
+  result: string;
   submitFn: (payload: SubmitPayload) => Promise<SubmitResponse>;
   setFormError: (msg: string) => void;
   setShowInvalidTokenModal: (show: boolean) => void;
