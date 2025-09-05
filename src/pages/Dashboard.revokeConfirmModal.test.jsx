@@ -131,7 +131,12 @@ describe("Dashboard - RevokeConfirmModal", () => {
     expect(queryByTestId("revoke-modal")).toBeNull();
   });
 
-  test("modal appears when showRevokeModal and revokeFormType are set", () => {
+  test("modal appears when showRevokeModal and revokeFormType are set", async () => {
+    clientsApi.fetchClientStatus.mockResolvedValueOnce({
+      ok: true,
+      data: mockClientFormsStatus,
+    });
+
     const { getByTestId, queryByTestId } = render(
       <MemoryRouter>
         <ClientContext.Provider value={contextValue}>
@@ -140,13 +145,27 @@ describe("Dashboard - RevokeConfirmModal", () => {
       </MemoryRouter>
     );
 
+    // Wait for useEffect to fetch client status
+    await waitFor(() =>
+      expect(clientsApi.fetchClientStatus).toHaveBeenCalledWith(
+        contextValue.email.toLowerCase()
+      )
+    );
+
     const revokeButton = getByTestId("revoke-YSQ-button");
     fireEvent.click(revokeButton);
 
-    expect(queryByTestId("revoke-modal")).toBeTruthy();
+    await waitFor(() => {
+      expect(queryByTestId("revoke-modal")).toBeTruthy();
+    });
   });
 
-  test("modal disappears after handleCloseFinished", () => {
+  test("modal disappears after handleCloseFinished", async () => {
+    clientsApi.fetchClientStatus.mockResolvedValueOnce({
+      ok: true,
+      data: mockClientFormsStatus,
+    });
+
     const { getByTestId, queryByTestId } = render(
       <MemoryRouter>
         <ClientContext.Provider value={contextValue}>
@@ -155,12 +174,25 @@ describe("Dashboard - RevokeConfirmModal", () => {
       </MemoryRouter>
     );
 
+    await waitFor(() =>
+      expect(clientsApi.fetchClientStatus).toHaveBeenCalledWith(
+        contextValue.email.toLowerCase()
+      )
+    );
+
     const revokeButton = getByTestId("revoke-YSQ-button");
     fireEvent.click(revokeButton);
-    expect(queryByTestId("revoke-modal")).toBeTruthy();
+
+    await waitFor(() => {
+      expect(queryByTestId("revoke-modal")).toBeTruthy();
+    });
+
     const closeButton = getByTestId("close-modal");
     fireEvent.click(closeButton);
-    expect(queryByTestId("revoke-modal")).toBeNull();
+
+    await waitFor(() => {
+      expect(queryByTestId("revoke-modal")).toBeNull();
+    });
   });
 
   test("onCancel triggers closeRevokeModal", () => {
@@ -176,7 +208,12 @@ describe("Dashboard - RevokeConfirmModal", () => {
     expect(closeRevokeModal).toHaveBeenCalled();
   });
 
-  test("closeRevokeModal sets closingRevokeModal to true", () => {
+  test("closeRevokeModal sets closingRevokeModal to true", async () => {
+    clientsApi.fetchClientStatus.mockResolvedValueOnce({
+      ok: true,
+      data: mockClientFormsStatus,
+    });
+
     const { getByTestId } = render(
       <MemoryRouter>
         <ClientContext.Provider value={contextValue}>
@@ -185,11 +222,21 @@ describe("Dashboard - RevokeConfirmModal", () => {
       </MemoryRouter>
     );
 
+    await waitFor(() =>
+      expect(clientsApi.fetchClientStatus).toHaveBeenCalledWith(
+        contextValue.email.toLowerCase()
+      )
+    );
+
     fireEvent.click(getByTestId("revoke-YSQ-button"));
     const modal = getByTestId("revoke-modal");
     expect(modal).toBeTruthy();
+
     fireEvent.click(getByTestId("cancel-button"));
-    expect(modal).toHaveAttribute("data-closing", "true");
+
+    await waitFor(() => {
+      expect(modal).toHaveAttribute("data-closing", "true");
+    });
   });
 
   test("clicking revoke confirm calls revokeFormToken", async () => {
@@ -308,27 +355,40 @@ describe("Dashboard - RevokeConfirmModal", () => {
     });
   });
 
-  test("shows fallback error if revokeFormToken API fails without error message", async () => {
-    const mockEmail = "test@example.com";
+  test("clicking revoke confirm shows fallback error message when revokeFormToken fails without error", async () => {
+    const mockEmail = "FALLBACK@Example.com";
+    const normalizedEmail = mockEmail.toLowerCase();
 
-    vi.spyOn(clientsApi, "fetchClientStatus").mockResolvedValue({
+    clientsApi.fetchClientStatus.mockResolvedValue({
       ok: true,
       data: {
         exists: true,
-        inactive: false,
-        formsCompleted: 2,
-        forms: { YSQ: { submitted: false, activeToken: true } },
+        clientStatus: "active",
+        forms: {
+          YSQ: { submitted: false, activeToken: true },
+        },
       },
     });
 
-    vi.spyOn(formsApi, "revokeFormToken").mockResolvedValue({
+    formsApi.revokeFormToken.mockResolvedValue({
       ok: false,
       data: {},
     });
 
     const { getByTestId, findByText } = render(
       <MemoryRouter>
-        <ClientContext.Provider value={contextValue}>
+        <ClientContext.Provider
+          value={{
+            email: mockEmail,
+            setEmail: vi.fn(),
+            clientFormsStatus: null,
+            setClientFormsStatus: vi.fn(),
+            successMessage: "",
+            setSuccessMessage: vi.fn(),
+            error: "",
+            setError: vi.fn(),
+          }}
+        >
           <Dashboard />
         </ClientContext.Provider>
       </MemoryRouter>
@@ -337,15 +397,19 @@ describe("Dashboard - RevokeConfirmModal", () => {
     fireEvent.change(getByTestId("email-input"), {
       target: { value: mockEmail },
     });
+
     fireEvent.click(getByTestId("check-button"));
 
-    await waitFor(() =>
-      expect(clientsApi.fetchClientStatus).toHaveBeenCalledWith(mockEmail)
-    );
+    await waitFor(() => {
+      expect(clientsApi.fetchClientStatus).toHaveBeenCalledWith(
+        normalizedEmail
+      );
+    });
 
     fireEvent.click(getByTestId("revoke-YSQ-button"));
     fireEvent.click(getByTestId("revoke-confirm-button"));
-    await findByText("Failed to revoke YSQ form");
+    const errorMessage = await findByText("Failed to revoke YSQ form");
+    expect(errorMessage).toBeInTheDocument();
   });
 
   test("sets revokedAt to null if revokeFormToken returns undefined", async () => {
