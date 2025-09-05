@@ -69,6 +69,16 @@ vi.mock("../components/modals/FormResetModal", () => ({
   ),
 }));
 
+vi.mock("../components/RatingScaleToolTip", () => ({
+  default: ({ title, items }) => (
+    <div data-testid="rating-scale-tooltip" data-title={title}>
+      {items.map((item, index) => (
+        <div key={index}>{item}</div>
+      ))}
+    </div>
+  ),
+}));
+
 describe("YSQ Component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -501,7 +511,7 @@ describe("YSQ Component", () => {
       .spyOn(YSQQuestions, "default")
       .mockImplementation(({ item, onArrowDown, ref }) => {
         const inputRef = { focus: vi.fn() };
-        if (ref) ref(inputRef); // assign ref
+        if (ref) ref(inputRef);
         return (
           <div
             data-testid={`question-${item.id}`}
@@ -565,7 +575,7 @@ describe("YSQ Component", () => {
       .spyOn(YSQQuestions, "default")
       .mockImplementation(({ item, onArrowUp, ref }) => {
         const inputRef = { focus: vi.fn() };
-        if (ref) ref(inputRef); // assign ref
+        if (ref) ref(inputRef);
         return (
           <div
             data-testid={`question-${item.id}`}
@@ -616,5 +626,40 @@ describe("YSQ Component", () => {
     }
 
     renderSpy.mockRestore();
+  });
+
+  test("renders RatingScaleTooltip with correct items", () => {
+    vi.spyOn(useValidateTokenHook, "default").mockReturnValue({
+      isValid: true,
+      showInvalidTokenModal: false,
+      setShowInvalidTokenModal: vi.fn(),
+    });
+
+    vi.spyOn(useYSQFormHook, "default").mockReturnValue({
+      answers: {},
+      formError: "",
+      missingIds: [],
+      resetModalOpen: false,
+      resetModalClosing: false,
+      handleChange: vi.fn(),
+      handleSubmit: (fn) => fn,
+      handleResetClick: vi.fn(),
+      confirmReset: vi.fn(),
+      cancelReset: vi.fn(),
+      handleModalCloseFinished: vi.fn(),
+      setFormError: vi.fn(),
+    });
+
+    const { getByTestId, getByText } = render(
+      <MemoryRouter>
+        <YSQ />
+      </MemoryRouter>
+    );
+
+    const tooltip = getByTestId("rating-scale-tooltip");
+    expect(tooltip).toBeInTheDocument();
+    expect(tooltip.dataset.title).toBe("YSQ Rating Scale");
+    expect(getByText("1 – Completely untrue of me")).toBeInTheDocument();
+    expect(getByText("6 – Describes me perfectly")).toBeInTheDocument();
   });
 });
