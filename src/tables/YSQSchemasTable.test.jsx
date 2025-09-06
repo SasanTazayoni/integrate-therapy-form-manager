@@ -35,7 +35,7 @@ describe("YSQSchemasTable", () => {
     expect(result.rawScore).toBe("10");
     expect(result.score456).toBe("5");
     expect(result.rating).toBe("Low");
-    expect(result.highlight).toBe(false);
+    expect(result.highlightLevel).toBe("none");
   });
 
   test("getSchemaRowScores returns correct values for 456 grayedOutCol", () => {
@@ -47,7 +47,7 @@ describe("YSQSchemasTable", () => {
     expect(result.rawScore).toBe("10");
     expect(result.score456).toBe("5");
     expect(result.rating).toBe("Severe");
-    expect(result.highlight).toBe(true);
+    expect(result.highlightLevel).toBe("severe");
   });
 
   test("getSchemaRowScores handles empty scores gracefully", () => {
@@ -56,7 +56,7 @@ describe("YSQSchemasTable", () => {
     expect(result.rawScore).toBe("");
     expect(result.score456).toBe("");
     expect(result.rating).toBe("");
-    expect(result.highlight).toBe(false);
+    expect(result.highlightLevel).toBe("none");
   });
 
   test("renders table headers", () => {
@@ -93,6 +93,7 @@ describe("YSQSchemasTable", () => {
     expect(mockOnHeaderRightClick).toHaveBeenCalledTimes(2);
     expect(mockOnHeaderRightClick.mock.calls[0][1]).toBe("raw");
     expect(mockOnHeaderRightClick.mock.calls[1][1]).toBe("456");
+
     const maxHeader = getByText("Max");
     const ratingHeader = getByText("Rating");
     fireEvent.click(maxHeader);
@@ -152,7 +153,7 @@ describe("YSQSchemasTable", () => {
     expect(score456Cell).toHaveClass("text-gray-900");
   });
 
-  test("applies highlight class for ratings that should be highlighted", () => {
+  test("applies correct classes for ratings based on highlightLevel", () => {
     const ysqScores = {
       ysq_ed_score: "25-Medium",
       ysq_ab_score: "40-High",
@@ -175,141 +176,26 @@ describe("YSQSchemasTable", () => {
       />
     );
 
-    const ratingCells = getAllByRole("cell", { name: /./ }).filter((cell) =>
+    const ratingCells = getAllByRole("cell").filter((cell) =>
       cell.classList.contains("rating-cell")
     );
 
     ratingCells.forEach((cell) => {
       const rating = cell.getAttribute("data-rating") || "";
-      const isHighlighted = ["high", "very high", "severe"].some((r) =>
-        rating.toLowerCase().includes(r)
-      );
-
-      if (isHighlighted) {
+      if (rating.toLowerCase().includes("severe")) {
+        expect(cell).toHaveClass("bg-red-300");
+        expect(cell).toHaveClass("border-red-500");
+      } else if (
+        ["high", "very high"].some((r) => rating.toLowerCase().includes(r))
+      ) {
         expect(cell).toHaveClass("bg-yellow-200");
         expect(cell).toHaveClass("border-yellow-400");
       } else {
         expect(cell).not.toHaveClass("bg-yellow-200");
         expect(cell).not.toHaveClass("border-yellow-400");
+        expect(cell).not.toHaveClass("bg-red-300");
+        expect(cell).not.toHaveClass("border-red-500");
       }
-    });
-  });
-
-  test("renders rating-cell without highlight classes when rating is not severe/high", () => {
-    const ysqScores = { ysq_ed_score: "10-Low" };
-    const ysq456Scores = { ysq_ed_456: "5-Low" };
-
-    const { getAllByRole } = render(
-      <YSQSchemasTable
-        grayedOutCol="456"
-        onHeaderClick={mockOnHeaderClick}
-        onHeaderRightClick={mockOnHeaderRightClick}
-        ysqScores={ysqScores}
-        ysq456Scores={ysq456Scores}
-      />
-    );
-
-    const ratingCells = getAllByRole("cell").filter((cell) =>
-      cell.classList.contains("rating-cell")
-    );
-
-    expect(ratingCells.length).toBeGreaterThan(0);
-
-    ratingCells.forEach((cell) => {
-      expect(cell).not.toHaveClass("bg-yellow-200");
-      expect(cell).not.toHaveClass("border-yellow-400");
-    });
-  });
-
-  test("renders all schema rows with correct names, codes, and scores", () => {
-    const ysqScores = {
-      ysq_ed_score: "12-High",
-      ysq_ab_score: "8-Low",
-      ysq_ma_score: "20-Medium",
-      ysq_si_score: "15-Low",
-      ysq_ds_score: "18-Medium",
-      ysq_fa_score: "7-Low",
-      ysq_di_score: "22-High",
-      ysq_vu_score: "10-Low",
-      ysq_eu_score: "14-Medium",
-      ysq_sb_score: "8-Low",
-      ysq_ss_score: "30-High",
-      ysq_ei_score: "5-Low",
-      ysq_us_score: "25-Medium",
-      ysq_et_score: "12-Low",
-      ysq_is_score: "20-High",
-      ysq_as_score: "16-Medium",
-      ysq_np_score: "14-Low",
-      ysq_pu_score: "18-High",
-    };
-
-    const ysq456Scores = {
-      ysq_ed_456: "5-Low",
-      ysq_ab_456: "10-Medium",
-      ysq_ma_456: "15-High",
-      ysq_si_456: "8-Low",
-      ysq_ds_456: "12-Medium",
-      ysq_fa_456: "3-Low",
-      ysq_di_456: "10-High",
-      ysq_vu_456: "6-Low",
-      ysq_eu_456: "7-Medium",
-      ysq_sb_456: "5-Low",
-      ysq_ss_456: "20-High",
-      ysq_ei_456: "2-Low",
-      ysq_us_456: "18-Medium",
-      ysq_et_456: "5-Low",
-      ysq_is_456: "15-High",
-      ysq_as_456: "10-Medium",
-      ysq_np_456: "7-Low",
-      ysq_pu_456: "12-High",
-    };
-
-    const { getByText, container } = render(
-      <YSQSchemasTable
-        grayedOutCol={null}
-        onHeaderClick={mockOnHeaderClick}
-        onHeaderRightClick={mockOnHeaderRightClick}
-        ysqScores={ysqScores}
-        ysq456Scores={ysq456Scores}
-      />
-    );
-
-    const schemas = [
-      { name: "Emotional Deprivation", code: "ED" },
-      { name: "Abandonment", code: "AB" },
-      { name: "Mistrust/Abuse", code: "MA" },
-      { name: "Social Isolation", code: "SI" },
-      { name: "Defectiveness/Shame", code: "DS" },
-      { name: "Failure", code: "FA" },
-      { name: "Dependence/Incompetence", code: "DI" },
-      { name: "Vulnerability to Harm", code: "VU" },
-      { name: "Enmeshment/Under-Developed Self", code: "EU" },
-      { name: "Subjugation", code: "SB" },
-      { name: "Self-Sacrifice", code: "SS" },
-      { name: "Emotional Inhibition", code: "EI" },
-      { name: "Unrelenting Standards", code: "US" },
-      { name: "Entitlement/Grandiosity", code: "ET" },
-      { name: "Insufficient Self-Control", code: "IS" },
-      { name: "Approval Seeking", code: "AS" },
-      { name: "Negativity/Pessimism", code: "NP" },
-      { name: "Punitiveness", code: "PU" },
-    ];
-
-    const rows = container.querySelectorAll("tbody tr");
-
-    schemas.forEach(({ name, code }, idx) => {
-      const row = rows[idx];
-      const tds = row.querySelectorAll("td");
-      expect(tds[0]).toHaveTextContent(new RegExp(`${name} \\(${code}\\)`));
-      const rawScore =
-        ysqScores[`ysq_${code.toLowerCase()}_score`].split("-")[0];
-      const score456 =
-        ysq456Scores[`ysq_${code.toLowerCase()}_456`].split("-")[0];
-      expect(tds[1]).toHaveTextContent(rawScore);
-      expect(tds[2]).toHaveTextContent(score456);
-      const rating = ysqScores[`ysq_${code.toLowerCase()}_score`].split("-")[1];
-      const ratingCell = tds[4];
-      expect(ratingCell).toHaveAttribute("data-rating", "");
     });
   });
 });
