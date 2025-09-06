@@ -10,6 +10,7 @@ import { parseDateStrict } from "../utils/dates";
 import { getValidFormByToken } from "./formControllerHelpers/formTokenHelpers";
 import { getActiveForms, mapFormSafe } from "../utils/formHelpers";
 import { sendMultipleFormLinks } from "../utils/sendMultipleFormLinks";
+import { normalizeEmail } from "../utils/normalizeEmail";
 
 export const sendForm = async (
   req: Request<{ formType: FormType }, unknown, { email: string }>,
@@ -263,5 +264,60 @@ export const updateClientInfo = async (req: Request, res: Response) => {
     return res
       .status(500)
       .json({ message: "Server error updating client info" });
+  }
+};
+
+export const getAllSubmittedSMIForms = async (req: Request, res: Response) => {
+  const emailRaw = req.query.email as string | undefined;
+
+  if (!emailRaw) {
+    return res.status(400).json({ error: "Email is required" });
+  }
+
+  const email = normalizeEmail(emailRaw);
+
+  try {
+    const client = await prisma.client.findUnique({
+      where: { email },
+    });
+
+    if (!client) {
+      return res.status(404).json({ error: "Client not found" });
+    }
+
+    const smiForms = await prisma.form.findMany({
+      where: {
+        clientId: client.id,
+        form_type: "SMI",
+        submitted_at: { not: null },
+      },
+      orderBy: { submitted_at: "desc" },
+    });
+
+    const results = smiForms.map((form) => ({
+      id: form.id,
+      submittedAt: form.submitted_at,
+      smiScores: {
+        dp: form.smi_dp_score,
+        dss: form.smi_dss_score,
+        ba: form.smi_ba_score,
+        sa: form.smi_sa_score,
+        cs: form.smi_cs_score,
+        ic: form.smi_ic_score,
+        uc: form.smi_uc_score,
+        cc: form.smi_cc_score,
+        vc: form.smi_vc_score,
+        dc: form.smi_dc_score,
+        pp: form.smi_pp_score,
+        ac: form.smi_ac_score,
+        ec: form.smi_ec_score,
+        ha: form.smi_ha_score,
+      },
+    }));
+
+    return res.json({ clientName: client.name ?? null, smiForms: results });
+  } catch (error) {
+    console.error("Error retrieving SMI submissions:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
