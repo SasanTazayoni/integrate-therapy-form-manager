@@ -69,7 +69,6 @@ export default function SMISubmissionsModal({
           setSmiForms([]);
         }
       } catch (err) {
-        console.error(err);
         setError("Failed to fetch SMI submissions.");
         setSmiForms([]);
       } finally {
@@ -115,7 +114,11 @@ export default function SMISubmissionsModal({
   if (!isOpen) return null;
 
   return (
-    <Modal ariaLabelledBy="smi-submissions-title" onOverlayClick={onClose}>
+    <Modal
+      ariaLabelledBy="smi-submissions-title"
+      onOverlayClick={onClose}
+      data-testid="smi-modal"
+    >
       <div className="items-center mb-4">
         <h2
           id="smi-submissions-title"
@@ -126,23 +129,29 @@ export default function SMISubmissionsModal({
       </div>
 
       {loading && (
-        <div className="flex justify-center py-4">
+        <div className="flex justify-center py-4" data-testid="smi-loading">
           <Loader className="w-6 h-6 text-gray-500 animate-spin" />
         </div>
       )}
 
-      {error && <p className="text-red-600 mb-2">{error}</p>}
+      {error && (
+        <p className="text-red-600 mb-2" data-testid="smi-error">
+          {error}
+        </p>
+      )}
 
       {!loading && !error && smiForms.length === 0 && (
-        <p className="text-gray-600">No previous SMI submissions found.</p>
+        <p className="text-gray-600" data-testid="smi-empty">
+          No previous SMI submissions found.
+        </p>
       )}
 
       {!loading && smiForms.length > 0 && (
-        <ul className="space-y-2 mb-2">
+        <ul className="space-y-2 mb-2" data-testid="smi-form-list">
           {smiForms.map((form) => {
             const disabled = Object.keys(form.smiScores).length === 0;
             return (
-              <li key={form.id}>
+              <li key={form.id} data-testid={`smi-form-${form.id}`}>
                 <span
                   onClick={() => !disabled && handleSelect(form)}
                   className={`cursor-pointer ${
@@ -150,6 +159,7 @@ export default function SMISubmissionsModal({
                       ? "cursor-not-allowed text-gray-400"
                       : "text-blue-500 hover:text-blue-700"
                   }`}
+                  data-testid={`smi-form-item-${form.id}`}
                 >
                   {form.submittedAt}
                 </span>
