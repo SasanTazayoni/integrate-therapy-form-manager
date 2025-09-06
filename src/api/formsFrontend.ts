@@ -264,3 +264,46 @@ export async function updateClientInfo({
     };
   }
 }
+
+export type SmiForm = {
+  id: string;
+  submittedAt: string;
+  smiScores: Record<string, string | null>;
+};
+
+export type FetchAllSmiFormsResult = {
+  ok: boolean;
+  data: {
+    clientName?: string | null;
+    smiForms?: SmiForm[];
+    error?: string;
+  };
+};
+
+export async function fetchAllSmiForms(
+  email: string
+): Promise<FetchAllSmiFormsResult> {
+  try {
+    const res = await axios.get<{
+      clientName: string | null;
+      smiForms: SmiForm[];
+    }>("/forms/smi/all", { params: { email } });
+    return { ok: true, data: res.data };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      return {
+        ok: false,
+        data: {
+          error: getErrorDisplay(
+            err,
+            "Network error while fetching SMI forms."
+          ),
+        },
+      };
+    }
+    return {
+      ok: false,
+      data: { error: "An unexpected error occurred while fetching SMI forms." },
+    };
+  }
+}
