@@ -3,7 +3,7 @@ import {
   normalizeCode,
   extractNumber,
   extractRating,
-  shouldHighlight,
+  getHighlightLevel,
 } from "../utils/YSQHelpers";
 
 type GrayedOutCol = "raw" | "456" | null;
@@ -52,9 +52,9 @@ export const getSchemaRowScores = (
     rating = extractRating(ysqScores[rawKey]);
   }
 
-  const highlight = shouldHighlight(rating);
+  const highlightLevel = getHighlightLevel(rating);
 
-  return { rawScore, score456, rating, highlight };
+  return { rawScore, score456, rating, highlightLevel };
 };
 
 export default function YSQSchemasTable({
@@ -132,8 +132,15 @@ export default function YSQSchemasTable({
         </thead>
         <tbody>
           {schemas.map((schema) => {
-            const { rawScore, score456, rating, highlight } =
+            const { rawScore, score456, rating, highlightLevel } =
               getSchemaRowScores(schema, grayedOutCol, ysqScores, ysq456Scores);
+
+            const bgClass =
+              highlightLevel === "severe"
+                ? "bg-red-300 border-red-500"
+                : highlightLevel === "highlight"
+                ? "bg-yellow-200 border-yellow-400"
+                : "";
 
             return (
               <tr
@@ -164,9 +171,7 @@ export default function YSQSchemasTable({
                 </td>
                 <td className="border border-gray-300 p-2">{schema.max}</td>
                 <td
-                  className={`border border-gray-300 p-2 font-bold rating-cell ${
-                    highlight ? "bg-yellow-200 border-yellow-400" : ""
-                  }`}
+                  className={`border border-gray-300 p-2 font-bold rating-cell ${bgClass}`}
                   data-rating={rating}
                 >
                   {rating}
