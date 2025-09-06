@@ -7,12 +7,12 @@ import { getActiveForms, mapFormSafe } from "../utils/formHelpers";
 import { parseDateStrict } from "../utils/dates";
 import { getValidFormByToken } from "../controllers/formControllerHelpers/formTokenHelpers";
 import {
-  createForm,
   sendForm,
   sendMultipleForms,
   validateToken,
   revokeFormToken,
   updateClientInfo,
+  getAllSubmittedSMIForms,
 } from "../controllers/formController";
 import { FORM_TYPES } from "../data/formTypes";
 import { sendMultipleFormLinks } from "../utils/sendMultipleFormLinks";
@@ -27,6 +27,7 @@ vi.mock("../prisma/client", () => ({
     },
     client: {
       update: vi.fn(),
+      findUnique: vi.fn(),
     },
   },
 }));
@@ -584,7 +585,7 @@ describe("formController", () => {
 
     await sendMultipleForms(req, res);
 
-    expect(prisma.form.create).toHaveBeenCalledTimes(FORM_TYPES.length - 1); // SMI still created
+    expect(prisma.form.create).toHaveBeenCalledTimes(FORM_TYPES.length - 1);
   });
 
   test("creates SMI form even if a submitted form exists", async () => {
@@ -639,5 +640,124 @@ describe("formController", () => {
         clientName: undefined,
       })
     );
+  });
+
+  test("returns 400 if email query is missing", async () => {
+    const req = { query: {} };
+    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
+
+    await getAllSubmittedSMIForms(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: "Email is required" });
+  });
+
+  test("returns 404 if client not found", async () => {
+    prisma.client.findUnique.mockResolvedValue(null);
+
+    const req = { query: { email: "test@test.com" } };
+    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
+
+    await getAllSubmittedSMIForms(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ error: "Client not found" });
+  });
+
+  test("returns empty array if client has no submitted SMI forms", async () => {
+    prisma.client.findUnique.mockResolvedValue({ id: "1", name: "John Doe" });
+    prisma.form.findMany.mockResolvedValue([]);
+
+    const req = { query: { email: "test@test.com" } };
+    const res = { json: vi.fn() };
+
+    await getAllSubmittedSMIForms(req, res);
+
+    expect(res.json).toHaveBeenCalledWith({
+      clientName: "John Doe",
+      smiForms: [],
+    });
+  });
+
+  test("returns submitted SMI forms correctly", async () => {
+    prisma.client.findUnique.mockResolvedValue({ id: "1", name: "John Doe" });
+    prisma.form.findMany.mockResolvedValue([
+      {
+        id: "form1",
+        submitted_at: new Date("2025-01-01T00:00:00Z"),
+        smi_dp_score: 1,
+        smi_dss_score: 2,
+        smi_ba_score: 3,
+        smi_sa_score: 4,
+        smi_cs_score: 5,
+        smi_ic_score: 6,
+        smi_uc_score: 7,
+        smi_cc_score: 8,
+        smi_vc_score: 9,
+        smi_dc_score: 10,
+        smi_pp_score: 11,
+        smi_ac_score: 12,
+        smi_ec_score: 13,
+        smi_ha_score: 14,
+      },
+    ]);
+
+    const req = { query: { email: "test@test.com" } };
+    const res = { json: vi.fn() };
+
+    await getAllSubmittedSMIForms(req, res);
+
+    expect(res.json).toHaveBeenCalledWith({
+      clientName: "John Doe",
+      smiForms: [
+        {
+          id: "form1",
+          submittedAt: new Date("2025-01-01T00:00:00Z"),
+          smiScores: {
+            dp: 1,
+            dss: 2,
+            ba: 3,
+            sa: 4,
+            cs: 5,
+            ic: 6,
+            uc: 7,
+            cc: 8,
+            vc: 9,
+            dc: 10,
+            pp: 11,
+            ac: 12,
+            ec: 13,
+            ha: 14,
+          },
+        },
+      ],
+    });
+  });
+
+  test("handles server errors and returns 500", async () => {
+    prisma.client.findUnique.mockRejectedValue(new Error("DB error"));
+
+    const req = { query: { email: "test@test.com" } };
+    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() };
+
+    await getAllSubmittedSMIForms(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({ error: "Internal server error" });
+  });
+
+  test("returns clientName=null if client.name is undefined", async () => {
+    prisma.client.findUnique.mockResolvedValue({ id: "2", name: undefined });
+    prisma.form.findMany.mockResolvedValue([]);
+
+    const req = { query: { email: "test2@test.com" } };
+    const res = { json: vi.fn(), status: vi.fn().mockReturnThis() };
+
+    await getAllSubmittedSMIForms(req, res);
+
+    expect(res.json).toHaveBeenCalledWith({
+      clientName: null,
+      smiForms: [],
+    });
   });
 });
