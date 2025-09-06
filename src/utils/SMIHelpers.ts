@@ -3,7 +3,13 @@ import { classifyScore } from "./SMIUtils";
 import { Item } from "../data/SMICommon";
 
 export const shouldHighlight = (rating: string) =>
-  ["high", "very high", "severe"].some((r) => rating.toLowerCase().includes(r));
+  ["high", "very high"].some((r) => rating.toLowerCase().includes(r));
+
+export const getHighlightLevel = (rating: string) => {
+  if (rating.toLowerCase().includes("severe")) return "severe";
+  if (shouldHighlight(rating)) return "highlight";
+  return "none";
+};
 
 export const getCellData = (
   mode: string,
@@ -19,7 +25,9 @@ export const getCellData = (
   if (Number.isNaN(score)) return null;
 
   const rating = classifyScore(score, smiBoundaries[key]);
-  return { score, rating, display: `${score} (${rating})` };
+  const highlightLevel = getHighlightLevel(rating);
+
+  return { score, rating, display: `${score} (${rating})`, highlightLevel };
 };
 
 export type SmiBoundaries = Record<string, number[]>;
