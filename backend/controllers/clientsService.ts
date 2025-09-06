@@ -22,7 +22,7 @@ export type Scores = {
   bai: { bai_score: string; submitted_at: string | null } | null;
   ysq: Record<string, string | null>;
   ysq456: Record<string, string | null>;
-  smi: Record<string, string | null>;
+  smi: Record<string, string | null> & { submitted_at?: string | null };
 };
 
 export const getClientFormsStatus = async (
@@ -64,13 +64,11 @@ export const getClientFormsStatus = async (
     return scores;
   };
 
-  const smiScores = extractScores(
-    getLatestForm(forms, (f) => f.form_type === "SMI"),
-    "smi_"
-  );
+  const latestSmiForm = getLatestForm(forms, (f) => f.form_type === "SMI");
+  const smiScores = extractScores(latestSmiForm, "smi_");
+  const smiSubmittedAt = latestSmiForm?.submitted_at?.toISOString() ?? null;
 
   const latestYsqForm = getLatestForm(forms, (f) => f.form_type === "YSQ");
-
   const ysqScores = extractScores(latestYsqForm, "ysq_", (key) =>
     key.endsWith("_score")
   );
@@ -132,7 +130,10 @@ export const getClientFormsStatus = async (
             submitted_at: baiForm.submitted_at?.toISOString() ?? null,
           }
         : null,
-      smi: smiScores,
+      smi: {
+        ...smiScores,
+        submitted_at: smiSubmittedAt,
+      },
       ysq: ysqScores,
       ysq456: ysq456Scores,
     },
