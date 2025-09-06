@@ -1,6 +1,6 @@
 import { FileText, Database } from "lucide-react";
 import { useState } from "react";
-import { getCellData, shouldHighlight } from "../utils/SMIHelpers";
+import { getCellData } from "../utils/SMIHelpers";
 import SMISubmissionsModal from "../components/modals/SMISubmissionsModal";
 
 type SMIModesTableProps = {
@@ -13,6 +13,13 @@ type SMIModesTableProps = {
   setLocalSmiSubmittedAt: React.Dispatch<
     React.SetStateAction<string | undefined>
   >;
+};
+
+type CellData = {
+  score: number;
+  rating: string;
+  display: string;
+  highlightLevel: "none" | "highlight" | "severe";
 };
 
 export default function SMIModesTable({
@@ -46,18 +53,21 @@ export default function SMIModesTable({
   const handleOpenSummarySheet = () => openModal();
 
   const renderTableCell = (cell: string, isLastCell: boolean) => {
-    const data = cell ? getCellData(cell, smiScores) : null;
-    const highlight = data?.rating ? shouldHighlight(data.rating) : false;
+    const data = getCellData(cell, smiScores) as CellData | null;
+    const highlightLevel = data?.highlightLevel ?? "none";
+
+    const bgClass =
+      highlightLevel === "severe"
+        ? "bg-red-300 border-red-500"
+        : highlightLevel === "highlight"
+        ? "bg-yellow-200 border-yellow-400"
+        : "bg-[--color-block--grey] border-gray-300";
 
     return (
       <td
         key={cell}
         className={`border-r p-3 align-center ${
-          isLastCell
-            ? "bg-gray-100 border-gray-300"
-            : highlight
-            ? "bg-yellow-200 border-yellow-400"
-            : "bg-[--color-block--grey] border-gray-300"
+          isLastCell ? "bg-gray-100 border-gray-300" : bgClass
         }`}
       >
         <div className="font-semibold text-sm text-gray-600">{cell}</div>
@@ -96,18 +106,18 @@ export default function SMIModesTable({
   };
 
   const renderMobileCell = (cell: string) => {
-    const data = getCellData(cell, smiScores);
-    const highlight = data?.rating ? shouldHighlight(data.rating) : false;
+    const data = getCellData(cell, smiScores) as CellData | null;
+    const highlightLevel = data?.highlightLevel ?? "none";
+
+    const bgClass =
+      highlightLevel === "severe"
+        ? "bg-red-300 border-red-500"
+        : highlightLevel === "highlight"
+        ? "bg-yellow-200 border-yellow-400"
+        : "bg-[--color-block--grey] border-gray-300";
 
     return (
-      <div
-        key={cell}
-        className={`p-4 rounded ${
-          highlight
-            ? "bg-yellow-200 border border-yellow-400"
-            : "bg-[--color-block--grey] border border-gray-300"
-        }`}
-      >
+      <div key={cell} className={`p-4 rounded ${bgClass}`}>
         <div className="font-semibold text-sm text-gray-600">{cell}</div>
         {cell && (
           <div className="mt-2 text-[--color-secondary] font-bold">
