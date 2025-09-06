@@ -23,6 +23,12 @@ const FormResultsSummary = () => {
   const { clientFormsStatus } = useClientContext() as {
     clientFormsStatus: ClientFormsStatusDetails | null;
   };
+  const [localSmiScores, setLocalSmiScores] = useState(
+    clientFormsStatus?.scores?.smi ?? {}
+  );
+  const [localSmiSubmittedAt, setLocalSmiSubmittedAt] = useState(
+    clientFormsStatus?.forms?.SMI?.submittedAt
+  );
 
   const navigate = useNavigate();
 
@@ -39,7 +45,6 @@ const FormResultsSummary = () => {
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const smiSubmittedAt = clientFormsStatus?.forms?.SMI?.submittedAt;
   const ysqSubmittedAt = clientFormsStatus?.forms?.YSQ?.submittedAt;
 
   const { score: bdiScore, label: bdiLabel } = parseScore(
@@ -92,10 +97,10 @@ const FormResultsSummary = () => {
 
         <SMIModesTable
           openModal={openModal}
-          submittedAt={
-            smiSubmittedAt ? new Date(smiSubmittedAt).toISOString() : undefined
-          }
-          smiScores={clientFormsStatus?.scores?.smi ?? {}}
+          submittedAt={localSmiSubmittedAt}
+          smiScores={localSmiScores}
+          setLocalSmiScores={setLocalSmiScores}
+          setLocalSmiSubmittedAt={setLocalSmiSubmittedAt}
         />
 
         <YSQSchemasTable
@@ -134,7 +139,14 @@ const FormResultsSummary = () => {
           ))}
         </section>
 
-        <SMISummaryModal isOpen={isModalOpen} onClose={closeModal} />
+        <SMISummaryModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          smiScores={localSmiScores}
+          submittedAt={localSmiSubmittedAt}
+          clientName={clientFormsStatus?.clientName}
+          clientDob={clientFormsStatus?.clientDob}
+        />
       </div>
     </ProtectedAccess>
   );
