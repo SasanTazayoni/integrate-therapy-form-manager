@@ -70,4 +70,20 @@ describe("RatingScaleTooltip", () => {
     fireEvent.click(button);
     expect(queryByText(title)).not.toBeInTheDocument();
   });
+
+  test("clicking outside closes the tooltip", () => {
+    const { getByLabelText, queryByText, container } = render(
+      <>
+        <div data-testid="outside">Outside element</div>
+        <RatingScaleTooltip title={title} items={items} />
+      </>
+    );
+
+    const button = getByLabelText(`Show ${title}`);
+    fireEvent.click(button);
+    expect(queryByText(title)).toBeInTheDocument();
+    const outside = container.querySelector('[data-testid="outside"]');
+    fireEvent.mouseDown(outside);
+    expect(queryByText(title)).not.toBeInTheDocument();
+  });
 });
