@@ -9,13 +9,21 @@ import Button from "../ui/Button";
 type SMISubmissionsModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  setLocalSmiScores: React.Dispatch<
+    React.SetStateAction<Record<string, string | null>>
+  >;
+  setLocalSmiSubmittedAt: React.Dispatch<
+    React.SetStateAction<string | undefined>
+  >;
 };
 
 export default function SMISubmissionsModal({
   isOpen,
   onClose,
+  setLocalSmiScores,
+  setLocalSmiSubmittedAt,
 }: SMISubmissionsModalProps) {
-  const { email, setCurrentSMI } = useClientContext();
+  const { email } = useClientContext();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [smiForms, setSmiForms] = useState<
@@ -76,10 +84,32 @@ export default function SMISubmissionsModal({
     submittedAt: string;
     smiScores: Record<string, string | null>;
   }) => {
-    if (Object.keys(form.smiScores).length === 0) return;
-    console.log("SMI Scores for", form.submittedAt, form.smiScores);
-    setCurrentSMI(form);
-    onClose();
+    const keyMap: Record<string, string> = {
+      vc: "smi_vc_score",
+      ac: "smi_ac_score",
+      ec: "smi_ec_score",
+      ic: "smi_ic_score",
+      uc: "smi_uc_score",
+      cc: "smi_cc_score",
+      cs: "smi_cs_score",
+      dp: "smi_dp_score",
+      dss: "smi_dss_score",
+      sa: "smi_sa_score",
+      ba: "smi_ba_score",
+      pp: "smi_pp_score",
+      dc: "smi_dc_score",
+      ha: "smi_ha_score",
+    };
+
+    const normalizedScores: Record<string, string | null> = {};
+
+    Object.entries(form.smiScores).forEach(([shortKey, value]) => {
+      const fullKey = keyMap[shortKey];
+      if (fullKey) normalizedScores[fullKey] = value ?? null;
+    });
+
+    setLocalSmiScores(normalizedScores);
+    setLocalSmiSubmittedAt(form.submittedAt);
   };
 
   if (!isOpen) return null;
