@@ -7,12 +7,20 @@ type SMIModesTableProps = {
   openModal: () => void;
   submittedAt?: string;
   smiScores: Record<string, string | null>;
+  setLocalSmiScores: React.Dispatch<
+    React.SetStateAction<Record<string, string | null>>
+  >;
+  setLocalSmiSubmittedAt: React.Dispatch<
+    React.SetStateAction<string | undefined>
+  >;
 };
 
 export default function SMIModesTable({
   openModal,
   submittedAt,
   smiScores,
+  setLocalSmiScores,
+  setLocalSmiSubmittedAt,
 }: SMIModesTableProps) {
   const smiModes = [
     "Detached Protector",
@@ -182,10 +190,11 @@ export default function SMIModesTable({
         </div>
       </div>
 
-      {/* SMISubmissionsModal */}
       <SMISubmissionsModal
         isOpen={isSmiModalOpen}
         onClose={() => setIsSmiModalOpen(false)}
+        setLocalSmiScores={setLocalSmiScores}
+        setLocalSmiSubmittedAt={setLocalSmiSubmittedAt}
       />
     </section>
   );
