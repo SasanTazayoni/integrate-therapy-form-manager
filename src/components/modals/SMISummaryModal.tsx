@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Modal from "../Modal";
 import Button from "../ui/Button";
-import { useClientContext } from "../../context/ClientContext";
 import { categoryKeyMap } from "../../data/SMIBoundaries";
 import { classifyBoundaryAndAlignment } from "../../utils/SMIUtils";
 import SMIModesScoreSummaryTable from "../../tables/SMIModesTableScores";
@@ -10,19 +9,22 @@ import SMIModesScoreSummaryCards from "../../tables/SMIModesScoreSummaryCards";
 type SMISummaryModalProps = {
   isOpen: boolean;
   onClose: () => void;
+  smiScores: Record<string, string | null>;
+  submittedAt?: string;
+  clientName?: string;
+  clientDob?: string;
 };
 
 export default function SMISummaryModal({
   isOpen,
   onClose,
+  smiScores,
+  submittedAt,
+  clientName,
+  clientDob,
 }: SMISummaryModalProps) {
   const [closing, setClosing] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
-
-  const { clientFormsStatus } = useClientContext();
-  const clientName = clientFormsStatus?.clientName ?? "";
-  const clientDob = clientFormsStatus?.clientDob ?? "";
-  const submittedAt = clientFormsStatus?.forms?.SMI?.submittedAt ?? "";
 
   const formattedDob = clientDob
     ? new Date(clientDob).toLocaleDateString()
@@ -50,8 +52,6 @@ export default function SMISummaryModal({
   }
 
   if (!isOpen) return null;
-
-  const smiScores = clientFormsStatus?.scores?.smi || {};
 
   const smiTableData: Record<
     string,
