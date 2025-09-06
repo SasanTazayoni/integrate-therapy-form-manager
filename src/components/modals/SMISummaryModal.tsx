@@ -152,7 +152,12 @@ export default function SMISummaryModal({
           </p>
 
           <div className="flex justify-center">
-            <Button onClick={handleCloseButtonClick}>Close</Button>
+            <Button
+              onClick={handleCloseButtonClick}
+              data-testid="internal-close-button"
+            >
+              Close
+            </Button>
           </div>
         </section>
       </div>
