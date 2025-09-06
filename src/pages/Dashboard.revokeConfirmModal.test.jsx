@@ -145,7 +145,6 @@ describe("Dashboard - RevokeConfirmModal", () => {
       </MemoryRouter>
     );
 
-    // Wait for useEffect to fetch client status
     await waitFor(() =>
       expect(clientsApi.fetchClientStatus).toHaveBeenCalledWith(
         contextValue.email.toLowerCase()

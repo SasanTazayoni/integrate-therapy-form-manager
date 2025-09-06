@@ -174,7 +174,7 @@ describe("FormButtons", () => {
       clientFormsStatus: {
         exists: true,
         forms: {
-          SMI: { activeToken: true, submitted: true }, // enable revoke
+          SMI: { activeToken: true, submitted: true },
           YSQ: { activeToken: false, submitted: false },
           BECKS: { activeToken: false, submitted: false },
           BURNS: { activeToken: false, submitted: false },
