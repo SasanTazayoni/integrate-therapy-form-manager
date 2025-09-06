@@ -2,6 +2,26 @@ import { NavigateFunction } from "react-router-dom";
 import { submitYSQForm } from "../api/formsFrontend";
 import { Item } from "../data/YSQCommon";
 
+export type HighlightLevel = "none" | "highlight" | "severe";
+
+export type YSQSchema = { key: string; label: string; data: Item[] };
+
+export type YSQCellData = {
+  score: number;
+  rating: string;
+  display: string;
+  highlightLevel: HighlightLevel;
+};
+
+export const shouldHighlight = (rating: string): boolean =>
+  ["high", "very high"].some((r) => rating.toLowerCase().includes(r));
+
+export const getHighlightLevel = (rating: string): HighlightLevel => {
+  if (rating.toLowerCase().includes("severe")) return "severe";
+  if (shouldHighlight(rating)) return "highlight";
+  return "none";
+};
+
 export const normalizeCode = (code: string): string =>
   code.split("/")[0].toLowerCase();
 
@@ -16,11 +36,6 @@ export const extractRating = (value: string | null | undefined): string => {
   const match = value.match(/-(.+)$/);
   return match ? match[1] : "";
 };
-
-export const shouldHighlight = (rating: string): boolean =>
-  ["high", "very high", "severe"].some((r) => rating.toLowerCase().includes(r));
-
-export type YSQSchema = { key: string; label: string; data: Item[] };
 
 export const submitYSQWithToken = async ({
   token,
