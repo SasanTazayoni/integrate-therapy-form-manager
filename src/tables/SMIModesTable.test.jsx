@@ -13,6 +13,7 @@ describe("SMIModesTable", () => {
   const smiScores = {
     "Detached Protector": "3-high",
     "Bully and Attack": "1-low",
+    "Self-Aggrandizer": "5-severe",
   };
   let mockSetLocalSmiScores;
   let mockSetLocalSmiSubmittedAt;
@@ -22,14 +23,21 @@ describe("SMIModesTable", () => {
     mockSetLocalSmiScores = vi.fn();
     mockSetLocalSmiSubmittedAt = vi.fn();
 
-    vi.spyOn(SMIHelpers, "getCellData").mockImplementation((cell) => ({
-      display: smiScores[cell] || "—",
-      rating: smiScores[cell]?.split("-")[1] || "",
-    }));
-
-    vi.spyOn(SMIHelpers, "shouldHighlight").mockImplementation(
-      (rating) => rating === "high"
-    );
+    vi.spyOn(SMIHelpers, "getCellData").mockImplementation((cell) => {
+      const val = smiScores[cell];
+      if (!val) return null;
+      const [num, rating] = val.split("-");
+      return {
+        display: num,
+        rating,
+        highlightLevel:
+          rating === "high"
+            ? "highlight"
+            : rating === "severe"
+            ? "severe"
+            : "none",
+      };
+    });
 
     let modalRoot = document.getElementById("modal-root");
     if (!modalRoot) {
@@ -56,22 +64,24 @@ describe("SMIModesTable", () => {
     expect(getAllByText("Healthy Adult *").length).toBeGreaterThan(0);
   });
 
-  test("highlights high-rated cells", () => {
+  test("applies yellow highlight for high-rated cells", () => {
     const { getAllByText } = renderWithClient(
-      <SMIModesTable
-        openModal={mockOpenModal}
-        smiScores={smiScores}
-        setLocalSmiScores={mockSetLocalSmiScores}
-        setLocalSmiSubmittedAt={mockSetLocalSmiSubmittedAt}
-      />
+      <SMIModesTable openModal={mockOpenModal} smiScores={smiScores} />
     );
 
-    const highlightedCells = getAllByText("Detached Protector").map(
-      (el) => el.parentElement
+    const td = getAllByText("Detached Protector")[0].closest("td");
+    expect(td).toHaveClass("bg-yellow-200");
+    expect(td).toHaveClass("border-yellow-400");
+  });
+
+  test("applies red highlight for severe-rated cells", () => {
+    const { getAllByText } = renderWithClient(
+      <SMIModesTable openModal={mockOpenModal} smiScores={smiScores} />
     );
-    highlightedCells.forEach((cell) => {
-      expect(cell).toHaveClass("bg-yellow-200");
-    });
+
+    const td = getAllByText("Self-Aggrandizer")[0].closest("td");
+    expect(td).toHaveClass("bg-red-300");
+    expect(td).toHaveClass("border-red-500");
   });
 
   test("clicking summary sheet icon calls openModal", () => {
@@ -176,9 +186,7 @@ describe("SMIModesTable", () => {
     });
 
     const modal = document.querySelector(".modal");
-
     expect(modal).toBeInTheDocument();
-
     const closeButton = modal.querySelector("button");
     fireEvent.click(closeButton);
 
