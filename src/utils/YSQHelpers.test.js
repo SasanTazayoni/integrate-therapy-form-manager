@@ -4,6 +4,7 @@ import {
   extractNumber,
   extractRating,
   shouldHighlight,
+  getHighlightLevel,
   submitYSQWithToken,
 } from "./YSQHelpers";
 import { submitYSQForm } from "../api/formsFrontend";
@@ -44,10 +45,19 @@ describe("YSQHelpers", () => {
   test("shouldHighlight detects high severity ratings", () => {
     expect(shouldHighlight("High")).toBe(true);
     expect(shouldHighlight("Very High")).toBe(true);
-    expect(shouldHighlight("Severe")).toBe(true);
+    expect(shouldHighlight("Severe")).toBe(false);
     expect(shouldHighlight("Medium")).toBe(false);
     expect(shouldHighlight("Low")).toBe(false);
     expect(shouldHighlight("")).toBe(false);
+  });
+
+  test("getHighlightLevel returns correct highlight level", () => {
+    expect(getHighlightLevel("Severe")).toBe("severe");
+    expect(getHighlightLevel("High")).toBe("highlight");
+    expect(getHighlightLevel("Very High")).toBe("highlight");
+    expect(getHighlightLevel("Medium")).toBe("none");
+    expect(getHighlightLevel("Low")).toBe("none");
+    expect(getHighlightLevel("")).toBe("none");
   });
 
   test("submitYSQWithToken sets error if token missing", async () => {
@@ -78,7 +88,6 @@ describe("YSQHelpers", () => {
     const schemas = [
       { key: "ed", label: "Emotional Deprivation", data: [{ id: "q1" }] },
     ];
-
     const answers = { q1: 5 };
 
     await submitYSQWithToken({
@@ -124,7 +133,7 @@ describe("YSQHelpers", () => {
     expect(navigate).not.toHaveBeenCalled();
   });
 
-  test("submitYSQWithToken handles other errors", async () => {
+  test("submitYSQWithToken handles other errors with provided message", async () => {
     const setFormError = vi.fn();
     const setShowInvalidTokenModal = vi.fn();
     const navigate = vi.fn();
@@ -149,7 +158,7 @@ describe("YSQHelpers", () => {
     expect(navigate).not.toHaveBeenCalled();
   });
 
-  test("submitYSQWithToken uses default error message if submitYSQForm returns undefined error", async () => {
+  test("submitYSQWithToken handles other errors with default message if error undefined", async () => {
     const setFormError = vi.fn();
     const setShowInvalidTokenModal = vi.fn();
     const navigate = vi.fn();
@@ -188,7 +197,6 @@ describe("YSQHelpers", () => {
         data: [{ id: "q1" }, { id: "q2" }],
       },
     ];
-
     const answers = { q1: 5 };
 
     await submitYSQWithToken({
@@ -202,11 +210,8 @@ describe("YSQHelpers", () => {
 
     expect(submitYSQForm).toHaveBeenCalledWith({
       token: "token123",
-      scores: {
-        ysq_ed_answers: [5, 0],
-      },
+      scores: { ysq_ed_answers: [5, 0] },
     });
-
     expect(setFormError).toHaveBeenCalledWith("");
     expect(navigate).toHaveBeenCalledWith("/submitted");
   });
