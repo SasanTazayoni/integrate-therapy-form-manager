@@ -9,6 +9,7 @@ import {
   submitSMIForm,
   submitYSQForm,
   updateClientInfo,
+  fetchAllSmiForms,
 } from "./formsFrontend";
 import * as getErrorDisplayModule from "../utils/getErrorDisplay";
 import { describe, test, expect, vi, beforeEach } from "vitest";
@@ -499,6 +500,51 @@ describe("sendMultipleFormTokens", () => {
     expect(result).toEqual({
       ok: false,
       data: { error: "Unexpected error occurred." },
+    });
+  });
+
+  test("returns ok true with data when axios GET succeeds", async () => {
+    const mockData = {
+      clientName: "John Doe",
+      smiForms: [{ id: "1", submittedAt: "2023-01-01", smiScores: {} }],
+    };
+    mockedAxios.get.mockResolvedValueOnce({ data: mockData });
+
+    const result = await fetchAllSmiForms(email);
+
+    expect(mockedAxios.get).toHaveBeenCalledWith("/forms/smi/all", {
+      params: { email },
+    });
+    expect(result).toEqual({ ok: true, data: mockData });
+  });
+
+  test("returns ok false with error from getErrorDisplay for axios error", async () => {
+    const mockError = new Error("Network error");
+    mockedAxios.get.mockRejectedValueOnce(mockError);
+    axios.isAxiosError = vi.fn().mockReturnValue(true);
+
+    vi.spyOn(getErrorDisplayModule, "getErrorDisplay").mockReturnValue(
+      "Mocked fetch error"
+    );
+
+    const result = await fetchAllSmiForms(email);
+
+    expect(result).toEqual({
+      ok: false,
+      data: { error: "Mocked fetch error" },
+    });
+  });
+
+  test("returns ok false with generic error for non-axios error", async () => {
+    const nonAxiosError = "Unexpected error";
+    mockedAxios.get.mockRejectedValueOnce(nonAxiosError);
+    axios.isAxiosError = vi.fn().mockReturnValue(false);
+
+    const result = await fetchAllSmiForms(email);
+
+    expect(result).toEqual({
+      ok: false,
+      data: { error: "An unexpected error occurred while fetching SMI forms." },
     });
   });
 });
