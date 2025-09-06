@@ -5,12 +5,13 @@ import { categoryKeyMap, smiBoundaries } from "../data/SMIBoundaries";
 describe("SMIHelpers", () => {
   const smiScores = { smi_vc_score: "3.5" };
 
-  test("getCellData returns parsed score + rating + display", () => {
+  test("getCellData returns parsed score + rating + display + highlightLevel", () => {
     const result = getCellData("Vulnerable Child", smiScores);
     expect(result).toEqual({
       score: 3.5,
       rating: expect.any(String),
       display: expect.stringContaining("3.5"),
+      highlightLevel: expect.any(String),
     });
   });
 
@@ -38,13 +39,18 @@ describe("SMIHelpers", () => {
     });
   });
 
-  test("shouldHighlight returns true for high severity ratings", () => {
-    expect(shouldHighlight("Very High")).toBe(true);
-    expect(shouldHighlight("Severe")).toBe(true);
-  });
+  test("getCellData returns correct highlightLevel for different ratings", () => {
+    const highScore = { smi_vc_score: "3.5" };
+    const resultHigh = getCellData("Vulnerable Child", highScore);
+    expect(resultHigh?.highlightLevel).toBe("highlight");
 
-  test("shouldHighlight returns false for mild ratings", () => {
-    expect(shouldHighlight("Average")).toBe(false);
+    const severeScore = { smi_vc_score: "10" };
+    const resultSevere = getCellData("Vulnerable Child", severeScore);
+    expect(resultSevere?.highlightLevel).toBe("severe");
+
+    const normalScore = { smi_vc_score: "1" };
+    const resultNone = getCellData("Vulnerable Child", normalScore);
+    expect(resultNone?.highlightLevel).toBe("none");
   });
 
   test("returns 'Unknown' if categoryKeyMap or smiBoundaries missing for a category", () => {
