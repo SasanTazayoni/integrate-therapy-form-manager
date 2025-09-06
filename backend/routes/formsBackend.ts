@@ -5,6 +5,7 @@ import {
   validateToken,
   revokeFormToken,
   updateClientInfo,
+  getAllSubmittedSMIForms,
 } from "../controllers/formController";
 import {
   submitBecksForm,
@@ -24,5 +25,6 @@ router.post("/submit/burns", submitBurnsForm);
 router.post("/submit/ysq", submitYSQForm);
 router.post("/submit/smi", submitSMIForm);
 router.post("/update-client-info", updateClientInfo);
+router.get("/smi/all", getAllSubmittedSMIForms);
 
 export default router;
