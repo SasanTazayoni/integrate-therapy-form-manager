@@ -98,7 +98,7 @@ const BURNS = () => {
           Submit
         </Button>
 
-        <Button type="button" variant="primary" onClick={handleResetClick}>
+        <Button type="button" variant="danger" onClick={handleResetClick}>
           Reset
         </Button>
       </div>
