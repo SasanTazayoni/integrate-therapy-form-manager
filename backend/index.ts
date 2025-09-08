@@ -18,19 +18,32 @@ type HttpError = Error & {
 
 // --- Security / middleware ---
 app.use(helmet());
+
+// --- Dynamic CORS ---
+const frontendUrl = getFrontendBaseUrl();
+
 app.use(
   cors({
-    origin: getFrontendBaseUrl(),
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+
+      if (origin === frontendUrl) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
+
 app.use(express.json());
 
 // --- API routes ---
 app.use("/clients", clientRoutes);
 app.use("/forms", formRoutes);
 
-// --- API 404s
+// --- API 404s ---
 app.use("/clients", (_req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
@@ -42,6 +55,7 @@ app.use("/forms", (_req, res) => {
 if (process.env.NODE_ENV === "production") {
   const distDir = path.resolve(__dirname, "../dist");
   const basePath = "/integrate-therapy-form-manager";
+
   app.use(basePath, express.static(distDir, { index: false }));
   app.get(`${basePath}/*`, (_req, res) => {
     res.sendFile(path.join(distDir, "index.html"));
