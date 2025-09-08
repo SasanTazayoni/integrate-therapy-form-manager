@@ -3,7 +3,8 @@ import { getEnvVar } from "./requiredEnv";
 import { getFrontendBaseUrl } from "./getFrontendBaseUrl";
 import { Form } from "@prisma/client";
 
-const baseUrl: string = getFrontendBaseUrl();
+const baseUrl = getFrontendBaseUrl();
+const SPA_BASE_PATH = "/integrate-therapy-form-manager";
 
 const formTitles: Record<string, string> = {
   YSQ: "Young Schema Questionnaire (YSQ)",
@@ -45,9 +46,11 @@ export async function sendMultipleFormLinks({
   const htmlLinks = forms
     .map(
       (f) =>
-        `<p><strong>${formTitles[f.form_type]}</strong>: <a href="${baseUrl}/${
-          f.form_type
-        }/${f.token}">Click here to complete</a></p>`
+        `<p><strong>${
+          formTitles[f.form_type]
+        }</strong>: <a href="${baseUrl}${SPA_BASE_PATH}/${f.form_type}/${
+          f.token
+        }">Click here to complete</a></p>`
     )
     .join("");
 
@@ -56,23 +59,21 @@ export async function sendMultipleFormLinks({
     to: email,
     subject: `Your forms from Integrate Therapy`,
     html: `
-    <p>Dear ${nameToUse},</p>
-
-    <p>You have been sent the following forms to complete:</p>
-    ${htmlLinks}
-
-    <p>Best wishes,</p>
-    <p>
-      Simon Burgess Dip MBACP<br/>
-      Integrate Therapy<br/>
-      The Foundry Building<br/>
-      2 Smiths Square<br/>
-      77 Fulham Palace Road<br/>
-      London<br/>
-      W6 8AF<br/>
-      Tel: 0784 604 3703
-    </p>
-  `,
+      <p>Dear ${nameToUse},</p>
+      <p>You have been sent the following forms to complete:</p>
+      ${htmlLinks}
+      <p>Best wishes,</p>
+      <p>
+        Simon Burgess Dip MBACP<br/>
+        Integrate Therapy<br/>
+        The Foundry Building<br/>
+        2 Smiths Square<br/>
+        77 Fulham Palace Road<br/>
+        London<br/>
+        W6 8AF<br/>
+        Tel: 0784 604 3703
+      </p>
+    `,
   };
 
   try {

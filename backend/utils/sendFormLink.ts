@@ -2,7 +2,7 @@ import nodemailer, { Transporter } from "nodemailer";
 import { getEnvVar } from "./requiredEnv";
 import { getFrontendBaseUrl } from "./getFrontendBaseUrl";
 
-const baseUrl: string = getFrontendBaseUrl();
+const baseUrl = getFrontendBaseUrl();
 const SPA_BASE_PATH = "/integrate-therapy-form-manager";
 
 function getFromEmail(): string {
@@ -60,10 +60,8 @@ export async function sendFormLink({
     subject: `Your ${formTitle}`,
     html: `
       <p>Dear ${nameToUse},</p>
-
       <p>You have been sent a <strong>${formTitle}</strong> to complete.</p>
       <p><a href="${link}">Click here to complete your form</a></p>
-
       <p>Best wishes,</p>
       <p>
         Simon Burgess Dip MBACP<br/>
