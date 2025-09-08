@@ -5,9 +5,13 @@ export function getFrontendBaseUrl(): string {
 
   try {
     const url = new URL(raw);
-    return `${url.protocol}//${url.host}`;
+
+    const normalized = `${url.protocol}//${url.host}`;
+    return normalized.endsWith("/") ? normalized.slice(0, -1) : normalized;
   } catch {
-    console.warn(`Invalid FRONTEND_BASE_URL: ${raw}, using fallback.`);
+    console.warn(
+      `Invalid FRONTEND_BASE_URL: ${raw}, using fallback http://localhost:5173`
+    );
     return "http://localhost:5173";
   }
 }
