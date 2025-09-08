@@ -9,7 +9,7 @@ describe("sendFormLink", () => {
 
   beforeEach(() => {
     vi.spyOn(frontendUtils, "getFrontendBaseUrl").mockReturnValue(
-      "http://localhost:5173/integrate-therapy-form-manager"
+      "http://localhost:5173"
     );
 
     vi.spyOn(envUtils, "getEnvVar").mockImplementation((name) => {
@@ -74,6 +74,9 @@ describe("sendFormLink", () => {
 
     const mailOptions = sendMailMock.mock.calls[0][0];
     expect(mailOptions.html).toContain("Dear Sir/Madam");
+    expect(mailOptions.html).toContain(
+      "http://localhost:5173/integrate-therapy-form-manager/SMI/abc123"
+    );
   });
 
   test("throws if formType is invalid", async () => {
