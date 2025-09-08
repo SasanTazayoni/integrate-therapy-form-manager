@@ -57,7 +57,8 @@ if (process.env.NODE_ENV === "production") {
   const basePath = "/integrate-therapy-form-manager";
 
   app.use(basePath, express.static(distDir, { index: false }));
-  app.get(`${basePath}/*`, (_req, res) => {
+
+  app.get(new RegExp(`^${basePath}/.*$`), (_req, res) => {
     res.sendFile(path.join(distDir, "index.html"));
   });
 }
