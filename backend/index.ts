@@ -42,7 +42,6 @@ app.use("/forms", (_req, res) => {
 if (process.env.NODE_ENV === "production") {
   const distDir = path.resolve(__dirname, "../dist");
   const basePath = "/integrate-therapy-form-manager";
-
   app.use(basePath, express.static(distDir, { index: false }));
   app.get(`${basePath}/*`, (_req, res) => {
     res.sendFile(path.join(distDir, "index.html"));
