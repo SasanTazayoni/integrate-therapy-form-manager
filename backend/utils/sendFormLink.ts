@@ -3,6 +3,7 @@ import { getEnvVar } from "./requiredEnv";
 import { getFrontendBaseUrl } from "./getFrontendBaseUrl";
 
 const baseUrl: string = getFrontendBaseUrl();
+const SPA_BASE_PATH = "/integrate-therapy-form-manager";
 
 function getFromEmail(): string {
   return getEnvVar("FROM_EMAIL");
@@ -49,7 +50,7 @@ export async function sendFormLink({
   if (!formPath) throw new Error(`Invalid form type: ${formType}`);
 
   const formTitle = formTitles[formType];
-  const link = `${baseUrl}${formPath}/${token}`;
+  const link = `${baseUrl}${SPA_BASE_PATH}${formPath}/${token}`;
   const nameToUse = clientName ?? "Sir/Madam";
   const fromEmail = getFromEmail();
 
@@ -58,23 +59,23 @@ export async function sendFormLink({
     to,
     subject: `Your ${formTitle}`,
     html: `
-    <p>Dear ${nameToUse},</p>
+      <p>Dear ${nameToUse},</p>
 
-    <p>You have been sent a <strong>${formTitle}</strong> to complete.</p>
-    <p><a href="${link}">Click here to complete your form</a></p>
+      <p>You have been sent a <strong>${formTitle}</strong> to complete.</p>
+      <p><a href="${link}">Click here to complete your form</a></p>
 
-    <p>Best wishes,</p>
-    <p>
-      Simon Burgess Dip MBACP<br/>
-      Integrate Therapy<br/>
-      The Foundry Building<br/>
-      2 Smiths Square<br/>
-      77 Fulham Palace Road<br/>
-      London<br/>
-      W6 8AF<br/>
-      Tel: 0784 604 3703
-    </p>
-  `,
+      <p>Best wishes,</p>
+      <p>
+        Simon Burgess Dip MBACP<br/>
+        Integrate Therapy<br/>
+        The Foundry Building<br/>
+        2 Smiths Square<br/>
+        77 Fulham Palace Road<br/>
+        London<br/>
+        W6 8AF<br/>
+        Tel: 0784 604 3703
+      </p>
+    `,
   };
 
   try {
