@@ -23,12 +23,7 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text"],
-      exclude: [
-        "**/server.ts",
-        "node_modules/**",
-        "prisma/seed.ts",
-        "scripts/runCleanupOnce.ts",
-      ],
+      exclude: ["**/server.ts", "dist/**", "node_modules/**", "prisma/seed.ts"],
     },
   },
 });
