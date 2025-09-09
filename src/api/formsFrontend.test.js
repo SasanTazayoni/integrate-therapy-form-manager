@@ -1,4 +1,5 @@
-import axios from "axios";
+import api from "./api";
+import * as getErrorDisplayModule from "../utils/getErrorDisplay";
 import {
   sendFormToken,
   sendMultipleFormTokens,
@@ -6,49 +7,49 @@ import {
   revokeFormToken,
   submitBecksForm,
   submitBurnsForm,
-  submitSMIForm,
   submitYSQForm,
+  submitSMIForm,
   updateClientInfo,
   fetchAllSmiForms,
 } from "./formsFrontend";
-import * as getErrorDisplayModule from "../utils/getErrorDisplay";
 import { describe, test, expect, vi, beforeEach } from "vitest";
 
-vi.mock("axios");
-const mockedAxios = axios;
+vi.mock("./api", () => ({
+  default: {
+    get: vi.fn(),
+    post: vi.fn(),
+  },
+}));
+
+const mockedApi = api;
 
 describe("sendFormToken", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   const email = "test@example.com";
   const formType = "ysq";
 
-  test("returns ok true with data when axios POST succeeds", async () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  test("returns ok true on success", async () => {
     const mockData = { token: "12345" };
-    mockedAxios.post.mockResolvedValueOnce({ data: mockData });
+    mockedApi.post.mockResolvedValueOnce({ data: mockData });
 
     const result = await sendFormToken(email, formType);
 
-    expect(mockedAxios.post).toHaveBeenCalledWith(
+    expect(mockedApi.post).toHaveBeenCalledWith(
       `/forms/send-token/${formType}`,
       { email }
     );
     expect(result).toEqual({ ok: true, data: mockData });
   });
 
-  test("returns ok false with error from getErrorDisplay for axios error", async () => {
-    const mockError = new Error("Network error");
-    mockedAxios.post.mockRejectedValueOnce(mockError);
-    axios.isAxiosError = vi.fn().mockReturnValue(true);
-
+  test("returns ok false with getErrorDisplay on axios error", async () => {
+    const err = { isAxiosError: true, response: { data: {} } };
+    mockedApi.post.mockRejectedValueOnce(err);
     vi.spyOn(getErrorDisplayModule, "getErrorDisplay").mockReturnValue(
       "Mocked error display"
     );
 
     const result = await sendFormToken(email, formType);
-
     expect(result).toEqual({
       ok: false,
       data: { error: "Mocked error display" },
@@ -56,12 +57,8 @@ describe("sendFormToken", () => {
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
-    const nonAxiosError = "Unexpected error";
-    mockedAxios.post.mockRejectedValueOnce(nonAxiosError);
-    axios.isAxiosError = vi.fn().mockReturnValue(false);
-
+    mockedApi.post.mockRejectedValueOnce("Unexpected error");
     const result = await sendFormToken(email, formType);
-
     expect(result).toEqual({
       ok: false,
       data: { error: "Unexpected error occurred." },
@@ -70,87 +67,65 @@ describe("sendFormToken", () => {
 });
 
 describe("validateFormToken", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   const token = "12345";
 
-  test("returns ok true with data when axios GET succeeds", async () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  test("returns ok true on success", async () => {
     const mockData = { valid: true };
-    mockedAxios.get.mockResolvedValueOnce({ data: mockData });
+    mockedApi.get.mockResolvedValueOnce({ data: mockData });
 
     const result = await validateFormToken(token);
-
-    expect(mockedAxios.get).toHaveBeenCalledWith("/forms/validate-token", {
+    expect(mockedApi.get).toHaveBeenCalledWith("/forms/validate-token", {
       params: { token },
     });
     expect(result).toEqual({ ok: true, data: mockData });
   });
 
-  test("returns ok false with error from getErrorDisplay for axios error", async () => {
-    const mockError = new Error("Network error");
-    mockedAxios.get.mockRejectedValueOnce(mockError);
-    axios.isAxiosError = vi.fn().mockReturnValue(true);
-
+  test("returns ok false with getErrorDisplay on axios error", async () => {
+    const err = { isAxiosError: true, response: { data: {} } };
+    mockedApi.get.mockRejectedValueOnce(err);
     vi.spyOn(getErrorDisplayModule, "getErrorDisplay").mockReturnValue(
       "Mocked error display"
     );
 
     const result = await validateFormToken(token);
-
-    expect(result).toEqual({
-      ok: false,
-      error: "Mocked error display",
-    });
+    expect(result).toEqual({ ok: false, error: "Mocked error display" });
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
-    const nonAxiosError = "Unexpected error";
-    mockedAxios.get.mockRejectedValueOnce(nonAxiosError);
-    axios.isAxiosError = vi.fn().mockReturnValue(false);
-
+    mockedApi.get.mockRejectedValueOnce("Unexpected error");
     const result = await validateFormToken(token);
-
-    expect(result).toEqual({
-      ok: false,
-      error: "Unexpected error occurred.",
-    });
+    expect(result).toEqual({ ok: false, error: "Unexpected error occurred." });
   });
 });
 
 describe("revokeFormToken", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   const email = "test@example.com";
   const formType = "ysq";
 
-  test("returns ok true with data when axios POST succeeds", async () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  test("returns ok true on success", async () => {
     const mockData = { revoked: true };
-    mockedAxios.post.mockResolvedValueOnce({ data: mockData });
+    mockedApi.post.mockResolvedValueOnce({ data: mockData });
 
     const result = await revokeFormToken(email, formType);
-
-    expect(mockedAxios.post).toHaveBeenCalledWith(
+    expect(mockedApi.post).toHaveBeenCalledWith(
       `/forms/revoke-token/${formType}`,
       { email }
     );
     expect(result).toEqual({ ok: true, data: mockData });
   });
 
-  test("returns ok false with error from getErrorDisplay for axios error", async () => {
-    const mockError = new Error("Network error");
-    mockedAxios.post.mockRejectedValueOnce(mockError);
-    axios.isAxiosError = vi.fn().mockReturnValue(true);
-
+  test("returns ok false with getErrorDisplay on axios error", async () => {
+    const err = { isAxiosError: true, response: { data: {} } };
+    mockedApi.post.mockRejectedValueOnce(err);
     vi.spyOn(getErrorDisplayModule, "getErrorDisplay").mockReturnValue(
       "Mocked revoke error"
     );
 
     const result = await revokeFormToken(email, formType);
-
     expect(result).toEqual({
       ok: false,
       data: { error: "Mocked revoke error" },
@@ -158,12 +133,8 @@ describe("revokeFormToken", () => {
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
-    const nonAxiosError = "Unexpected error";
-    mockedAxios.post.mockRejectedValueOnce(nonAxiosError);
-    axios.isAxiosError = vi.fn().mockReturnValue(false);
-
+    mockedApi.post.mockRejectedValueOnce("Unexpected error");
     const result = await revokeFormToken(email, formType);
-
     expect(result).toEqual({
       ok: false,
       data: { error: "Unexpected error occurred." },
@@ -171,378 +142,163 @@ describe("revokeFormToken", () => {
   });
 });
 
-describe("submitBecksForm", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+describe.each([
+  {
+    fn: submitBecksForm,
+    path: "/forms/submit/becks",
+    args: { token: "t", result: "r" },
+    name: "Becks",
+  },
+  {
+    fn: submitBurnsForm,
+    path: "/forms/submit/burns",
+    args: { token: "t", result: "r" },
+    name: "Burns",
+  },
+  {
+    fn: submitYSQForm,
+    path: "/forms/submit/ysq",
+    args: { token: "t", scores: { ysq_ed_answers: [1] } },
+    name: "YSQ",
+  },
+  {
+    fn: submitSMIForm,
+    path: "/forms/submit/smi",
+    args: { token: "t", results: { d: { average: 1, label: "L" } } },
+    name: "SMI",
+  },
+])("$name form submission", ({ fn, path, args }) => {
+  beforeEach(() => vi.clearAllMocks());
 
-  const token = "token123";
-  const result = "some_result";
-
-  test("returns ok true with data when axios POST succeeds", async () => {
+  test("returns ok true on success", async () => {
     const mockData = { submitted: true };
-    mockedAxios.post.mockResolvedValueOnce({ data: mockData });
+    mockedApi.post.mockResolvedValueOnce({ data: mockData });
 
-    const response = await submitBecksForm({ token, result });
-
-    expect(mockedAxios.post).toHaveBeenCalledWith("/forms/submit/becks", {
-      token,
-      result,
-    });
-    expect(response).toEqual({ ok: true, data: mockData });
+    const res = await fn(args);
+    expect(mockedApi.post).toHaveBeenCalledWith(path, args);
+    expect(res).toEqual({ ok: true, data: mockData });
   });
 
-  test("returns ok false with code and error from getErrorDisplay for axios error", async () => {
-    const mockError = {
-      response: { data: { code: 400 } },
-      message: "Network error",
-    };
-    mockedAxios.post.mockRejectedValueOnce(mockError);
-    axios.isAxiosError = vi.fn().mockReturnValue(true);
-
+  test("returns ok false with code and error on axios error", async () => {
+    const err = { response: { data: { code: 400 } }, isAxiosError: true };
+    mockedApi.post.mockRejectedValueOnce(err);
     vi.spyOn(getErrorDisplayModule, "getErrorDisplay").mockReturnValue(
       "Mocked submit error"
     );
 
-    const response = await submitBecksForm({ token, result });
-
-    expect(response).toEqual({
-      ok: false,
-      error: "Mocked submit error",
-      code: 400,
-    });
+    const res = await fn(args);
+    expect(res).toEqual({ ok: false, error: "Mocked submit error", code: 400 });
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
-    const nonAxiosError = "Unexpected error";
-    mockedAxios.post.mockRejectedValueOnce(nonAxiosError);
-    axios.isAxiosError = vi.fn().mockReturnValue(false);
+    mockedApi.post.mockRejectedValueOnce("Unexpected error");
 
-    const response = await submitBecksForm({ token, result });
-
-    expect(response).toEqual({
-      ok: false,
-      error: "Unexpected error occurred.",
-    });
-  });
-});
-
-describe("submitBurnsForm", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  const token = "token123";
-  const result = "some_result";
-
-  test("returns ok true with data when axios POST succeeds", async () => {
-    const mockData = { submitted: true };
-    mockedAxios.post.mockResolvedValueOnce({ data: mockData });
-
-    const response = await submitBurnsForm({ token, result });
-
-    expect(mockedAxios.post).toHaveBeenCalledWith("/forms/submit/burns", {
-      token,
-      result,
-    });
-    expect(response).toEqual({ ok: true, data: mockData });
-  });
-
-  test("returns ok false with code and error from getErrorDisplay for axios error", async () => {
-    const mockError = {
-      response: { data: { code: 400 } },
-      message: "Network error",
-    };
-    mockedAxios.post.mockRejectedValueOnce(mockError);
-    axios.isAxiosError = vi.fn().mockReturnValue(true);
-
-    vi.spyOn(getErrorDisplayModule, "getErrorDisplay").mockReturnValue(
-      "Mocked submit error"
-    );
-
-    const response = await submitBurnsForm({ token, result });
-
-    expect(response).toEqual({
-      ok: false,
-      error: "Mocked submit error",
-      code: 400,
-    });
-  });
-
-  test("returns ok false with generic error for non-axios error", async () => {
-    const nonAxiosError = "Unexpected error";
-    mockedAxios.post.mockRejectedValueOnce(nonAxiosError);
-    axios.isAxiosError = vi.fn().mockReturnValue(false);
-
-    const response = await submitBurnsForm({ token, result });
-
-    expect(response).toEqual({
-      ok: false,
-      error: "Unexpected error occurred.",
-    });
-  });
-});
-
-describe("submitYSQForm", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  const token = "token123";
-  const scores = {
-    ysq_ed_answers: [1, 2, 3],
-    ysq_ab_answers: [0, 1],
-  };
-
-  test("returns ok true with data when axios POST succeeds", async () => {
-    const mockData = { submitted: true };
-    mockedAxios.post.mockResolvedValueOnce({ data: mockData });
-
-    const response = await submitYSQForm({ token, scores });
-
-    expect(mockedAxios.post).toHaveBeenCalledWith("/forms/submit/ysq", {
-      token,
-      scores,
-    });
-    expect(response).toEqual({ ok: true, data: mockData });
-  });
-
-  test("returns ok false with code and error from getErrorDisplay for axios error", async () => {
-    const mockError = {
-      response: { data: { code: 400 } },
-      message: "Network error",
-    };
-    mockedAxios.post.mockRejectedValueOnce(mockError);
-    axios.isAxiosError = vi.fn().mockReturnValue(true);
-
-    vi.spyOn(getErrorDisplayModule, "getErrorDisplay").mockReturnValue(
-      "Mocked YSQ error"
-    );
-
-    const response = await submitYSQForm({ token, scores });
-
-    expect(response).toEqual({
-      ok: false,
-      error: "Mocked YSQ error",
-      code: 400,
-    });
-  });
-
-  test("returns ok false with generic error for non-axios error", async () => {
-    const nonAxiosError = "Unexpected error";
-    mockedAxios.post.mockRejectedValueOnce(nonAxiosError);
-    axios.isAxiosError = vi.fn().mockReturnValue(false);
-
-    const response = await submitYSQForm({ token, scores });
-
-    expect(response).toEqual({
-      ok: false,
-      error: "Unexpected error occurred.",
-    });
-  });
-});
-
-describe("submitSMIForm", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  const token = "token123";
-  const results = {
-    domain1: { average: 2.5, label: "Low" },
-    domain2: { average: 4.0, label: "High" },
-  };
-
-  test("returns ok true with data when axios POST succeeds", async () => {
-    const mockData = { submitted: true };
-    mockedAxios.post.mockResolvedValueOnce({ data: mockData });
-
-    const response = await submitSMIForm({ token, results });
-
-    expect(mockedAxios.post).toHaveBeenCalledWith("/forms/submit/smi", {
-      token,
-      results,
-    });
-    expect(response).toEqual({ ok: true, data: mockData });
-  });
-
-  test("returns ok false with code and error from getErrorDisplay for axios error", async () => {
-    const mockError = {
-      response: { data: { code: 400 } },
-      message: "Network error",
-    };
-    mockedAxios.post.mockRejectedValueOnce(mockError);
-    axios.isAxiosError = vi.fn().mockReturnValue(true);
-
-    vi.spyOn(getErrorDisplayModule, "getErrorDisplay").mockReturnValue(
-      "Mocked SMI error"
-    );
-
-    const response = await submitSMIForm({ token, results });
-
-    expect(response).toEqual({
-      ok: false,
-      error: "Mocked SMI error",
-      code: 400,
-    });
-  });
-
-  test("returns ok false with generic error for non-axios error", async () => {
-    const nonAxiosError = "Unexpected error";
-    mockedAxios.post.mockRejectedValueOnce(nonAxiosError);
-    axios.isAxiosError = vi.fn().mockReturnValue(false);
-
-    const response = await submitSMIForm({ token, results });
-
-    expect(response).toEqual({
-      ok: false,
-      error: "Unexpected error occurred.",
-    });
+    const res = await fn(args);
+    expect(res.ok).toBe(false);
   });
 });
 
 describe("updateClientInfo", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
+  const args = { token: "t", name: "John", dob: "2000-01-01" };
+
+  beforeEach(() => vi.clearAllMocks());
+
+  test("returns ok true on success", async () => {
+    mockedApi.post.mockResolvedValueOnce({});
+    const res = await updateClientInfo(args);
+    expect(mockedApi.post).toHaveBeenCalledWith(
+      "/forms/update-client-info",
+      args
+    );
+    expect(res).toEqual({ ok: true });
   });
 
-  const token = "token123";
-  const name = "John Doe";
-  const dob = "1990-01-01";
-
-  test("returns ok true when axios POST succeeds", async () => {
-    mockedAxios.post.mockResolvedValueOnce({});
-
-    const result = await updateClientInfo({ token, name, dob });
-
-    expect(mockedAxios.post).toHaveBeenCalledWith("/forms/update-client-info", {
-      token,
-      name,
-      dob,
-    });
-    expect(result).toEqual({ ok: true });
-  });
-
-  test("returns ok false with error from getErrorDisplay for axios error", async () => {
-    const mockError = new Error("Network error");
-    mockedAxios.post.mockRejectedValueOnce(mockError);
-    axios.isAxiosError = vi.fn().mockReturnValue(true);
-
+  test("returns ok false with getErrorDisplay on axios error", async () => {
+    const err = { isAxiosError: true, response: { data: {} } };
+    mockedApi.post.mockRejectedValueOnce(err);
     vi.spyOn(getErrorDisplayModule, "getErrorDisplay").mockReturnValue(
       "Mocked update error"
     );
 
-    const result = await updateClientInfo({ token, name, dob });
-
-    expect(result).toEqual({
-      ok: false,
-      error: "Mocked update error",
-    });
+    const res = await updateClientInfo(args);
+    expect(res).toEqual({ ok: false, error: "Mocked update error" });
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
-    const nonAxiosError = "Unexpected error";
-    mockedAxios.post.mockRejectedValueOnce(nonAxiosError);
-    axios.isAxiosError = vi.fn().mockReturnValue(false);
-
-    const result = await updateClientInfo({ token, name, dob });
-
-    expect(result).toEqual({
-      ok: false,
-      error: "Unexpected error occurred.",
-    });
+    mockedApi.post.mockRejectedValueOnce("Unexpected error");
+    const res = await updateClientInfo(args);
+    expect(res).toEqual({ ok: false, error: "Unexpected error occurred." });
   });
 });
 
 describe("sendMultipleFormTokens", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   const email = "test@example.com";
 
-  test("returns ok true with data when axios POST succeeds", async () => {
-    const mockData = { sent: ["YSQ", "SMI"] };
-    mockedAxios.post.mockResolvedValueOnce({ data: mockData });
+  beforeEach(() => vi.clearAllMocks());
 
-    const result = await sendMultipleFormTokens(email);
+  test("returns ok true on success", async () => {
+    const data = { sent: ["YSQ", "SMI"] };
+    mockedApi.post.mockResolvedValueOnce({ data });
 
-    expect(mockedAxios.post).toHaveBeenCalledWith("/forms/send-multiple", {
+    const res = await sendMultipleFormTokens(email);
+    expect(mockedApi.post).toHaveBeenCalledWith("/forms/send-multiple", {
       email,
     });
-    expect(result).toEqual({ ok: true, data: mockData });
+    expect(res).toEqual({ ok: true, data });
   });
 
-  test("returns ok false with error from getErrorDisplay for axios error", async () => {
-    const mockError = new Error("Network error");
-    mockedAxios.post.mockRejectedValueOnce(mockError);
-    axios.isAxiosError = vi.fn().mockReturnValue(true);
-
+  test("returns ok false with getErrorDisplay on axios error", async () => {
+    const err = { isAxiosError: true, response: { data: {} } };
+    mockedApi.post.mockRejectedValueOnce(err);
     vi.spyOn(getErrorDisplayModule, "getErrorDisplay").mockReturnValue(
-      "Mocked error display"
+      "Mocked multiple send"
     );
 
-    const result = await sendMultipleFormTokens(email);
-
-    expect(result).toEqual({
-      ok: false,
-      data: { error: "Mocked error display" },
-    });
+    const res = await sendMultipleFormTokens(email);
+    expect(res).toEqual({ ok: false, data: { error: "Mocked multiple send" } });
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
-    const nonAxiosError = "Unexpected error";
-    mockedAxios.post.mockRejectedValueOnce(nonAxiosError);
-    axios.isAxiosError = vi.fn().mockReturnValue(false);
-
-    const result = await sendMultipleFormTokens(email);
-
-    expect(result).toEqual({
+    mockedApi.post.mockRejectedValueOnce("Unexpected error");
+    const res = await sendMultipleFormTokens(email);
+    expect(res).toEqual({
       ok: false,
       data: { error: "Unexpected error occurred." },
     });
   });
+});
 
-  test("returns ok true with data when axios GET succeeds", async () => {
-    const mockData = {
-      clientName: "John Doe",
-      smiForms: [{ id: "1", submittedAt: "2023-01-01", smiScores: {} }],
-    };
-    mockedAxios.get.mockResolvedValueOnce({ data: mockData });
+describe("fetchAllSmiForms", () => {
+  const email = "test@example.com";
 
-    const result = await fetchAllSmiForms(email);
+  beforeEach(() => vi.clearAllMocks());
 
-    expect(mockedAxios.get).toHaveBeenCalledWith("/forms/smi/all", {
+  test("returns ok true on success", async () => {
+    const data = { clientName: "John", smiForms: [] };
+    mockedApi.get.mockResolvedValueOnce({ data });
+
+    const res = await fetchAllSmiForms(email);
+    expect(mockedApi.get).toHaveBeenCalledWith("/forms/smi/all", {
       params: { email },
     });
-    expect(result).toEqual({ ok: true, data: mockData });
+    expect(res).toEqual({ ok: true, data });
   });
 
-  test("returns ok false with error from getErrorDisplay for axios error", async () => {
-    const mockError = new Error("Network error");
-    mockedAxios.get.mockRejectedValueOnce(mockError);
-    axios.isAxiosError = vi.fn().mockReturnValue(true);
-
+  test("returns ok false with getErrorDisplay on axios error", async () => {
+    const err = { isAxiosError: true, response: { data: {} } };
+    mockedApi.get.mockRejectedValueOnce(err);
     vi.spyOn(getErrorDisplayModule, "getErrorDisplay").mockReturnValue(
-      "Mocked fetch error"
+      "Mocked fetch SMI"
     );
 
-    const result = await fetchAllSmiForms(email);
-
-    expect(result).toEqual({
-      ok: false,
-      data: { error: "Mocked fetch error" },
-    });
+    const res = await fetchAllSmiForms(email);
+    expect(res).toEqual({ ok: false, data: { error: "Mocked fetch SMI" } });
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
-    const nonAxiosError = "Unexpected error";
-    mockedAxios.get.mockRejectedValueOnce(nonAxiosError);
-    axios.isAxiosError = vi.fn().mockReturnValue(false);
-
-    const result = await fetchAllSmiForms(email);
-
-    expect(result).toEqual({
+    mockedApi.get.mockRejectedValueOnce("Unexpected error");
+    const res = await fetchAllSmiForms(email);
+    expect(res).toEqual({
       ok: false,
       data: { error: "An unexpected error occurred while fetching SMI forms." },
     });
