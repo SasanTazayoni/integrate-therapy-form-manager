@@ -28,7 +28,7 @@ const router = createBrowserRouter(
     },
   ],
   {
-    basename: "/integrate-therapy-form-manager",
+    basename: import.meta.env.VITE_BASE_PATH || "/",
   }
 );
 
