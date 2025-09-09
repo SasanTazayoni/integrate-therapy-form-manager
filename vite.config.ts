@@ -1,9 +1,9 @@
-import { defineConfig } from "vitest/config";
+import { defineConfig, ConfigEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 
-export default defineConfig({
-  base: "/",
+export default defineConfig(({ mode }: ConfigEnv) => ({
+  base: mode === "production" ? "/" : "/integrate-therapy-form-manager/",
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
@@ -26,4 +26,4 @@ export default defineConfig({
       exclude: ["**/server.ts", "dist/**", "node_modules/**", "prisma/seed.ts"],
     },
   },
-});
+}));
