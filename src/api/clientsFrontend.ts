@@ -1,4 +1,3 @@
-import api from "./api";
 import axios from "axios";
 import { getErrorDisplay } from "../utils/getErrorDisplay";
 import type { ClientFormsStatus } from "../types/formStatusTypes";
@@ -21,7 +20,7 @@ export async function fetchClientStatus(
   email: string
 ): Promise<FetchClientStatusResult> {
   try {
-    const res = await api.get<ClientFormsStatus>("/clients/form-status", {
+    const res = await axios.get<ClientFormsStatus>("/clients/form-status", {
       params: { email },
     });
     return { ok: true, data: res.data };
@@ -48,7 +47,7 @@ export async function fetchClientStatus(
 
 export async function addClient(email: string): Promise<AddClientResult> {
   try {
-    const res = await api.post<ClientFormsStatus>("/clients/add", { email });
+    const res = await axios.post<ClientFormsStatus>("/clients/add", { email });
     return { ok: true, data: res.data };
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
@@ -61,7 +60,9 @@ export async function addClient(email: string): Promise<AddClientResult> {
     }
     return {
       ok: false,
-      data: { error: "An unexpected error occurred while adding client." },
+      data: {
+        error: "An unexpected error occurred while adding client.",
+      },
     };
   }
 }
@@ -72,7 +73,7 @@ type DeleteClientResult =
 
 export async function deleteClient(email: string): Promise<DeleteClientResult> {
   try {
-    const res = await api.delete<{ message: string }>("/clients/by-email", {
+    const res = await axios.delete<{ message: string }>(`/clients/by-email`, {
       params: { email },
     });
     return { ok: true, data: res.data };
@@ -87,7 +88,9 @@ export async function deleteClient(email: string): Promise<DeleteClientResult> {
     }
     return {
       ok: false,
-      data: { error: "An unexpected error occurred while deleting client." },
+      data: {
+        error: "An unexpected error occurred while deleting client.",
+      },
     };
   }
 }
@@ -118,7 +121,7 @@ export async function deactivateClient(
   email: string
 ): Promise<DeactivateClientResult> {
   try {
-    const res = await api.patch<DeactivateClientResponse>(
+    const res = await axios.patch<DeactivateClientResponse>(
       "/clients/deactivate",
       null,
       { params: { email } }
@@ -165,7 +168,7 @@ export async function activateClient(
   email: string
 ): Promise<ActivateClientResult> {
   try {
-    const res = await api.patch<ActivateClientResponse>(
+    const res = await axios.patch<ActivateClientResponse>(
       "/clients/activate",
       null,
       { params: { email } }
@@ -182,7 +185,9 @@ export async function activateClient(
     }
     return {
       ok: false,
-      data: { error: "An unexpected error occurred while activating client." },
+      data: {
+        error: "An unexpected error occurred while activating client.",
+      },
     };
   }
 }

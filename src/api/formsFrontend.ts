@@ -1,4 +1,3 @@
-import api from "./api";
 import axios from "axios";
 import { getErrorDisplay } from "../utils/getErrorDisplay";
 
@@ -28,7 +27,7 @@ type Scores = Partial<{
 
 export async function sendFormToken(email: string, formType: string) {
   try {
-    const res = await api.post(`/forms/send-token/${formType}`, { email });
+    const res = await axios.post(`/forms/send-token/${formType}`, { email });
     return { ok: true, data: res.data };
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
@@ -42,13 +41,18 @@ export async function sendFormToken(email: string, formType: string) {
         },
       };
     }
-    return { ok: false, data: { error: "Unexpected error occurred." } };
+    return {
+      ok: false,
+      data: {
+        error: "Unexpected error occurred.",
+      },
+    };
   }
 }
 
 export async function sendMultipleFormTokens(email: string) {
   try {
-    const res = await api.post("/forms/send-multiple", { email });
+    const res = await axios.post("/forms/send-multiple", { email });
     return { ok: true, data: res.data };
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
@@ -62,13 +66,21 @@ export async function sendMultipleFormTokens(email: string) {
         },
       };
     }
-    return { ok: false, data: { error: "Unexpected error occurred." } };
+    return {
+      ok: false,
+      data: {
+        error: "Unexpected error occurred.",
+      },
+    };
   }
 }
 
 export async function validateFormToken(token: string) {
   try {
-    const res = await api.get("/forms/validate-token", { params: { token } });
+    const res = await axios.get("/forms/validate-token", {
+      params: { token },
+    });
+
     return { ok: true, data: res.data };
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
@@ -77,13 +89,16 @@ export async function validateFormToken(token: string) {
         error: getErrorDisplay(err, "Unknown error validating token"),
       };
     }
-    return { ok: false, error: "Unexpected error occurred." };
+    return {
+      ok: false,
+      error: "Unexpected error occurred.",
+    };
   }
 }
 
 export async function revokeFormToken(email: string, formType: string) {
   try {
-    const res = await api.post(`/forms/revoke-token/${formType}`, { email });
+    const res = await axios.post(`/forms/revoke-token/${formType}`, { email });
     return { ok: true, data: res.data };
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
@@ -97,7 +112,12 @@ export async function revokeFormToken(email: string, formType: string) {
         },
       };
     }
-    return { ok: false, data: { error: "Unexpected error occurred." } };
+    return {
+      ok: false,
+      data: {
+        error: "Unexpected error occurred.",
+      },
+    };
   }
 }
 
@@ -109,18 +129,26 @@ export async function submitBecksForm({
   result: string;
 }) {
   try {
-    const res = await api.post("/forms/submit/becks", { token, result });
+    const res = await axios.post("/forms/submit/becks", { token, result });
     return { ok: true, data: res.data };
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
-      const code = (err as any)?.response?.data?.code;
+      const code = err?.response?.data?.code;
       const message = getErrorDisplay(
         err,
         "Network error while submitting form."
       );
-      return { ok: false, error: message, code };
+
+      return {
+        ok: false,
+        error: message,
+        code,
+      };
     }
-    return { ok: false, error: "Unexpected error occurred." };
+    return {
+      ok: false,
+      error: "Unexpected error occurred.",
+    };
   }
 }
 
@@ -132,18 +160,26 @@ export async function submitBurnsForm({
   result: string;
 }) {
   try {
-    const res = await api.post("/forms/submit/burns", { token, result });
+    const res = await axios.post("/forms/submit/burns", { token, result });
     return { ok: true, data: res.data };
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
-      const code = (err as any)?.response?.data?.code;
+      const code = err?.response?.data?.code;
       const message = getErrorDisplay(
         err,
         "Network error while submitting form."
       );
-      return { ok: false, error: message, code };
+
+      return {
+        ok: false,
+        error: message,
+        code,
+      };
     }
-    return { ok: false, error: "Unexpected error occurred." };
+    return {
+      ok: false,
+      error: "Unexpected error occurred.",
+    };
   }
 }
 
@@ -155,15 +191,20 @@ export async function submitYSQForm({
   scores: Scores;
 }) {
   try {
-    const res = await api.post("/forms/submit/ysq", { token, scores });
+    const res = await axios.post("/forms/submit/ysq", {
+      token,
+      scores,
+    });
+
     return { ok: true, data: res.data };
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
-      const code = (err as any)?.response?.data?.code;
+      const code = err?.response?.data?.code;
       const message = getErrorDisplay(
         err,
         "Network error while submitting YSQ form."
       );
+
       return { ok: false, error: message, code };
     }
     return { ok: false, error: "Unexpected error occurred." };
@@ -178,15 +219,20 @@ export async function submitSMIForm({
   results: Record<string, { average: number; label: string }>;
 }) {
   try {
-    const res = await api.post("/forms/submit/smi", { token, results });
+    const res = await axios.post("/forms/submit/smi", {
+      token,
+      results,
+    });
+
     return { ok: true, data: res.data };
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
-      const code = (err as any)?.response?.data?.code;
+      const code = err?.response?.data?.code;
       const message = getErrorDisplay(
         err,
         "Network error while submitting SMI form."
       );
+
       return { ok: false, error: message, code };
     }
     return { ok: false, error: "Unexpected error occurred." };
@@ -203,7 +249,7 @@ export async function updateClientInfo({
   dob: string;
 }) {
   try {
-    await api.post("/forms/update-client-info", { token, name, dob });
+    await axios.post("/forms/update-client-info", { token, name, dob });
     return { ok: true };
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
@@ -212,7 +258,10 @@ export async function updateClientInfo({
         error: getErrorDisplay(err, "Unknown error updating client info"),
       };
     }
-    return { ok: false, error: "Unexpected error occurred." };
+    return {
+      ok: false,
+      error: "Unexpected error occurred.",
+    };
   }
 }
 
@@ -235,7 +284,7 @@ export async function fetchAllSmiForms(
   email: string
 ): Promise<FetchAllSmiFormsResult> {
   try {
-    const res = await api.get<{
+    const res = await axios.get<{
       clientName: string | null;
       smiForms: SmiForm[];
     }>("/forms/smi/all", { params: { email } });
