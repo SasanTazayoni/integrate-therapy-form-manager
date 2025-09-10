@@ -53,12 +53,12 @@ app.use("/forms", (_req, res) => {
 
 // --- SPA static + fallback (production only) ---
 if (process.env.NODE_ENV === "production") {
-  const distDir = path.resolve(__dirname, "../dist");
-  const basePath = "/integrate-therapy-form-manager";
+  const distDir =
+    process.env.FRONTEND_DIST_PATH || path.resolve(process.cwd(), "dist");
 
-  app.use(basePath, express.static(distDir, { index: false }));
+  app.use(express.static(distDir, { index: false }));
 
-  app.get(new RegExp(`^${basePath}/.*$`), (_req, res) => {
+  app.get("*", (_req, res) => {
     res.sendFile(path.join(distDir, "index.html"));
   });
 }
