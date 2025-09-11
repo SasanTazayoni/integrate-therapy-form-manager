@@ -53,15 +53,12 @@ app.use("/forms", (_req, res) => {
 
 // --- SPA static + fallback (production only) ---
 if (process.env.NODE_ENV === "production") {
-  const distDir =
-    process.env.FRONTEND_DIST_PATH || path.resolve(__dirname, "../dist");
+  const frontendDir = path.join(__dirname, "frontend");
 
-  console.log("Serving frontend from:", distDir);
+  app.use(express.static(frontendDir));
 
-  app.use(express.static(distDir, { index: false }));
-
-  app.get(/(.*)/, (_req, res) => {
-    res.sendFile(path.join(distDir, "index.html"));
+  app.get(/^\/(?!clients|forms).*$/, (_req, res) => {
+    res.sendFile(path.join(frontendDir, "index.html"));
   });
 }
 
