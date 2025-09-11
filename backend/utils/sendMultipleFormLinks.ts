@@ -4,7 +4,6 @@ import { getFrontendBaseUrl } from "./getFrontendBaseUrl";
 import { Form } from "@prisma/client";
 
 const baseUrl = getFrontendBaseUrl();
-const SPA_BASE_PATH = "/integrate-therapy-form-manager";
 
 const formTitles: Record<string, string> = {
   YSQ: "Young Schema Questionnaire (YSQ)",
@@ -46,11 +45,9 @@ export async function sendMultipleFormLinks({
   const htmlLinks = forms
     .map(
       (f) =>
-        `<p><strong>${
-          formTitles[f.form_type]
-        }</strong>: <a href="${baseUrl}${SPA_BASE_PATH}/${f.form_type}/${
-          f.token
-        }">Click here to complete</a></p>`
+        `<p><strong>${formTitles[f.form_type]}</strong>: <a href="${baseUrl}/${
+          f.form_type
+        }/${f.token}">Click here to complete</a></p>`
     )
     .join("");
 
