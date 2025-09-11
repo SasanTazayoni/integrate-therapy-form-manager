@@ -54,7 +54,7 @@ app.use("/forms", (_req, res) => {
 // --- SPA static + fallback (production only) ---
 if (process.env.NODE_ENV === "production") {
   const distDir =
-    process.env.FRONTEND_DIST_PATH || path.resolve(process.cwd(), "dist");
+    process.env.FRONTEND_DIST_PATH || path.resolve(__dirname, "../dist");
 
   app.use(express.static(distDir, { index: false }));
 
