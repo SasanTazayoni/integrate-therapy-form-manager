@@ -29,7 +29,7 @@ describe("NotFoundModal", () => {
     const description = container.querySelector("#not-found-desc");
     expect(description).toBeTruthy();
     expect(description.textContent).toBe(
-      "You seemed to have navigated to an unknown address. Please check your email for a valid form link."
+      "You seemed to have navigated to an unknown page. Please check your email for a valid form link."
     );
 
     expect(document.activeElement).toBe(heading);

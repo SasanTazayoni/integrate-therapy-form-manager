@@ -8,7 +8,7 @@ type Props = {
 
 export default function NotFoundModal({
   title = "This page does not exist",
-  message = "You seemed to have navigated to an unknown address. Please check your email for a valid form link.",
+  message = "You seemed to have navigated to an unknown page. Please check your email for a valid form link.",
 }: Props) {
   const headingRef = useRef<HTMLHeadingElement>(null);
 
