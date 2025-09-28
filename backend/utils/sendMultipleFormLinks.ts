@@ -1,9 +1,10 @@
-import nodemailer, { Transporter } from "nodemailer";
+import { Resend } from "resend";
 import { getEnvVar } from "./requiredEnv";
 import { getFrontendBaseUrl } from "./getFrontendBaseUrl";
 import { Form } from "@prisma/client";
 
 const baseUrl = getFrontendBaseUrl();
+const resend = new Resend(getEnvVar("RESEND_API_KEY"));
 
 const formTitles: Record<string, string> = {
   YSQ: "Young Schema Questionnaire (YSQ)",
@@ -11,10 +12,6 @@ const formTitles: Record<string, string> = {
   BECKS: "Beck's Depression Inventory (BDI)",
   BURNS: "Burn's Anxiety Inventory (BAI)",
 };
-
-function getFromEmail(): string {
-  return getEnvVar("FROM_EMAIL");
-}
 
 export type SendMultipleFormLinksParams = {
   email: string;
@@ -29,19 +26,7 @@ export async function sendMultipleFormLinks({
 }: SendMultipleFormLinksParams): Promise<void> {
   if (forms.length === 0) return;
 
-  const transporter: Transporter = nodemailer.createTransport({
-    host: getEnvVar("SMTP_HOST"),
-    port: Number(getEnvVar("SMTP_PORT")),
-    secure: getEnvVar("SMTP_SECURE") === "true",
-    auth: {
-      user: getEnvVar("SMTP_USER"),
-      pass: getEnvVar("SMTP_PASS"),
-    },
-  });
-
   const nameToUse = clientName ?? "Sir/Madam";
-  const fromEmail = getFromEmail();
-
   const htmlLinks = forms
     .map(
       (f) =>
@@ -51,31 +36,32 @@ export async function sendMultipleFormLinks({
     )
     .join("");
 
-  const mailOptions: nodemailer.SendMailOptions = {
-    from: fromEmail,
-    to: email,
-    subject: `Your forms from Integrate Therapy`,
-    html: `
-      <p>Dear ${nameToUse},</p>
-      <p>You have been sent the following forms to complete:</p>
-      ${htmlLinks}
-      <p>Best wishes,</p>
-      <p>
-        Simon Burgess Dip MBACP<br/>
-        Integrate Therapy<br/>
-        The Foundry Building<br/>
-        2 Smiths Square<br/>
-        77 Fulham Palace Road<br/>
-        London<br/>
-        W6 8AF<br/>
-        Tel: 0784 604 3703
-      </p>
-    `,
-  };
+  const htmlBody = `
+    <p>Dear ${nameToUse},</p>
+    <p>You have been sent the following forms to complete:</p>
+    ${htmlLinks}
+    <p>Best wishes,</p>
+    <p>
+      Simon Burgess Dip MBACP<br/>
+      Integrate Therapy<br/>
+      The Foundry Building<br/>
+      2 Smiths Square<br/>
+      77 Fulham Palace Road<br/>
+      London<br/>
+      W6 8AF<br/>
+      Tel: 0784 604 3703
+    </p>
+  `;
 
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log("✅ Email sent with multiple forms:", info.messageId);
+    const result = await resend.emails.send({
+      from: getEnvVar("FROM_EMAIL"),
+      to: email,
+      subject: `Your forms from Integrate Therapy`,
+      html: htmlBody,
+    });
+
+    console.log("✅ Email sent with multiple forms:", result);
   } catch (error) {
     console.error(
       "❌ Failed to send multiple forms email:",
