@@ -1,8 +1,9 @@
-import nodemailer, { Transporter } from "nodemailer";
+import { Resend } from "resend";
 import { getEnvVar } from "./requiredEnv";
 import { getFrontendBaseUrl } from "./getFrontendBaseUrl";
 
 const baseUrl = getFrontendBaseUrl();
+const resend = new Resend(getEnvVar("RESEND_API_KEY"));
 
 function getFromEmail(): string {
   return getEnvVar("FROM_EMAIL");
@@ -35,16 +36,6 @@ export async function sendFormLink({
   formType,
   clientName,
 }: SendFormLinkParams): Promise<void> {
-  const transporter: Transporter = nodemailer.createTransport({
-    host: getEnvVar("SMTP_HOST"),
-    port: Number(getEnvVar("SMTP_PORT")),
-    secure: getEnvVar("SMTP_SECURE") === "true",
-    auth: {
-      user: getEnvVar("SMTP_USER"),
-      pass: getEnvVar("SMTP_PASS"),
-    },
-  });
-
   const formPath = pathMap[formType];
   if (!formPath) throw new Error(`Invalid form type: ${formType}`);
 
@@ -53,31 +44,32 @@ export async function sendFormLink({
   const nameToUse = clientName ?? "Sir/Madam";
   const fromEmail = getFromEmail();
 
-  const mailOptions: nodemailer.SendMailOptions = {
-    from: fromEmail,
-    to,
-    subject: `Your ${formTitle}`,
-    html: `
-      <p>Dear ${nameToUse},</p>
-      <p>You have been sent a <strong>${formTitle}</strong> to complete.</p>
-      <p><a href="${link}">Click here to complete your form</a></p>
-      <p>Best wishes,</p>
-      <p>
-        Simon Burgess Dip MBACP<br/>
-        Integrate Therapy<br/>
-        The Foundry Building<br/>
-        2 Smiths Square<br/>
-        77 Fulham Palace Road<br/>
-        London<br/>
-        W6 8AF<br/>
-        Tel: 0784 604 3703
-      </p>
-    `,
-  };
+  const htmlBody = `
+    <p>Dear ${nameToUse},</p>
+    <p>You have been sent a <strong>${formTitle}</strong> to complete.</p>
+    <p><a href="${link}">Click here to complete your form</a></p>
+    <p>Best wishes,</p>
+    <p>
+      Simon Burgess Dip MBACP<br/>
+      Integrate Therapy<br/>
+      The Foundry Building<br/>
+      2 Smiths Square<br/>
+      77 Fulham Palace Road<br/>
+      London<br/>
+      W6 8AF<br/>
+      Tel: 0784 604 3703
+    </p>
+  `;
 
   try {
-    const info = await transporter.sendMail(mailOptions);
-    console.log("✅ Email sent:", info.messageId);
+    const result = await resend.emails.send({
+      from: fromEmail,
+      to,
+      subject: `Your ${formTitle}`,
+      html: htmlBody,
+    });
+
+    console.log("✅ Email sent:", result);
   } catch (error) {
     console.error(
       "❌ Failed to send email:",
