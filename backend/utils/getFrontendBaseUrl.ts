@@ -6,8 +6,7 @@ export function getFrontendBaseUrl(): string {
   try {
     const url = new URL(raw);
 
-    const normalized = `${url.protocol}//${url.host}`;
-    return normalized.endsWith("/") ? normalized.slice(0, -1) : normalized;
+    return `${url.protocol}//${url.host}`;
   } catch {
     console.warn(
       `Invalid FRONTEND_BASE_URL: ${raw}, using fallback http://localhost:5173`
