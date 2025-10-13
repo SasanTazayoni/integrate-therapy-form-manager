@@ -12,4 +12,3 @@
 * Agile development process - github projects, github issues, moscow
 * Testing - Deployment
 * Credits
-* Testing MD file to be made
