@@ -15,15 +15,15 @@ describe("YSQSchemasTable", () => {
   });
 
   test("headerTextClass returns correct classes", () => {
-    expect(headerTextClass("raw", "raw")).toBe("text-gray-500");
-    expect(headerTextClass("raw", "456")).toBe("text-gray-900");
-    expect(headerTextClass("raw", null)).toBe("text-gray-900");
+    expect(headerTextClass("raw", "raw")).toBe("text-gray-900");
+    expect(headerTextClass("raw", "456")).toBe("text-gray-500");
+    expect(headerTextClass("raw", null)).toBe("text-gray-500");
   });
 
   test("cellTextClass returns correct classes", () => {
-    expect(cellTextClass("456", "456")).toBe("text-gray-300");
-    expect(cellTextClass("456", "raw")).toBe("text-gray-900");
-    expect(cellTextClass("456", null)).toBe("text-gray-900");
+    expect(cellTextClass("456", "456")).toBe("text-gray-900");
+    expect(cellTextClass("456", "raw")).toBe("text-gray-300");
+    expect(cellTextClass("456", null)).toBe("text-gray-300");
   });
 
   test("getSchemaRowScores returns correct values for raw grayedOutCol", () => {
@@ -145,12 +145,12 @@ describe("YSQSchemasTable", () => {
       />
     );
 
-    expect(getByText("Raw")).toHaveClass("text-gray-500");
-    expect(getByText("4/5/6")).toHaveClass("text-gray-900");
+    expect(getByText("Raw")).toHaveClass("text-gray-900");
+    expect(getByText("4/5/6")).toHaveClass("text-gray-500");
     const rawCell = getByText("12");
     const score456Cell = getByText("8");
-    expect(rawCell).toHaveClass("text-gray-300");
-    expect(score456Cell).toHaveClass("text-gray-900");
+    expect(rawCell).toHaveClass("text-gray-900");
+    expect(score456Cell).toHaveClass("text-gray-300");
   });
 
   test("applies correct classes for ratings based on highlightLevel", () => {
