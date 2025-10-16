@@ -3,19 +3,19 @@ import { Item, OPTIONS } from "./YSQCommon";
 const YSQSocialIsolation: Item[] = [
   {
     id: 44,
-    prompt: "I don’t fit in.",
+    prompt: "I don't fit in.",
     options: OPTIONS,
     category: "SI",
   },
   {
     id: 45,
-    prompt: "I’m fundamentally different from other people",
+    prompt: "I'm fundamentally different from other people",
     options: OPTIONS,
     category: "SI",
   },
   {
     id: 46,
-    prompt: "I don’t belong; I’m a loner",
+    prompt: "I don't belong; I'm a loner",
     options: OPTIONS,
     category: "SI",
   },
@@ -51,7 +51,7 @@ const YSQSocialIsolation: Item[] = [
   },
   {
     id: 52,
-    prompt: "I sometimes feel as if I’m an alien",
+    prompt: "I sometimes feel as if I'm an alien",
     options: OPTIONS,
     category: "SI",
   },

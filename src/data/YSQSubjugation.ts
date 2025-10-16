@@ -10,14 +10,14 @@ const YSQSubjugation: Item[] = [
   },
   {
     id: 117,
-    prompt: "I believe that if I do what I want, I’m only asking for trouble",
+    prompt: "I believe that if I do what I want, I'm only asking for trouble",
     options: OPTIONS,
     category: "SB",
   },
   {
     id: 118,
     prompt:
-      "I feel that I have no choice but to give in to other people’s wishes, or else they will retaliate or reject me in some way",
+      "I feel that I have no choice but to give in to other people's wishes, or else they will retaliate or reject me in some way",
     options: OPTIONS,
     category: "SB",
   },
@@ -30,7 +30,7 @@ const YSQSubjugation: Item[] = [
   {
     id: 120,
     prompt:
-      "I’ve always let others make choices for me, so I really don’t know what I want for myself",
+      "I've always let others make choices for me, so I really don't know what I want for myself",
     options: OPTIONS,
     category: "SB",
   },
@@ -43,7 +43,7 @@ const YSQSubjugation: Item[] = [
   {
     id: 122,
     prompt:
-      "I worry a lot about pleasing other people, so they won’t reject me",
+      "I worry a lot about pleasing other people, so they won't reject me",
     options: OPTIONS,
     category: "SB",
   },

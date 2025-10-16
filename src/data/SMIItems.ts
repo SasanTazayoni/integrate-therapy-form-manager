@@ -16,7 +16,7 @@ const SMIItems: Item[] = [
   },
   {
     id: 3,
-    prompt: "I deny myself pleasure because I don’t deserve it.",
+    prompt: "I deny myself pleasure because I don't deserve it.",
     options: OPTIONS,
     category: "Punitive Parent",
   },
@@ -41,7 +41,7 @@ const SMIItems: Item[] = [
   },
   {
     id: 7,
-    prompt: "I’m hard on myself.",
+    prompt: "I'm hard on myself.",
     options: OPTIONS,
     category: "Demanding Parent",
   },
@@ -54,7 +54,7 @@ const SMIItems: Item[] = [
   },
   {
     id: 9,
-    prompt: "I can’t forgive myself.",
+    prompt: "I can't forgive myself.",
     options: OPTIONS,
     category: "Punitive Parent",
   },
@@ -66,7 +66,7 @@ const SMIItems: Item[] = [
   },
   {
     id: 11,
-    prompt: "I get irritated when people don’t do what I ask them to do.",
+    prompt: "I get irritated when people don't do what I ask them to do.",
     options: OPTIONS,
     category: "Self-Aggrandizer",
   },
@@ -78,7 +78,7 @@ const SMIItems: Item[] = [
   },
   {
     id: 13,
-    prompt: "If I can’t reach a goal, I become easily frustrated and give up.",
+    prompt: "If I can't reach a goal, I become easily frustrated and give up.",
     options: OPTIONS,
     category: "Undisciplined Child",
   },
@@ -97,7 +97,7 @@ const SMIItems: Item[] = [
   },
   {
     id: 16,
-    prompt: "It’s my fault when something bad happens.",
+    prompt: "It's my fault when something bad happens.",
     options: OPTIONS,
     category: "Punitive Parent",
   },
@@ -110,7 +110,7 @@ const SMIItems: Item[] = [
   {
     id: 18,
     prompt:
-      "I change myself depending on the people I’m with, so they’ll like me or approve of me.",
+      "I change myself depending on the people I'm with, so they'll like me or approve of me.",
     options: OPTIONS,
     category: "Compliant Surrenderer",
   },
@@ -128,13 +128,13 @@ const SMIItems: Item[] = [
   },
   {
     id: 21,
-    prompt: "I don’t discipline myself to complete routine or boring tasks.",
+    prompt: "I don't discipline myself to complete routine or boring tasks.",
     options: OPTIONS,
     category: "Undisciplined Child",
   },
   {
     id: 22,
-    prompt: "If I don’t fight, I will be abused or neglected.",
+    prompt: "If I don't fight, I will be abused or neglected.",
     options: OPTIONS,
     category: "Angry Child",
   },
@@ -159,14 +159,14 @@ const SMIItems: Item[] = [
   {
     id: 26,
     prompt:
-      "Once I start to feel angry, I often don’t control it and lose my temper.",
+      "Once I start to feel angry, I often don't control it and lose my temper.",
     options: OPTIONS,
     category: "Enraged Child",
   },
   {
     id: 27,
     prompt:
-      "It’s important for me to be Number One (e.g., the most popular, most successful, most wealthy, most powerful).",
+      "It's important for me to be Number One (e.g., the most popular, most successful, most wealthy, most powerful).",
     options: OPTIONS,
     category: "Self-Aggrandizer",
   },
@@ -261,7 +261,7 @@ const SMIItems: Item[] = [
   {
     id: 42,
     prompt:
-      "I ‘m angry that people are trying to take away my freedom or independence.",
+      "I 'm angry that people are trying to take away my freedom or independence.",
     options: OPTIONS,
     category: "Angry Child",
   },
@@ -274,14 +274,14 @@ const SMIItems: Item[] = [
   {
     id: 44,
     prompt:
-      "I do what I want to do, regardless of other people’s needs and feelings.",
+      "I do what I want to do, regardless of other people's needs and feelings.",
     options: OPTIONS,
     category: "Self-Aggrandizer",
   },
   {
     id: 45,
     prompt:
-      "I’m not letting myself relax or have fun until I’ve finished everything I’m supposed to do.",
+      "I'm not letting myself relax or have fun until I've finished everything I'm supposed to do.",
     options: OPTIONS,
     category: "Demanding Parent",
   },
@@ -363,13 +363,13 @@ const SMIItems: Item[] = [
   },
   {
     id: 58,
-    prompt: "I’m bad if I get angry at other people.",
+    prompt: "I'm bad if I get angry at other people.",
     options: OPTIONS,
     category: "Punitive Parent",
   },
   {
     id: 59,
-    prompt: "I don’t want to get involved with people.",
+    prompt: "I don't want to get involved with people.",
     options: OPTIONS,
     category: "Detached Protector",
   },
@@ -394,13 +394,13 @@ const SMIItems: Item[] = [
   },
   {
     id: 63,
-    prompt: "I’m angry with someone for leaving me alone or abandoning me.",
+    prompt: "I'm angry with someone for leaving me alone or abandoning me.",
     options: OPTIONS,
     category: "Angry Child",
   },
   {
     id: 64,
-    prompt: "I don’t feel connected to other people.",
+    prompt: "I don't feel connected to other people.",
     options: OPTIONS,
     category: "Detached Protector",
   },
@@ -450,7 +450,7 @@ const SMIItems: Item[] = [
   {
     id: 72,
     prompt:
-      "I don’t allow myself to do pleasurable things that other people do because I’m bad.",
+      "I don't allow myself to do pleasurable things that other people do because I'm bad.",
     options: OPTIONS,
     category: "Punitive Parent",
   },
@@ -468,7 +468,7 @@ const SMIItems: Item[] = [
   },
   {
     id: 75,
-    prompt: "I don’t care about anything; nothing matters to me.",
+    prompt: "I don't care about anything; nothing matters to me.",
     options: OPTIONS,
     category: "Detached Protector",
   },
@@ -500,26 +500,26 @@ const SMIItems: Item[] = [
   },
   {
     id: 80,
-    prompt: "I’m capable of taking care of myself.",
+    prompt: "I'm capable of taking care of myself.",
     options: OPTIONS,
     category: "Healthy Adult",
   },
   {
     id: 81,
-    prompt: "I’m quite critical of other people.",
+    prompt: "I'm quite critical of other people.",
     options: OPTIONS,
     category: "Self-Aggrandizer",
   },
   {
     id: 82,
-    prompt: "I’m under constant pressure to achieve and get things done.",
+    prompt: "I'm under constant pressure to achieve and get things done.",
     options: OPTIONS,
     category: "Demanding Parent",
   },
   {
     id: 83,
     prompt:
-      "I’m trying not to make mistakes; otherwise, I’ll get down on myself.",
+      "I'm trying not to make mistakes; otherwise, I'll get down on myself.",
     options: OPTIONS,
     category: "Demanding Parent",
   },
@@ -543,7 +543,7 @@ const SMIItems: Item[] = [
   },
   {
     id: 87,
-    prompt: "I’m angry at myself.",
+    prompt: "I'm angry at myself.",
     options: OPTIONS,
     category: "Punitive Parent",
   },
@@ -568,7 +568,7 @@ const SMIItems: Item[] = [
   },
   {
     id: 91,
-    prompt: "I’m demanding of other people.",
+    prompt: "I'm demanding of other people.",
     options: OPTIONS,
     category: "Self-Aggrandizer",
   },
@@ -586,7 +586,7 @@ const SMIItems: Item[] = [
   },
   {
     id: 94,
-    prompt: "I’m a bad person.",
+    prompt: "I'm a bad person.",
     options: OPTIONS,
     category: "Punitive Parent",
   },
@@ -623,7 +623,7 @@ const SMIItems: Item[] = [
   {
     id: 100,
     prompt:
-      "I act in a passive way, even when I don’t like the way things are.",
+      "I act in a passive way, even when I don't like the way things are.",
     options: OPTIONS,
     category: "Compliant Surrenderer",
   },
@@ -649,7 +649,7 @@ const SMIItems: Item[] = [
   {
     id: 104,
     prompt:
-      "I know that there is a ‘right’ and a ‘wrong’ way to do things; I try hard to do things the right way, or else I start criticizing myself.",
+      "I know that there is a 'right' and a 'wrong' way to do things; I try hard to do things the right way, or else I start criticizing myself.",
     options: OPTIONS,
     category: "Demanding Parent",
   },
@@ -667,7 +667,7 @@ const SMIItems: Item[] = [
   },
   {
     id: 107,
-    prompt: "I’m lazy.",
+    prompt: "I'm lazy.",
     options: OPTIONS,
     category: "Undisciplined Child",
   },
@@ -680,7 +680,7 @@ const SMIItems: Item[] = [
   },
   {
     id: 109,
-    prompt: "I’ve been cheated or treated unfairly.",
+    prompt: "I've been cheated or treated unfairly.",
     options: OPTIONS,
     category: "Angry Child",
   },
@@ -711,20 +711,20 @@ const SMIItems: Item[] = [
   {
     id: 114,
     prompt:
-      "I feel I shouldn’t have to follow the same rules that other people do.",
+      "I feel I shouldn't have to follow the same rules that other people do.",
     options: OPTIONS,
     category: "Self-Aggrandizer",
   },
   {
     id: 115,
     prompt:
-      "My life right now revolves around getting things done and doing them ‘right’.",
+      "My life right now revolves around getting things done and doing them 'right'.",
     options: OPTIONS,
     category: "Demanding Parent",
   },
   {
     id: 116,
-    prompt: "I’m pushing myself to be more responsible than most other people.",
+    prompt: "I'm pushing myself to be more responsible than most other people.",
     options: OPTIONS,
     category: "Demanding Parent",
   },
@@ -737,7 +737,7 @@ const SMIItems: Item[] = [
   },
   {
     id: 118,
-    prompt: "I don’t deserve sympathy when something bad happens to me.",
+    prompt: "I don't deserve sympathy when something bad happens to me.",
     options: OPTIONS,
     category: "Punitive Parent",
   },
@@ -749,7 +749,7 @@ const SMIItems: Item[] = [
   },
   {
     id: 120,
-    prompt: "I feel that I’m basically a good person.",
+    prompt: "I feel that I'm basically a good person.",
     options: OPTIONS,
     category: "Healthy Adult",
   },

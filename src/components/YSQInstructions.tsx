@@ -18,12 +18,12 @@ const YSQInstructions = () => {
 
         <p className="font-bold mb-1">Rating Scale:</p>
         <ul className="list-none space-y-1">
-          <li>1 – Completely untrue of me</li>
-          <li>2 – Mostly untrue of me</li>
-          <li>3 – Slightly more true than untrue</li>
-          <li>4 – Moderately true of me</li>
-          <li>5 – Mostly true of me</li>
-          <li>6 – Describes me perfectly</li>
+          <li>1 - Completely untrue of me</li>
+          <li>2 - Mostly untrue of me</li>
+          <li>3 - Slightly more true than untrue</li>
+          <li>4 - Moderately true of me</li>
+          <li>5 - Mostly true of me</li>
+          <li>6 - Describes me perfectly</li>
         </ul>
       </div>
 

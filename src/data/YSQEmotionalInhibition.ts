@@ -24,7 +24,7 @@ const YSQEmotionalInhibition: Item[] = [
   {
     id: 146,
     prompt:
-      "A lot of anger and resentment build up inside of me that I don’t express",
+      "A lot of anger and resentment build up inside of me that I don't express",
     options: OPTIONS,
     category: "EI",
   },

@@ -10,7 +10,7 @@ const YSQApprovalSeeking: Item[] = [
   {
     id: 195,
     prompt:
-      "I change myself depending on the people I’m with, so they’ll like me more",
+      "I change myself depending on the people I'm with, so they'll like me more",
     options: OPTIONS,
     category: "AS",
   },
@@ -49,7 +49,7 @@ const YSQApprovalSeeking: Item[] = [
   {
     id: 201,
     prompt:
-      "I am so focused on fitting in that sometimes I don’t know who I am",
+      "I am so focused on fitting in that sometimes I don't know who I am",
     options: OPTIONS,
     category: "AS",
   },
@@ -63,13 +63,13 @@ const YSQApprovalSeeking: Item[] = [
   {
     id: 203,
     prompt:
-      "When I look at my life decisions, I see that I made most of them with other people’s approval in mind",
+      "When I look at my life decisions, I see that I made most of them with other people's approval in mind",
     options: OPTIONS,
     category: "AS",
   },
   {
     id: 204,
-    prompt: "Even if I don’t like someone, I still want him or her to like me",
+    prompt: "Even if I don't like someone, I still want him or her to like me",
     options: OPTIONS,
     category: "AS",
   },

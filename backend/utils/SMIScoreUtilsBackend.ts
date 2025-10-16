@@ -16,7 +16,7 @@ export function classifyScore(score: number, boundaries: number[]): string {
 export function normalizeLabel(label: string) {
   return label
     .toLowerCase()
-    .replace(/[\(\)\-\–]/g, " ")
+    .replace(/[\(\)\-\-]/g, " ")
     .replace(/[^a-z0-9\s]/g, "")
     .replace(/\s+/g, " ")
     .trim();

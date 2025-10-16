@@ -23,19 +23,19 @@ const YSQDefectiveness: Item[] = [
   {
     id: 57,
     prompt:
-      "No matter how hard I try, I feel that I won’t be able to get a significant man/woman to respect me or feel that I am worthwhile",
+      "No matter how hard I try, I feel that I won't be able to get a significant man/woman to respect me or feel that I am worthwhile",
     options: OPTIONS,
     category: "DS",
   },
   {
     id: 58,
-    prompt: "I’m unworthy of the love, attention, and respect of others",
+    prompt: "I'm unworthy of the love, attention, and respect of others",
     options: OPTIONS,
     category: "DS",
   },
   {
     id: 59,
-    prompt: "I feel that I’m not lovable",
+    prompt: "I feel that I'm not lovable",
     options: OPTIONS,
     category: "DS",
   },
@@ -68,7 +68,7 @@ const YSQDefectiveness: Item[] = [
   {
     id: 64,
     prompt:
-      "I have inner secrets that I don’t want people close to me to find out",
+      "I have inner secrets that I don't want people close to me to find out",
     options: OPTIONS,
     category: "DS",
   },
@@ -80,7 +80,7 @@ const YSQDefectiveness: Item[] = [
   },
   {
     id: 66,
-    prompt: "I don’t feel I let people know the real me",
+    prompt: "I don't feel I let people know the real me",
     options: OPTIONS,
     category: "DS",
   },

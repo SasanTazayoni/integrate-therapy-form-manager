@@ -48,14 +48,14 @@ const YSQDependence: Item[] = [
   },
   {
     id: 85,
-    prompt: "I’m inept in most areas of life",
+    prompt: "I'm inept in most areas of life",
     options: OPTIONS,
     category: "DI",
   },
   {
     id: 86,
     prompt:
-      "If I trust my own judgement in everyday situations, I’ll make the wrong decision",
+      "If I trust my own judgement in everyday situations, I'll make the wrong decision",
     options: OPTIONS,
     category: "DI",
   },
@@ -74,7 +74,7 @@ const YSQDependence: Item[] = [
   {
     id: 89,
     prompt:
-      "I don’t feel confident about my ability to solve everyday problems that come up",
+      "I don't feel confident about my ability to solve everyday problems that come up",
     options: OPTIONS,
     category: "DI",
   },

@@ -44,7 +44,7 @@ const YSQNegativityPessimism: Item[] = [
   {
     id: 214,
     prompt:
-      "I feel better assuming that things will not work out for me, so that I don’t feel disappointed if things go wrong",
+      "I feel better assuming that things will not work out for me, so that I don't feel disappointed if things go wrong",
     options: OPTIONS,
     category: "NP",
   },

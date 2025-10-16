@@ -29,8 +29,8 @@ describe("SMI Score Utils", () => {
 
   describe("normalizeLabel", () => {
     test("normalizes labels correctly", () => {
-      expect(normalizeLabel("Burn’s Anxiety (BAI)")).toBe("burns anxiety bai");
-      expect(normalizeLabel("  Test-Label – Example  ")).toBe(
+      expect(normalizeLabel("Burn's Anxiety (BAI)")).toBe("burns anxiety bai");
+      expect(normalizeLabel("  Test-Label - Example  ")).toBe(
         "test label example"
       );
       expect(normalizeLabel("Special@#Chars!!")).toBe("specialchars");

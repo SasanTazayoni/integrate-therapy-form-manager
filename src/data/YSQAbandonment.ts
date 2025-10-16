@@ -11,7 +11,7 @@ const YSQAbandonment: Item[] = [
   {
     id: 11,
     prompt:
-      "I find myself clinging to people I’m close to, because I’m afraid they’ll leave me",
+      "I find myself clinging to people I'm close to, because I'm afraid they'll leave me",
     options: OPTIONS,
     category: "AB",
   },
@@ -30,14 +30,14 @@ const YSQAbandonment: Item[] = [
   {
     id: 14,
     prompt:
-      "I don’t feel that important relationships will last; I expect them to end",
+      "I don't feel that important relationships will last; I expect them to end",
     options: OPTIONS,
     category: "AB",
   },
   {
     id: 15,
     prompt:
-      "I feel addicted to partners who can’t be there for me in a committed way",
+      "I feel addicted to partners who can't be there for me in a committed way",
     options: OPTIONS,
     category: "AB",
   },
@@ -71,14 +71,14 @@ const YSQAbandonment: Item[] = [
   {
     id: 20,
     prompt:
-      "I can’t count on people who support me to be there on a regular basis",
+      "I can't count on people who support me to be there on a regular basis",
     options: OPTIONS,
     category: "AB",
   },
   {
     id: 21,
     prompt:
-      "I can’t let myself get really close to other people, because I can’t be sure they’ll always be there",
+      "I can't let myself get really close to other people, because I can't be sure they'll always be there",
     options: OPTIONS,
     category: "AB",
   },
@@ -99,7 +99,7 @@ const YSQAbandonment: Item[] = [
   {
     id: 24,
     prompt:
-      "The people close to me have been very unpredictable; one moment they’re available and nice to me; the next they’re angry, upset, self-absorbed, fighting, etc.",
+      "The people close to me have been very unpredictable; one moment they're available and nice to me; the next they're angry, upset, self-absorbed, fighting, etc.",
     options: OPTIONS,
     category: "AB",
   },
@@ -112,7 +112,7 @@ const YSQAbandonment: Item[] = [
   {
     id: 26,
     prompt:
-      "I can’t be myself or express what I really feel, or people will leave me",
+      "I can't be myself or express what I really feel, or people will leave me",
     options: OPTIONS,
     category: "AB",
   },

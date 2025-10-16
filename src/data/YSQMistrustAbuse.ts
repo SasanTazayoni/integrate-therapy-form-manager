@@ -47,7 +47,7 @@ const YSQMistrustAbuse: Item[] = [
   },
   {
     id: 34,
-    prompt: "I am quite suspicious of other people’s motives",
+    prompt: "I am quite suspicious of other people's motives",
     options: OPTIONS,
     category: "MA",
   },
@@ -60,7 +60,7 @@ const YSQMistrustAbuse: Item[] = [
   },
   {
     id: 36,
-    prompt: "I’m usually on the lookout for people’s ulterior motives",
+    prompt: "I'm usually on the lookout for people's ulterior motives",
     options: OPTIONS,
     category: "MA",
   },
@@ -81,13 +81,13 @@ const YSQMistrustAbuse: Item[] = [
   {
     id: 39,
     prompt:
-      "I set up ‘tests’ for other people, to see if they are telling me the truth and are well-intentioned",
+      "I set up 'tests' for other people, to see if they are telling me the truth and are well-intentioned",
     options: OPTIONS,
     category: "MA",
   },
   {
     id: 40,
-    prompt: "I subscribe to the belief: ‘Control or be controlled.’",
+    prompt: "I subscribe to the belief: 'Control or be controlled.'",
     options: OPTIONS,
     category: "MA",
   },

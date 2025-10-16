@@ -4,7 +4,7 @@ const YSQUnrelentingStandards: Item[] = [
   {
     id: 152,
     prompt:
-      "I must be the best at most of what I do: I can’t accept second best",
+      "I must be the best at most of what I do: I can't accept second best",
     options: OPTIONS,
     category: "US",
   },
@@ -22,7 +22,7 @@ const YSQUnrelentingStandards: Item[] = [
   },
   {
     id: 155,
-    prompt: "I try to do my best: I can’t settle for ‘good enough’",
+    prompt: "I try to do my best: I can't settle for 'good enough'",
     options: OPTIONS,
     category: "US",
   },
@@ -80,13 +80,13 @@ const YSQUnrelentingStandards: Item[] = [
   {
     id: 164,
     prompt:
-      "I can’t let myself off the hook easily or make excuses for my mistakes",
+      "I can't let myself off the hook easily or make excuses for my mistakes",
     options: OPTIONS,
     category: "US",
   },
   {
     id: 165,
-    prompt: "I’m a very competitive person",
+    prompt: "I'm a very competitive person",
     options: OPTIONS,
     category: "US",
   },

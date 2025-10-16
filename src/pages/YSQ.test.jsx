@@ -659,7 +659,7 @@ describe("YSQ Component", () => {
     const tooltip = getByTestId("rating-scale-tooltip");
     expect(tooltip).toBeInTheDocument();
     expect(tooltip.dataset.title).toBe("YSQ Rating Scale");
-    expect(getByText("1 – Completely untrue of me")).toBeInTheDocument();
-    expect(getByText("6 – Describes me perfectly")).toBeInTheDocument();
+    expect(getByText("1 - Completely untrue of me")).toBeInTheDocument();
+    expect(getByText("6 - Describes me perfectly")).toBeInTheDocument();
   });
 });

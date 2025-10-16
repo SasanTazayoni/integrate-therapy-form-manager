@@ -11,7 +11,7 @@ const YSQInsufficientSelfControl: Item[] = [
   {
     id: 180,
     prompt:
-      "I can’t seem to discipline myself to complete routine or boring tasks",
+      "I can't seem to discipline myself to complete routine or boring tasks",
     options: OPTIONS,
     category: "IS",
   },
@@ -24,7 +24,7 @@ const YSQInsufficientSelfControl: Item[] = [
   },
   {
     id: 182,
-    prompt: "If I can’t reach a goal, I become easily frustrated and give up",
+    prompt: "If I can't reach a goal, I become easily frustrated and give up",
     options: OPTIONS,
     category: "IS",
   },
@@ -38,7 +38,7 @@ const YSQInsufficientSelfControl: Item[] = [
   {
     id: 184,
     prompt:
-      "It often happens that, once I start to feel angry, I just can’t control it",
+      "It often happens that, once I start to feel angry, I just can't control it",
     options: OPTIONS,
     category: "IS",
   },
@@ -63,14 +63,14 @@ const YSQInsufficientSelfControl: Item[] = [
   },
   {
     id: 188,
-    prompt: "I can’t concentrate on anything for too long",
+    prompt: "I can't concentrate on anything for too long",
     options: OPTIONS,
     category: "IS",
   },
   {
     id: 189,
     prompt:
-      "I can’t force myself to do things I don’t enjoy, even when I know it’s for my own good",
+      "I can't force myself to do things I don't enjoy, even when I know it's for my own good",
     options: OPTIONS,
     category: "IS",
   },

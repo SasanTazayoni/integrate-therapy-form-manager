@@ -13,8 +13,8 @@ describe("YSQInstructions", () => {
       )
     ).toBeInTheDocument();
     expect(getByText("Rating Scale:")).toBeInTheDocument();
-    expect(getByText("1 – Completely untrue of me")).toBeInTheDocument();
-    expect(getByText("6 – Describes me perfectly")).toBeInTheDocument();
+    expect(getByText("1 - Completely untrue of me")).toBeInTheDocument();
+    expect(getByText("6 - Describes me perfectly")).toBeInTheDocument();
     expect(getByText("Example:")).toBeInTheDocument();
   });
 });

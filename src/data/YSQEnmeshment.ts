@@ -11,7 +11,7 @@ const YSQEnmeshment: Item[] = [
   {
     id: 106,
     prompt:
-      "My parent(s) and I tend to be over involved in each other’s lives and problems",
+      "My parent(s) and I tend to be over involved in each other's lives and problems",
     options: OPTIONS,
     category: "EU",
   },
@@ -32,14 +32,14 @@ const YSQEnmeshment: Item[] = [
   {
     id: 109,
     prompt:
-      "I often feel that I don’t have a separate identity from my parents or partner",
+      "I often feel that I don't have a separate identity from my parents or partner",
     options: OPTIONS,
     category: "EU",
   },
   {
     id: 110,
     prompt:
-      "I often feel as if my parent(s) are living through me – I don’t have a life of my own",
+      "I often feel as if my parent(s) are living through me - I don't have a life of my own",
     options: OPTIONS,
     category: "EU",
   },

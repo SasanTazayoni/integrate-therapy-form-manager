@@ -10,7 +10,7 @@ const YSQFailure: Item[] = [
   },
   {
     id: 70,
-    prompt: "I’m incompetent when it comes to achievement",
+    prompt: "I'm incompetent when it comes to achievement",
     options: OPTIONS,
     category: "FA",
   },
@@ -23,21 +23,21 @@ const YSQFailure: Item[] = [
   },
   {
     id: 72,
-    prompt: "I’m a failure",
+    prompt: "I'm a failure",
     options: OPTIONS,
     category: "FA",
   },
   {
     id: 73,
     prompt:
-      "I’m not as talented as most people are at their work (or at school)",
+      "I'm not as talented as most people are at their work (or at school)",
     options: OPTIONS,
     category: "FA",
   },
   {
     id: 74,
     prompt:
-      "I’m not as intelligent as most people when it comes to work (or school)",
+      "I'm not as intelligent as most people when it comes to work (or school)",
     options: OPTIONS,
     category: "FA",
   },
@@ -51,7 +51,7 @@ const YSQFailure: Item[] = [
   {
     id: 76,
     prompt:
-      "I often feel embarrassed around other people, because I don’t measure up to them in terms of my accomplishments",
+      "I often feel embarrassed around other people, because I don't measure up to them in terms of my accomplishments",
     options: OPTIONS,
     category: "FA",
   },

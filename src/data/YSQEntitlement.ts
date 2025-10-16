@@ -10,14 +10,14 @@ const YSQEntitlement: Item[] = [
   },
   {
     id: 169,
-    prompt: "I often get angry or irritable if I can’t get what I want.",
+    prompt: "I often get angry or irritable if I can't get what I want.",
     options: OPTIONS,
     category: "ET",
   },
   {
     id: 170,
     prompt:
-      "I’m special and shouldn’t have to accept many of the restrictions placed on other people",
+      "I'm special and shouldn't have to accept many of the restrictions placed on other people",
     options: OPTIONS,
     category: "ET",
   },
@@ -30,7 +30,7 @@ const YSQEntitlement: Item[] = [
   {
     id: 172,
     prompt:
-      "I feel that I shouldn’t have to follow the normal rules and conventions other people do",
+      "I feel that I shouldn't have to follow the normal rules and conventions other people do",
     options: OPTIONS,
     category: "ET",
   },
@@ -50,7 +50,7 @@ const YSQEntitlement: Item[] = [
   {
     id: 175,
     prompt:
-      "I often find that I am so involved in my own priorities that I don’t have time to give to friends or family",
+      "I often find that I am so involved in my own priorities that I don't have time to give to friends or family",
     options: OPTIONS,
     category: "ET",
   },
@@ -63,13 +63,13 @@ const YSQEntitlement: Item[] = [
   },
   {
     id: 177,
-    prompt: "I get very irritated when people won’t do what I ask of them",
+    prompt: "I get very irritated when people won't do what I ask of them",
     options: OPTIONS,
     category: "ET",
   },
   {
     id: 178,
-    prompt: "I can’t tolerate other people telling me what to do.",
+    prompt: "I can't tolerate other people telling me what to do.",
     options: OPTIONS,
     category: "ET",
   },

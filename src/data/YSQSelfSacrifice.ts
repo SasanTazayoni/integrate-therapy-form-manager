@@ -3,7 +3,7 @@ import { Item, OPTIONS } from "./YSQCommon";
 const YSQSelfSacrifice: Item[] = [
   {
     id: 126,
-    prompt: "I put others’ needs before my own, or else I feel guilty",
+    prompt: "I put others' needs before my own, or else I feel guilty",
     options: OPTIONS,
     category: "SS",
   },
@@ -22,13 +22,13 @@ const YSQSelfSacrifice: Item[] = [
   {
     id: 129,
     prompt:
-      "I’m the one who usually ends up taking care of the people I’m close to",
+      "I'm the one who usually ends up taking care of the people I'm close to",
     options: OPTIONS,
     category: "SS",
   },
   {
     id: 130,
-    prompt: "There is almost nothing I couldn’t put up with if I loved someone",
+    prompt: "There is almost nothing I couldn't put up with if I loved someone",
     options: OPTIONS,
     category: "SS",
   },
@@ -41,7 +41,7 @@ const YSQSelfSacrifice: Item[] = [
   {
     id: 132,
     prompt:
-      "At work, I’m usually the one to volunteer to do extra tasks or to put in extra time",
+      "At work, I'm usually the one to volunteer to do extra tasks or to put in extra time",
     options: OPTIONS,
     category: "SS",
   },
@@ -59,26 +59,26 @@ const YSQSelfSacrifice: Item[] = [
   },
   {
     id: 135,
-    prompt: "I’m only happy when those around me are happy",
+    prompt: "I'm only happy when those around me are happy",
     options: OPTIONS,
     category: "SS",
   },
   {
     id: 136,
     prompt:
-      "I’m so busy doing for the people that I care about that I have little time for myself",
+      "I'm so busy doing for the people that I care about that I have little time for myself",
     options: OPTIONS,
     category: "SS",
   },
   {
     id: 137,
-    prompt: "I’ve always been the one who listens to everyone else’s problems",
+    prompt: "I've always been the one who listens to everyone else's problems",
     options: OPTIONS,
     category: "SS",
   },
   {
     id: 138,
-    prompt: "I’m more comfortable giving a present than receiving one",
+    prompt: "I'm more comfortable giving a present than receiving one",
     options: OPTIONS,
     category: "SS",
   },
@@ -103,7 +103,7 @@ const YSQSelfSacrifice: Item[] = [
   },
   {
     id: 142,
-    prompt: "It’s very difficult for me to ask others to take care of my needs",
+    prompt: "It's very difficult for me to ask others to take care of my needs",
     options: OPTIONS,
     category: "SS",
   },

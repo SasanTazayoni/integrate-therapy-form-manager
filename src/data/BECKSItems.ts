@@ -199,7 +199,7 @@ const BECKS_ITEMS: Item[] = [
       { value: 1, text: "I don't sleep as well as I used to." },
       {
         value: 2,
-        text: "I wake up 1–2 hours earlier than usual and find it hard to get back to sleep.",
+        text: "I wake up 1-2 hours earlier than usual and find it hard to get back to sleep.",
       },
       {
         value: 3,
