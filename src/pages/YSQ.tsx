@@ -57,12 +57,12 @@ const YSQ_SCHEMAS: YSQSchema[] = [
 ];
 
 const YSQ_RATING_SCALE = [
-  "1 – Completely untrue of me",
-  "2 – Mostly untrue of me",
-  "3 – Slightly more true than untrue",
-  "4 – Moderately true of me",
-  "5 – Mostly true of me",
-  "6 – Describes me perfectly",
+  "1 - Completely untrue of me",
+  "2 - Mostly untrue of me",
+  "3 - Slightly more true than untrue",
+  "4 - Moderately true of me",
+  "5 - Mostly true of me",
+  "6 - Describes me perfectly",
 ];
 
 const YSQ = () => {

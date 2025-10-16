@@ -25,12 +25,12 @@ type Schema = { name: string; code: string; max: number };
 export const headerTextClass = (
   col: "raw" | "456",
   grayedOutCol: GrayedOutCol
-): string => (grayedOutCol === col ? "text-gray-500" : "text-gray-900");
+): string => (grayedOutCol === col ? "text-gray-900" : "text-gray-500");
 
 export const cellTextClass = (
   col: "raw" | "456",
   grayedOutCol: GrayedOutCol
-): string => (grayedOutCol === col ? "text-gray-300" : "text-gray-900");
+): string => (grayedOutCol === col ? "text-gray-900" : "text-gray-300");
 
 export const getSchemaRowScores = (
   schema: Schema,
