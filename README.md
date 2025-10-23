@@ -27,7 +27,9 @@ Emails are sent through the Resend API, and each contains a unique access token 
 
 Form submissions are automatically scored by backend scripts, and both the scores and responses are stored in a PostgreSQL (Neon) database. These results can be retrieved through the dashboard, where the “Summary” view displays pre-generated charts for clients who have completed specific questionnaires.
 
-This application is hosted on the cloud platform Render. Due to the sensitive nature of the data, a live demo is not publicly available; however, a video demonstrating exactly how the system works will be provided using a dummy email.
+This application is hosted on the cloud platform Render. Due to the sensitive nature of the data, a live demo is not publicly available; however, the features section will outline clearly how the application works with many screenshots.
+
+![Integrate Therapy Form Manager on various devices](documentation/amiresponsive.png)
 
 * UX - colour, typography
 * User stories and epics
