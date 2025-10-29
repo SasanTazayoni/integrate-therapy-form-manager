@@ -29,30 +29,20 @@ Form submissions are automatically scored by backend scripts, and both the score
 
 This application is hosted on the cloud platform Render. Due to the sensitive nature of the data, a live demo is not publicly available. However, the features section includes multiple screenshots, and I have posted a series of video examples using dummy data, both of which clearly demonstrate how the application works.
 
-Video 1 shows the general functions of the main dashboard. This includes:
+[Video 1](https://youtu.be/3WnS_OHUOWU) shows the general functions of the main dashboard. This includes:
 
 * Searching up users who have submitted a form.
 * Searching up users who have expired forms.
 * Sending a new form to a user.
 * Revoking a form from a user.
 
-[Video 1](https://youtu.be/3WnS_OHUOWU)
+[Video 2](https://youtu.be/W1-StyVjz9g) shows an interchangeable UI for the form results summary page when a user has submitted multiple SMI forms.
 
-Video 2 shows an interchangeable UI for the form results summary page when a user has submitted multiple SMI forms.
+[Video 3](https://youtu.be/Iigw7zTFNBE) shows an example of the form results summary page when a user has submitted all forms.
 
-[Video 2](https://youtu.be/W1-StyVjz9g)
+[Video 4](https://youtu.be/eYBd66YKvYs) shows the process of creating a new user and sending the form bundle to their email. It also shows the email being received (wired up with Resend API) and the forms being opened. After quickly demonstrating all forms, it then shows an example of a form being filled and submitted.
 
-Video 3 shows an example of the form results summary page when a user has submitted all forms.
-
-[Video 3](https://youtu.be/Iigw7zTFNBE)
-
-Video 4 shows the process of creating a new user and sending the form bundle to their email. It also shows the email being received (wired up with Resend API) and the forms being opened. After quickly demonstrating all forms, it then shows an example of a form being filled and submitted.
-
-[Video 4](https://youtu.be/eYBd66YKvYs)
-
-Video 5 shows a user being deactivated, activated and then permanently deleted.
-
-[Video 5](https://youtu.be/Qo2ALHhEPzE)
+[Video 5](https://youtu.be/Qo2ALHhEPzE) shows a user being deactivated, activated and then permanently deleted.
 
 ![Integrate Therapy Form Manager on various devices](documentation/amiresponsive.png)
 
