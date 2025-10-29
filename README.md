@@ -64,7 +64,16 @@ This colour palette works well for the website because the combination of bright
 
 Open Sans is used for body text, while Lora is used for headings. This combination was a deliberate choice to create a calm, professional, and approachable aesthetic. Open Sans provides clean, highly readable text for comfortable reading, and Lora adds elegance and visual distinction to headings, helping guide the user’s attention while reinforcing a sense of trust and credibility throughout the site.
 
-* User stories and epics
+# User stories
+
+To guide the development of Integrate Therapy Form Manager, user stories were created to outline the essential tasks needed to build the website to a high standard. These user stories were further categorised into epics to facilitate an agile development approach.
+
+View a full list of user stories [here](https://github.com/SasanTazayoni/integrate-therapy-form-manager/issues?q=is%3Aissue%20label%3A%22User%20Story%22).
+
+EPIC 1: Authentication
+
+- Authentication for Application Access - As an admin I can log in to the application so that only I can access its features and data. `(MUST HAVE)`
+
 * Wireframes
 * Features - existing and future
 * Tech used
