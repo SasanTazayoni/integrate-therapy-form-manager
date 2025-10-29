@@ -74,6 +74,16 @@ EPIC 1: Authentication
 
 - Authentication for Application Access - As an admin I can log in to the application so that only I can access its features and data. `(MUST HAVE)`
 
+EPIC 2: User Management
+
+- User Search and Form Status Tracking - As an admin I can search for a user in the database so that I can see the user’s status and track their submitted, pending, and expired forms.
+- Client Deactivation and Automatic Deletion (GDPR Compliant) - As an admin I can deactivate a client so that their data becomes inaccessible and is automatically deleted after 1 year of inactivity so that the system remains GDPR compliant and does not retain personal data unnecessarily.
+- Client Activation - As an admin I can reactivate a previously deactivated client so that they can resume receiving forms and their data becomes accessible again.
+- Client Deletion - As an admin I can permanently delete a client and all their associated data so that their personal information and forms are fully removed from the system in compliance with GDPR.
+- Add New Client from Search - As an admin I can add a new client when a searched user does not exist so that I can quickly create client records without leaving the search workflow.
+
+
+
 * Wireframes
 * Features - existing and future
 * Tech used
