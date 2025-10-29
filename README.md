@@ -117,6 +117,10 @@ EPIC 7: UI / UX Enhancements
 - Button Hover Ripple Animation Effect - As a user I can see a unique ripple animation when hovering over buttons so that the interface feels interactive and visually engaging. `(COULD HAVE)`
 - Autosave In-Progress Forms - As a user I can have my form responses automatically saved while I am filling out a form so that I don’t lose my progress if I leave the page, navigate away, or experience a technical issue. `(WON'T HAVE)`
 
+EPIC 8: Analytics
+
+- Therapist Analytics Dashboard - As an admin I can view an analytics dashboard that shows aggregated data about all my clients’ form activity and results so that I can monitor overall progress, identify trends, and make informed clinical decisions. `(WON'T HAVE)`
+
 * Wireframes
 * Features - existing and future
 * Tech used
