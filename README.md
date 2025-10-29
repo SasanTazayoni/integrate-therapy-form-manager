@@ -85,10 +85,17 @@ EPIC 2: User Management
 Epic 3: Form Sending & Management
 
 - Send All Unsent Forms via Email - As an admin I can send all unsent forms to a user at once so that the user receives all pending forms efficiently without sending them individually. `(SHOULD HAVE)`
-- Send Individual Form via Email - As a admin I can send a single form to a user so that the user receives the specific form they need. `(MUST HAVE)`
-- Revoke Individual Form - As a admin I can revoke an individual form so that users cannot have indefinite access to unfilled forms and are required to respond within a set period. `(SHOULD HAVE)`
-- Receive Email for Individual Form - As an user I can receive an email with a link to a specific form so that I can complete the required form without waiting for other forms. `(MUST HAVE)`
+- Send Individual Form via Email - As an admin I can send a single form to a user so that the user receives the specific form they need. `(MUST HAVE)`
+- Revoke Individual Form - As an admin I can revoke an individual form so that users cannot have indefinite access to unfilled forms and are required to respond within a set period. `(SHOULD HAVE)`
+- Receive Email for Individual Form - As a user I can receive an email with a link to a specific form so that I can complete the required form without waiting for other forms. `(MUST HAVE)`
 - Receive Email for Multiple Forms (Bulk Send) - As a user I can receive a single email containing links to multiple forms so that I can complete all pending forms efficiently in one place. `(COULD HAVE)`
+
+Epic 4: Form Status & Results Tracking
+
+- Display Form Status for Each Client - As an admin I can see the status of each form for a client so that I can quickly understand which forms have been sent, submitted, revoked, expired, or pending without checking individual records. `(SHOULD HAVE)`
+- View Form Results Summary - As an admin I can view a summary of all filled-out forms for a client so that I can quickly review the client’s submitted data in one place. `(MUST HAVE)`
+- Print Form Results Summary - As an admin I can print the form results summary page and SMI modal so that I can generate a physical copy of the client’s submitted data for review or record keeping. `(COULD HAVE)`
+- Capture Client Name and Date of Birth on First Access - As a user I can enter my name and date of birth the first time I access a form so that my identity can be recorded and associated with my form submissions. `(MUST HAVE)`
 
 * Wireframes
 * Features - existing and future
