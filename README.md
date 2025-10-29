@@ -82,7 +82,7 @@ EPIC 2: User Management
 - Client Deletion - As an admin I can permanently delete a client and all their associated data so that their personal information and forms are fully removed from the system in compliance with GDPR. `(MUST HAVE)`
 - Add New Client from Search - As an admin I can add a new client when a searched user does not exist so that I can quickly create client records without leaving the search workflow. `(MUST HAVE)`
 
-Epic 3: Form Sending & Management
+EPIC 3: Form Sending & Management
 
 - Send All Unsent Forms via Email - As an admin I can send all unsent forms to a user at once so that the user receives all pending forms efficiently without sending them individually. `(SHOULD HAVE)`
 - Send Individual Form via Email - As an admin I can send a single form to a user so that the user receives the specific form they need. `(MUST HAVE)`
@@ -90,12 +90,19 @@ Epic 3: Form Sending & Management
 - Receive Email for Individual Form - As a user I can receive an email with a link to a specific form so that I can complete the required form without waiting for other forms. `(MUST HAVE)`
 - Receive Email for Multiple Forms (Bulk Send) - As a user I can receive a single email containing links to multiple forms so that I can complete all pending forms efficiently in one place. `(COULD HAVE)`
 
-Epic 4: Form Status & Results Tracking
+EPIC 4: Form Status & Results Tracking
 
 - Display Form Status for Each Client - As an admin I can see the status of each form for a client so that I can quickly understand which forms have been sent, submitted, revoked, expired, or pending without checking individual records. `(SHOULD HAVE)`
 - View Form Results Summary - As an admin I can view a summary of all filled-out forms for a client so that I can quickly review the client’s submitted data in one place. `(MUST HAVE)`
 - Print Form Results Summary - As an admin I can print the form results summary page and SMI modal so that I can generate a physical copy of the client’s submitted data for review or record keeping. `(COULD HAVE)`
 - Capture Client Name and Date of Birth on First Access - As a user I can enter my name and date of birth the first time I access a form so that my identity can be recorded and associated with my form submissions. `(MUST HAVE)`
+
+EPIC 5: Specific Assessment Forms
+
+- YSQ Form with Ratings and Validation - As a user I can complete the YSQ form with guidance, navigation, and validation so that I can accurately submit my responses and have them scored. `(MUST HAVE)`
+- SMI Form with Ratings and Validation - As a user I can complete the SMI form with guidance, navigation, and validation so that I can accurately submit my responses and have them scored by subcategory. `(MUST HAVE)`
+- Burns Anxiety Inventory (BAI) with Validation - As a user I can complete the BAI form by selecting answers that are scored 0–3 so that I can quickly assess my level of anxiety and submit my responses. `(MUST HAVE)`
+- Beck Depression Inventory (BDI) with Validation - As a user I can complete the BDI form by selecting answers that are scored 0–3 so that I can quickly assess my level of depression and submit my responses. `(MUST HAVE)`
 
 * Wireframes
 * Features - existing and future
