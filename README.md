@@ -27,7 +27,32 @@ Emails are sent through the Resend API, and each contains a unique access token 
 
 Form submissions are automatically scored by backend scripts, and both the scores and responses are stored in a PostgreSQL (Neon) database. These results can be retrieved through the dashboard, where the “Summary” view displays pre-generated charts for clients who have completed specific questionnaires.
 
-This application is hosted on the cloud platform Render. Due to the sensitive nature of the data, a live demo is not publicly available; however, the features section will outline clearly how the application works with many screenshots.
+This application is hosted on the cloud platform Render. Due to the sensitive nature of the data, a live demo is not publicly available. However, the features section includes multiple screenshots, and I have posted a series of video examples using dummy data, both of which clearly demonstrate how the application works.
+
+Video 1 shows the general functions of the main dashboard. This includes:
+
+* Searching up users who have submitted a form.
+* Searching up users who have expired forms.
+* Sending a new form to a user.
+* Revoking a form from a user.
+
+[Video 1](https://youtu.be/3WnS_OHUOWU)
+
+Video 2 shows an interchangeable UI for the form results summary page when a user has submitted multiple SMI forms.
+
+[Video 2](https://youtu.be/W1-StyVjz9g)
+
+Video 3 shows an example of the form results summary page when a user has submitted all forms.
+
+[Video 3](https://youtu.be/Iigw7zTFNBE)
+
+Video 4 shows the process of creating a new user and sending the form bundle to their email. It also shows the email being received (wired up with Resend API) and the forms being opened. After quickly demonstrating all forms, it then shows an example of a form being filled and submitted.
+
+[Video 4](https://youtu.be/eYBd66YKvYs)
+
+Video 5 shows a user being deactivated, activated and then permanently deleted.
+
+[Video 5](https://youtu.be/Qo2ALHhEPzE)
 
 ![Integrate Therapy Form Manager on various devices](documentation/amiresponsive.png)
 
