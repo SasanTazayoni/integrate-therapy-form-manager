@@ -112,6 +112,11 @@ EPIC 6: Results Summary Table
 - YSQ Table with Toggleable Scores - As an admin I can view the YSQ table with score ratings and totals so that I can analyze client data with the option to toggle raw scores or 4-5-6 scores. `(MUST HAVE)`
 - BAI and BDI Small Cards with Scores - As an admin I can view the Burn’s Anxiety Inventory (BAI) and Beck’s Depression Inventory (BDI) in small cards so that I can quickly see anxiety and depression scores for the client. `(MUST HAVE)`
 
+EPIC 7: UI / UX Enhancements
+
+- Button Hover Ripple Animation Effect - As a user I can see a unique ripple animation when hovering over buttons so that the interface feels interactive and visually engaging. `(COULD HAVE)`
+- Autosave In-Progress Forms - As a user I can have my form responses automatically saved while I am filling out a form so that I don’t lose my progress if I leave the page, navigate away, or experience a technical issue. `(WON'T HAVE)`
+
 * Wireframes
 * Features - existing and future
 * Tech used
