@@ -356,5 +356,64 @@ Using this approach, I was able to apply the MoSCow prioritization and labels to
 - **Could Have**: has small impact if left out (*20% of stories*)
 - **Won't Have**: not a priority for this iteration
 
-* Testing - Deployment
-* Credits
+# Testing
+
+> [!NOTE]  
+> For all testing, please refer to the [TESTING.md](TESTING.md) file.
+
+# Deployment
+
+## Node JS
+
+1. Go to the node [website](https://nodejs.org/en).
+2. Click on the "DOWNLOAD" tab at the top of the page.
+3. Click on the appropriate installer for your operating system (in my case it is Windows) and this will download node to your computer.
+4. Open the downloaded file and run the installation.
+5. Follow through the instructions, clicking "next" where necessary and accepting the terms.
+6. When the installation is complete, node.js will be installed into your computer.
+7. You can check your version of node in a terminal by typing in "node -v".
+8. Type "NPM init -y" to create a JSON package that will keep a record of the installation dependencies required for the project.
+
+## PostgreSQL Database
+
+This project uses a [Neon Database](http://neon.tech/).
+
+To obtain your own Postgres Database, sign-up with your GitHub account, then follow these steps:
+
+- Decide a project name (this is commonly the name of the project: integrate-therapy-form-manager) and a database name and fill in the fields.
+- Pick the version of Postgres that you would like from the drop-down menu.
+- Pick the region that is closest to you from the drop-down menu.
+- Click **Create Project**.
+- You can now connect to the database using the API provided.
+
+### Environment variables
+
+Store these in your project .env (or secret manager):
+
+```DATABASE_URL=postgresql:XXXXXXXXXXXXX```
+
+## Resend API
+
+This project uses Resend to handle sending transactional emails (account verification, purchase confirmations, etc.).
+Once you've created a Resend account and logged in, follow these steps to connect your Node server:
+
+* Log in to your Resend dashboard at Resend.
+* Go to API Keys (or Settings → API keys) and create a new API key.
+* Copy the key immediately — you will not be able to view the full key again after creation.
+  * Save this somewhere secure (local ```.env```, secrets manager, etc.) and do not commit it to source control.
+  * ```RESEND_API_KEY``` = your Resend API key (e.g. ```re_xxxxxxxxxxxxx```)
+* (Recommended) Verify a sending domain:
+  * In the dashboard, go to Domains → Add Domain (e.g., yourdomain.com).
+  * Add the DNS records Resend provides (SPF/TXT, DKIM) with your DNS provider. [Instructions here](https://resend.com/docs/send-with-smtp)
+  * Wait for propagation and confirm verification in the Resend dashboard — verified domains improve deliverability.
+ 
+### Environment variables
+
+Store these in your project .env (or secret manager):
+
+```RESEND_API_KEY=re_xxxxxxxxxxxxxxxxx```
+```EMAIL_FROM="Your Name <noreply@yourdomain.com>"```
+
+Install the Node SDK by running ```npm install resend```.
+
+
