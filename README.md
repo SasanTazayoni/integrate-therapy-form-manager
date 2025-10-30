@@ -125,20 +125,18 @@ EPIC 8: Analytics
 
 <details>
 <summary> Click here to see the Dashboard wireframes </summary>
-  - ![screenshot](documentation/dashboard.jpg)
-  - ![screenshot](documentation/dashboardmobile.jpg)
+  - ![Dashboard page desktop](documentation/dashboard.jpg)
+  - ![Dashboard page mobile](documentation/dashboardmobile.jpg)
 </details>
 <details>
 <summary> Click here to see the Form Results Summary wireframes </summary>
-  - ![screenshot](documentation/formresults.jpg)
-  - ![screenshot](documentation/formresultsmobile.jpg)
+  - ![Form Results Summary page desktop](documentation/formresults.jpg)
+  - ![Form Results Summary page mobile](documentation/formresultsmobile.jpg)
 </details>
 <details>
-<summary> Click here to see the Form wireframes (SMI/YSQ followed by BDI/BAI) </summary>
-  - ![screenshot](documentation/forms.jpg)
+<summary> Click here to see the Form wireframes (These forms look very similar on desktop and mobile therefore multiple wireframes were not needed for these) </summary>
+  - ![SMI/YSQ forms followed by BDI/BAI forms](documentation/forms.jpg)
 </details>
-
-Note: These forms look very similar on desktop and mobile therefore multiple wireframes were not needed for these.
 
 * Wireframes
 * Features - existing and future
