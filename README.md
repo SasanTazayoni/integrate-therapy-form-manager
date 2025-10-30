@@ -292,8 +292,31 @@ All new users will be asked to provide a name and a date of birth:
 * Autosave in-progress forms is useful because it prevents users from losing their work if they accidentally close the page, lose internet connection, or experience a system error. By automatically saving entered information as the user types, it saves time, reduces frustration, and ensures data accuracy. This feature improves user experience and productivity, especially for long or complex forms that would otherwise need to be filled out again from scratch.
 * Therapist Analytics Dashboard is useful because it allows therapists to track key metrics about their clients, sessions, and outcomes in one place. It helps visualize trends such as client progress, session frequency, and treatment effectiveness, making it easier to identify patterns and adjust therapeutic approaches. By providing clear data insights, the dashboard supports evidence-based practice, improves client care, and enhances the therapist’s ability to manage workload and measure success over time.
 
-* Tech used
-* DB design
+# Tools & technologies used
+
+* [Coolors](https://coolors.co/) used to display colour palette used on the website.
+* [Google Fonts](https://fonts.google.com/) used to import 'Lora' and 'Open sans' fonts.
+* [Github](https://github.com/) used to manage version control on project development.
+* [Render](https://render.com/) used to deploy the frontend as a live static site directly from the repository and to host the backend as a web service.
+* [VSCode](https://code.visualstudio.com/) used as the code editor/IDE to develop the project.
+* [Amiresposive](https://amiresponsive.co.uk/) used to display website on the most common devices.
+* [ChatGPT](https://chat.openai.com/) used to assist with creating APIs, to assist with test suites and to verify code.
+* [Favicon.io](https://favicon.io/) used to generate favicon.
+* [React Router](https://reactrouter.com/) used for client-side routing and navigation between pages.
+* [Resend API](https://resend.com/) used for sending emails in my application.
+* [PostgreSQL database by Neon](http://neon.tech/) used as the Postgres database from Neon Tech.
+* PostgreSQL used as the relational database management.
+* HTML used to provide the structure and markup for the frontend components.
+* CSS used for the main site design and layout.
+* TypeScript used for static typing and improved developer tooling to the React codebase for safer, more maintainable code.
+* React to build the interactive frontend user interface and manage component-based layouts.
+
+# Database design
+
+ERDs help visualize database architecture before model creation, and understanding table relationships can save time later. This design might have benefited from separate entities for each questionnaire.
+
+![Entity relationship diagram](documentation/invalidform.png)
+
 * Agile development process - github projects, github issues, moscow
 * Testing - Deployment
 * Credits
