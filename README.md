@@ -285,7 +285,7 @@ When a form is submitted, the token becomes inactive therefore the form becomes 
 
 All new users will be asked to provide a name and a date of birth:
 
-![New user information gathering](documentation/newuser.png) <br>
+![New user information gathering](documentation/newuserdetails.png) <br>
 
 ## Future features
 
