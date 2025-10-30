@@ -310,6 +310,12 @@ All new users will be asked to provide a name and a date of birth:
 * CSS used for the main site design and layout.
 * TypeScript used for static typing and improved developer tooling to the React codebase for safer, more maintainable code.
 * React to build the interactive frontend user interface and manage component-based layouts.
+* Vite used as the frontend build tool and development server for fast bundling and hot module replacement.
+* Jest used to write unit and integration tests to ensure code reliability.
+* Tailwind CSS used as a utility-first CSS framework to style components efficiently.
+* REST API used as the architecture for communication between the frontend and backend services.
+* Node.js used as the JavaScript runtime environment to run backend code.
+* Express used as the Node.js framework to build API endpoints and manage server-side logic.
 
 # Database design
 
