@@ -196,6 +196,97 @@ The Dashboard page consists of:
 
 ![Summary button](documentation/summarybutton.png) <br>
 
+### Form Results Summary
+
+The Form Results Summary page consists of:
+
+* A header which has has a button that links back to the dashboard, the credentials of the user if the have been recorded, the title of the page and an icon to print the page from: <br>
+
+![Summary page header](documentation/summarypageheader.png) <br>
+
+* A SMI modes table with the date of submission (if one has been submitted): <br>
+
+![SMI modes table](documentation/smimodestable.png) <br>
+
+* An SMI summary sheet which is accessible via the SMI modes table by clicking on the paper icon: <br>
+
+![SMI summary sheet](documentation/smiscoresummarysheet.png) <br>
+![SMI summary sheet lower half](documentation/smiscoresummarysheet2.png) <br>
+
+* An SMI submissions modal for previous submissions which is accessible via the SMI modes table by clicking on the database icon: <br>
+
+![SMI submissions modal](documentation/smisubmissionsmodal.png) <br>
+
+* A YSQ schemas table which can toggle scores: <br>
+
+![YSQ schemas table](documentation/ysqschemastable.png) <br>
+![YSQ schemas table active](documentation/ysqschemastableactive.png) <br>
+
+* Small card showing the BDI and BAI scores if they are recorded: <br>
+
+![BDI and BAI cards](documentation/bdibaicards.png) <br>
+
+### Questionnaires
+
+There are 4 distinct questionnaires - YSQ, SMI, BDI, BAI.
+
+The YSQ questionnaire consists of:
+
+* A set of instructions explaining how the form should be filled: <br>
+
+![YSQ instructions](documentation/ysqinstructions.png) <br>
+
+* A dropdown togglable menu with quick instructions for the form: <br>
+
+![YSQ dropdown instructions](documentation/ysqdropdown.png) <br>
+
+* A large questionnaire: <br>
+
+![YSQ questionnaire](documentation/ysqquestionnaire.png) <br>
+
+The SMI questionnaire consists of (similar to YSQ):
+
+* A set of instructions explaining how the form should be filled: <br>
+
+![SMI instructions](documentation/smiinstructions.png) <br>
+
+* A dropdown togglable menu with quick instructions for the form: <br>
+
+![SMI dropdown instructions](documentation/smiquestionnaire.png) <br>
+
+* A large questionnaire: <br>
+
+![SMI questionnaire](documentation/smiquestionnaire.png) <br>
+
+The BDI questionnaire consists of:
+
+* A small questionnaire which is somewhat different to the SMI and YSQ with togglable answers: <br>
+
+![BDI questionnaire](documentation/bdiquestionnaire.png) <br>
+
+The BAI questionnaire consists of (similar to BDI):
+
+![BAI questionnaire](documentation/baiquestionnaire.png) <br>
+
+All questionnaires consist of:
+
+* A reset button which opens a modal to confirm and a submission message when a form is submitted: <br>
+
+![Form reset confirmation modal](documentation/resetmodal.png) <br>
+![Form submission message](documentation/submissionmessage.png) <br>
+
+When a user is sent an email with forms, it should look like this: <br>
+
+![New email with forms](documentation/email.png) <br>
+
+When a form is submitted, the token becomes inactive therefore the form becomes inaccessible: <br>
+
+![Inactive form](documentation/invalidform.png) <br>
+
+All new users will be asked to provide a name and a date of birth:
+
+![New user information gathering](documentation/newuser.png) <br>
+
 * Tech used
 * DB design
 * Agile development process - github projects, github issues, moscow
