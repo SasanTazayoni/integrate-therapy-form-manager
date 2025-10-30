@@ -220,7 +220,7 @@ The Form Results Summary page consists of:
 * A YSQ schemas table which can toggle scores: <br>
 
 ![YSQ schemas table](documentation/ysqschemastable.png) <br>
-![YSQ schemas table active](documentation/ysqschemastableactive.png) <br>
+![YSQ schemas table inactive](documentation/ysqschemastableinactive.png) <br>
 
 * Small card showing the BDI and BAI scores if they are recorded: <br>
 
