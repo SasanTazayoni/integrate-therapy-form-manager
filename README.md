@@ -144,8 +144,58 @@ EPIC 8: Analytics
 
 </details>
 
-* Wireframes
-* Features - existing and future
+# Features
+
+## Existing Features
+
+### Dashboard
+
+The Dashboard page consists of:
+
+* An authentication modal to gain access to the application (for security):
+
+![Admin login modal](documentation/adminlogin.jpg) <br>
+
+* A title with a logo either side: <br>
+
+![Title for Dashboard page](documentation/titlewithlogo.jpg) <br>
+
+* A search bar for searching up clients via their email: <br>
+
+![Search bar](documentation/searchbar.jpg) <br>
+![Search bar empty](documentation/searchbarred.jpg) <br>
+![Search bar with successful search](documentation/searchbargreen.jpg) <br>
+![Search bar loading](documentation/searchbarloadingspinner.jpg) <br>
+
+* A deactivate button which deactivates the client, disables form access and deletes the client after 1 year.
+* An activate button which appears when the client is deactivated in order to reactivate them.
+* A delete button to permanently delete the client. <br>
+
+![Deactivate an Delete buttons](documentation/deactivatedelete.jpg) <br>
+![Deactivate confirmation modal](documentation/deactivatemodal.jpg) <br>
+![Activate confirmation modal](documentation/activatemodal.jpg) <br>
+![Delete confirmation modal](documentation/deletemodal.jpg) <br>
+
+* A prompt for adding new users to the database: <br>
+
+![New user](documentation/newuser.jpg) <br>
+
+* A hover animation on all buttons: <br>
+
+![Hover animation](documentation/hoveranimation.jpg) <br>
+
+* A control panel for sending and revoking forms as well as to see the status of forms for each particular person. <br>
+
+![Control panel](documentation/controlpanel.jpg) <br>
+![Active form](documentation/activeform.jpg) <br>
+![Expired form](documentation/expiredform.jpg) <br>
+![Resendable SMI form](documentation/resendablesmi.jpg) <br>
+![Sending form](documentation/sendingform.jpg) <br>
+
+* A summary button to access the Form Results Summary page: <br>
+
+![Summary button](documentation/summarybutton.jpg) <br>
+
 * Tech used
 * DB design
 * Agile development process - github projects, github issues, moscow
