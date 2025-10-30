@@ -323,6 +323,38 @@ ERDs help visualize database architecture before model creation, and understandi
 
 ![Entity relationship diagram](documentation/invalidform.png)
 
-* Agile development process - github projects, github issues, moscow
+# Agile development process
+
+## GitHub Projects
+
+[GitHub Projects](https://github.com/SasanTazayoni/integrate-therapy-form-manager/projects) served as an Agile tool for this project.
+It isn't a specialised tool, but with the right tags and project creation/issue assignments, it can be made to work.
+
+Through it, user stories, issues, and milestone tasks were planned, then tracked on a weekly basis using the basic Kanban board.
+
+![screenshot](documentation/projectsboard.png)
+
+## GitHub Issues
+
+GitHub Issues served as an another Agile tool. There, I used my own **User Story Template** to manage user stories. It also helped with milestone iterations on a weekly basis.
+
+- [Open Issues](https://github.com/SasanTazayoni/integrate-therapy-form-manager/issues)
+
+![screenshot](documentation/openissues.png)
+
+- [Closed Issues](https://github.com/SasanTazayoni/integrate-therapy-form-manager/issues?q=is%3Aissue%20state%3Aclosed)
+
+![screenshot](documentation/closedissues.png)
+
+### MoSCoW Prioritization
+
+I've decomposed my Epics into stories prior to prioritizing and implementing them.
+Using this approach, I was able to apply the MoSCow prioritization and labels to my user stories within the Issues tab.
+
+- **Must Have**: guaranteed to be delivered (*max 60% of stories*)
+- **Should Have**: adds significant value, but not vital (*the rest ~20% of stories*)
+- **Could Have**: has small impact if left out (*20% of stories*)
+- **Won't Have**: not a priority for this iteration
+
 * Testing - Deployment
 * Credits
