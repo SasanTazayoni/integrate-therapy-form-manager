@@ -121,6 +121,25 @@ EPIC 8: Analytics
 
 - Therapist Analytics Dashboard - As an admin I can view an analytics dashboard that shows aggregated data about all my clients’ form activity and results so that I can monitor overall progress, identify trends, and make informed clinical decisions. `(WON'T HAVE)`
 
+# Wireframes
+
+<details>
+<summary> Click here to see the Dashboard wireframes </summary>
+  - ![screenshot](documentation/dashboard.jpg)
+  - ![screenshot](documentation/dashboardmobile.jpg)
+</details>
+<details>
+<summary> Click here to see the Form Results Summary wireframes </summary>
+  - ![screenshot](documentation/formresults.jpg)
+  - ![screenshot](documentation/formresultsmobile.jpg)
+</details>
+<details>
+<summary> Click here to see the Form wireframes (SMI/YSQ followed by BDI/BAI) </summary>
+  - ![screenshot](documentation/forms.jpg)
+</details>
+
+Note: These forms look very similar on desktop and mobile therefore multiple wireframes were not needed for these.
+
 * Wireframes
 * Features - existing and future
 * Tech used
