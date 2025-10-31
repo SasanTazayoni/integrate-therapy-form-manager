@@ -471,17 +471,17 @@ You will need to create a new file called `.env` at the root-level of the fronte
 
 Sample `.env` file (frontend):
 
-```VITE_THERAPIST_USERNAME=yourusername```
-```VITE_THERAPIST_PASSWORD=yourpassword```
-```VITE_API_URL=/```
-```VITE_BASE_PATH=/integrate-therapy-form-manager```
+* ```VITE_THERAPIST_USERNAME=yourusername```
+* ```VITE_THERAPIST_PASSWORD=yourpassword```
+* ```VITE_API_URL=/```
+* ```VITE_BASE_PATH=/integrate-therapy-form-manager```
 
 Sample `.env` file (backend):
 
-```DATABASE_URL='yourdatabaseurl'```
-```RESEND_API_KEY="yourresendapikey"```
-```FROM_EMAIL="Your email <youremail@yourdomain.com>"```
-```FRONTEND_BASE_URL="yourfrontendservername"```
+* ```DATABASE_URL='yourdatabaseurl'```
+* ```RESEND_API_KEY="yourresendapikey"```
+* ```FROM_EMAIL="Your email <youremail@yourdomain.com>"```
+* ```FRONTEND_BASE_URL="yourfrontendservername"```
 
 Local environment only (do not include these in production/deployment!)
 
