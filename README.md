@@ -358,8 +358,47 @@ Using this approach, I was able to apply the MoSCow prioritization and labels to
 
 # Testing
 
-> [!NOTE]  
-> For all testing, please refer to the [TESTING.md](TESTING.md) file.
+## Lighthouse Audit
+
+I've tested my deployed project using the Lighthouse Audit tool to check for any major issues.
+
+| Page | Mobile | Desktop | Notes |
+| --- | --- | --- | --- |
+| Dashboard | ![screenshot](documentation/lighthouse-dashboard-mobile.png) | ![screenshot](documentation/lighthouse-dashboard-desktop.png) | No warnings |
+| Form results summary | ![screenshot](documentation/lighthouse-formresultssummary-mobile.png) | ![screenshot](documentation/lighthouse-formresultssummary-desktop.png) | No warnings |
+| YSQ | ![screenshot](documentation/lighthouse-ysq-mobile.png) | ![screenshot](documentation/documentation/lighthouse-ysq-desktop.png) | No warnings |
+| SMI | ![screenshot](documentation/lighthouse-smi-mobile.png) | ![screenshot](documentation/lighthouse-smi-desktop.png) | No warnings |
+| BDI | ![screenshot](documentation/lighthouse-bdi-mobile.png) | ![screenshot](documentation/lighthouse-bdi-desktop.png) | No warnings |
+| BAI | ![screenshot](documentation/lighthouse-bai-mobile.png) | ![screenshot](documentation/lighthouse-bai-desktop.png) | No warnings |
+
+## Automated Testing
+
+I have conducted a series of automated tests on my application.
+
+### JavaScript (Unit Testing)
+
+I have used Vitest, a fast unit testing framework for Vite projects, to test the application functionality.
+
+In order to run the tests, I ran the following command in the terminal each time:
+
+```npm run test```
+
+To create the coverage report, I would then run the following command:
+
+```npm run test -- --coverage```
+
+Below are the results from all the files on my application that I've tested:
+
+Frontend:
+
+![screenshot](documentation/frontendtestcoverage.png) <br>
+![screenshot](documentation/frontendtestcoverage2.png) <br>
+![screenshot](documentation/frontendtestcoverage3.png) <br>
+
+Backend:
+
+![screenshot](documentation/backendtestcoverage.png) <br>
+![screenshot](documentation/backendtestcoverage2.png) <br>
 
 # Deployment
 
