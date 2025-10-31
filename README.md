@@ -416,4 +416,613 @@ Store these in your project .env (or secret manager):
 
 Install the Node SDK by running ```npm install resend```.
 
+## Render Deployment
 
+This project uses [Render](https://render.com/), a platform as a service (PaaS) that enables developers to build, run, and operate applications entirely in the cloud.
+
+Deployment steps are as follows, after account setup (including workspace setup):
+
+### Backend
+
+* Select "Projects" which should open a page to select a service.
+* Click the "+ New" button in the top right corner.
+* Select "New Web Service" for the backend.
+* Connect to your Git provider (Github in my case) and then to the repository (e.g. https://github.com/SasanTazayoni/integrate-therapy-form-manager in my case).
+* Give a unique name for the static site (should be different to the frontend site name).
+* Set the Region to one that is closest to you.
+* Set the "Root Directory" to the name of the folder which contains the backend file (in my case it is "backend").
+* Set the "Start Command" to "npm run start".
+* Set the following Environment Variables:
+  * DATABASE_URL = [YOUR DATABASE API KEY]
+  * FROM_EMAIL = [Your email <youremail@yourdomain.com>]
+  * FRONTEND_BASE_URL = [NAME OF FRONTEND SERVER]
+  * RESEND_API_KEY = [YOUR RESEND API KEY]
+
+### Frontend
+
+* Click the "+ New" button in the top right corner again.
+* Select "New Static Site" for the frontend.
+* Connect to your Git provider (Github in my case) and then to the repository (e.g. https://github.com/SasanTazayoni/integrate-therapy-form-manager in my case).
+* Give a unique name for the static site (usually autofilled).
+* Set the Publish Directory as "dist".
+* Set the following Environment Variables:
+  * VITE_API_URL = [NAME OF BACKEND SERVER]
+  * VITE_BASE_PATH = /
+  * VITE_THERAPIST_USERNAME = [DECIDE A USERNAME]
+  * VITE_THERAPIST_PASSWORD = [DECIDE A PASSWORD]
+* Click "Deploy Static Site" which will deploy the frontend from the latest commit.
+* On the left sidebar menu, click the "Redirects/Rewrites" tab.
+* Under "Source" add "/*", under "Destination" add "/index.html", under "Action" add "Rewrite".
+
+The application should be accessible via the frontend URL when both the frontend and backend are hosted.
+
+## Local deployment
+
+This project can be cloned or forked in order to make a local copy on your own system.
+
+For either method, you will need to install any applicable packages found within the *package.json* file.
+
+- `npm install`.
+
+You will need to create a new file called `.env` at the root-level of the frontend folder and backend folder, and include the same environment variables listed above from the Render deployment steps.
+
+> [!IMPORTANT]  
+> This is a sample only; you would replace the values with your own if cloning/forking my repository.
+
+Sample `.env` file (frontend):
+
+```VITE_THERAPIST_USERNAME=yourusername```
+```VITE_THERAPIST_PASSWORD=yourpassword```
+```VITE_API_URL=/```
+```VITE_BASE_PATH=/integrate-therapy-form-manager```
+
+Sample `.env` file (backend):
+
+```DATABASE_URL='yourdatabaseurl'```
+```RESEND_API_KEY="yourresendapikey"```
+```FROM_EMAIL="Your email <youremail@yourdomain.com>"```
+```FRONTEND_BASE_URL="yourfrontendservername"```
+
+Local environment only (do not include these in production/deployment!)
+
+Once the project is cloned or forked, in order to run it locally, you'll need to follow these steps:
+
+* Open a terminal and change directories into the frontend folder.
+* Type "npm run dev" which should build then run the frontend server.
+* Open a second terminal and change directories into the backend folder.
+* Before running the backend, make sure your database is properly migrated using Prisma:
+  * Type npx prisma migrate dev --name init which will apply the latest Prisma schema changes to your local database.
+* Type "npm run dev" which should build then run the backend server.
+* Both of these can be stopped with `CTRL+C`.
+
+In the production version the frontend is served via the backend therefore in order to run it locally, ```src/api/api.ts``` can be deleted, ```‎src/api/clientsFrontend.ts``` and ```‎src/api/formsFrontend.ts``` should be replaced respectively with these files:
+
+```ts
+import axios from "axios";
+import { getErrorDisplay } from "../utils/getErrorDisplay";
+import type { ClientFormsStatus } from "../types/formStatusTypes";
+
+export type Client = {
+  id: string;
+  name: string;
+  email: string;
+};
+
+type FetchClientStatusResult =
+  | { ok: true; data: ClientFormsStatus }
+  | { ok: false; data: { error: string } };
+
+type AddClientResult =
+  | { ok: true; data: ClientFormsStatus }
+  | { ok: false; data: { error: string } };
+
+export async function fetchClientStatus(
+  email: string
+): Promise<FetchClientStatusResult> {
+  try {
+    const res = await axios.get<ClientFormsStatus>("/clients/form-status", {
+      params: { email },
+    });
+    return { ok: true, data: res.data };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      return {
+        ok: false,
+        data: {
+          error: getErrorDisplay(
+            err,
+            "Network error while fetching client status."
+          ),
+        },
+      };
+    }
+    return {
+      ok: false,
+      data: {
+        error: "An unexpected error occurred while fetching client status.",
+      },
+    };
+  }
+}
+
+export async function addClient(email: string): Promise<AddClientResult> {
+  try {
+    const res = await axios.post<ClientFormsStatus>("/clients/add", { email });
+    return { ok: true, data: res.data };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      return {
+        ok: false,
+        data: {
+          error: getErrorDisplay(err, "Network error while adding client."),
+        },
+      };
+    }
+    return {
+      ok: false,
+      data: {
+        error: "An unexpected error occurred while adding client.",
+      },
+    };
+  }
+}
+
+type DeleteClientResult =
+  | { ok: true; data: { message: string } }
+  | { ok: false; data: { error: string } };
+
+export async function deleteClient(email: string): Promise<DeleteClientResult> {
+  try {
+    const res = await axios.delete<{ message: string }>(`/clients/by-email`, {
+      params: { email },
+    });
+    return { ok: true, data: res.data };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      return {
+        ok: false,
+        data: {
+          error: getErrorDisplay(err, "Network error while deleting client."),
+        },
+      };
+    }
+    return {
+      ok: false,
+      data: {
+        error: "An unexpected error occurred while deleting client.",
+      },
+    };
+  }
+}
+
+export async function deleteClientByEmail(
+  email: string
+): Promise<DeleteClientResult> {
+  return await deleteClient(email);
+}
+
+type DeactivateClientResponse = {
+  message: string;
+  client: {
+    id: string;
+    email: string;
+    name: string;
+    status: string;
+    inactivated_at: string | null;
+    delete_inactive: string | null;
+  };
+};
+
+type DeactivateClientResult =
+  | { ok: true; data: DeactivateClientResponse }
+  | { ok: false; data: { error: string } };
+
+export async function deactivateClient(
+  email: string
+): Promise<DeactivateClientResult> {
+  try {
+    const res = await axios.patch<DeactivateClientResponse>(
+      "/clients/deactivate",
+      null,
+      { params: { email } }
+    );
+    return { ok: true, data: res.data };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      return {
+        ok: false,
+        data: {
+          error: getErrorDisplay(
+            err,
+            "Network error while deactivating client."
+          ),
+        },
+      };
+    }
+    return {
+      ok: false,
+      data: {
+        error: "An unexpected error occurred while deactivating client.",
+      },
+    };
+  }
+}
+
+type ActivateClientResponse = {
+  message: string;
+  client: {
+    id: string;
+    email: string;
+    name: string;
+    status: string;
+    inactivated_at: string | null;
+    delete_inactive: string | null;
+  };
+};
+
+type ActivateClientResult =
+  | { ok: true; data: ActivateClientResponse }
+  | { ok: false; data: { error: string } };
+
+export async function activateClient(
+  email: string
+): Promise<ActivateClientResult> {
+  try {
+    const res = await axios.patch<ActivateClientResponse>(
+      "/clients/activate",
+      null,
+      { params: { email } }
+    );
+    return { ok: true, data: res.data };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      return {
+        ok: false,
+        data: {
+          error: getErrorDisplay(err, "Network error while activating client."),
+        },
+      };
+    }
+    return {
+      ok: false,
+      data: {
+        error: "An unexpected error occurred while activating client.",
+      },
+    };
+  }
+}
+```
+
+```ts
+import axios from "axios";
+import { getErrorDisplay } from "../utils/getErrorDisplay";
+
+type SchemaCodes =
+  | "ed"
+  | "ab"
+  | "ma"
+  | "si"
+  | "ds"
+  | "fa"
+  | "di"
+  | "vu"
+  | "eu"
+  | "sb"
+  | "ss"
+  | "ei"
+  | "us"
+  | "et"
+  | "is"
+  | "as"
+  | "np"
+  | "pu";
+
+type Scores = Partial<{
+  [K in SchemaCodes as `ysq_${K}_answers`]: number[];
+}>;
+
+export async function sendFormToken(email: string, formType: string) {
+  try {
+    const res = await axios.post(`/forms/send-token/${formType}`, { email });
+    return { ok: true, data: res.data };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      return {
+        ok: false,
+        data: {
+          error: getErrorDisplay(
+            err,
+            "Network error while sending form token."
+          ),
+        },
+      };
+    }
+    return {
+      ok: false,
+      data: {
+        error: "Unexpected error occurred.",
+      },
+    };
+  }
+}
+
+export async function sendMultipleFormTokens(email: string) {
+  try {
+    const res = await axios.post("/forms/send-multiple", { email });
+    return { ok: true, data: res.data };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      return {
+        ok: false,
+        data: {
+          error: getErrorDisplay(
+            err,
+            "Network error while sending multiple form tokens."
+          ),
+        },
+      };
+    }
+    return {
+      ok: false,
+      data: {
+        error: "Unexpected error occurred.",
+      },
+    };
+  }
+}
+
+export async function validateFormToken(token: string) {
+  try {
+    const res = await axios.get("/forms/validate-token", {
+      params: { token },
+    });
+
+    return { ok: true, data: res.data };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      return {
+        ok: false,
+        error: getErrorDisplay(err, "Unknown error validating token"),
+      };
+    }
+    return {
+      ok: false,
+      error: "Unexpected error occurred.",
+    };
+  }
+}
+
+export async function revokeFormToken(email: string, formType: string) {
+  try {
+    const res = await axios.post(`/forms/revoke-token/${formType}`, { email });
+    return { ok: true, data: res.data };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      return {
+        ok: false,
+        data: {
+          error: getErrorDisplay(
+            err,
+            "Network error while revoking form token."
+          ),
+        },
+      };
+    }
+    return {
+      ok: false,
+      data: {
+        error: "Unexpected error occurred.",
+      },
+    };
+  }
+}
+
+export async function submitBecksForm({
+  token,
+  result,
+}: {
+  token: string;
+  result: string;
+}) {
+  try {
+    const res = await axios.post("/forms/submit/becks", { token, result });
+    return { ok: true, data: res.data };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      const code = err?.response?.data?.code;
+      const message = getErrorDisplay(
+        err,
+        "Network error while submitting form."
+      );
+
+      return {
+        ok: false,
+        error: message,
+        code,
+      };
+    }
+    return {
+      ok: false,
+      error: "Unexpected error occurred.",
+    };
+  }
+}
+
+export async function submitBurnsForm({
+  token,
+  result,
+}: {
+  token: string;
+  result: string;
+}) {
+  try {
+    const res = await axios.post("/forms/submit/burns", { token, result });
+    return { ok: true, data: res.data };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      const code = err?.response?.data?.code;
+      const message = getErrorDisplay(
+        err,
+        "Network error while submitting form."
+      );
+
+      return {
+        ok: false,
+        error: message,
+        code,
+      };
+    }
+    return {
+      ok: false,
+      error: "Unexpected error occurred.",
+    };
+  }
+}
+
+export async function submitYSQForm({
+  token,
+  scores,
+}: {
+  token: string;
+  scores: Scores;
+}) {
+  try {
+    const res = await axios.post("/forms/submit/ysq", {
+      token,
+      scores,
+    });
+
+    return { ok: true, data: res.data };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      const code = err?.response?.data?.code;
+      const message = getErrorDisplay(
+        err,
+        "Network error while submitting YSQ form."
+      );
+
+      return { ok: false, error: message, code };
+    }
+    return { ok: false, error: "Unexpected error occurred." };
+  }
+}
+
+export async function submitSMIForm({
+  token,
+  results,
+}: {
+  token: string;
+  results: Record<string, { average: number; label: string }>;
+}) {
+  try {
+    const res = await axios.post("/forms/submit/smi", {
+      token,
+      results,
+    });
+
+    return { ok: true, data: res.data };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      const code = err?.response?.data?.code;
+      const message = getErrorDisplay(
+        err,
+        "Network error while submitting SMI form."
+      );
+
+      return { ok: false, error: message, code };
+    }
+    return { ok: false, error: "Unexpected error occurred." };
+  }
+}
+
+export async function updateClientInfo({
+  token,
+  name,
+  dob,
+}: {
+  token: string;
+  name: string;
+  dob: string;
+}) {
+  try {
+    await axios.post("/forms/update-client-info", { token, name, dob });
+    return { ok: true };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      return {
+        ok: false,
+        error: getErrorDisplay(err, "Unknown error updating client info"),
+      };
+    }
+    return {
+      ok: false,
+      error: "Unexpected error occurred.",
+    };
+  }
+}
+
+export type SmiForm = {
+  id: string;
+  submittedAt: string;
+  smiScores: Record<string, string | null>;
+};
+
+export type FetchAllSmiFormsResult = {
+  ok: boolean;
+  data: {
+    clientName?: string | null;
+    smiForms?: SmiForm[];
+    error?: string;
+  };
+};
+
+export async function fetchAllSmiForms(
+  email: string
+): Promise<FetchAllSmiFormsResult> {
+  try {
+    const res = await axios.get<{
+      clientName: string | null;
+      smiForms: SmiForm[];
+    }>("/forms/smi/all", { params: { email } });
+    return { ok: true, data: res.data };
+  } catch (err: unknown) {
+    if (axios.isAxiosError(err)) {
+      return {
+        ok: false,
+        data: {
+          error: getErrorDisplay(
+            err,
+            "Network error while fetching SMI forms."
+          ),
+        },
+      };
+    }
+    return {
+      ok: false,
+      data: { error: "An unexpected error occurred while fetching SMI forms." },
+    };
+  }
+}
+```
+
+### Cloning
+
+You can clone the repository by following these steps:
+
+1. Go to the [GitHub repository](https://github.com/SasanTazayoni/integrate-therapy-form-manager) 
+2. Locate the Code button above the list of files and click it 
+3. Select if you prefer to clone using HTTPS, SSH, or GitHub CLI and click the copy button to copy the URL to your clipboard
+4. Open Git Bash or Terminal
+5. Change the current working directory to the one where you want the cloned directory
+6. In your IDE Terminal, type the following command to clone my repository:
+	- `git clone https://github.com/SasanTazayoni/integrate-therapy-form-manager.git`
+7. Press Enter to create your local clone.
+
+### Forking
+
+By forking the GitHub Repository, we make a copy of the original repository on our GitHub account to view and/or make changes without affecting the original owner's repository.
+You can fork this repository by using the following steps:
+
+1. Log in to GitHub and locate the [GitHub Repository](https://github.com/SasanTazayoni/integrate-therapy-form-manager)
+2. At the top of the Repository (not top of page) just above the "Settings" Button on the menu, locate the "Fork" Button.
+3. Once clicked, you should now have a copy of the original repository in your own GitHub account!
