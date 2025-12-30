@@ -57,6 +57,33 @@ This application is hosted on the cloud platform Render. Due to the sensitive na
 
 ![Integrate Therapy Form Manager on various devices](documentation/amiresponsive.png)
 
+## 🔧 Key Technical Challenges Solved
+
+### 1. Token-Based Security Without User Accounts
+
+**Challenge:** Clients needed secure form access without creating accounts (reduces friction).  
+**Solution:** Implemented JWT token system with 14-day expiry and automatic deactivation post-submission.
+
+### 2. Complex Multi-Form Scoring Algorithms
+
+**Challenge:** Different questionnaires (YSQ, SMI, BAI, BDI) required different scoring methodologies.  
+**Solution:** Built modular backend scoring functions with comprehensive validation and error handling.
+
+### 3. Form State Management & Data Integrity
+
+**Challenge:** Preventing duplicate submissions while allowing form resets and revocations.  
+**Solution:** Designed database schema with form status tracking and automated token lifecycle management.
+
+### 4. Client Data Privacy (GDPR Compliance)
+
+**Challenge:** Handling sensitive therapy data with proper retention and deletion policies.  
+**Solution:** Implemented automatic client deactivation and scheduled deletion after 1 year of inactivity.
+
+### 5. Email Automation & Reliability
+
+**Challenge:** Ensuring timely form delivery and handling email failures gracefully.  
+**Solution:** Integrated Resend API with error handling and status tracking for all email operations.
+
 # UX
 
 The Integrate Therapy Form Manager was designed to streamline the therapist’s workflow while providing a clear, intuitive experience for clients completing forms. The UX focuses on two main personas: therapists or administrators managing forms, and clients filling them out. For therapists, efficiency is key - the admin dashboard consolidates sending forms, revoking access, reviewing submissions, and visualising results into a single interface. Tasks like creating new clients, sending multiple forms, and generating summary charts now take just a few clicks, saving significant time.
