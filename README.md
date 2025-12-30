@@ -366,7 +366,7 @@ I've tested my deployed project using the Lighthouse Audit tool to check for any
 | --- | --- | --- | --- |
 | Dashboard | ![screenshot](documentation/lighthouse-dashboard-mobile.png) | ![screenshot](documentation/lighthouse-dashboard-desktop.png) | No warnings |
 | Form results summary | ![screenshot](documentation/lighthouse-formresultssummary-mobile.png) | ![screenshot](documentation/lighthouse-formresultssummary-desktop.png) | No warnings |
-| YSQ | ![screenshot](documentation/lighthouse-ysq-mobile.png) | ![screenshot](documentation/documentation/lighthouse-ysq-desktop.png) | No warnings |
+| YSQ | ![screenshot](documentation/lighthouse-ysq-mobile.png) | ![screenshot](documentation/lighthouse-ysq-desktop.png) | No warnings |
 | SMI | ![screenshot](documentation/lighthouse-smi-mobile.png) | ![screenshot](documentation/lighthouse-smi-desktop.png) | No warnings |
 | BDI | ![screenshot](documentation/lighthouse-bdi-mobile.png) | ![screenshot](documentation/lighthouse-bdi-desktop.png) | No warnings |
 | BAI | ![screenshot](documentation/lighthouse-bai-mobile.png) | ![screenshot](documentation/lighthouse-bai-desktop.png) | No warnings |
