@@ -2,6 +2,17 @@
 
 ![HTML](./tech/html.png) ![CSS](./tech/css.png) ![Javascript](./tech/javascript.png) ![Typescript](./tech/typescript.png) ![Vite](./tech/vite.png) ![React](./tech/react.png) ![Jest](./tech/jest.png) ![Tailwind](./tech/tailwind.png) ![REST-API](./tech/restapi.png) ![Prisma](./tech/prisma.png) ![PostgreSQL](./tech/postgresql.png) ![Neon](./tech/neon.png) ![Node](./tech/node.png) ![Express](./tech/express.png) ![ChatGPT](./tech/chatgpt.png) ![VSCode](./tech/vscode.png) ![render](./tech/render.png)
 
+> **⚠️ Note:** This is a production application handling sensitive therapy client data. A live demo is not publicly available for privacy and GDPR compliance reasons. Please see the [video demonstrations](#introduction) and [screenshots](#features) below.
+
+## 🎯 Quick Links
+
+- [Video Demonstrations](#introduction) - See the app in action
+- [Features](#existing-features) - Detailed feature breakdown  
+- [Tech Stack](#tools--technologies-used) - Technologies used
+- [Architecture](#database-design) - Database design (ERD)
+- [Testing](#testing) - Test coverage & results
+- [Deployment](#deployment) - How to deploy your own instance
+
 # Introduction
 
 This project was developed for a sole-trader psychotherapist to address a specific business challenge. Previously, the therapist manually sent forms stored in Excel spreadsheets to clients via email. Clients would complete the forms and return them, after which the therapist manually calculated scores based on each client’s responses. Finally, the results were compiled into charts for each questionnaire, which were used to assist in the therapy process during client sessions.
