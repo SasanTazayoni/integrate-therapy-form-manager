@@ -23,7 +23,19 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
     coverage: {
       provider: "v8",
       reporter: ["text"],
-      exclude: ["**/server.ts", "dist/**", "node_modules/**", "prisma/seed.ts"],
+      exclude: [
+        "vite.config.ts",
+        "eslint.config.js",
+        "setupTests.js",
+        "src/main.tsx",
+        "src/vite-env.d.ts",
+        "src/types/**",
+        "src/App.tsx",
+        "backend/**",
+        "dist/**",
+        "node_modules/**",
+        "**/*.test.*",
+      ],
     },
   },
 }));

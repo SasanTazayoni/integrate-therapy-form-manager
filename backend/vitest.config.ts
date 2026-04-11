@@ -13,6 +13,7 @@ export default defineConfig({
         "routes/**",
         "prisma/**",
         "dist/**",
+        "../src/**",
         "node_modules/**",
         "**/*.test.*",
       ],
