@@ -107,6 +107,7 @@ export default function Dashboard() {
     if (confirmedEmail !== normalizedEmail) setConfirmedEmail(null);
 
     setError("");
+    setSuccessMessage("");
     setLoading(true);
 
     const { ok, data } = await fetchClientStatus(normalizedEmail);

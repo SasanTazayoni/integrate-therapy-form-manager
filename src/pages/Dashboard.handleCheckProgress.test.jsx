@@ -274,6 +274,41 @@ describe("Dashboard - handleCheckProgress", () => {
     });
   });
 
+  test("clears success message before loading so spinner is visible on re-fetch", async () => {
+    const mockEmail = "test@example.com";
+    const mockClientStatus = { exists: true, inactive: false, formsCompleted: 2, forms: {} };
+
+    let resolveSecondFetch;
+    const secondFetchPromise = new Promise((resolve) => {
+      resolveSecondFetch = resolve;
+    });
+
+    clientsApi.fetchClientStatus
+      .mockResolvedValueOnce({ ok: true, data: mockClientStatus })
+      .mockReturnValueOnce(secondFetchPromise);
+
+    const { getByTestId, queryByTestId } = render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>
+    );
+
+    fireEvent.change(getByTestId("email-input"), { target: { value: mockEmail } });
+    fireEvent.click(getByTestId("check-button"));
+
+    await waitFor(() => {
+      expect(getByTestId("success-message")).toBeInTheDocument();
+    });
+
+    fireEvent.click(getByTestId("check-button"));
+
+    await waitFor(() => {
+      expect(queryByTestId("success-message")).not.toBeInTheDocument();
+    });
+
+    resolveSecondFetch({ ok: true, data: mockClientStatus });
+  });
+
   test("shows fallback error if fetchClientStatus fails without error message", async () => {
     const mockEmail = "test@example.com";
 
