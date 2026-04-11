@@ -1,5 +1,5 @@
 import { render, fireEvent } from "@testing-library/react";
-import { describe, test, vi, beforeEach, expect } from "vitest";
+import { describe, test, vi, beforeEach, afterEach, expect } from "vitest";
 import RemoveClientModal from "./RemoveClientModal";
 
 beforeEach(() => {
@@ -23,6 +23,14 @@ describe("RemoveClientModal", () => {
     onConfirm,
     onCloseFinished,
   };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
 
   test("renders the modal with title and message", () => {
     render(<RemoveClientModal {...defaultProps} />);
@@ -54,9 +62,17 @@ describe("RemoveClientModal", () => {
   });
 
   test("calls onCancel when overlay is clicked", () => {
-    const { getByRole } = render(<RemoveClientModal {...defaultProps} />);
-    const overlay = getByRole("dialog");
+    render(<RemoveClientModal {...defaultProps} />);
+    const overlay = document.querySelector(".overlay") as HTMLElement;
     fireEvent.click(overlay);
     expect(onCancel).toHaveBeenCalled();
+  });
+
+  test("calls onCloseFinished after closing animation completes", () => {
+    vi.useFakeTimers();
+    const { rerender } = render(<RemoveClientModal {...defaultProps} />);
+    rerender(<RemoveClientModal {...defaultProps} closing={true} />);
+    vi.advanceTimersByTime(500);
+    expect(onCloseFinished).toHaveBeenCalled();
   });
 });
