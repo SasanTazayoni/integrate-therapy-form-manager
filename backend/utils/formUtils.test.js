@@ -78,7 +78,6 @@ describe("deactivateInvalidActiveForms", () => {
         OR: [
           { token_expires_at: { lt: expect.any(Date) } },
           { submitted_at: { not: null } },
-          { revoked_at: { not: null } },
         ],
       },
       data: { is_active: false },

@@ -29,7 +29,6 @@ export async function deactivateInvalidActiveForms(
       OR: [
         { token_expires_at: { lt: new Date() } },
         { submitted_at: { not: null } },
-        { revoked_at: { not: null } },
       ],
     },
     data: { is_active: false },
