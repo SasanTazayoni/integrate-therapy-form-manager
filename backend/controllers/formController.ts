@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../prisma/client";
-import { Form } from "@prisma/client";
+import { Form, Prisma } from "@prisma/client";
 import { sendFormLink } from "../utils/sendFormLink";
 import { FORM_TYPES, FormType } from "../data/formTypes";
 import { generateToken, computeExpiry } from "../utils/tokens";
@@ -67,8 +67,26 @@ export const sendForm = async (
       .status(201)
       .json({ message: "Form sent via email", form: mapFormSafe(form) });
   } catch (error) {
-    console.error("Error sending form:", error);
-    res.status(500).json({ error: "Failed to send form" });
+    if (error instanceof Error && error.message === "Email delivery failed") {
+      console.error("Email delivery failed:", error.cause);
+      return res.status(502).json({
+        error:
+          "The form was created but the email could not be delivered. Check the client's email address.",
+      });
+    }
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError ||
+      error instanceof Prisma.PrismaClientInitializationError
+    ) {
+      console.error("Database error in sendForm:", error);
+      return res.status(503).json({
+        error: "Service temporarily unavailable. Please try again in a moment.",
+      });
+    }
+    console.error("Unexpected error in sendForm:", error);
+    res.status(500).json({
+      error: "Something went wrong. If this keeps happening please contact support.",
+    });
   }
 };
 
@@ -85,10 +103,6 @@ export const sendMultipleForms = async (
 
     const now = new Date();
     const createdForms: Form[] = [];
-
-    const allForms = await prisma.form.findMany({
-      where: { clientId: client.id },
-    });
 
     for (const formType of FORM_TYPES) {
       await deactivateInvalidActiveForms(client.id, formType);
@@ -151,8 +165,26 @@ export const sendMultipleForms = async (
       sentForms: createdForms.map(mapFormSafe),
     });
   } catch (error) {
-    console.error("Error sending multiple forms:", error);
-    res.status(500).json({ error: "Failed to send multiple forms" });
+    if (error instanceof Error && error.message === "Email delivery failed") {
+      console.error("Email delivery failed:", error.cause);
+      return res.status(502).json({
+        error:
+          "The forms were created but the email could not be delivered. Check the client's email address.",
+      });
+    }
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError ||
+      error instanceof Prisma.PrismaClientInitializationError
+    ) {
+      console.error("Database error in sendMultipleForms:", error);
+      return res.status(503).json({
+        error: "Service temporarily unavailable. Please try again in a moment.",
+      });
+    }
+    console.error("Unexpected error in sendMultipleForms:", error);
+    res.status(500).json({
+      error: "Something went wrong. If this keeps happening please contact support.",
+    });
   }
 };
 
