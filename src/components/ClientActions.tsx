@@ -29,35 +29,14 @@ export default function ClientActions({
 
   const openModal = (type: Exclude<ModalType, null>) =>
     setModal({ type, closing: false });
-  const cancelModal = () => {
-    let result = false;
-    setModal((prev) => {
-      if (prev.type) {
-        result = true;
-        return { ...prev, closing: true };
-      }
-      return prev;
-    });
-    return result;
-  };
+  const cancelModal = () => setModal((prev) => ({ ...prev, closing: true }));
 
   const closeModalFinished = () => setModal({ type: null, closing: false });
   const confirmModal = () => {
-    let result = false;
-
     if (modal.type === "remove") onDeleteClient();
     if (modal.type === "deactivate") onDeactivateClient?.();
     if (modal.type === "activate") onActivateClient?.();
-
-    setModal((prev) => {
-      if (prev.type) {
-        result = true;
-        return { ...prev, closing: true };
-      }
-      return prev;
-    });
-
-    return result;
+    setModal((prev) => ({ ...prev, closing: true }));
   };
 
   const modalMap = {
