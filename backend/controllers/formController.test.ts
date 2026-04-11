@@ -409,11 +409,11 @@ describe("formController", () => {
   });
 
   test("revokeFormToken revokes forms successfully", async () => {
+    const revokedAt = new Date();
     const mockClient = { id: "1" };
     vi.mocked(findClientByEmail).mockResolvedValue(mockClient as any);
     mockPrisma.form.updateMany.mockResolvedValue({ count: 1 });
-    mockPrisma.form.findMany.mockResolvedValue([{ revoked_at: new Date() }] as any);
-    vi.mocked(getActiveForms).mockReturnValue([{ revoked_at: new Date() }] as any);
+    mockPrisma.form.findFirst.mockResolvedValue({ revoked_at: revokedAt } as any);
 
     const req = {
       body: { email: "test@test.com" },
@@ -421,17 +421,17 @@ describe("formController", () => {
     } as any;
     const res = { json: vi.fn() } as any;
     await revokeFormToken(req, res);
-    expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({ message: "Form token(s) revoked successfully" })
-    );
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Form token(s) revoked successfully",
+      revokedAt,
+    });
   });
 
-  test("revokeFormToken sets revokedAt to null if revoked_at is undefined", async () => {
+  test("revokeFormToken sets revokedAt to null if no revoked form is found", async () => {
     const mockClient = { id: "1" };
     vi.mocked(findClientByEmail).mockResolvedValue(mockClient as any);
     mockPrisma.form.updateMany.mockResolvedValue({ count: 1 });
-    mockPrisma.form.findMany.mockResolvedValue([{}] as any);
-    vi.mocked(getActiveForms).mockReturnValue([{}] as any);
+    mockPrisma.form.findFirst.mockResolvedValue(null);
 
     const req = {
       body: { email: "test@test.com" },
@@ -441,12 +441,10 @@ describe("formController", () => {
 
     await revokeFormToken(req, res);
 
-    expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({
-        message: "Form token(s) revoked successfully",
-        revokedAt: null,
-      })
-    );
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Form token(s) revoked successfully",
+      revokedAt: null,
+    });
   });
 
   test("revokeFormToken handles server error", async () => {
