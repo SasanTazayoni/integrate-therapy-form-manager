@@ -51,13 +51,13 @@ export const getClientFormsStatus = async (
 
   const extractScores = (
     form: Form | undefined,
-    prefix: string,
-    filter?: (key: string) => boolean
+    formTypePrefix: string,
+    scoreKeyFilter?: (key: string) => boolean
   ): Record<string, string | null> => {
     const scores: Record<string, string | null> = {};
     if (!form) return scores;
     Object.entries(form).forEach(([key, value]) => {
-      if (key.startsWith(prefix) && (!filter || filter(key))) {
+      if (key.startsWith(formTypePrefix) && (!scoreKeyFilter || scoreKeyFilter(key))) {
         scores[key] = value !== null ? String(value) : null;
       }
     });
