@@ -1,8 +1,8 @@
-import { describe, test, expect, vi, beforeEach } from "vitest";
+import { describe, test, expect, vi, beforeEach, type Mock } from "vitest";
 import { sendFormLink } from "./sendFormLink";
 
 vi.mock("./requiredEnv", () => ({
-  getEnvVar: vi.fn((key) => {
+  getEnvVar: vi.fn((key: string) => {
     if (key === "RESEND_API_KEY") return "test-api-key";
     if (key === "FROM_EMAIL") return "from@test.com";
   }),
@@ -23,10 +23,10 @@ vi.mock("resend", () => {
 });
 
 describe("sendFormLink", () => {
-  let sendMock;
+  let sendMock: Mock;
 
   beforeEach(async () => {
-    const resendModule = await import("resend");
+    const resendModule = await import("resend") as unknown as { __sendMock: Mock };
     sendMock = resendModule.__sendMock;
     sendMock.mockReset();
     sendMock.mockResolvedValue({ data: { id: "test-email-id" }, error: null });
@@ -55,7 +55,7 @@ describe("sendFormLink", () => {
       sendFormLink({
         to: "test@example.com",
         token: "abc123",
-        formType: "INVALID",
+        formType: "INVALID" as any,
       })
     ).rejects.toThrow("Invalid form type: INVALID");
   });
