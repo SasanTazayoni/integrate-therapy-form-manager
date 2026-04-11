@@ -5,6 +5,7 @@ export default defineConfig({
     coverage: {
       exclude: [
         "vitest.config.ts",
+        "eslint.config.js",
         "env.ts",
         "index.ts",
         "server.ts",
