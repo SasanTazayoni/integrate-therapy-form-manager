@@ -56,7 +56,7 @@ const FormResultsSummary = () => {
 
   return (
     <ProtectedAccess>
-      <div className="outer-container bg-[var(--color-block--white)] text-[--color-link] font-sans">
+      <div className="outer-container bg-[var(--color-block--white)] text-[var(--color-link)] font-sans">
         <div className="flex items-center justify-between p-2 no-print">
           <Button
             className="button button--small"
@@ -83,7 +83,7 @@ const FormResultsSummary = () => {
           SMI/YSQ/BAI/BDI Summary Sheet
         </h1>
 
-        <div className="client-info mb-6 font-medium text-[--color-link] text-base md:text-lg">
+        <div className="client-info mb-6 font-medium text-[var(--color-link)] text-base md:text-lg">
           <div>
             <strong>Client:</strong> {clientFormsStatus?.clientName ?? ""}
           </div>

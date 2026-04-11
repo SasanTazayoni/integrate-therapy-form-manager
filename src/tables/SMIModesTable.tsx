@@ -61,7 +61,7 @@ export default function SMIModesTable({
         ? "bg-red-300 border-red-500"
         : highlightLevel === "highlight"
         ? "bg-yellow-200 border-yellow-400"
-        : "bg-[--color-block--grey] border-gray-300";
+        : "bg-[var(--color-block--grey)] border-gray-300";
 
     return (
       <td
@@ -72,7 +72,7 @@ export default function SMIModesTable({
       >
         <div className="font-semibold text-sm text-gray-600">{cell}</div>
         {cell && (
-          <div className="mt-4 text-[--color-secondary] font-bold">
+          <div className="mt-4 text-[var(--color-secondary)] font-bold">
             {data?.display ?? "—"}
           </div>
         )}
@@ -114,13 +114,13 @@ export default function SMIModesTable({
         ? "bg-red-300 border-red-500"
         : highlightLevel === "highlight"
         ? "bg-yellow-200 border-yellow-400"
-        : "bg-[--color-block--grey] border-gray-300";
+        : "bg-[var(--color-block--grey)] border-gray-300";
 
     return (
       <div key={cell} className={`p-4 rounded ${bgClass}`}>
         <div className="font-semibold text-sm text-gray-600">{cell}</div>
         {cell && (
-          <div className="mt-2 text-[--color-secondary] font-bold">
+          <div className="mt-2 text-[var(--color-secondary)] font-bold">
             {data?.display ?? "—"}
           </div>
         )}
@@ -130,7 +130,7 @@ export default function SMIModesTable({
 
   return (
     <section className="mb-12">
-      <h2 className="question-title text-[--color-primary] text-center text-2xl md:text-[18px]">
+      <h2 className="question-title text-[var(--color-primary)] text-center text-2xl md:text-[18px]">
         SMI Modes{" "}
         {submittedAt && (
           <span className="text-gray-400">

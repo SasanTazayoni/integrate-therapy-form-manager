@@ -88,7 +88,7 @@ export default function YSQSchemasTable({
 
   return (
     <section className="mb-12">
-      <h2 className="question-title text-[--color-primary] text-center">
+      <h2 className="question-title text-[var(--color-primary)] text-center">
         YSQ Schemas{" "}
         {ysqSubmittedAt && (
           <span className="text-gray-400">
@@ -145,7 +145,7 @@ export default function YSQSchemasTable({
             return (
               <tr
                 key={schema.code}
-                className="text-center bg-[--color-block--white] hover:bg-[--color-selected-bg] transition"
+                className="text-center bg-[var(--color-block--white)] hover:bg-[var(--color-selected-bg)] transition"
               >
                 <td className="border border-gray-300 p-2 font-medium text-center md:text-left">
                   <span className="hidden md:inline">
