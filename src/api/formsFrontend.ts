@@ -113,7 +113,7 @@ export async function submitBecksForm({
     return { ok: true, data: res.data };
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
-      const code = (err as any)?.response?.data?.code;
+      const code = err.response?.data?.code;
       const message = getErrorDisplay(
         err,
         "Network error while submitting form."
@@ -136,7 +136,7 @@ export async function submitBurnsForm({
     return { ok: true, data: res.data };
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
-      const code = (err as any)?.response?.data?.code;
+      const code = err.response?.data?.code;
       const message = getErrorDisplay(
         err,
         "Network error while submitting form."
@@ -159,7 +159,7 @@ export async function submitYSQForm({
     return { ok: true, data: res.data };
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
-      const code = (err as any)?.response?.data?.code;
+      const code = err.response?.data?.code;
       const message = getErrorDisplay(
         err,
         "Network error while submitting YSQ form."
@@ -182,7 +182,7 @@ export async function submitSMIForm({
     return { ok: true, data: res.data };
   } catch (err: unknown) {
     if (axios.isAxiosError(err)) {
-      const code = (err as any)?.response?.data?.code;
+      const code = err.response?.data?.code;
       const message = getErrorDisplay(
         err,
         "Network error while submitting SMI form."
