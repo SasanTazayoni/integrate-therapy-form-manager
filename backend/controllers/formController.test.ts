@@ -1,7 +1,6 @@
 import { describe, test, expect, vi, beforeEach, type Mock } from "vitest";
 import { Prisma } from "@prisma/client";
 import prisma from "../prisma/client";
-import * as tokens from "../utils/tokens";
 import { sendFormLink } from "../utils/sendFormLink";
 import { findClientByEmail } from "../utils/clientUtils";
 import { getActiveForms, mapFormSafe } from "../utils/formHelpers";
@@ -94,9 +93,6 @@ beforeEach(() => {
   } as any);
 
   vi.mocked(sendFormLink).mockResolvedValue(undefined);
-
-  tokens.generateToken = vi.fn(() => "mocked-token");
-  tokens.computeExpiry = vi.fn(() => new Date("2099-01-01T00:00:00Z"));
 
   vi.mocked(getActiveForms).mockReturnValue([]);
   vi.mocked(mapFormSafe).mockImplementation((f) => f as any);
