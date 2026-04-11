@@ -594,9 +594,13 @@ describe("formController", () => {
 
     await sendMultipleForms(req, res);
 
+    expect(mockPrisma.form.updateMany).toHaveBeenCalledWith({
+      where: { id: { in: expect.any(Array) } },
+      data: { is_active: false },
+    });
     expect(res.status).toHaveBeenCalledWith(502);
     expect(res.json).toHaveBeenCalledWith({
-      error: "The forms were created but the email could not be delivered. Check the client's email address.",
+      error: "The email could not be delivered and the form tokens have been cancelled. Please check the client's email address and try again.",
     });
   });
 

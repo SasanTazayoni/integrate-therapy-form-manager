@@ -97,12 +97,13 @@ export const sendMultipleForms = async (
   const { email } = req.body;
   if (!email) return res.status(400).json({ error: "Email required" });
 
+  const createdForms: Form[] = [];
+
   try {
     const client = await findClientByEmail(email);
     if (!client) return res.status(404).json({ error: "Client not found" });
 
     const now = new Date();
-    const createdForms: Form[] = [];
 
     for (const formType of FORM_TYPES) {
       await deactivateInvalidActiveForms(client.id, formType);
@@ -166,10 +167,16 @@ export const sendMultipleForms = async (
     });
   } catch (error) {
     if (error instanceof Error && error.message === "Email delivery failed") {
+      if (createdForms.length > 0) {
+        await prisma.form.updateMany({
+          where: { id: { in: createdForms.map((form) => form.id) } },
+          data: { is_active: false },
+        });
+      }
       console.error("Email delivery failed:", error.cause);
       return res.status(502).json({
         error:
-          "The forms were created but the email could not be delivered. Check the client's email address.",
+          "The email could not be delivered and the form tokens have been cancelled. Please check the client's email address and try again.",
       });
     }
     if (
