@@ -1,14 +1,11 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import helmet from "helmet";
 import path from "path";
 import crypto from "crypto";
 import clientRoutes from "./routes/clientsBackend";
 import formRoutes from "./routes/formsBackend";
 import { getFrontendBaseUrl } from "./utils/getFrontendBaseUrl";
-
-dotenv.config();
 
 const app = express();
 
