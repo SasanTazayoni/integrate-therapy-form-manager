@@ -1,8 +1,6 @@
 import { useState, useMemo } from "react";
-import { Item } from "../data/SMICommon";
 import SMIItems from "../data/SMIItems";
 
-const ALL_SMI_ITEMS: Item[] = SMIItems;
 
 const useSMIForm = () => {
   const [answers, setAnswers] = useState<Record<number, 1 | 2 | 3 | 4 | 5 | 6>>(
@@ -14,7 +12,7 @@ const useSMIForm = () => {
   const [resetModalClosing, setResetModalClosing] = useState(false);
 
   const total = useMemo(() => {
-    return ALL_SMI_ITEMS.reduce(
+    return SMIItems.reduce(
       (sum, item) => sum + (answers[item.id] ?? 0),
       0
     );
@@ -42,7 +40,7 @@ const useSMIForm = () => {
   const handleSubmit = (onValidSubmit: () => void) => (e: React.FormEvent) => {
     e.preventDefault();
 
-    const unansweredIds = ALL_SMI_ITEMS.filter(
+    const unansweredIds = SMIItems.filter(
       (item) => answers[item.id] === undefined
     ).map((item) => item.id);
 
