@@ -61,20 +61,14 @@ export async function sendFormLink({
     </p>
   `;
 
-  try {
-    const result = await resend.emails.send({
-      from: fromEmail,
-      to,
-      subject: `Your ${formTitle}`,
-      html: htmlBody,
-    });
+  const { error } = await resend.emails.send({
+    from: fromEmail,
+    to,
+    subject: `Your ${formTitle}`,
+    html: htmlBody,
+  });
 
-    console.log("✅ Email sent:", result);
-  } catch (error) {
-    console.error(
-      "❌ Failed to send email:",
-      error instanceof Error ? error.message : error
-    );
-    throw new Error("Email sending failed");
+  if (error) {
+    throw new Error("Email delivery failed", { cause: error });
   }
 }

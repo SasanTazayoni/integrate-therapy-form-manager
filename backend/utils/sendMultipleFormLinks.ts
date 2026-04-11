@@ -53,20 +53,14 @@ export async function sendMultipleFormLinks({
     </p>
   `;
 
-  try {
-    const result = await resend.emails.send({
-      from: getEnvVar("FROM_EMAIL"),
-      to: email,
-      subject: `Your forms from Integrate Therapy`,
-      html: htmlBody,
-    });
+  const { error } = await resend.emails.send({
+    from: getEnvVar("FROM_EMAIL"),
+    to: email,
+    subject: `Your forms from Integrate Therapy`,
+    html: htmlBody,
+  });
 
-    console.log("✅ Email sent with multiple forms:", result);
-  } catch (error) {
-    console.error(
-      "❌ Failed to send multiple forms email:",
-      error instanceof Error ? error.message : error
-    );
-    throw new Error("Email sending failed");
+  if (error) {
+    throw new Error("Email delivery failed", { cause: error });
   }
 }
