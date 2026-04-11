@@ -29,7 +29,7 @@ describe("sendMultipleFormLinks", () => {
     const resendModule = await import("resend");
     sendMock = resendModule.__sendMock;
     sendMock.mockReset();
-    sendMock.mockResolvedValue({ id: "test-email-id" });
+    sendMock.mockResolvedValue({ data: { id: "test-email-id" }, error: null });
   });
 
   test("sends an email with multiple forms", async () => {
@@ -56,9 +56,12 @@ describe("sendMultipleFormLinks", () => {
     expect(callArgs.html).toContain("https://test.com/SMI/token2");
   });
 
-  test("throws an error if sending email fails", async () => {
+  test("throws Email delivery failed if Resend returns an error", async () => {
     const forms = [{ form_type: "YSQ", token: "token1" }];
-    sendMock.mockRejectedValueOnce(new Error("SMTP failure"));
+    sendMock.mockResolvedValueOnce({
+      data: null,
+      error: { message: "API key is invalid", name: "validation_error", statusCode: 401 },
+    });
 
     await expect(
       sendMultipleFormLinks({
@@ -66,50 +69,22 @@ describe("sendMultipleFormLinks", () => {
         clientName: "Bob",
         forms,
       })
-    ).rejects.toThrow("Email sending failed");
+    ).rejects.toThrow("Email delivery failed");
   });
 
-  test("logs the error message when email send fails", async () => {
-    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+  test("preserves original Resend error as cause", async () => {
+    const resendError = { message: "API key is invalid", name: "validation_error", statusCode: 401 };
     const forms = [{ form_type: "SMI", token: "token2" }];
-    sendMock.mockRejectedValueOnce(new Error("Network error"));
+    sendMock.mockResolvedValueOnce({ data: null, error: resendError });
 
-    await expect(
-      sendMultipleFormLinks({
-        email: "fail2@example.com",
-        clientName: "Carol",
-        forms,
-      })
-    ).rejects.toThrow("Email sending failed");
+    const err = await sendMultipleFormLinks({
+      email: "fail@example.com",
+      clientName: "Carol",
+      forms,
+    }).catch((e) => e);
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "❌ Failed to send multiple forms email:",
-      "Network error"
-    );
-
-    consoleSpy.mockRestore();
-  });
-
-  test("logs non-Error rejection values", async () => {
-    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    const forms = [{ form_type: "YSQ", token: "token1" }];
-
-    sendMock.mockRejectedValueOnce("some string error");
-
-    await expect(
-      sendMultipleFormLinks({
-        email: "fail3@example.com",
-        clientName: "Dan",
-        forms,
-      })
-    ).rejects.toThrow("Email sending failed");
-
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "❌ Failed to send multiple forms email:",
-      "some string error"
-    );
-
-    consoleSpy.mockRestore();
+    expect(err.message).toBe("Email delivery failed");
+    expect(err.cause).toBe(resendError);
   });
 
   test("does nothing if forms array is empty", async () => {

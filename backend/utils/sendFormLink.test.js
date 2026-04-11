@@ -29,7 +29,7 @@ describe("sendFormLink", () => {
     const resendModule = await import("resend");
     sendMock = resendModule.__sendMock;
     sendMock.mockReset();
-    sendMock.mockResolvedValue({ id: "test-email-id" });
+    sendMock.mockResolvedValue({ data: { id: "test-email-id" }, error: null });
   });
 
   test("sends a single form email correctly", async () => {
@@ -60,8 +60,11 @@ describe("sendFormLink", () => {
     ).rejects.toThrow("Invalid form type: INVALID");
   });
 
-  test("throws an error if sending fails", async () => {
-    sendMock.mockRejectedValueOnce(new Error("SMTP failure"));
+  test("throws Email delivery failed if Resend returns an error", async () => {
+    sendMock.mockResolvedValueOnce({
+      data: null,
+      error: { message: "API key is invalid", name: "validation_error", statusCode: 401 },
+    });
 
     await expect(
       sendFormLink({
@@ -69,45 +72,21 @@ describe("sendFormLink", () => {
         token: "abc123",
         formType: "YSQ",
       })
-    ).rejects.toThrow("Email sending failed");
+    ).rejects.toThrow("Email delivery failed");
   });
 
-  test("logs error message when sending fails with Error", async () => {
-    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    sendMock.mockRejectedValueOnce(new Error("Network error"));
+  test("preserves original Resend error as cause", async () => {
+    const resendError = { message: "API key is invalid", name: "validation_error", statusCode: 401 };
+    sendMock.mockResolvedValueOnce({ data: null, error: resendError });
 
-    await expect(
-      sendFormLink({
-        to: "fail2@example.com",
-        token: "abc123",
-        formType: "SMI",
-      })
-    ).rejects.toThrow("Email sending failed");
+    const err = await sendFormLink({
+      to: "fail@example.com",
+      token: "abc123",
+      formType: "YSQ",
+    }).catch((e) => e);
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "❌ Failed to send email:",
-      "Network error"
-    );
-    consoleSpy.mockRestore();
-  });
-
-  test("logs error message when sending fails with non-Error", async () => {
-    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    sendMock.mockRejectedValueOnce("some string error");
-
-    await expect(
-      sendFormLink({
-        to: "fail3@example.com",
-        token: "abc123",
-        formType: "BECKS",
-      })
-    ).rejects.toThrow("Email sending failed");
-
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "❌ Failed to send email:",
-      "some string error"
-    );
-    consoleSpy.mockRestore();
+    expect(err.message).toBe("Email delivery failed");
+    expect(err.cause).toBe(resendError);
   });
 
   test("uses 'Sir/Madam' if clientName is undefined", async () => {
