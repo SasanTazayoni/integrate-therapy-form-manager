@@ -133,6 +133,44 @@ describe("ProtectedAccess", () => {
     expect(passwordInput).toHaveValue("");
   });
 
+  test("successful login hides the modal and saves session after animation", async () => {
+    vi.resetModules();
+    const { default: PA } = await import("./ProtectedAccess");
+
+    const { getByLabelText, getByRole, queryByRole } = render(
+      <PA>
+        <div>Child</div>
+      </PA>
+    );
+
+    act(() => {
+      fireEvent.change(getByLabelText(/username/i), {
+        target: { value: "wrong" },
+      });
+      fireEvent.change(getByLabelText(/password/i), {
+        target: { value: "wrong" },
+      });
+      fireEvent.click(getByRole("button", { name: /login/i }));
+    });
+
+    act(() => {
+      fireEvent.change(getByLabelText(/username/i), {
+        target: { value: "admin" },
+      });
+      fireEvent.change(getByLabelText(/password/i), {
+        target: { value: "password" },
+      });
+      fireEvent.click(getByRole("button", { name: /login/i }));
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+
+    expect(queryByRole("dialog")).not.toBeInTheDocument();
+    expect(sessionStorage.getItem("integrateTherapyAuthenticated")).toBe("true");
+  });
+
   test("second handleSubmit clears existing fadeOut and clearError timers", () => {
     vi.useFakeTimers();
     const clearSpy = vi.spyOn(window, "clearTimeout");
