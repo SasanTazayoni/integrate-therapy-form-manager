@@ -359,7 +359,7 @@ All new users will be asked to provide a name and a date of birth:
 
 ERDs help visualize database architecture before model creation, and understanding table relationships can save time later. This design might have benefited from separate entities for each questionnaire.
 
-![Entity relationship diagram](documentation/invalidform.png)
+![Entity relationship diagram](documentation/erd.png)
 
 # Agile development process
 
