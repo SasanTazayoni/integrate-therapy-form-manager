@@ -39,6 +39,27 @@ describe("getFrontendBaseUrl", () => {
     expect(result).toBe("http://localhost:5173");
   });
 
+  test("returns URL correctly in production when FRONTEND_BASE_URL is set", () => {
+    const originalNodeEnv = process.env.NODE_ENV;
+    const originalFrontendUrl = process.env.FRONTEND_BASE_URL;
+
+    process.env.NODE_ENV = "production";
+    process.env.FRONTEND_BASE_URL = "https://production-app.com/path";
+    vi.spyOn(envUtils, "getEnvVar").mockReturnValue("https://production-app.com/path");
+
+    try {
+      const result = getFrontendBaseUrl();
+      expect(result).toBe("https://production-app.com");
+    } finally {
+      process.env.NODE_ENV = originalNodeEnv;
+      if (originalFrontendUrl !== undefined) {
+        process.env.FRONTEND_BASE_URL = originalFrontendUrl;
+      } else {
+        delete process.env.FRONTEND_BASE_URL;
+      }
+    }
+  });
+
   test("throws in production if FRONTEND_BASE_URL is not set", () => {
     const originalNodeEnv = process.env.NODE_ENV;
     const originalFrontendUrl = process.env.FRONTEND_BASE_URL;
