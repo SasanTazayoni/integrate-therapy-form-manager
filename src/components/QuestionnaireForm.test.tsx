@@ -3,17 +3,20 @@ import { render, waitFor, fireEvent } from "@testing-library/react";
 import QuestionnaireForm, { reducer } from "./QuestionnaireForm";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import * as api from "../api/formsFrontend";
-import { createRef } from "react";
+import type { Dispatch } from "react";
 import setErrorTimers from "../utils/startErrorFadeTimers";
 import * as timersUtil from "../utils/startErrorFadeTimers";
+import type { FormType } from "../constants/formTypes";
+
+const TEST_FORM = "TEST_FORM" as FormType;
 
 vi.spyOn(api, "validateFormToken").mockResolvedValue({
   ok: false,
   error: "Invalid token",
 });
 
-vi.mock("react-router-dom", async (orig) => {
-  const actual = await orig();
+vi.mock("react-router-dom", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("react-router-dom")>();
   return {
     ...actual,
     useActionData: () => ({ error: "Something went wrong" }),
@@ -29,7 +32,23 @@ vi.mock("./modals/InvalidTokenModal", () => ({
 }));
 
 vi.mock("./modals/ClientInfoModal", () => ({
-  default: ({ name, dob, error, onSubmit, onNameChange, onDobChange }) => (
+  default: ({
+    name,
+    dob,
+    error,
+    onSubmit,
+    onNameChange,
+    onDobChange,
+  }: {
+    name: string;
+    dob: string;
+    error?: string;
+    errorFading?: boolean;
+    closing?: boolean;
+    onSubmit: () => void;
+    onNameChange: (val: string) => void;
+    onDobChange: (val: string) => void;
+  }) => (
     <div data-testid="client-info-modal">
       <input
         data-testid="modal-name"
@@ -62,21 +81,21 @@ describe("QuestionnaireForm component", () => {
   const mockToken = "token-without-client-info";
 
   test("should return the same state for unknown actions", () => {
-    const initialState = { status: "loading" };
+    const initialState = { status: "loading" } as const;
     const action = { type: "UNKNOWN" };
-    expect(reducer(initialState, action)).toEqual(initialState);
+    expect(reducer(initialState, action as Parameters<typeof reducer>[1])).toEqual(initialState);
   });
 
   test("should handle INVALID action", () => {
-    const initialState = { status: "loading" };
-    const action = { type: "INVALID", payload: "Error message" };
+    const initialState = { status: "loading" } as const;
+    const action = { type: "INVALID", payload: "Error message" } as const;
     const expectedState = { status: "error", message: "Error message" };
     expect(reducer(initialState, action)).toEqual(expectedState);
   });
 
   test("should handle VALID action", () => {
-    const initialState = { status: "loading" };
-    const action = { type: "VALID" };
+    const initialState = { status: "loading" } as const;
+    const action = { type: "VALID" } as const;
     const expectedState = { status: "valid" };
     expect(reducer(initialState, action)).toEqual(expectedState);
   });
@@ -89,7 +108,7 @@ describe("QuestionnaireForm component", () => {
           element: (
             <QuestionnaireForm
               title="Test Form"
-              questionnaire="TEST_FORM"
+              questionnaire={TEST_FORM}
               token="dummy-token"
             >
               <div>Child Content</div>
@@ -125,7 +144,7 @@ describe("QuestionnaireForm component", () => {
           element: (
             <QuestionnaireForm
               title="Test Form"
-              questionnaire="TEST_FORM"
+              questionnaire={TEST_FORM}
               token="bad-token"
             >
               <div>Child Content</div>
@@ -151,7 +170,7 @@ describe("QuestionnaireForm component", () => {
       ok: true,
       data: {
         valid: true,
-        questionnaire: "TEST_FORM",
+        questionnaire: TEST_FORM,
         client: { name: "John Doe", dob: "1990-01-01" },
       },
     });
@@ -163,7 +182,7 @@ describe("QuestionnaireForm component", () => {
           element: (
             <QuestionnaireForm
               title="Test Form"
-              questionnaire="TEST_FORM"
+              questionnaire={TEST_FORM}
               token="valid-token"
             >
               <div data-testid="child-content">Child Content</div>
@@ -181,7 +200,7 @@ describe("QuestionnaireForm component", () => {
       expect(loader).toBeNull();
       const child = container.querySelector('[data-testid="child-content"]');
       expect(child).not.toBeNull();
-      expect(child.textContent).toBe("Child Content");
+      expect(child!.textContent).toBe("Child Content");
     });
   });
 
@@ -190,7 +209,7 @@ describe("QuestionnaireForm component", () => {
       ok: true,
       data: {
         valid: true,
-        questionnaire: "TEST_FORM",
+        questionnaire: TEST_FORM,
         client: { name: "", dob: "" },
       },
     });
@@ -202,7 +221,7 @@ describe("QuestionnaireForm component", () => {
           element: (
             <QuestionnaireForm
               title="Test Form"
-              questionnaire="TEST_FORM"
+              questionnaire={TEST_FORM}
               token={mockToken}
             >
               <div>Child Content</div>
@@ -228,7 +247,7 @@ describe("QuestionnaireForm component", () => {
       ok: true,
       data: {
         valid: true,
-        questionnaire: "TEST_FORM",
+        questionnaire: TEST_FORM,
         client: { name: "", dob: "" },
       },
     });
@@ -240,7 +259,7 @@ describe("QuestionnaireForm component", () => {
           element: (
             <QuestionnaireForm
               title="Test Form"
-              questionnaire="TEST_FORM"
+              questionnaire={TEST_FORM}
               token="token-missing-info"
             >
               <div>Child Content</div>
@@ -254,8 +273,8 @@ describe("QuestionnaireForm component", () => {
     const { getByTestId } = render(<RouterProvider router={router} />);
     const modal = await waitFor(() => getByTestId("client-info-modal"));
     expect(modal).toBeTruthy();
-    const nameInput = getByTestId("modal-name");
-    const dobInput = getByTestId("modal-dob");
+    const nameInput = getByTestId("modal-name") as HTMLInputElement;
+    const dobInput = getByTestId("modal-dob") as HTMLInputElement;
     fireEvent.change(nameInput, { target: { value: "Jane Doe" } });
     expect(nameInput.value).toBe("Jane Doe");
     fireEvent.change(dobInput, { target: { value: "2000-12-31" } });
@@ -272,7 +291,7 @@ describe("QuestionnaireForm component", () => {
           element: (
             <QuestionnaireForm
               title="Test Form"
-              questionnaire="TEST_FORM"
+              questionnaire={TEST_FORM}
               token="valid-token"
               onError={onError}
             >
@@ -290,11 +309,11 @@ describe("QuestionnaireForm component", () => {
 
   test("dispatches fadeOutAction then clearAction at the right times", async () => {
     const dispatch = vi.fn();
-    const fadeRef = createRef();
-    const clearRef = createRef();
+    const fadeRef: { current: number | null } = { current: null };
+    const clearRef: { current: number | null } = { current: null };
 
     setErrorTimers(
-      dispatch,
+      dispatch as unknown as Dispatch<{ type: string }>,
       "BEGIN_ERROR_FADE_OUT",
       "CLEAR_ERROR",
       50,
@@ -315,7 +334,7 @@ describe("QuestionnaireForm component", () => {
       ok: true,
       data: {
         valid: true,
-        questionnaire: "TEST_FORM",
+        questionnaire: TEST_FORM,
         client: { name: "", dob: "" },
       },
     });
@@ -328,7 +347,7 @@ describe("QuestionnaireForm component", () => {
           element: (
             <QuestionnaireForm
               title="Test"
-              questionnaire="TEST_FORM"
+              questionnaire={TEST_FORM}
               token="token"
             >
               <div>Child</div>
@@ -344,7 +363,7 @@ describe("QuestionnaireForm component", () => {
     );
 
     const modal = await waitFor(() => getByTestId("client-info-modal"));
-    fireEvent.click(modal.querySelector("button"));
+    fireEvent.click(modal.querySelector("button")!);
     const errorEl = await waitFor(() => getByTestId("client-info-error"));
     expect(errorEl.textContent).toBe("Inputs cannot be empty");
     await new Promise((r) => setTimeout(r, 2600));
@@ -374,7 +393,7 @@ describe("QuestionnaireForm component", () => {
           element: (
             <QuestionnaireForm
               title="Test Form"
-              questionnaire="TEST_FORM"
+              questionnaire={TEST_FORM}
               token="some-token"
             >
               <div>Child Content</div>
@@ -400,7 +419,7 @@ describe("QuestionnaireForm component", () => {
       ok: true,
       data: {
         valid: true,
-        questionnaire: "TEST_FORM",
+        questionnaire: TEST_FORM,
         client: { name: "", dob: "" },
       },
     });
@@ -412,7 +431,7 @@ describe("QuestionnaireForm component", () => {
           element: (
             <QuestionnaireForm
               title="Test Form"
-              questionnaire="TEST_FORM"
+              questionnaire={TEST_FORM}
               token="token"
             >
               <div>Child</div>
@@ -425,9 +444,9 @@ describe("QuestionnaireForm component", () => {
 
     const { getByTestId } = render(<RouterProvider router={router} />);
     const modal = await waitFor(() => getByTestId("client-info-modal"));
-    const nameInput = getByTestId("modal-name");
-    const dobInput = getByTestId("modal-dob");
-    const submitBtn = modal.querySelector("button");
+    const nameInput = getByTestId("modal-name") as HTMLInputElement;
+    const dobInput = getByTestId("modal-dob") as HTMLInputElement;
+    const submitBtn = modal.querySelector("button")!;
 
     fireEvent.change(nameInput, { target: { value: "" } });
     fireEvent.change(dobInput, { target: { value: "" } });
@@ -453,7 +472,7 @@ describe("QuestionnaireForm component", () => {
       ok: true,
       data: {
         valid: true,
-        questionnaire: "TEST_FORM",
+        questionnaire: TEST_FORM,
         client: { name: "", dob: "" },
       },
     });
@@ -470,7 +489,7 @@ describe("QuestionnaireForm component", () => {
           element: (
             <QuestionnaireForm
               title="Test"
-              questionnaire="TEST_FORM"
+              questionnaire={TEST_FORM}
               token="token"
             >
               <div>Child</div>
@@ -491,7 +510,7 @@ describe("QuestionnaireForm component", () => {
       target: { value: "1990-01-01" },
     });
 
-    fireEvent.click(modal.querySelector("button"));
+    fireEvent.click(modal.querySelector("button")!);
     const errorEl = await waitFor(() => getByTestId("client-info-error"));
     expect(errorEl.textContent).toBe("Server rejected update");
   });
@@ -501,7 +520,7 @@ describe("QuestionnaireForm component", () => {
       ok: true,
       data: {
         valid: true,
-        questionnaire: "TEST_FORM",
+        questionnaire: TEST_FORM,
         client: { name: "", dob: "" },
       },
     });
@@ -509,7 +528,7 @@ describe("QuestionnaireForm component", () => {
     vi.spyOn(api, "updateClientInfo").mockResolvedValue({
       ok: false,
       error: undefined,
-    });
+    } as unknown as Awaited<ReturnType<typeof api.updateClientInfo>>);
 
     const router = createMemoryRouter(
       [
@@ -518,7 +537,7 @@ describe("QuestionnaireForm component", () => {
           element: (
             <QuestionnaireForm
               title="Test"
-              questionnaire="TEST_FORM"
+              questionnaire={TEST_FORM}
               token="token"
             >
               <div>Child</div>
@@ -539,7 +558,7 @@ describe("QuestionnaireForm component", () => {
       target: { value: "1990-01-01" },
     });
 
-    fireEvent.click(modal.querySelector("button"));
+    fireEvent.click(modal.querySelector("button")!);
     const errorEl = await waitFor(() => getByTestId("client-info-error"));
     expect(errorEl.textContent).toBe("Failed to update info");
   });
@@ -549,7 +568,7 @@ describe("QuestionnaireForm component", () => {
       ok: true,
       data: {
         valid: true,
-        questionnaire: "TEST_FORM",
+        questionnaire: TEST_FORM,
         client: { name: "", dob: "" },
       },
     });
@@ -563,7 +582,7 @@ describe("QuestionnaireForm component", () => {
           element: (
             <QuestionnaireForm
               title="Test"
-              questionnaire="TEST_FORM"
+              questionnaire={TEST_FORM}
               token="token"
             >
               <div>Child</div>
@@ -584,7 +603,7 @@ describe("QuestionnaireForm component", () => {
     fireEvent.change(getByTestId("modal-dob"), {
       target: { value: "1990-01-01" },
     });
-    fireEvent.click(modal.querySelector("button"));
+    fireEvent.click(modal.querySelector("button")!);
     await new Promise((r) => setTimeout(r, 600));
     expect(queryByTestId("client-info-modal")).toBeNull();
   });
@@ -595,7 +614,7 @@ describe("QuestionnaireForm component", () => {
         {
           path: "/",
           element: (
-            <QuestionnaireForm title="No Token Form" questionnaire="TEST_FORM">
+            <QuestionnaireForm title="No Token Form" questionnaire={TEST_FORM}>
               <div>Child Content</div>
             </QuestionnaireForm>
           ),
@@ -617,7 +636,7 @@ describe("QuestionnaireForm component", () => {
     vi.spyOn(api, "validateFormToken").mockResolvedValue({
       ok: false,
       error: undefined,
-    });
+    } as unknown as Awaited<ReturnType<typeof api.validateFormToken>>);
 
     const router = createMemoryRouter(
       [
@@ -626,7 +645,7 @@ describe("QuestionnaireForm component", () => {
           element: (
             <QuestionnaireForm
               title="Fallback Test Form"
-              questionnaire="TEST_FORM"
+              questionnaire={TEST_FORM}
               token="token-fallback-ok"
             >
               <div>Child Content</div>
@@ -663,7 +682,7 @@ describe("QuestionnaireForm component", () => {
           element: (
             <QuestionnaireForm
               title="Fallback Msg Test"
-              questionnaire="TEST_FORM"
+              questionnaire={TEST_FORM}
               token="token-fallback-mismatch"
             >
               <div>Child Content</div>
@@ -683,7 +702,7 @@ describe("QuestionnaireForm component", () => {
   });
 
   test("does nothing if component unmounts before validateFormToken resolves", async () => {
-    let resolveToken;
+    let resolveToken!: (v: Awaited<ReturnType<typeof api.validateFormToken>>) => void;
     vi.spyOn(api, "validateFormToken").mockImplementation(
       () => new Promise((resolve) => { resolveToken = resolve; })
     );
@@ -693,7 +712,7 @@ describe("QuestionnaireForm component", () => {
         {
           path: "/",
           element: (
-            <QuestionnaireForm title="Test" questionnaire="TEST_FORM" token="valid-token">
+            <QuestionnaireForm title="Test" questionnaire={TEST_FORM} token="valid-token">
               <div>Child</div>
             </QuestionnaireForm>
           ),
@@ -707,7 +726,7 @@ describe("QuestionnaireForm component", () => {
 
     resolveToken({
       ok: true,
-      data: { valid: true, questionnaire: "TEST_FORM", client: { name: "John", dob: "1990-01-01" } },
+      data: { valid: true, questionnaire: TEST_FORM, client: { name: "John", dob: "1990-01-01" } },
     });
 
     await new Promise((r) => setTimeout(r, 50));
@@ -725,7 +744,7 @@ describe("QuestionnaireForm component", () => {
           element: (
             <QuestionnaireForm
               title="Fallback Catch Test"
-              questionnaire="TEST_FORM"
+              questionnaire={TEST_FORM}
               token="token-fallback-catch"
             >
               <div>Child Content</div>
@@ -750,7 +769,7 @@ describe("QuestionnaireForm component", () => {
     const { unmount } = render(
       <QuestionnaireForm
         title="Test Form"
-        questionnaire="TEST_FORM"
+        questionnaire={TEST_FORM}
         token="valid-token"
       >
         <div>Child Content</div>
@@ -759,9 +778,17 @@ describe("QuestionnaireForm component", () => {
 
     const t1 = setTimeout(() => {}, 1000);
     const t2 = setTimeout(() => {}, 2000);
-    const fadeRef = { current: t1 };
-    const clearRef = { current: t2 };
-    timersUtil.default(() => {}, "", "", 0, 0, fadeRef, clearRef);
+    const fadeRef: { current: number | null } = { current: t1 };
+    const clearRef: { current: number | null } = { current: t2 };
+    timersUtil.default(
+      (() => {}) as unknown as Dispatch<{ type: string }>,
+      "",
+      "",
+      0,
+      0,
+      fadeRef,
+      clearRef
+    );
     unmount();
 
     expect(clearSpy).toHaveBeenCalledWith(t1);
@@ -774,7 +801,7 @@ describe("QuestionnaireForm component", () => {
     render(
       <QuestionnaireForm
         title="Test Form"
-        questionnaire="TEST_FORM"
+        questionnaire={TEST_FORM}
         token="valid-token"
       >
         <div>Child Content</div>
@@ -782,11 +809,11 @@ describe("QuestionnaireForm component", () => {
     );
 
     const fakeDispatch = vi.fn();
-    const fakeErrorTimer = { current: null };
-    const fakeClearTimer = { current: null };
+    const fakeErrorTimer: { current: number | null } = { current: null };
+    const fakeClearTimer: { current: number | null } = { current: null };
 
     timersUtil.default(
-      fakeDispatch,
+      fakeDispatch as unknown as Dispatch<{ type: string }>,
       "BEGIN_ERROR_FADE_OUT",
       "CLEAR_ERROR",
       2500,
