@@ -2,16 +2,10 @@ import { Resend } from "resend";
 import { getEnvVar } from "./requiredEnv";
 import { getFrontendBaseUrl } from "./getFrontendBaseUrl";
 import { Form } from "@prisma/client";
+import { FORM_TITLES } from "../data/formTypes";
 
 const baseUrl = getFrontendBaseUrl();
 const resend = new Resend(getEnvVar("RESEND_API_KEY"));
-
-const formTitles: Record<string, string> = {
-  YSQ: "Young Schema Questionnaire (YSQ)",
-  SMI: "Schema Mode Inventory (SMI)",
-  BECKS: "Beck's Depression Inventory (BDI)",
-  BURNS: "Burn's Anxiety Inventory (BAI)",
-};
 
 export type SendMultipleFormLinksParams = {
   email: string;
@@ -30,7 +24,7 @@ export async function sendMultipleFormLinks({
   const htmlLinks = forms
     .map(
       (f) =>
-        `<p><strong>${formTitles[f.form_type]}</strong>: <a href="${baseUrl}/${
+        `<p><strong>${FORM_TITLES[f.form_type as keyof typeof FORM_TITLES]}</strong>: <a href="${baseUrl}/${
           f.form_type
         }/${f.token}">Click here to complete</a></p>`
     )

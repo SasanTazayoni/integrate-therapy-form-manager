@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 import { getEnvVar } from "./requiredEnv";
 import { getFrontendBaseUrl } from "./getFrontendBaseUrl";
+import { FORM_TITLES, type FormType } from "../data/formTypes";
 
 const baseUrl = getFrontendBaseUrl();
 const resend = new Resend(getEnvVar("RESEND_API_KEY"));
@@ -16,17 +17,11 @@ const pathMap: Record<string, string> = {
   BURNS: "/BURNS",
 };
 
-const formTitles: Record<string, string> = {
-  YSQ: "Young Schema Questionnaire (YSQ)",
-  SMI: "Schema Mode Inventory (SMI)",
-  BECKS: "Beck's Depression Inventory (BDI)",
-  BURNS: "Burn's Anxiety Inventory (BAI)",
-};
 
 export type SendFormLinkParams = {
   to: string;
   token: string;
-  formType: keyof typeof pathMap;
+  formType: FormType;
   clientName?: string;
 };
 
@@ -39,7 +34,7 @@ export async function sendFormLink({
   const formPath = pathMap[formType];
   if (!formPath) throw new Error(`Invalid form type: ${formType}`);
 
-  const formTitle = formTitles[formType];
+  const formTitle = FORM_TITLES[formType];
   const link = `${baseUrl}${formPath}/${token}`;
   const nameToUse = clientName ?? "Sir/Madam";
   const fromEmail = getFromEmail();
