@@ -22,7 +22,10 @@ vi.mock("./api", () => ({
   },
 }));
 
-const mockedApi = vi.mocked(api);
+const mockedApi = api as unknown as {
+  get: ReturnType<typeof vi.fn>;
+  post: ReturnType<typeof vi.fn>;
+};
 
 function makeAxiosError(responseData: unknown): AxiosError {
   const err = new AxiosError("Request failed");
@@ -146,27 +149,34 @@ describe("revokeFormToken", () => {
   });
 });
 
-describe.each([
+type FormEntry = {
+  fn: (args: never) => Promise<{ ok: boolean; error?: string; code?: unknown }>;
+  path: string;
+  args: unknown;
+  name: string;
+};
+
+describe.each<FormEntry>([
   {
-    fn: submitBecksForm,
+    fn: submitBecksForm as FormEntry["fn"],
     path: "/forms/submit/becks",
     args: { token: "t", result: "r" },
     name: "Becks",
   },
   {
-    fn: submitBurnsForm,
+    fn: submitBurnsForm as FormEntry["fn"],
     path: "/forms/submit/burns",
     args: { token: "t", result: "r" },
     name: "Burns",
   },
   {
-    fn: submitYSQForm,
+    fn: submitYSQForm as FormEntry["fn"],
     path: "/forms/submit/ysq",
     args: { token: "t", scores: { ysq_ed_answers: [1] } },
     name: "YSQ",
   },
   {
-    fn: submitSMIForm,
+    fn: submitSMIForm as FormEntry["fn"],
     path: "/forms/submit/smi",
     args: { token: "t", results: { d: { average: 1, label: "L" } } },
     name: "SMI",
@@ -178,7 +188,7 @@ describe.each([
     const mockData = { submitted: true };
     mockedApi.post.mockResolvedValueOnce({ data: mockData });
 
-    const res = await fn(args);
+    const res = await fn(args as never);
     expect(mockedApi.post).toHaveBeenCalledWith(path, args);
     expect(res).toEqual({ ok: true, data: mockData });
   });
@@ -189,14 +199,14 @@ describe.each([
       "Mocked submit error"
     );
 
-    const res = await fn(args);
+    const res = await fn(args as never);
     expect(res).toEqual({ ok: false, error: "Mocked submit error", code: 400 });
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
     mockedApi.post.mockRejectedValueOnce(new Error("Unexpected error"));
 
-    const res = await fn(args);
+    const res = await fn(args as never);
     expect(res.ok).toBe(false);
   });
 });
