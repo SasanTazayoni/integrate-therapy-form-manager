@@ -1,10 +1,13 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
 import startErrorFadeTimers from "./startErrorFadeTimers";
 
+type TestAction = { type: "FADE" | "CLEAR" | "FADE1" | "CLEAR1" | "FADE2" | "CLEAR2" };
+type TimerRef = { current: ReturnType<typeof setTimeout> | null };
+
 describe("startErrorFadeTimers", () => {
-  let dispatch;
-  let fadeTimerRef;
-  let clearTimerRef;
+  let dispatch: ReturnType<typeof vi.fn>;
+  let fadeTimerRef: TimerRef;
+  let clearTimerRef: TimerRef;
 
   beforeEach(() => {
     vi.useFakeTimers();
@@ -19,7 +22,7 @@ describe("startErrorFadeTimers", () => {
   });
 
   test("dispatches fadeOut and clear actions at the correct times", () => {
-    startErrorFadeTimers(
+    startErrorFadeTimers<TestAction>(
       dispatch,
       "FADE",
       "CLEAR",
@@ -43,9 +46,9 @@ describe("startErrorFadeTimers", () => {
   });
 
   test("clears previous timers when called again", () => {
-    const clearTimeoutSpy = vi.spyOn(global, "clearTimeout");
+    const clearTimeoutSpy = vi.spyOn(globalThis, "clearTimeout");
 
-    startErrorFadeTimers(
+    startErrorFadeTimers<TestAction>(
       dispatch,
       "FADE1",
       "CLEAR1",
@@ -57,7 +60,7 @@ describe("startErrorFadeTimers", () => {
     const firstFade = fadeTimerRef.current;
     const firstClear = clearTimerRef.current;
 
-    startErrorFadeTimers(
+    startErrorFadeTimers<TestAction>(
       dispatch,
       "FADE2",
       "CLEAR2",
