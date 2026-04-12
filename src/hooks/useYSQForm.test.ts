@@ -2,26 +2,12 @@ import { renderHook, act } from "@testing-library/react";
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import useYSQForm from "./useYSQForm";
 
-vi.mock("../data/YSQEmotionalDeprivation", () => ({
-  default: [{ id: 1, text: "Q1" }],
+vi.mock("../data/YSQAllItems", () => ({
+  default: [
+    { id: 1, prompt: "Q1", options: [], category: "test" },
+    { id: 2, prompt: "Q2", options: [], category: "test" },
+  ],
 }));
-vi.mock("../data/YSQAbandonment", () => ({ default: [{ id: 2, text: "Q2" }] }));
-vi.mock("../data/YSQMistrustAbuse", () => ({ default: [] }));
-vi.mock("../data/YSQSocialIsolation", () => ({ default: [] }));
-vi.mock("../data/YSQDefectiveness", () => ({ default: [] }));
-vi.mock("../data/YSQFailure", () => ({ default: [] }));
-vi.mock("../data/YSQDependence", () => ({ default: [] }));
-vi.mock("../data/YSQVulnerability", () => ({ default: [] }));
-vi.mock("../data/YSQEnmeshment", () => ({ default: [] }));
-vi.mock("../data/YSQSubjugation", () => ({ default: [] }));
-vi.mock("../data/YSQSelfSacrifice", () => ({ default: [] }));
-vi.mock("../data/YSQEmotionalInhibition", () => ({ default: [] }));
-vi.mock("../data/YSQUnrelentingStandards", () => ({ default: [] }));
-vi.mock("../data/YSQEntitlement", () => ({ default: [] }));
-vi.mock("../data/YSQInsufficientSelfControl", () => ({ default: [] }));
-vi.mock("../data/YSQApprovalSeeking", () => ({ default: [] }));
-vi.mock("../data/YSQNegativityPessimism", () => ({ default: [] }));
-vi.mock("../data/YSQPunitiveness", () => ({ default: [] }));
 
 describe("useYSQForm", () => {
   beforeEach(() => {
@@ -75,7 +61,7 @@ describe("useYSQForm", () => {
     const fakeSubmit = vi.fn();
 
     act(() => {
-      result.current.handleSubmit(fakeSubmit)({ preventDefault: vi.fn() });
+      result.current.handleSubmit(fakeSubmit)({ preventDefault: vi.fn() } as unknown as React.FormEvent);
     });
 
     expect(result.current.formError).toBe("Please answer all questions");
@@ -93,7 +79,7 @@ describe("useYSQForm", () => {
     });
 
     act(() => {
-      result.current.handleSubmit(fakeSubmit)({ preventDefault: vi.fn() });
+      result.current.handleSubmit(fakeSubmit)({ preventDefault: vi.fn() } as unknown as React.FormEvent);
     });
 
     expect(result.current.formError).toBeNull();
