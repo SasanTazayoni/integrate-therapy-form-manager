@@ -101,10 +101,10 @@ export default function QuestionnaireForm({
     }
 
     validateFormToken(token)
-      .then(({ ok, data, error }) => {
+      .then(({ ok, data }) => {
         if (!active) return;
 
-        if (!ok || !data) throw new Error(error || DEFAULT_INVALID_MSG);
+        if (!ok || !data) throw new Error(data?.error || DEFAULT_INVALID_MSG);
         if (!(data.valid && data.questionnaire === questionnaire)) {
           throw new Error(data.message || DEFAULT_INVALID_MSG);
         }

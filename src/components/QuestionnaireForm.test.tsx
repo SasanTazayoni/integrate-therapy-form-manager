@@ -12,7 +12,7 @@ const TEST_FORM = "TEST_FORM" as FormType;
 
 vi.spyOn(api, "validateFormToken").mockResolvedValue({
   ok: false,
-  error: "Invalid token",
+  data: { error: "Invalid token" },
 });
 
 vi.mock("react-router-dom", async (importOriginal) => {
@@ -134,7 +134,7 @@ describe("QuestionnaireForm component", () => {
   test("shows InvalidTokenModal when validateFormToken fails", async () => {
     vi.spyOn(api, "validateFormToken").mockResolvedValue({
       ok: false,
-      error: "Invalid token",
+      data: { error: "Invalid token" },
     });
 
     const router = createMemoryRouter(
