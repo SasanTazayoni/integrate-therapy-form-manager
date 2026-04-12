@@ -26,6 +26,13 @@ import type { ClientFormsStatus } from "../types/formStatusTypes";
 import { useClientContext } from "../context/ClientContext";
 import ClientActions from "../components/ClientActions";
 
+const initialFormActionLoading: Record<FormType, boolean> = {
+  YSQ: false,
+  SMI: false,
+  BECKS: false,
+  BURNS: false,
+};
+
 export default function Dashboard() {
   const navigate = useNavigate();
 
@@ -41,13 +48,6 @@ export default function Dashboard() {
   const [error, setError] = useState("");
   const [clientFormsStatus, setClientFormsStatus] =
     useState<ClientFormsStatus | null>(contextClientFormsStatus || null);
-
-  const initialFormActionLoading: Record<FormType, boolean> = {
-    YSQ: false,
-    SMI: false,
-    BECKS: false,
-    BURNS: false,
-  };
 
   const [formActionLoading, setFormActionLoading] = useState(
     initialFormActionLoading
