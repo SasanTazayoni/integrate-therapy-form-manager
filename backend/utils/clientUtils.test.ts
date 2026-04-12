@@ -15,34 +15,38 @@ vi.mock("./normalizeEmail", () => ({
   normalizeEmail: vi.fn(),
 }));
 
+const mockPrisma = prisma as unknown as {
+  client: { findUnique: ReturnType<typeof vi.fn> };
+};
+
 describe("findClientByEmail", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   test("calls prisma.client.findUnique with normalized email", async () => {
-    normalizeEmail.mockReturnValue("normalized@example.com");
-    prisma.client.findUnique.mockResolvedValue({
+    vi.mocked(normalizeEmail).mockReturnValue("normalized@example.com");
+    mockPrisma.client.findUnique.mockResolvedValue({
       id: 1,
       email: "normalized@example.com",
     });
 
     const result = await findClientByEmail("TEST@Example.com");
 
-    expect(normalizeEmail).toHaveBeenCalledWith("TEST@Example.com");
-    expect(prisma.client.findUnique).toHaveBeenCalledWith({
+    expect(vi.mocked(normalizeEmail)).toHaveBeenCalledWith("TEST@Example.com");
+    expect(mockPrisma.client.findUnique).toHaveBeenCalledWith({
       where: { email: "normalized@example.com" },
     });
     expect(result).toEqual({ id: 1, email: "normalized@example.com" });
   });
 
   test("returns null if client not found", async () => {
-    normalizeEmail.mockReturnValue("notfound@example.com");
-    prisma.client.findUnique.mockResolvedValue(null);
+    vi.mocked(normalizeEmail).mockReturnValue("notfound@example.com");
+    mockPrisma.client.findUnique.mockResolvedValue(null);
 
     const result = await findClientByEmail("unknown@example.com");
 
-    expect(normalizeEmail).toHaveBeenCalledWith("unknown@example.com");
+    expect(vi.mocked(normalizeEmail)).toHaveBeenCalledWith("unknown@example.com");
     expect(result).toBeNull();
   });
 });
