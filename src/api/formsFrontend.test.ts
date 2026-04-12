@@ -1,3 +1,5 @@
+import { describe, test, expect, vi, beforeEach } from "vitest";
+import { AxiosError, type AxiosResponse } from "axios";
 import api from "./api";
 import * as getErrorDisplayModule from "../utils/getErrorDisplay";
 import {
@@ -12,7 +14,6 @@ import {
   updateClientInfo,
   fetchAllSmiForms,
 } from "./formsFrontend";
-import { describe, test, expect, vi, beforeEach } from "vitest";
 
 vi.mock("./api", () => ({
   default: {
@@ -21,7 +22,13 @@ vi.mock("./api", () => ({
   },
 }));
 
-const mockedApi = api;
+const mockedApi = vi.mocked(api);
+
+function makeAxiosError(responseData: unknown): AxiosError {
+  const err = new AxiosError("Request failed");
+  err.response = { data: responseData } as unknown as AxiosResponse;
+  return err;
+}
 
 describe("sendFormToken", () => {
   const email = "test@example.com";
@@ -43,8 +50,7 @@ describe("sendFormToken", () => {
   });
 
   test("returns ok false with getErrorDisplay on axios error", async () => {
-    const err = { isAxiosError: true, response: { data: {} } };
-    mockedApi.post.mockRejectedValueOnce(err);
+    mockedApi.post.mockRejectedValueOnce(makeAxiosError({}));
     vi.spyOn(getErrorDisplayModule, "getErrorDisplay").mockReturnValue(
       "Mocked error display"
     );
@@ -57,7 +63,7 @@ describe("sendFormToken", () => {
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
-    mockedApi.post.mockRejectedValueOnce("Unexpected error");
+    mockedApi.post.mockRejectedValueOnce(new Error("Unexpected error"));
     const result = await sendFormToken(email, formType);
     expect(result).toEqual({
       ok: false,
@@ -83,8 +89,7 @@ describe("validateFormToken", () => {
   });
 
   test("returns ok false with getErrorDisplay on axios error", async () => {
-    const err = { isAxiosError: true, response: { data: {} } };
-    mockedApi.get.mockRejectedValueOnce(err);
+    mockedApi.get.mockRejectedValueOnce(makeAxiosError({}));
     vi.spyOn(getErrorDisplayModule, "getErrorDisplay").mockReturnValue(
       "Mocked error display"
     );
@@ -94,7 +99,7 @@ describe("validateFormToken", () => {
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
-    mockedApi.get.mockRejectedValueOnce("Unexpected error");
+    mockedApi.get.mockRejectedValueOnce(new Error("Unexpected error"));
     const result = await validateFormToken(token);
     expect(result).toEqual({ ok: false, error: "Unexpected error occurred." });
   });
@@ -119,8 +124,7 @@ describe("revokeFormToken", () => {
   });
 
   test("returns ok false with getErrorDisplay on axios error", async () => {
-    const err = { isAxiosError: true, response: { data: {} } };
-    mockedApi.post.mockRejectedValueOnce(err);
+    mockedApi.post.mockRejectedValueOnce(makeAxiosError({}));
     vi.spyOn(getErrorDisplayModule, "getErrorDisplay").mockReturnValue(
       "Mocked revoke error"
     );
@@ -133,7 +137,7 @@ describe("revokeFormToken", () => {
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
-    mockedApi.post.mockRejectedValueOnce("Unexpected error");
+    mockedApi.post.mockRejectedValueOnce(new Error("Unexpected error"));
     const result = await revokeFormToken(email, formType);
     expect(result).toEqual({
       ok: false,
@@ -180,8 +184,7 @@ describe.each([
   });
 
   test("returns ok false with code and error on axios error", async () => {
-    const err = { response: { data: { code: 400 } }, isAxiosError: true };
-    mockedApi.post.mockRejectedValueOnce(err);
+    mockedApi.post.mockRejectedValueOnce(makeAxiosError({ code: 400 }));
     vi.spyOn(getErrorDisplayModule, "getErrorDisplay").mockReturnValue(
       "Mocked submit error"
     );
@@ -191,7 +194,7 @@ describe.each([
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
-    mockedApi.post.mockRejectedValueOnce("Unexpected error");
+    mockedApi.post.mockRejectedValueOnce(new Error("Unexpected error"));
 
     const res = await fn(args);
     expect(res.ok).toBe(false);
@@ -214,8 +217,7 @@ describe("updateClientInfo", () => {
   });
 
   test("returns ok false with getErrorDisplay on axios error", async () => {
-    const err = { isAxiosError: true, response: { data: {} } };
-    mockedApi.post.mockRejectedValueOnce(err);
+    mockedApi.post.mockRejectedValueOnce(makeAxiosError({}));
     vi.spyOn(getErrorDisplayModule, "getErrorDisplay").mockReturnValue(
       "Mocked update error"
     );
@@ -225,7 +227,7 @@ describe("updateClientInfo", () => {
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
-    mockedApi.post.mockRejectedValueOnce("Unexpected error");
+    mockedApi.post.mockRejectedValueOnce(new Error("Unexpected error"));
     const res = await updateClientInfo(args);
     expect(res).toEqual({ ok: false, error: "Unexpected error occurred." });
   });
@@ -248,8 +250,7 @@ describe("sendMultipleFormTokens", () => {
   });
 
   test("returns ok false with getErrorDisplay on axios error", async () => {
-    const err = { isAxiosError: true, response: { data: {} } };
-    mockedApi.post.mockRejectedValueOnce(err);
+    mockedApi.post.mockRejectedValueOnce(makeAxiosError({}));
     vi.spyOn(getErrorDisplayModule, "getErrorDisplay").mockReturnValue(
       "Mocked multiple send"
     );
@@ -259,7 +260,7 @@ describe("sendMultipleFormTokens", () => {
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
-    mockedApi.post.mockRejectedValueOnce("Unexpected error");
+    mockedApi.post.mockRejectedValueOnce(new Error("Unexpected error"));
     const res = await sendMultipleFormTokens(email);
     expect(res).toEqual({
       ok: false,
@@ -285,8 +286,7 @@ describe("fetchAllSmiForms", () => {
   });
 
   test("returns ok false with getErrorDisplay on axios error", async () => {
-    const err = { isAxiosError: true, response: { data: {} } };
-    mockedApi.get.mockRejectedValueOnce(err);
+    mockedApi.get.mockRejectedValueOnce(makeAxiosError({}));
     vi.spyOn(getErrorDisplayModule, "getErrorDisplay").mockReturnValue(
       "Mocked fetch SMI"
     );
@@ -296,7 +296,7 @@ describe("fetchAllSmiForms", () => {
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
-    mockedApi.get.mockRejectedValueOnce("Unexpected error");
+    mockedApi.get.mockRejectedValueOnce(new Error("Unexpected error"));
     const res = await fetchAllSmiForms(email);
     expect(res).toEqual({
       ok: false,
