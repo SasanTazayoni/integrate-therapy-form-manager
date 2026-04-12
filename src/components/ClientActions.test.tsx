@@ -2,8 +2,15 @@ import { render, fireEvent } from "@testing-library/react";
 import { describe, test, expect, vi } from "vitest";
 import ClientActions from "./ClientActions";
 
+type ModalProps = {
+  onConfirm: () => void;
+  onCancel: () => void;
+  onCloseFinished: () => void;
+  closing: boolean;
+};
+
 vi.mock("../components/modals/RemoveClientModal", () => ({
-  default: ({ onConfirm, onCancel, onCloseFinished, closing }) => (
+  default: ({ onConfirm, onCancel, onCloseFinished, closing }: ModalProps) => (
     <div data-testid="remove-modal">
       <button data-testid="remove-confirm-btn" onClick={onConfirm}>
         Confirm
@@ -20,7 +27,7 @@ vi.mock("../components/modals/RemoveClientModal", () => ({
 }));
 
 vi.mock("../components/modals/DeactivateClientModal", () => ({
-  default: ({ onConfirm, onCancel, onCloseFinished, closing }) => (
+  default: ({ onConfirm, onCancel, onCloseFinished, closing }: ModalProps) => (
     <div data-testid="deactivate-modal">
       <button data-testid="deactivate-confirm-btn" onClick={onConfirm}>
         Confirm
@@ -40,7 +47,7 @@ vi.mock("../components/modals/DeactivateClientModal", () => ({
 }));
 
 vi.mock("../components/modals/ActivateClientModal", () => ({
-  default: ({ onConfirm, onCancel, onCloseFinished, closing }) => (
+  default: ({ onConfirm, onCancel, onCloseFinished, closing }: ModalProps) => (
     <div data-testid="activate-modal">
       <button data-testid="activate-confirm-btn" onClick={onConfirm}>
         Confirm
@@ -200,7 +207,9 @@ describe("ClientActions", () => {
   });
 
   test("resets modal state when DeactivateClientModal finishes closing", () => {
-    const { getByTestId } = render(<ClientActions loading={false} />);
+    const { getByTestId } = render(
+      <ClientActions onDeleteClient={vi.fn()} loading={false} />
+    );
     const wrapper = getByTestId("client-actions-wrapper");
     fireEvent.click(getByTestId("modal-button-deactivate"));
     expect(wrapper.dataset.modalType).toBe("deactivate");
@@ -217,7 +226,9 @@ describe("ClientActions", () => {
   });
 
   test("resets modal state when RemoveClientModal finishes closing", () => {
-    const { getByTestId } = render(<ClientActions loading={false} />);
+    const { getByTestId } = render(
+      <ClientActions onDeleteClient={vi.fn()} loading={false} />
+    );
     const wrapper = getByTestId("client-actions-wrapper");
     fireEvent.click(getByTestId("modal-button-remove"));
     expect(wrapper.dataset.modalType).toBe("remove");
@@ -234,9 +245,25 @@ describe("ClientActions", () => {
     expect(wrapper.dataset.modalClosing).toBe("false");
   });
 
+  test("closeModalFinished resets modal type to null", () => {
+    const { getByTestId, queryByTestId } = render(
+      <ClientActions
+        isInactive={false}
+        onDeleteClient={vi.fn()}
+        loading={false}
+      />
+    );
+
+    fireEvent.click(getByTestId("modal-button-remove"));
+    expect(getByTestId("remove-modal")).toBeInTheDocument();
+
+    fireEvent.click(getByTestId("remove-close-finished-btn"));
+    expect(queryByTestId("remove-modal")).not.toBeInTheDocument();
+  });
+
   test("resets modal state when ActivateClientModal finishes closing", () => {
     const { getByTestId } = render(
-      <ClientActions isInactive loading={false} />
+      <ClientActions isInactive onDeleteClient={vi.fn()} loading={false} />
     );
     const wrapper = getByTestId("client-actions-wrapper");
     fireEvent.click(getByTestId("modal-button-activate"));
