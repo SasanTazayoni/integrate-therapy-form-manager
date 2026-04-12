@@ -3,7 +3,7 @@ import { Prisma, type Client, type Form } from "@prisma/client";
 import prisma from "../prisma/client";
 import { sendFormLink } from "../utils/sendFormLink";
 import { findClientByEmail } from "../utils/clientUtils";
-import { getActiveForms, mapFormSafe } from "../utils/formHelpers";
+import { getActiveForms } from "../utils/formHelpers";
 import { parseDateStrict } from "../utils/dates";
 import { getValidFormByToken } from "../controllers/formControllerHelpers/formTokenHelpers";
 import {
@@ -52,10 +52,13 @@ vi.mock("../utils/tokens", () => ({
   computeExpiry: vi.fn(() => new Date("2099-01-01T00:00:00Z")),
 }));
 
-vi.mock("../utils/formHelpers", () => ({
-  getActiveForms: vi.fn(() => []),
-  mapFormSafe: vi.fn((f: unknown) => f),
-}));
+vi.mock("../utils/formHelpers", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../utils/formHelpers")>();
+  return {
+    ...actual,
+    getActiveForms: vi.fn(() => []),
+  };
+});
 
 vi.mock("../utils/sendFormLink", () => ({
   sendFormLink: vi.fn(),
@@ -115,9 +118,6 @@ beforeEach(() => {
   vi.mocked(sendFormLink).mockResolvedValue(undefined);
 
   vi.mocked(getActiveForms).mockReturnValue([]);
-  vi.mocked(mapFormSafe).mockImplementation(
-    (f) => f as unknown as ReturnType<typeof mapFormSafe>,
-  );
   mockPrisma.form.findFirst.mockResolvedValue(null);
   mockPrisma.form.findMany.mockResolvedValue([]);
 });
@@ -317,7 +317,12 @@ describe("formController", () => {
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
         message: "Form sent via email",
-        form: expect.any(Object),
+        form: {
+          token: "mocked-token",
+          formType: FORM_TYPES[0],
+          submittedAt: null,
+          isActive: true,
+        },
       }),
     );
   });
@@ -363,7 +368,12 @@ describe("formController", () => {
     expect(res.json).toHaveBeenCalledWith(
       expect.objectContaining({
         message: "Form sent via email",
-        form: expect.any(Object),
+        form: {
+          token: "mocked-token",
+          formType: FORM_TYPES[0],
+          submittedAt: null,
+          isActive: true,
+        },
       }),
     );
   });
