@@ -1,4 +1,5 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
+import type { Form } from "@prisma/client";
 import * as clientsRepo from "./clientsRepository";
 import * as normalizeUtils from "../utils/normalizeEmail";
 import { getClientFormsStatus, createClient } from "./clientsService";
@@ -22,8 +23,8 @@ describe("clientsService", () => {
     });
 
     test("returns error if client not found", async () => {
-      normalizeUtils.normalizeEmail.mockReturnValue("test@example.com");
-      clientsRepo.findClientByEmail.mockResolvedValue(null);
+      vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("test@example.com");
+      vi.mocked(clientsRepo.findClientByEmail).mockResolvedValue(null);
 
       const result = await getClientFormsStatus("test@example.com");
       expect(result.clientExists).toBe(false);
@@ -61,10 +62,10 @@ describe("clientsService", () => {
           revoked_at: null,
         },
       ];
-      normalizeUtils.normalizeEmail.mockReturnValue("test@example.com");
-      clientsRepo.findClientByEmail.mockResolvedValue(mockClient);
-      clientsRepo.getFormsByClientId.mockResolvedValue(mockForms);
-      getLatestForm.mockImplementation((forms, predicate) =>
+      vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("test@example.com");
+      vi.mocked(clientsRepo.findClientByEmail).mockResolvedValue(mockClient as unknown as Awaited<ReturnType<typeof clientsRepo.findClientByEmail>>);
+      vi.mocked(clientsRepo.getFormsByClientId).mockResolvedValue(mockForms as unknown as Form[]);
+      vi.mocked(getLatestForm).mockImplementation((forms: Form[], predicate: (f: Form) => boolean) =>
         forms.find(predicate)
       );
 
@@ -73,8 +74,8 @@ describe("clientsService", () => {
       expect(result.clientExists).toBe(true);
       expect(result.clientName).toBe("Alice");
       expect(result.formsStatus).toBeDefined();
-      expect(result.scores.bdi?.bdi_score).toBe("10");
-      expect(result.scores.bai?.bai_score).toBe("20");
+      expect(result.scores!.bdi?.bdi_score).toBe("10");
+      expect(result.scores!.bai?.bai_score).toBe("20");
     });
   });
 
@@ -87,8 +88,8 @@ describe("clientsService", () => {
 
     test("creates client successfully", async () => {
       const mockClient = { id: "1", email: "test@example.com", name: "Alice" };
-      normalizeUtils.normalizeEmail.mockReturnValue("test@example.com");
-      clientsRepo.createNewClient = vi.fn().mockResolvedValue(mockClient);
+      vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("test@example.com");
+      vi.mocked(clientsRepo.createNewClient).mockResolvedValue(mockClient as unknown as Awaited<ReturnType<typeof clientsRepo.createNewClient>>);
 
       const result = await createClient({
         email: "TEST@EXAMPLE.COM",
@@ -104,10 +105,8 @@ describe("clientsService", () => {
     });
 
     test("handles errors from repository", async () => {
-      normalizeUtils.normalizeEmail.mockReturnValue("test@example.com");
-      clientsRepo.createNewClient = vi
-        .fn()
-        .mockRejectedValue(new Error("DB Error"));
+      vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("test@example.com");
+      vi.mocked(clientsRepo.createNewClient).mockRejectedValue(new Error("DB Error"));
 
       const result = await createClient({ email: "test@example.com" });
 
@@ -124,9 +123,9 @@ describe("clientsService", () => {
       status: "active",
       inactivated_at: null,
     };
-    normalizeUtils.normalizeEmail.mockReturnValue("test@example.com");
-    clientsRepo.findClientByEmail.mockResolvedValue(mockClient);
-    clientsRepo.getFormsByClientId.mockResolvedValue([]);
+    vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("test@example.com");
+    vi.mocked(clientsRepo.findClientByEmail).mockResolvedValue(mockClient as unknown as Awaited<ReturnType<typeof clientsRepo.findClientByEmail>>);
+    vi.mocked(clientsRepo.getFormsByClientId).mockResolvedValue([]);
 
     const result = await getClientFormsStatus("test@example.com");
 
@@ -168,10 +167,10 @@ describe("clientsService", () => {
         revoked_at: null,
       },
     ];
-    normalizeUtils.normalizeEmail.mockReturnValue("test@example.com");
-    clientsRepo.findClientByEmail.mockResolvedValue(mockClient);
-    clientsRepo.getFormsByClientId.mockResolvedValue(mockForms);
-    getLatestForm.mockImplementation((forms, predicate) =>
+    vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("test@example.com");
+    vi.mocked(clientsRepo.findClientByEmail).mockResolvedValue(mockClient as unknown as Awaited<ReturnType<typeof clientsRepo.findClientByEmail>>);
+    vi.mocked(clientsRepo.getFormsByClientId).mockResolvedValue(mockForms as unknown as Form[]);
+    vi.mocked(getLatestForm).mockImplementation((forms: Form[], predicate: (f: Form) => boolean) =>
       forms.find(predicate)
     );
 
@@ -179,8 +178,8 @@ describe("clientsService", () => {
 
     expect(result.inactive).toBe(true);
     expect(result.formsCompleted).toBe(1);
-    expect(result.formsStatus[FORM_TYPES[0]].submitted).toBe(true);
-    expect(result.formsStatus[FORM_TYPES[1]].activeToken).toBe(true);
+    expect(result.formsStatus![FORM_TYPES[0]].submitted).toBe(true);
+    expect(result.formsStatus![FORM_TYPES[1]].activeToken).toBe(true);
   });
 
   test("createClient converts DOB string to Date", async () => {
@@ -190,8 +189,8 @@ describe("clientsService", () => {
       name: "Alice",
       dob: new Date("1990-01-01"),
     };
-    clientsRepo.createNewClient = vi.fn().mockResolvedValue(mockClient);
-    normalizeUtils.normalizeEmail.mockReturnValue("test@example.com");
+    vi.mocked(clientsRepo.createNewClient).mockResolvedValue(mockClient as unknown as Awaited<ReturnType<typeof clientsRepo.createNewClient>>);
+    vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("test@example.com");
 
     const result = await createClient({
       email: "TEST@EXAMPLE.COM",
@@ -233,20 +232,20 @@ describe("clientsService", () => {
       bai_score: null,
     };
 
-    normalizeUtils.normalizeEmail.mockReturnValue("alice@example.com");
-    clientsRepo.findClientByEmail.mockResolvedValue(mockClient);
-    clientsRepo.getFormsByClientId.mockResolvedValue([mockYsqForm]);
-    getLatestForm.mockImplementation((forms, predicate) =>
+    vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("alice@example.com");
+    vi.mocked(clientsRepo.findClientByEmail).mockResolvedValue(mockClient as unknown as Awaited<ReturnType<typeof clientsRepo.findClientByEmail>>);
+    vi.mocked(clientsRepo.getFormsByClientId).mockResolvedValue([mockYsqForm] as unknown as Form[]);
+    vi.mocked(getLatestForm).mockImplementation((forms: Form[], predicate: (f: Form) => boolean) =>
       forms.find(predicate)
     );
 
     const result = await getClientFormsStatus("alice@example.com");
 
-    expect(result.scores.ysq).toEqual({
+    expect(result.scores!.ysq).toEqual({
       ysq_ed_score: "5",
       ysq_ma_score: "10",
     });
-    expect(result.scores.ysq456).toEqual({
+    expect(result.scores!.ysq456).toEqual({
       ysq_ed_456: "2",
       ysq_ma_456: "4",
     });
@@ -261,10 +260,10 @@ describe("clientsService", () => {
       status: "active",
       inactivated_at: null,
     };
-    normalizeUtils.normalizeEmail.mockReturnValue("test@example.com");
-    clientsRepo.findClientByEmail.mockResolvedValue(mockClient);
-    clientsRepo.getFormsByClientId.mockResolvedValue([]);
-    getLatestForm.mockImplementation(() => undefined);
+    vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("test@example.com");
+    vi.mocked(clientsRepo.findClientByEmail).mockResolvedValue(mockClient as unknown as Awaited<ReturnType<typeof clientsRepo.findClientByEmail>>);
+    vi.mocked(clientsRepo.getFormsByClientId).mockResolvedValue([]);
+    vi.mocked(getLatestForm).mockImplementation(() => undefined);
 
     const result = await getClientFormsStatus("test@example.com");
 
@@ -293,17 +292,17 @@ describe("clientsService", () => {
       smi_hidden: 99,
     };
 
-    normalizeUtils.normalizeEmail.mockReturnValue("test@example.com");
-    clientsRepo.findClientByEmail.mockResolvedValue(mockClient);
-    clientsRepo.getFormsByClientId.mockResolvedValue([mockForm]);
-    getLatestForm.mockImplementation((forms, predicate) =>
+    vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("test@example.com");
+    vi.mocked(clientsRepo.findClientByEmail).mockResolvedValue(mockClient as unknown as Awaited<ReturnType<typeof clientsRepo.findClientByEmail>>);
+    vi.mocked(clientsRepo.getFormsByClientId).mockResolvedValue([mockForm] as unknown as Form[]);
+    vi.mocked(getLatestForm).mockImplementation((forms: Form[], predicate: (f: Form) => boolean) =>
       forms.find(predicate)
     );
 
     const result = await getClientFormsStatus("test@example.com");
-    expect(result.scores.smi.smi_q1).toBe("5");
-    expect(result.scores.smi.smi_q2).toBeNull();
-    expect(result.scores.ysq456).toEqual({});
+    expect(result.scores!.smi.smi_q1).toBe("5");
+    expect(result.scores!.smi.smi_q2).toBeNull();
+    expect(result.scores!.ysq456).toEqual({});
   });
 
   test("returns bdi as null when no BDI form exists", async () => {
@@ -328,17 +327,17 @@ describe("clientsService", () => {
       },
     ];
 
-    normalizeUtils.normalizeEmail.mockReturnValue("test@example.com");
-    clientsRepo.findClientByEmail.mockResolvedValue(mockClient);
-    clientsRepo.getFormsByClientId.mockResolvedValue(mockForms);
-    getLatestForm.mockImplementation((forms, predicate) =>
+    vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("test@example.com");
+    vi.mocked(clientsRepo.findClientByEmail).mockResolvedValue(mockClient as unknown as Awaited<ReturnType<typeof clientsRepo.findClientByEmail>>);
+    vi.mocked(clientsRepo.getFormsByClientId).mockResolvedValue(mockForms as unknown as Form[]);
+    vi.mocked(getLatestForm).mockImplementation((forms: Form[], predicate: (f: Form) => boolean) =>
       forms.find(predicate)
     );
 
     const result = await getClientFormsStatus("test@example.com");
 
-    expect(result.scores.bdi).toBeNull();
-    expect(result.scores.bai).toEqual({
+    expect(result.scores!.bdi).toBeNull();
+    expect(result.scores!.bai).toEqual({
       bai_score: "12",
       submitted_at: "2024-01-01T00:00:00.000Z",
     });
@@ -366,16 +365,16 @@ describe("clientsService", () => {
       },
     ];
 
-    normalizeUtils.normalizeEmail.mockReturnValue("test@example.com");
-    clientsRepo.findClientByEmail.mockResolvedValue(mockClient);
-    clientsRepo.getFormsByClientId.mockResolvedValue(mockForms);
-    getLatestForm.mockImplementation((forms, predicate) =>
+    vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("test@example.com");
+    vi.mocked(clientsRepo.findClientByEmail).mockResolvedValue(mockClient as unknown as Awaited<ReturnType<typeof clientsRepo.findClientByEmail>>);
+    vi.mocked(clientsRepo.getFormsByClientId).mockResolvedValue(mockForms as unknown as Form[]);
+    vi.mocked(getLatestForm).mockImplementation((forms: Form[], predicate: (f: Form) => boolean) =>
       forms.find(predicate)
     );
 
     const result = await getClientFormsStatus("test@example.com");
 
-    expect(result.scores.bdi).toEqual({
+    expect(result.scores!.bdi).toEqual({
       bdi_score: "15",
       submitted_at: null,
     });
