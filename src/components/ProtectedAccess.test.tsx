@@ -1,6 +1,6 @@
 import { render, fireEvent, act } from "@testing-library/react";
 import { describe, vi, beforeEach, test, afterEach, expect } from "vitest";
-import ProtectedAccess from "./ProtectedAccess";
+import ProtectedAccess, { MODAL_CLOSE_DURATION_MS } from "./ProtectedAccess";
 
 vi.mock("./modals/AdminLoginModal", () => ({
   default: ({
@@ -11,6 +11,14 @@ vi.mock("./modals/AdminLoginModal", () => ({
     onPasswordChange,
     onSubmit,
     onClear,
+  }: {
+    username: string;
+    password: string;
+    error: string;
+    onUsernameChange: (val: string) => void;
+    onPasswordChange: (val: string) => void;
+    onSubmit: () => void;
+    onClear: () => void;
   }) => (
     <div role="dialog">
       <input
@@ -164,7 +172,7 @@ describe("ProtectedAccess", () => {
     });
 
     act(() => {
-      vi.advanceTimersByTime(500);
+      vi.advanceTimersByTime(MODAL_CLOSE_DURATION_MS);
     });
 
     expect(queryByRole("dialog")).not.toBeInTheDocument();
