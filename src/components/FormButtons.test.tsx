@@ -2,6 +2,7 @@ import { render, fireEvent } from "@testing-library/react";
 import { describe, test, beforeEach, vi, expect } from "vitest";
 import FormButtons from "./FormButtons";
 import { FORM_TYPES, FORM_TITLES } from "../constants/formTypes";
+import type { FormType } from "../constants/formTypes";
 
 const mockOnSend = vi.fn();
 const mockOnRevoke = vi.fn();
@@ -15,12 +16,12 @@ const defaultProps = {
       YSQ: { activeToken: false, submitted: false },
       BECKS: { activeToken: false, submitted: false },
       BURNS: { activeToken: false, submitted: false },
-    },
+    } as Record<FormType, { activeToken: boolean; submitted: boolean }>,
   },
   onSend: mockOnSend,
   onRevoke: mockOnRevoke,
   onSendAll: mockOnSendAll,
-  formActionLoading: { SMI: false, YSQ: false, BECKS: false, BURNS: false },
+  formActionLoading: { SMI: false, YSQ: false, BECKS: false, BURNS: false } as Record<FormType, boolean>,
   clientInactive: false,
   searchLoading: false,
 };
@@ -43,8 +44,8 @@ describe("FormButtons", () => {
     const { getByTestId } = render(<FormButtons {...defaultProps} />);
 
     FORM_TYPES.forEach((formType) => {
-      const sendButton = getByTestId(`send-${formType}-button`);
-      const revokeButton = getByTestId(`revoke-${formType}-button`);
+      const sendButton = getByTestId(`send-${formType}-button`) as HTMLButtonElement;
+      const revokeButton = getByTestId(`revoke-${formType}-button`) as HTMLButtonElement;
       if (!sendButton.disabled) fireEvent.click(sendButton);
       if (!revokeButton.disabled) fireEvent.click(revokeButton);
     });
@@ -95,7 +96,7 @@ describe("FormButtons", () => {
           YSQ: { activeToken: false, submitted: true },
           BECKS: { activeToken: false, submitted: false },
           BURNS: { activeToken: false, submitted: false },
-        },
+        } as Record<FormType, { activeToken: boolean; submitted: boolean }>,
       },
     };
 
@@ -118,9 +119,9 @@ describe("FormButtons", () => {
           YSQ: { activeToken: true, submitted: false },
           BECKS: { activeToken: false, submitted: false },
           BURNS: { activeToken: false, submitted: false },
-        },
+        } as Record<FormType, { activeToken: boolean; submitted: boolean }>,
       },
-      formActionLoading: { SMI: true, YSQ: false, BECKS: false, BURNS: false },
+      formActionLoading: { SMI: true, YSQ: false, BECKS: false, BURNS: false } as Record<FormType, boolean>,
     };
 
     const { getByTestId } = render(<FormButtons {...props} />);
@@ -139,7 +140,7 @@ describe("FormButtons", () => {
           YSQ: { activeToken: false, submitted: false },
           BECKS: { activeToken: false, submitted: false },
           BURNS: { activeToken: false, submitted: false },
-        },
+        } as unknown as Record<FormType, { activeToken: boolean; submitted: boolean }>,
       },
     };
 
@@ -152,7 +153,7 @@ describe("FormButtons", () => {
       clientFormsStatus: null,
       onSend: mockOnSend,
       onRevoke: mockOnRevoke,
-      formActionLoading: { SMI: false, YSQ: false, BECKS: false, BURNS: false },
+      formActionLoading: { SMI: false, YSQ: false, BECKS: false, BURNS: false } as Record<FormType, boolean>,
       clientInactive: false,
       searchLoading: false,
       onSendAll: vi.fn(),
@@ -178,11 +179,11 @@ describe("FormButtons", () => {
           YSQ: { activeToken: false, submitted: false },
           BECKS: { activeToken: false, submitted: false },
           BURNS: { activeToken: false, submitted: false },
-        },
+        } as Record<FormType, { activeToken: boolean; submitted: boolean }>,
       },
       onSend: vi.fn(),
       onRevoke: mockOnRevoke,
-      formActionLoading: { SMI: false, YSQ: false, BECKS: false, BURNS: false },
+      formActionLoading: { SMI: false, YSQ: false, BECKS: false, BURNS: false } as Record<FormType, boolean>,
       clientInactive: false,
       searchLoading: false,
     };
