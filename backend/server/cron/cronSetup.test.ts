@@ -43,9 +43,8 @@ describe("cron callback execution", () => {
   });
 
   test("should log error if cleanup fails", async () => {
-    cleanupModule.deleteInactiveClientsOlderThanOneYear.mockRejectedValue(
-      new Error("fail")
-    );
+    const error = new Error("fail");
+    cleanupModule.deleteInactiveClientsOlderThanOneYear.mockRejectedValue(error);
 
     let scheduledFn: (() => Promise<void>) | null = null;
     cron.schedule.mockImplementation((_schedule: string, fn: () => Promise<void>) => {
@@ -65,7 +64,7 @@ describe("cron callback execution", () => {
       expect(cleanupModule.deleteInactiveClientsOlderThanOneYear).toHaveBeenCalled();
       expect(consoleErrorMock).toHaveBeenCalledWith(
         "[cron] Cleanup failed:",
-        expect.any(Error)
+        error
       );
     } finally {
       consoleErrorMock.mockRestore();
