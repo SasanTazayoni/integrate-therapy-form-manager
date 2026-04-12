@@ -7,10 +7,10 @@ const sampleItem = {
   category: "burns",
   text: "How often do you feel anxious?",
   options: [
-    { value: 0, text: "Never" },
-    { value: 1, text: "Sometimes" },
-    { value: 2, text: "Often" },
-    { value: 3, text: "Always" },
+    { value: 0 as const, text: "Never" },
+    { value: 1 as const, text: "Sometimes" },
+    { value: 2 as const, text: "Often" },
+    { value: 3 as const, text: "Always" },
   ],
 };
 
@@ -89,7 +89,7 @@ describe("BurnsQuestions", () => {
     );
 
     const selectedInput = getByLabelText("3Always");
-    fireEvent.contextMenu(selectedInput.parentElement);
+    fireEvent.contextMenu(selectedInput.parentElement!);
 
     expect(handleChange).toHaveBeenCalledWith("q1", undefined);
   });
@@ -106,7 +106,7 @@ describe("BurnsQuestions", () => {
     );
 
     const input = getByLabelText("1Sometimes");
-    fireEvent.contextMenu(input.parentElement);
+    fireEvent.contextMenu(input.parentElement!);
 
     expect(handleChange).not.toHaveBeenCalled();
   });
