@@ -1,7 +1,7 @@
 import { describe, test, expect, vi } from "vitest";
 import { render, fireEvent } from "@testing-library/react";
 import Button from "./Button";
-import * as rippleModule from "../../utils/ripple";
+import * as rippleModule from "../utils/ripple";
 
 describe("Button component", () => {
   test("renders children correctly", () => {
