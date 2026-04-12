@@ -18,13 +18,17 @@ app.use(helmet());
 
 // --- Dynamic CORS ---
 const frontendUrl = getFrontendBaseUrl();
+const isDevelopment = process.env.NODE_ENV !== "production";
+const allowedOrigins = isDevelopment
+  ? [frontendUrl, "http://localhost:5173"]
+  : [frontendUrl];
 
 app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
 
-      if (origin === frontendUrl) {
+      if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       } else {
         return callback(new Error("Not allowed by CORS"));
