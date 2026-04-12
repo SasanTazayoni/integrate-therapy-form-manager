@@ -1,4 +1,5 @@
 import { describe, test, expect, vi, beforeEach, type Mock } from "vitest";
+import type { Form } from "@prisma/client";
 import { sendMultipleFormLinks } from "./sendMultipleFormLinks";
 
 vi.mock("./requiredEnv", () => ({
@@ -36,7 +37,7 @@ describe("sendMultipleFormLinks", () => {
     const forms = [
       { form_type: "YSQ", token: "token1" },
       { form_type: "SMI", token: "token2" },
-    ] as any[];
+    ] as unknown as Form[];
 
     await sendMultipleFormLinks({
       email: "test@example.com",
@@ -57,7 +58,7 @@ describe("sendMultipleFormLinks", () => {
   });
 
   test("throws Email delivery failed if Resend returns an error", async () => {
-    const forms = [{ form_type: "YSQ", token: "token1" }] as any[];
+    const forms = [{ form_type: "YSQ", token: "token1" }] as unknown as Form[];
     sendMock.mockResolvedValueOnce({
       data: null,
       error: { message: "API key is invalid", name: "validation_error", statusCode: 401 },
@@ -74,7 +75,7 @@ describe("sendMultipleFormLinks", () => {
 
   test("preserves original Resend error as cause", async () => {
     const resendError = { message: "API key is invalid", name: "validation_error", statusCode: 401 };
-    const forms = [{ form_type: "SMI", token: "token2" }] as any[];
+    const forms = [{ form_type: "SMI", token: "token2" }] as unknown as Form[];
     sendMock.mockResolvedValueOnce({ data: null, error: resendError });
 
     const err = await sendMultipleFormLinks({
@@ -97,7 +98,7 @@ describe("sendMultipleFormLinks", () => {
   });
 
   test("uses 'Sir/Madam' if clientName is undefined", async () => {
-    const forms = [{ form_type: "YSQ", token: "token1" }] as any[];
+    const forms = [{ form_type: "YSQ", token: "token1" }] as unknown as Form[];
 
     await sendMultipleFormLinks({
       email: "test@example.com",

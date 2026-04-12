@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, beforeEach, type Mock } from "vitest";
-import { Prisma } from "@prisma/client";
+import { Prisma, type Client, type Form } from "@prisma/client";
 import prisma from "../prisma/client";
 import { sendFormLink } from "../utils/sendFormLink";
 import { findClientByEmail } from "../utils/clientUtils";
@@ -16,6 +16,20 @@ import {
 } from "../controllers/formController";
 import { FORM_TYPES } from "../data/formTypes";
 import { sendMultipleFormLinks } from "../utils/sendMultipleFormLinks";
+
+type SendFormReq = Parameters<typeof sendForm>[0];
+type SendFormRes = Parameters<typeof sendForm>[1];
+type ValidateTokenReq = Parameters<typeof validateToken>[0];
+type ValidateTokenRes = Parameters<typeof validateToken>[1];
+type RevokeTokenReq = Parameters<typeof revokeFormToken>[0];
+type RevokeTokenRes = Parameters<typeof revokeFormToken>[1];
+type UpdateClientInfoReq = Parameters<typeof updateClientInfo>[0];
+type UpdateClientInfoRes = Parameters<typeof updateClientInfo>[1];
+type SendMultipleFormsReq = Parameters<typeof sendMultipleForms>[0];
+type SendMultipleFormsRes = Parameters<typeof sendMultipleForms>[1];
+type GetAllSMIFormsReq = Parameters<typeof getAllSubmittedSMIForms>[0];
+type GetAllSMIFormsRes = Parameters<typeof getAllSubmittedSMIForms>[1];
+type ValidForm = Awaited<ReturnType<typeof getValidFormByToken>>;
 
 vi.mock("../prisma/client", () => ({
   default: {
@@ -68,7 +82,13 @@ vi.mock("../utils/sendMultipleFormLinks", () => ({
 }));
 
 const mockPrisma = prisma as unknown as {
-  form: { create: Mock; findMany: Mock; findFirst: Mock; findUnique: Mock; updateMany: Mock };
+  form: {
+    create: Mock;
+    findMany: Mock;
+    findFirst: Mock;
+    findUnique: Mock;
+    updateMany: Mock;
+  };
   client: { update: Mock; findUnique: Mock };
 };
 
@@ -84,18 +104,20 @@ beforeEach(() => {
     token_expires_at: new Date("2099-01-01T00:00:00Z"),
     is_active: true,
     submitted_at: null,
-  });
+  } as unknown as Form);
 
   vi.mocked(findClientByEmail).mockResolvedValue({
     id: "1",
     email: "test@test.com",
     name: "John",
-  } as any);
+  } as unknown as Client);
 
   vi.mocked(sendFormLink).mockResolvedValue(undefined);
 
   vi.mocked(getActiveForms).mockReturnValue([]);
-  vi.mocked(mapFormSafe).mockImplementation((f) => f as any);
+  vi.mocked(mapFormSafe).mockImplementation(
+    (f) => f as unknown as ReturnType<typeof mapFormSafe>,
+  );
   mockPrisma.form.findFirst.mockResolvedValue(null);
   mockPrisma.form.findMany.mockResolvedValue([]);
 });
@@ -106,8 +128,14 @@ describe("formController", () => {
   });
 
   test("sendForm returns 400 if input invalid", async () => {
-    const req = { body: { email: "" }, params: { formType: "invalid" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = {
+      body: { email: "" },
+      params: { formType: "invalid" },
+    } as unknown as SendFormReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendFormRes;
 
     await sendForm(req, res);
 
@@ -120,8 +148,11 @@ describe("formController", () => {
     const req = {
       body: { email: "test@test.com" },
       params: { formType: FORM_TYPES[0] },
-    } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    } as unknown as SendFormReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendFormRes;
 
     await sendForm(req, res);
 
@@ -131,15 +162,24 @@ describe("formController", () => {
 
   test("sendForm returns 400 if active token exists", async () => {
     const mockClient = { id: "1", email: "test@test.com", name: "John" };
-    vi.mocked(findClientByEmail).mockResolvedValue(mockClient as any);
-    mockPrisma.form.findMany.mockResolvedValue([{ id: "existing" }] as any);
-    vi.mocked(getActiveForms).mockReturnValue([{ id: "existing" }] as any);
+    vi.mocked(findClientByEmail).mockResolvedValue(
+      mockClient as unknown as Client,
+    );
+    mockPrisma.form.findMany.mockResolvedValue([
+      { id: "existing" },
+    ] as unknown as Form[]);
+    vi.mocked(getActiveForms).mockReturnValue([
+      { id: "existing" },
+    ] as unknown as Form[]);
 
     const req = {
       body: { email: "test@test.com" },
       params: { formType: FORM_TYPES[0] },
-    } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    } as unknown as SendFormReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendFormRes;
 
     await sendForm(req, res);
 
@@ -155,48 +195,66 @@ describe("formController", () => {
     const req = {
       body: { email: "test@test.com" },
       params: { formType: FORM_TYPES[0] },
-    } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    } as unknown as SendFormReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendFormRes;
 
     await sendForm(req, res);
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
-      error: "Something went wrong. If this keeps happening please contact support.",
+      error:
+        "Something went wrong. If this keeps happening please contact support.",
     });
   });
 
   test("sendForm returns 502 if email delivery fails", async () => {
     const mockClient = { id: "1", email: "test@test.com", name: "John" };
-    vi.mocked(findClientByEmail).mockResolvedValue(mockClient as any);
-    mockPrisma.form.create.mockResolvedValue({ id: "new-form", token: "mocked-token" } as any);
+    vi.mocked(findClientByEmail).mockResolvedValue(
+      mockClient as unknown as Client,
+    );
+    mockPrisma.form.create.mockResolvedValue({
+      id: "new-form",
+      token: "mocked-token",
+    } as unknown as Form);
     vi.mocked(getActiveForms).mockReturnValue([]);
-    vi.mocked(sendFormLink).mockRejectedValueOnce(new Error("Email delivery failed"));
-
-    const req = {
-      body: { email: "test@test.com" },
-      params: { formType: FORM_TYPES[0] },
-    } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
-
-    await sendForm(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(502);
-    expect(res.json).toHaveBeenCalledWith({
-      error: "The form was created but the email could not be delivered. Check the client's email address.",
-    });
-  });
-
-  test("sendForm returns 503 if a Prisma error occurs", async () => {
-    vi.mocked(findClientByEmail).mockRejectedValue(
-      new Prisma.PrismaClientInitializationError("Connection failed", "5.0.0")
+    vi.mocked(sendFormLink).mockRejectedValueOnce(
+      new Error("Email delivery failed"),
     );
 
     const req = {
       body: { email: "test@test.com" },
       params: { formType: FORM_TYPES[0] },
-    } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    } as unknown as SendFormReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendFormRes;
+
+    await sendForm(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(502);
+    expect(res.json).toHaveBeenCalledWith({
+      error:
+        "The form was created but the email could not be delivered. Check the client's email address.",
+    });
+  });
+
+  test("sendForm returns 503 if a Prisma error occurs", async () => {
+    vi.mocked(findClientByEmail).mockRejectedValue(
+      new Prisma.PrismaClientInitializationError("Connection failed", "5.0.0"),
+    );
+
+    const req = {
+      body: { email: "test@test.com" },
+      params: { formType: FORM_TYPES[0] },
+    } as unknown as SendFormReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendFormRes;
 
     await sendForm(req, res);
 
@@ -208,7 +266,9 @@ describe("formController", () => {
 
   test("sendForm successfully creates a new form and sends email", async () => {
     const mockClient = { id: "1", email: "test@test.com", name: "John" };
-    vi.mocked(findClientByEmail).mockResolvedValue(mockClient as any);
+    vi.mocked(findClientByEmail).mockResolvedValue(
+      mockClient as unknown as Client,
+    );
     mockPrisma.form.create.mockResolvedValue({
       id: "new-form",
       token: "mocked-token",
@@ -218,14 +278,17 @@ describe("formController", () => {
       token_expires_at: new Date("2099-01-01T00:00:00Z"),
       is_active: true,
       submitted_at: null,
-    } as any);
+    } as unknown as Form);
     vi.mocked(getActiveForms).mockReturnValue([]);
 
     const req = {
       body: { email: "test@test.com" },
       params: { formType: FORM_TYPES[0] },
-    } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    } as unknown as SendFormReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendFormRes;
 
     await sendForm(req, res);
 
@@ -238,7 +301,7 @@ describe("formController", () => {
           is_active: true,
           submitted_at: null,
         }),
-      })
+      }),
     );
 
     expect(sendFormLink).toHaveBeenCalledWith(
@@ -247,7 +310,7 @@ describe("formController", () => {
         token: "mocked-token",
         formType: FORM_TYPES[0],
         clientName: mockClient.name,
-      })
+      }),
     );
 
     expect(res.status).toHaveBeenCalledWith(201);
@@ -255,13 +318,15 @@ describe("formController", () => {
       expect.objectContaining({
         message: "Form sent via email",
         form: expect.any(Object),
-      })
+      }),
     );
   });
 
   test("sendForm sets clientName to undefined if client.name is null", async () => {
     const mockClient = { id: "1", email: "test@test.com", name: null };
-    vi.mocked(findClientByEmail).mockResolvedValue(mockClient as any);
+    vi.mocked(findClientByEmail).mockResolvedValue(
+      mockClient as unknown as Client,
+    );
     mockPrisma.form.create.mockResolvedValue({
       id: "new-form",
       token: "mocked-token",
@@ -271,14 +336,17 @@ describe("formController", () => {
       token_expires_at: new Date("2099-01-01T00:00:00Z"),
       is_active: true,
       submitted_at: null,
-    } as any);
+    } as unknown as Form);
     vi.mocked(getActiveForms).mockReturnValue([]);
 
     const req = {
       body: { email: "test@test.com" },
       params: { formType: FORM_TYPES[0] },
-    } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    } as unknown as SendFormReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendFormRes;
 
     await sendForm(req, res);
 
@@ -288,7 +356,7 @@ describe("formController", () => {
         token: "mocked-token",
         formType: FORM_TYPES[0],
         clientName: undefined,
-      })
+      }),
     );
 
     expect(res.status).toHaveBeenCalledWith(201);
@@ -296,13 +364,16 @@ describe("formController", () => {
       expect.objectContaining({
         message: "Form sent via email",
         form: expect.any(Object),
-      })
+      }),
     );
   });
 
   test("validateToken returns 400 if missing token", async () => {
-    const req = { query: {} } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = { query: {} } as unknown as ValidateTokenReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as ValidateTokenRes;
 
     await validateToken(req, res);
 
@@ -315,8 +386,11 @@ describe("formController", () => {
 
   test("validateToken returns 403 if token invalid", async () => {
     vi.mocked(getValidFormByToken).mockResolvedValue(null);
-    const req = { query: { token: "invalid" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = { query: { token: "invalid" } } as unknown as ValidateTokenReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as ValidateTokenRes;
 
     await validateToken(req, res);
 
@@ -332,9 +406,11 @@ describe("formController", () => {
       form_type: FORM_TYPES[0],
       client: { name: "John", dob: "2000-01-01" },
     };
-    vi.mocked(getValidFormByToken).mockResolvedValue(mockForm as any);
-    const req = { query: { token: "valid" } } as any;
-    const res = { json: vi.fn() } as any;
+    vi.mocked(getValidFormByToken).mockResolvedValue(
+      mockForm as unknown as ValidForm,
+    );
+    const req = { query: { token: "valid" } } as unknown as ValidateTokenReq;
+    const res = { json: vi.fn() } as unknown as ValidateTokenRes;
 
     await validateToken(req, res);
 
@@ -350,10 +426,12 @@ describe("formController", () => {
       form_type: FORM_TYPES[0],
       client: {},
     };
-    vi.mocked(getValidFormByToken).mockResolvedValue(mockForm as any);
+    vi.mocked(getValidFormByToken).mockResolvedValue(
+      mockForm as unknown as ValidForm,
+    );
 
-    const req = { query: { token: "valid" } } as any;
-    const res = { json: vi.fn() } as any;
+    const req = { query: { token: "valid" } } as unknown as ValidateTokenReq;
+    const res = { json: vi.fn() } as unknown as ValidateTokenRes;
 
     await validateToken(req, res);
 
@@ -366,8 +444,11 @@ describe("formController", () => {
 
   test("validateToken handles server error", async () => {
     vi.mocked(getValidFormByToken).mockRejectedValue(new Error("DB error"));
-    const req = { query: { token: "valid" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = { query: { token: "valid" } } as unknown as ValidateTokenReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as ValidateTokenRes;
 
     await validateToken(req, res);
 
@@ -379,8 +460,14 @@ describe("formController", () => {
   });
 
   test("revokeFormToken returns 400 if input invalid", async () => {
-    const req = { body: { email: "" }, params: { formType: "invalid" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = {
+      body: { email: "" },
+      params: { formType: "invalid" },
+    } as unknown as RevokeTokenReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as RevokeTokenRes;
     await revokeFormToken(req, res);
     expect(res.status).toHaveBeenCalledWith(400);
   });
@@ -390,20 +477,28 @@ describe("formController", () => {
     const req = {
       body: { email: "test@test.com" },
       params: { formType: FORM_TYPES[0] },
-    } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    } as unknown as RevokeTokenReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as RevokeTokenRes;
     await revokeFormToken(req, res);
     expect(res.status).toHaveBeenCalledWith(404);
   });
 
   test("revokeFormToken returns 404 if no active forms", async () => {
-    vi.mocked(findClientByEmail).mockResolvedValue({ id: "1" } as any);
+    vi.mocked(findClientByEmail).mockResolvedValue({
+      id: "1",
+    } as unknown as Client);
     mockPrisma.form.updateMany.mockResolvedValue({ count: 0 });
     const req = {
       body: { email: "test@test.com" },
       params: { formType: FORM_TYPES[0] },
-    } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    } as unknown as RevokeTokenReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as RevokeTokenRes;
     await revokeFormToken(req, res);
     expect(res.status).toHaveBeenCalledWith(404);
   });
@@ -411,15 +506,19 @@ describe("formController", () => {
   test("revokeFormToken revokes forms successfully", async () => {
     const revokedAt = new Date();
     const mockClient = { id: "1" };
-    vi.mocked(findClientByEmail).mockResolvedValue(mockClient as any);
+    vi.mocked(findClientByEmail).mockResolvedValue(
+      mockClient as unknown as Client,
+    );
     mockPrisma.form.updateMany.mockResolvedValue({ count: 1 });
-    mockPrisma.form.findFirst.mockResolvedValue({ revoked_at: revokedAt } as any);
+    mockPrisma.form.findFirst.mockResolvedValue({
+      revoked_at: revokedAt,
+    } as unknown as Form);
 
     const req = {
       body: { email: "test@test.com" },
       params: { formType: FORM_TYPES[0] },
-    } as any;
-    const res = { json: vi.fn() } as any;
+    } as unknown as RevokeTokenReq;
+    const res = { json: vi.fn() } as unknown as RevokeTokenRes;
     await revokeFormToken(req, res);
     expect(res.json).toHaveBeenCalledWith({
       message: "Form token(s) revoked successfully",
@@ -429,15 +528,17 @@ describe("formController", () => {
 
   test("revokeFormToken sets revokedAt to null if no revoked form is found", async () => {
     const mockClient = { id: "1" };
-    vi.mocked(findClientByEmail).mockResolvedValue(mockClient as any);
+    vi.mocked(findClientByEmail).mockResolvedValue(
+      mockClient as unknown as Client,
+    );
     mockPrisma.form.updateMany.mockResolvedValue({ count: 1 });
     mockPrisma.form.findFirst.mockResolvedValue(null);
 
     const req = {
       body: { email: "test@test.com" },
       params: { formType: FORM_TYPES[0] },
-    } as any;
-    const res = { json: vi.fn() } as any;
+    } as unknown as RevokeTokenReq;
+    const res = { json: vi.fn() } as unknown as RevokeTokenRes;
 
     await revokeFormToken(req, res);
 
@@ -452,8 +553,11 @@ describe("formController", () => {
     const req = {
       body: { email: "test@test.com" },
       params: { formType: FORM_TYPES[0] },
-    } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    } as unknown as RevokeTokenReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as RevokeTokenRes;
 
     await revokeFormToken(req, res);
 
@@ -464,34 +568,53 @@ describe("formController", () => {
   });
 
   test("updateClientInfo returns 400 if missing fields", async () => {
-    const req = { body: {} } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = { body: {} } as unknown as UpdateClientInfoReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as UpdateClientInfoRes;
     await updateClientInfo(req, res);
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
   test("updateClientInfo returns 404 if form or client not found", async () => {
     mockPrisma.form.findUnique.mockResolvedValue(null);
-    const req = { body: { token: "t", name: "John", dob: "2000-01-01" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = {
+      body: { token: "t", name: "John", dob: "2000-01-01" },
+    } as unknown as UpdateClientInfoReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as UpdateClientInfoRes;
     await updateClientInfo(req, res);
     expect(res.status).toHaveBeenCalledWith(404);
   });
 
   test("updateClientInfo returns 400 if dob invalid", async () => {
-    mockPrisma.form.findUnique.mockResolvedValue({ client: { id: "1" } } as any);
+    mockPrisma.form.findUnique.mockResolvedValue({
+      client: { id: "1" },
+    } as unknown as Form);
     vi.mocked(parseDateStrict).mockReturnValue(null);
-    const req = { body: { token: "t", name: "John", dob: "invalid" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = {
+      body: { token: "t", name: "John", dob: "invalid" },
+    } as unknown as UpdateClientInfoReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as UpdateClientInfoRes;
     await updateClientInfo(req, res);
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
   test("updateClientInfo updates client successfully", async () => {
-    mockPrisma.form.findUnique.mockResolvedValue({ client: { id: "1" } } as any);
+    mockPrisma.form.findUnique.mockResolvedValue({
+      client: { id: "1" },
+    } as unknown as Form);
     vi.mocked(parseDateStrict).mockReturnValue(new Date("2000-01-01"));
-    const req = { body: { token: "t", name: "John", dob: "2000-01-01" } } as any;
-    const res = { json: vi.fn() } as any;
+    const req = {
+      body: { token: "t", name: "John", dob: "2000-01-01" },
+    } as unknown as UpdateClientInfoReq;
+    const res = { json: vi.fn() } as unknown as UpdateClientInfoRes;
     await updateClientInfo(req, res);
     expect(mockPrisma.client.update).toHaveBeenCalled();
     expect(res.json).toHaveBeenCalledWith({ success: true });
@@ -499,8 +622,13 @@ describe("formController", () => {
 
   test("updateClientInfo handles server error", async () => {
     mockPrisma.form.findUnique.mockRejectedValue(new Error("DB error"));
-    const req = { body: { token: "t", name: "John", dob: "2000-01-01" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = {
+      body: { token: "t", name: "John", dob: "2000-01-01" },
+    } as unknown as UpdateClientInfoReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as UpdateClientInfoRes;
 
     await updateClientInfo(req, res);
 
@@ -511,8 +639,11 @@ describe("formController", () => {
   });
 
   test("sendMultipleForms returns 400 if email is missing", async () => {
-    const req = { body: {} } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = { body: {} } as unknown as SendMultipleFormsReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendMultipleFormsRes;
 
     await sendMultipleForms(req, res);
 
@@ -523,8 +654,13 @@ describe("formController", () => {
   test("sendMultipleForms returns 404 if client not found", async () => {
     vi.mocked(findClientByEmail).mockResolvedValue(null);
 
-    const req = { body: { email: "notfound@test.com" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = {
+      body: { email: "notfound@test.com" },
+    } as unknown as SendMultipleFormsReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendMultipleFormsRes;
 
     await sendMultipleForms(req, res);
 
@@ -533,22 +669,36 @@ describe("formController", () => {
   });
 
   test("sendMultipleForms returns 409 if no forms to send", async () => {
-    mockPrisma.form.findFirst.mockResolvedValue({ id: "1", is_active: true } as any);
+    mockPrisma.form.findFirst.mockResolvedValue({
+      id: "1",
+      is_active: true,
+    } as unknown as Form);
 
-    const req = { body: { email: "test@test.com" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = {
+      body: { email: "test@test.com" },
+    } as unknown as SendMultipleFormsReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendMultipleFormsRes;
 
     await sendMultipleForms(req, res);
 
     expect(res.status).toHaveBeenCalledWith(409);
     expect(res.json).toHaveBeenCalledWith({
-      message: "No forms to send. Active tokens or submitted forms already exist.",
+      message:
+        "No forms to send. Active tokens or submitted forms already exist.",
     });
   });
 
   test("sendMultipleForms creates forms and calls sendMultipleFormLinks", async () => {
-    const req = { body: { email: "test@test.com" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = {
+      body: { email: "test@test.com" },
+    } as unknown as SendMultipleFormsReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendMultipleFormsRes;
 
     await sendMultipleForms(req, res);
 
@@ -558,7 +708,7 @@ describe("formController", () => {
         email: "test@test.com",
         clientName: "John",
         forms: expect.any(Array),
-      })
+      }),
     );
 
     expect(res.status).toHaveBeenCalledWith(201);
@@ -566,29 +716,42 @@ describe("formController", () => {
       expect.objectContaining({
         message: "Forms sent via email",
         sentForms: expect.any(Array),
-      })
+      }),
     );
   });
 
   test("sendMultipleForms handles unexpected errors and returns 500", async () => {
     vi.mocked(findClientByEmail).mockRejectedValue(new Error("DB error"));
 
-    const req = { body: { email: "test@test.com" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = {
+      body: { email: "test@test.com" },
+    } as unknown as SendMultipleFormsReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendMultipleFormsRes;
 
     await sendMultipleForms(req, res);
 
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith({
-      error: "Something went wrong. If this keeps happening please contact support.",
+      error:
+        "Something went wrong. If this keeps happening please contact support.",
     });
   });
 
   test("sendMultipleForms returns 502 if email delivery fails", async () => {
-    vi.mocked(sendMultipleFormLinks).mockRejectedValueOnce(new Error("Email delivery failed"));
+    vi.mocked(sendMultipleFormLinks).mockRejectedValueOnce(
+      new Error("Email delivery failed"),
+    );
 
-    const req = { body: { email: "test@test.com" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = {
+      body: { email: "test@test.com" },
+    } as unknown as SendMultipleFormsReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendMultipleFormsRes;
 
     await sendMultipleForms(req, res);
 
@@ -598,17 +761,23 @@ describe("formController", () => {
     });
     expect(res.status).toHaveBeenCalledWith(502);
     expect(res.json).toHaveBeenCalledWith({
-      error: "The email could not be delivered and the form tokens have been cancelled. Please check the client's email address and try again.",
+      error:
+        "The email could not be delivered and the form tokens have been cancelled. Please check the client's email address and try again.",
     });
   });
 
   test("sendMultipleForms returns 503 if a Prisma error occurs", async () => {
     vi.mocked(findClientByEmail).mockRejectedValue(
-      new Prisma.PrismaClientInitializationError("Connection failed", "5.0.0")
+      new Prisma.PrismaClientInitializationError("Connection failed", "5.0.0"),
     );
 
-    const req = { body: { email: "test@test.com" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = {
+      body: { email: "test@test.com" },
+    } as unknown as SendMultipleFormsReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendMultipleFormsRes;
 
     await sendMultipleForms(req, res);
 
@@ -619,10 +788,18 @@ describe("formController", () => {
   });
 
   test("skips creating form if existing active form exists", async () => {
-    mockPrisma.form.findFirst.mockResolvedValue({ id: "1", is_active: true } as any);
+    mockPrisma.form.findFirst.mockResolvedValue({
+      id: "1",
+      is_active: true,
+    } as unknown as Form);
 
-    const req = { body: { email: "test@test.com" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = {
+      body: { email: "test@test.com" },
+    } as unknown as SendMultipleFormsReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendMultipleFormsRes;
 
     await sendMultipleForms(req, res);
 
@@ -633,11 +810,16 @@ describe("formController", () => {
   test("skips creating form if submitted form exists and formType !== SMI", async () => {
     mockPrisma.form.findFirst
       .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce({ submitted_at: new Date() } as any)
+      .mockResolvedValueOnce({ submitted_at: new Date() } as unknown as Form)
       .mockResolvedValue(null);
 
-    const req = { body: { email: "test@test.com" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = {
+      body: { email: "test@test.com" },
+    } as unknown as SendMultipleFormsReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendMultipleFormsRes;
 
     await sendMultipleForms(req, res);
 
@@ -649,56 +831,78 @@ describe("formController", () => {
       .mockResolvedValueOnce(null)
       .mockResolvedValueOnce(null)
       .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce({ submitted_at: new Date() } as any)
+      .mockResolvedValueOnce({ submitted_at: new Date() } as unknown as Form)
       .mockResolvedValue(null);
 
-    const req = { body: { email: "test@test.com" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = {
+      body: { email: "test@test.com" },
+    } as unknown as SendMultipleFormsReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendMultipleFormsRes;
 
     await sendMultipleForms(req, res);
 
     expect(mockPrisma.form.create).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ form_type: "SMI" }),
-      })
+      }),
     );
   });
 
   test("sendMultipleForms passes clientName when client has a name", async () => {
     const mockClient = { id: "1", email: "test@test.com", name: "John Doe" };
-    vi.mocked(findClientByEmail).mockResolvedValue(mockClient as any);
+    vi.mocked(findClientByEmail).mockResolvedValue(
+      mockClient as unknown as Client,
+    );
 
-    const req = { body: { email: "test@test.com" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = {
+      body: { email: "test@test.com" },
+    } as unknown as SendMultipleFormsReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendMultipleFormsRes;
 
     await sendMultipleForms(req, res);
 
     expect(sendMultipleFormLinks).toHaveBeenCalledWith(
       expect.objectContaining({
         clientName: "John Doe",
-      })
+      }),
     );
   });
 
   test("sendMultipleForms sets clientName to undefined when client.name is null", async () => {
     const mockClient = { id: "1", email: "test@test.com", name: null };
-    vi.mocked(findClientByEmail).mockResolvedValue(mockClient as any);
+    vi.mocked(findClientByEmail).mockResolvedValue(
+      mockClient as unknown as Client,
+    );
 
-    const req = { body: { email: "test@test.com" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = {
+      body: { email: "test@test.com" },
+    } as unknown as SendMultipleFormsReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as SendMultipleFormsRes;
 
     await sendMultipleForms(req, res);
 
     expect(sendMultipleFormLinks).toHaveBeenCalledWith(
       expect.objectContaining({
         clientName: undefined,
-      })
+      }),
     );
   });
 
   test("returns 400 if email query is missing", async () => {
-    const req = { query: {} } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = { query: {} } as unknown as GetAllSMIFormsReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as GetAllSMIFormsRes;
 
     await getAllSubmittedSMIForms(req, res);
 
@@ -709,8 +913,13 @@ describe("formController", () => {
   test("returns 404 if client not found", async () => {
     mockPrisma.client.findUnique.mockResolvedValue(null);
 
-    const req = { query: { email: "test@test.com" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = {
+      query: { email: "test@test.com" },
+    } as unknown as GetAllSMIFormsReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as GetAllSMIFormsRes;
 
     await getAllSubmittedSMIForms(req, res);
 
@@ -719,11 +928,16 @@ describe("formController", () => {
   });
 
   test("returns empty array if client has no submitted SMI forms", async () => {
-    mockPrisma.client.findUnique.mockResolvedValue({ id: "1", name: "John Doe" } as any);
+    mockPrisma.client.findUnique.mockResolvedValue({
+      id: "1",
+      name: "John Doe",
+    } as unknown as Client);
     mockPrisma.form.findMany.mockResolvedValue([]);
 
-    const req = { query: { email: "test@test.com" } } as any;
-    const res = { json: vi.fn() } as any;
+    const req = {
+      query: { email: "test@test.com" },
+    } as unknown as GetAllSMIFormsReq;
+    const res = { json: vi.fn() } as unknown as GetAllSMIFormsRes;
 
     await getAllSubmittedSMIForms(req, res);
 
@@ -734,7 +948,10 @@ describe("formController", () => {
   });
 
   test("returns submitted SMI forms correctly", async () => {
-    mockPrisma.client.findUnique.mockResolvedValue({ id: "1", name: "John Doe" } as any);
+    mockPrisma.client.findUnique.mockResolvedValue({
+      id: "1",
+      name: "John Doe",
+    } as unknown as Client);
     mockPrisma.form.findMany.mockResolvedValue([
       {
         id: "form1",
@@ -754,10 +971,12 @@ describe("formController", () => {
         smi_ec_score: 13,
         smi_ha_score: 14,
       },
-    ] as any);
+    ] as unknown as Form[]);
 
-    const req = { query: { email: "test@test.com" } } as any;
-    const res = { json: vi.fn() } as any;
+    const req = {
+      query: { email: "test@test.com" },
+    } as unknown as GetAllSMIFormsReq;
+    const res = { json: vi.fn() } as unknown as GetAllSMIFormsRes;
 
     await getAllSubmittedSMIForms(req, res);
 
@@ -768,8 +987,20 @@ describe("formController", () => {
           id: "form1",
           submittedAt: new Date("2025-01-01T00:00:00Z"),
           smiScores: {
-            dp: 1, dss: 2, ba: 3, sa: 4, cs: 5, ic: 6, uc: 7,
-            cc: 8, vc: 9, dc: 10, pp: 11, ac: 12, ec: 13, ha: 14,
+            dp: 1,
+            dss: 2,
+            ba: 3,
+            sa: 4,
+            cs: 5,
+            ic: 6,
+            uc: 7,
+            cc: 8,
+            vc: 9,
+            dc: 10,
+            pp: 11,
+            ac: 12,
+            ec: 13,
+            ha: 14,
           },
         },
       ],
@@ -779,8 +1010,13 @@ describe("formController", () => {
   test("handles server errors and returns 500", async () => {
     mockPrisma.client.findUnique.mockRejectedValue(new Error("DB error"));
 
-    const req = { query: { email: "test@test.com" } } as any;
-    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as any;
+    const req = {
+      query: { email: "test@test.com" },
+    } as unknown as GetAllSMIFormsReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as GetAllSMIFormsRes;
 
     await getAllSubmittedSMIForms(req, res);
 
@@ -789,11 +1025,19 @@ describe("formController", () => {
   });
 
   test("returns clientName=null if client.name is undefined", async () => {
-    mockPrisma.client.findUnique.mockResolvedValue({ id: "2", name: undefined } as any);
+    mockPrisma.client.findUnique.mockResolvedValue({
+      id: "2",
+      name: undefined,
+    } as unknown as Client);
     mockPrisma.form.findMany.mockResolvedValue([]);
 
-    const req = { query: { email: "test2@test.com" } } as any;
-    const res = { json: vi.fn(), status: vi.fn().mockReturnThis() } as any;
+    const req = {
+      query: { email: "test2@test.com" },
+    } as unknown as GetAllSMIFormsReq;
+    const res = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis(),
+    } as unknown as GetAllSMIFormsRes;
 
     await getAllSubmittedSMIForms(req, res);
 

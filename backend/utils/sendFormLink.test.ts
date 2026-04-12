@@ -1,5 +1,6 @@
 import { describe, test, expect, vi, beforeEach, type Mock } from "vitest";
 import { sendFormLink } from "./sendFormLink";
+import type { FormType } from "../data/formTypes";
 
 vi.mock("./requiredEnv", () => ({
   getEnvVar: vi.fn((key: string) => {
@@ -55,7 +56,7 @@ describe("sendFormLink", () => {
       sendFormLink({
         to: "test@example.com",
         token: "abc123",
-        formType: "INVALID" as any,
+        formType: "INVALID" as unknown as FormType,
       })
     ).rejects.toThrow("Invalid form type: INVALID");
   });
