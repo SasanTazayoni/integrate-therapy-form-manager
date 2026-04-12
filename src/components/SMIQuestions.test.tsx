@@ -19,7 +19,7 @@ describe("SMIQuestions", () => {
     const { getByTestId } = render(
       <SMIQuestion item={item} value={3} onChange={vi.fn()} />
     );
-    expect(getByTestId("input-1").value).toBe("3");
+    expect((getByTestId("input-1") as HTMLInputElement).value).toBe("3");
   });
 
   test("calls onChange with valid number", () => {
@@ -60,7 +60,7 @@ describe("SMIQuestions", () => {
       <SMIQuestion item={item} value={3} onChange={vi.fn()} />
     );
 
-    const input = getByTestId("input-1");
+    const input = getByTestId("input-1") as HTMLInputElement;
     input.select = vi.fn();
     fireEvent.focus(input);
     expect(input.select).toHaveBeenCalled();
