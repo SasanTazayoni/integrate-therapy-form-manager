@@ -57,4 +57,40 @@ describe("clientsRepository", () => {
     expect(mockPrisma.client.create).toHaveBeenCalledWith({ data: clientData });
     expect(result).toEqual(mockClient);
   });
+
+  test("findClientByEmail returns null when client does not exist", async () => {
+    mockPrisma.client.findUnique = vi.fn().mockResolvedValue(null);
+
+    const result = await findClientByEmail("notfound@example.com");
+
+    expect(result).toBeNull();
+  });
+
+  test("findClientByEmail throws if prisma throws", async () => {
+    mockPrisma.client.findUnique = vi.fn().mockRejectedValue(new Error("DB error"));
+
+    await expect(findClientByEmail("test@example.com")).rejects.toThrow("DB error");
+  });
+
+  test("getFormsByClientId returns empty array when client has no forms", async () => {
+    mockPrisma.form.findMany = vi.fn().mockResolvedValue([]);
+
+    const result = await getFormsByClientId("123");
+
+    expect(result).toEqual([]);
+  });
+
+  test("getFormsByClientId throws if prisma throws", async () => {
+    mockPrisma.form.findMany = vi.fn().mockRejectedValue(new Error("DB error"));
+
+    await expect(getFormsByClientId("123")).rejects.toThrow("DB error");
+  });
+
+  test("createNewClient throws if prisma throws", async () => {
+    mockPrisma.client.create = vi.fn().mockRejectedValue(new Error("DB error"));
+
+    await expect(
+      createNewClient({ email: "new@example.com" })
+    ).rejects.toThrow("DB error");
+  });
 });
