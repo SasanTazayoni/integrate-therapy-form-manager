@@ -1,5 +1,6 @@
 import prisma from "../../prisma/client";
 import { deleteClientByEmail } from "../../controllers/clientDeletion";
+import { CLIENT_STATUS } from "../../data/clientStatus";
 
 export async function deleteInactiveClientsOlderThanOneYear(): Promise<void> {
   try {
@@ -7,7 +8,7 @@ export async function deleteInactiveClientsOlderThanOneYear(): Promise<void> {
 
     const expiredClients = await prisma.client.findMany({
       where: {
-        status: "inactive",
+        status: CLIENT_STATUS.INACTIVE,
         delete_inactive: { lte: now },
       },
       select: { email: true },

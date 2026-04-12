@@ -1,5 +1,6 @@
 import prisma from "../prisma/client";
 import type { Client as PrismaClientType } from "@prisma/client";
+import { CLIENT_STATUS } from "../data/clientStatus";
 
 export type DeactivateClientResult =
   | { ok: true; data: PrismaClientType }
@@ -16,7 +17,7 @@ export async function deactivateClient(
     const client = await prisma.client.update({
       where: { email },
       data: {
-        status: "inactive",
+        status: CLIENT_STATUS.INACTIVE,
         inactivated_at: now,
         delete_inactive: deleteInactiveDate,
       },
@@ -40,7 +41,7 @@ export async function activateClient(
     const client = await prisma.client.update({
       where: { email },
       data: {
-        status: "active",
+        status: CLIENT_STATUS.ACTIVE,
         inactivated_at: null,
         delete_inactive: null,
       },

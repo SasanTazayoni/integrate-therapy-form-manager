@@ -7,6 +7,7 @@ import {
 import { FORM_TYPES, FormType } from "../data/formTypes";
 import { normalizeEmail } from "../utils/normalizeEmail";
 import { getLatestForm } from "../utils/formHelpers";
+import { CLIENT_STATUS } from "../data/clientStatus";
 
 export type FormStatus = {
   activeToken: boolean;
@@ -106,7 +107,7 @@ export const getClientFormsStatus = async (
     0
   );
 
-  const inactive = client.status !== "active" || Boolean(client.inactivated_at);
+  const inactive = client.status !== CLIENT_STATUS.ACTIVE || Boolean(client.inactivated_at);
 
   return {
     clientExists: true,

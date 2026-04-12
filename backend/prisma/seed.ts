@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { generateScore } from "../utils/SMIScoreUtilsBackend";
 import { smiBoundaries } from "../data/SMIBoundariesBackend";
+import { CLIENT_STATUS } from "../data/clientStatus";
 
 const prisma = new PrismaClient();
 
@@ -16,7 +17,7 @@ async function main() {
       name: "Alice YSQ",
       email: "alice@ysq.com",
       dob: new Date("1990-01-01"),
-      status: "active",
+      status: CLIENT_STATUS.ACTIVE,
     },
   });
 
@@ -25,7 +26,7 @@ async function main() {
       name: "Bob SMI",
       email: "bob@smi.com",
       dob: new Date("1985-05-10"),
-      status: "active",
+      status: CLIENT_STATUS.ACTIVE,
     },
   });
 
@@ -34,7 +35,7 @@ async function main() {
       name: "Carol BECKS",
       email: "carol@becks.com",
       dob: new Date("1992-03-15"),
-      status: "active",
+      status: CLIENT_STATUS.ACTIVE,
     },
   });
 
@@ -43,7 +44,7 @@ async function main() {
       name: "Dave BURNS",
       email: "dave@burns.com",
       dob: new Date("1988-08-22"),
-      status: "active",
+      status: CLIENT_STATUS.ACTIVE,
     },
   });
 
@@ -52,7 +53,7 @@ async function main() {
       name: "Emma MultiForm",
       email: "emma@multi.com",
       dob: new Date("1993-07-10"),
-      status: "active",
+      status: CLIENT_STATUS.ACTIVE,
     },
   });
 
@@ -61,7 +62,7 @@ async function main() {
       name: "Frank Expired",
       email: "frank@expired.com",
       dob: new Date("1980-02-20"),
-      status: "active",
+      status: CLIENT_STATUS.ACTIVE,
     },
   });
 
