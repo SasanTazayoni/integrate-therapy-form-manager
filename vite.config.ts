@@ -29,6 +29,7 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
         "setupTests.js",
         "src/main.tsx",
         "src/vite-env.d.ts",
+        "src/vitest.d.ts",
         "src/types/**",
         "src/App.tsx",
         "backend/**",
