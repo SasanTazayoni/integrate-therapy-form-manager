@@ -15,6 +15,10 @@ vi.mock("../../controllers/clientDeletion", () => ({
   deleteClientByEmail: vi.fn(),
 }));
 
+const mockPrisma = prisma as unknown as {
+  client: { findMany: ReturnType<typeof vi.fn> };
+};
+
 describe("deleteInactiveClientsOlderThanOneYear", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -26,11 +30,11 @@ describe("deleteInactiveClientsOlderThanOneYear", () => {
       { email: "b@example.com" },
     ];
 
-    prisma.client.findMany.mockResolvedValue(mockClients);
+    mockPrisma.client.findMany.mockResolvedValue(mockClients);
 
     await deleteInactiveClientsOlderThanOneYear();
 
-    expect(prisma.client.findMany).toHaveBeenCalledWith(
+    expect(mockPrisma.client.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({
           status: "inactive",
@@ -38,26 +42,26 @@ describe("deleteInactiveClientsOlderThanOneYear", () => {
       })
     );
 
-    expect(deleteClientByEmail).toHaveBeenCalledTimes(mockClients.length);
-    expect(deleteClientByEmail).toHaveBeenCalledWith("a@example.com");
-    expect(deleteClientByEmail).toHaveBeenCalledWith("b@example.com");
+    expect(vi.mocked(deleteClientByEmail)).toHaveBeenCalledTimes(mockClients.length);
+    expect(vi.mocked(deleteClientByEmail)).toHaveBeenCalledWith("a@example.com");
+    expect(vi.mocked(deleteClientByEmail)).toHaveBeenCalledWith("b@example.com");
   });
 
   it("should handle errors from deleteClientByEmail gracefully", async () => {
     const mockClients = [{ email: "a@example.com" }];
-    prisma.client.findMany.mockResolvedValue(mockClients);
-    deleteClientByEmail.mockRejectedValue(new Error("delete failed"));
+    mockPrisma.client.findMany.mockResolvedValue(mockClients);
+    vi.mocked(deleteClientByEmail).mockRejectedValue(new Error("delete failed"));
 
     await deleteInactiveClientsOlderThanOneYear();
 
-    expect(deleteClientByEmail).toHaveBeenCalledWith("a@example.com");
+    expect(vi.mocked(deleteClientByEmail)).toHaveBeenCalledWith("a@example.com");
   });
 
   it("should handle errors from prisma.findMany gracefully", async () => {
-    prisma.client.findMany.mockRejectedValue(new Error("DB error"));
+    mockPrisma.client.findMany.mockRejectedValue(new Error("DB error"));
 
     await deleteInactiveClientsOlderThanOneYear();
 
-    expect(deleteClientByEmail).not.toHaveBeenCalled();
+    expect(vi.mocked(deleteClientByEmail)).not.toHaveBeenCalled();
   });
 });
