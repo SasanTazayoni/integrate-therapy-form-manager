@@ -146,6 +146,7 @@ describe("FormStatusMessage", () => {
 
     expect(getByText(/form not yet sent/i)).toBeInTheDocument();
   });
+
   test("formatDate returns empty string for undefined, null, or invalid date", () => {
     expect(formatDate(undefined)).toBe("");
     expect(formatDate(null)).toBe("");
