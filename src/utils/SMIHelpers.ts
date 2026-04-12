@@ -18,10 +18,10 @@ export const getCellData = (
   const key = categoryKeyMap[mode];
   if (!key) return null;
 
-  const raw = smiScores?.[key];
-  if (!raw) return null;
+  const rawScoreValue = smiScores?.[key];
+  if (!rawScoreValue) return null;
 
-  const score = parseFloat(raw);
+  const score = parseFloat(rawScoreValue);
   if (Number.isNaN(score)) return null;
 
   const rating = classifyScore(score, smiBoundaries[key]);
@@ -51,15 +51,15 @@ export const computeSMIScores = (
 
   const results: Record<string, { average: number; label: string }> = {};
   for (const category in scoresByCategory) {
-    const avg = Number(
+    const categoryAverage = Number(
       (scoresByCategory[category] / countsByCategory[category]).toFixed(2)
     );
     const key = categoryKeyMap[category];
     const label =
       key && smiBoundaries[key]
-        ? classifyScore(avg, smiBoundaries[key])
+        ? classifyScore(categoryAverage, smiBoundaries[key])
         : "Unknown";
-    results[category] = { average: avg, label };
+    results[category] = { average: categoryAverage, label };
   }
 
   return results;

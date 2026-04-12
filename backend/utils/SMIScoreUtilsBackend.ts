@@ -23,17 +23,17 @@ export function normalizeLabel(label: string) {
 }
 
 function randomScoreBetween(min: number, max: number): number {
-  const val = min + Math.random() * (max - min);
-  return Math.round(val * 100) / 100;
+  const randomValue = min + Math.random() * (max - min);
+  return Math.round(randomValue * 100) / 100;
 }
 
 export function generateScore(scaleKey: string): string {
   const boundaries = smiBoundaries[scaleKey];
   const segment = Math.floor(Math.random() * (boundaries.length - 1));
-  let low = boundaries[segment];
-  let high = boundaries[segment + 1];
-  if (low > high) [low, high] = [high, low];
-  const score = randomScoreBetween(low, high);
+  let lowerBoundary = boundaries[segment];
+  let upperBoundary = boundaries[segment + 1];
+  if (lowerBoundary > upperBoundary) [lowerBoundary, upperBoundary] = [upperBoundary, lowerBoundary];
+  const score = randomScoreBetween(lowerBoundary, upperBoundary);
   const category = classifyScore(score, boundaries);
   return `${score} - ${category}`;
 }

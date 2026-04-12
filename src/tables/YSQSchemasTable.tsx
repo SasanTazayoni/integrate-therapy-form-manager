@@ -6,10 +6,10 @@ import {
   getHighlightLevel,
 } from "../utils/YSQHelpers";
 
-type GrayedOutCol = "raw" | "456" | null;
+type HiddenColumn = "raw" | "456" | null;
 
 type YSQSchemasTableProps = {
-  grayedOutCol: GrayedOutCol;
+  hiddenColumn: HiddenColumn;
   onHeaderClick: (col: "raw" | "456") => void;
   onHeaderRightClick: (
     e: React.MouseEvent<HTMLElement>,
@@ -24,17 +24,17 @@ type Schema = { name: string; code: string; max: number };
 
 export const headerTextClass = (
   col: "raw" | "456",
-  grayedOutCol: GrayedOutCol
-): string => (grayedOutCol === col ? "text-gray-900" : "text-gray-500");
+  hiddenColumn: HiddenColumn
+): string => (hiddenColumn === col ? "text-gray-900" : "text-gray-500");
 
 export const cellTextClass = (
   col: "raw" | "456",
-  grayedOutCol: GrayedOutCol
-): string => (grayedOutCol === col ? "text-gray-900" : "text-gray-300");
+  hiddenColumn: HiddenColumn
+): string => (hiddenColumn === col ? "text-gray-900" : "text-gray-300");
 
 export const getSchemaRowScores = (
   schema: Schema,
-  grayedOutCol: GrayedOutCol,
+  hiddenColumn: HiddenColumn,
   ysqScores: Record<string, string | null>,
   ysq456Scores: Record<string, string | null>
 ) => {
@@ -46,9 +46,9 @@ export const getSchemaRowScores = (
   const score456 = extractNumber(ysq456Scores[score456Key]);
 
   let rating = "";
-  if (grayedOutCol === "raw") {
+  if (hiddenColumn === "raw") {
     rating = extractRating(ysq456Scores[score456Key]);
-  } else if (grayedOutCol === "456") {
+  } else if (hiddenColumn === "456") {
     rating = extractRating(ysqScores[rawKey]);
   }
 
@@ -58,7 +58,7 @@ export const getSchemaRowScores = (
 };
 
 export default function YSQSchemasTable({
-  grayedOutCol,
+  hiddenColumn,
   onHeaderClick,
   onHeaderRightClick,
   ysqSubmittedAt,
@@ -106,7 +106,7 @@ export default function YSQSchemasTable({
               data-testid="raw-header"
               className={`border border-gray-300 p-2 w-1/12 md:w-1/12 cursor-pointer select-none ${headerTextClass(
                 "raw",
-                grayedOutCol
+                hiddenColumn
               )}`}
               onClick={() => onHeaderClick("raw")}
               onContextMenu={(e) => onHeaderRightClick(e, "raw")}
@@ -117,7 +117,7 @@ export default function YSQSchemasTable({
               data-testid="456-header"
               className={`border border-gray-300 p-2 w-1/12 md:w-1/12 cursor-pointer select-none ${headerTextClass(
                 "456",
-                grayedOutCol
+                hiddenColumn
               )}`}
               onClick={() => onHeaderClick("456")}
               onContextMenu={(e) => onHeaderRightClick(e, "456")}
@@ -133,7 +133,7 @@ export default function YSQSchemasTable({
         <tbody>
           {schemas.map((schema) => {
             const { rawScore, score456, rating, highlightLevel } =
-              getSchemaRowScores(schema, grayedOutCol, ysqScores, ysq456Scores);
+              getSchemaRowScores(schema, hiddenColumn, ysqScores, ysq456Scores);
 
             const bgClass =
               highlightLevel === "severe"
@@ -156,7 +156,7 @@ export default function YSQSchemasTable({
                 <td
                   className={`border border-gray-300 p-2 ${cellTextClass(
                     "raw",
-                    grayedOutCol
+                    hiddenColumn
                   )}`}
                 >
                   {rawScore}
@@ -164,7 +164,7 @@ export default function YSQSchemasTable({
                 <td
                   className={`border border-gray-300 p-2 ${cellTextClass(
                     "456",
-                    grayedOutCol
+                    hiddenColumn
                   )}`}
                 >
                   {score456}

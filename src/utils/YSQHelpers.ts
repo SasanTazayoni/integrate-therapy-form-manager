@@ -25,15 +25,15 @@ export const getHighlightLevel = (rating: string): HighlightLevel => {
 export const normalizeCode = (code: string): string =>
   code.split("/")[0].toLowerCase();
 
-export const extractNumber = (value: string | null | undefined): string => {
-  if (!value) return "";
-  const match = value.match(/^\d+/);
+export const extractNumber = (scoreString: string | null | undefined): string => {
+  if (!scoreString) return "";
+  const match = scoreString.match(/^\d+/);
   return match ? match[0] : "";
 };
 
-export const extractRating = (value: string | null | undefined): string => {
-  if (!value) return "";
-  const match = value.match(/-(.+)$/);
+export const extractRating = (scoreString: string | null | undefined): string => {
+  if (!scoreString) return "";
+  const match = scoreString.match(/-(.+)$/);
   return match ? match[1] : "";
 };
 

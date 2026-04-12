@@ -17,7 +17,7 @@ type ClientFormsStatusDetails = ClientFormsStatus & {
 };
 
 const FormResultsSummary = () => {
-  const [grayedOutCol, setGrayedOutCol] = useState<"raw" | "456" | null>(null);
+  const [hiddenColumn, setHiddenColumn] = useState<"raw" | "456" | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { clientFormsStatus } = useClientContext() as {
@@ -32,14 +32,14 @@ const FormResultsSummary = () => {
 
   const navigate = useNavigate();
 
-  const onHeaderClick = (col: "raw" | "456") => setGrayedOutCol(col);
+  const onHeaderClick = (col: "raw" | "456") => setHiddenColumn(col);
 
   const onHeaderRightClick = (
     e: React.MouseEvent<HTMLElement>,
     col: "raw" | "456"
   ) => {
     e.preventDefault();
-    if (grayedOutCol === col) setGrayedOutCol(null);
+    if (hiddenColumn === col) setHiddenColumn(null);
   };
 
   const openModal = () => setIsModalOpen(true);
@@ -104,7 +104,7 @@ const FormResultsSummary = () => {
         />
 
         <YSQSchemasTable
-          grayedOutCol={grayedOutCol}
+          hiddenColumn={hiddenColumn}
           onHeaderClick={onHeaderClick}
           onHeaderRightClick={onHeaderRightClick}
           ysqSubmittedAt={

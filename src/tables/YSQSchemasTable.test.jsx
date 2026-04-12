@@ -26,7 +26,7 @@ describe("YSQSchemasTable", () => {
     expect(cellTextClass("456", null)).toBe("text-gray-300");
   });
 
-  test("getSchemaRowScores returns correct values for raw grayedOutCol", () => {
+  test("getSchemaRowScores returns correct values for raw hiddenColumn", () => {
     const schema = { name: "Test", code: "TS", max: 50 };
     const ysqScores = { ysq_ts_score: "10-High" };
     const ysq456Scores = { ysq_ts_456: "5-Low" };
@@ -38,7 +38,7 @@ describe("YSQSchemasTable", () => {
     expect(result.highlightLevel).toBe("none");
   });
 
-  test("getSchemaRowScores returns correct values for 456 grayedOutCol", () => {
+  test("getSchemaRowScores returns correct values for 456 hiddenColumn", () => {
     const schema = { name: "Test", code: "TS", max: 50 };
     const ysqScores = { ysq_ts_score: "10-Severe" };
     const ysq456Scores = { ysq_ts_456: "5-Low" };
@@ -62,7 +62,7 @@ describe("YSQSchemasTable", () => {
   test("renders table headers", () => {
     const { getByText } = render(
       <YSQSchemasTable
-        grayedOutCol={null}
+        hiddenColumn={null}
         onHeaderClick={mockOnHeaderClick}
         onHeaderRightClick={mockOnHeaderRightClick}
       />
@@ -75,7 +75,7 @@ describe("YSQSchemasTable", () => {
   test("calls onHeaderClick and onHeaderRightClick only for Raw and 4/5/6 headers", () => {
     const { getByText } = render(
       <YSQSchemasTable
-        grayedOutCol={null}
+        hiddenColumn={null}
         onHeaderClick={mockOnHeaderClick}
         onHeaderRightClick={mockOnHeaderRightClick}
       />
@@ -110,7 +110,7 @@ describe("YSQSchemasTable", () => {
 
     const { getByText } = render(
       <YSQSchemasTable
-        grayedOutCol={null}
+        hiddenColumn={null}
         onHeaderClick={mockOnHeaderClick}
         onHeaderRightClick={mockOnHeaderRightClick}
         ysqSubmittedAt={date.toISOString()}
@@ -123,7 +123,7 @@ describe("YSQSchemasTable", () => {
   test("does not render submitted date if ysqSubmittedAt is undefined", () => {
     const { queryByText } = render(
       <YSQSchemasTable
-        grayedOutCol={null}
+        hiddenColumn={null}
         onHeaderClick={mockOnHeaderClick}
         onHeaderRightClick={mockOnHeaderRightClick}
       />
@@ -131,13 +131,13 @@ describe("YSQSchemasTable", () => {
     expect(queryByText(/\(\d{1,2}\/\d{1,2}\/\d{4}\)/)).toBeNull();
   });
 
-  test("applies correct gray classes for headers and cells based on grayedOutCol", () => {
+  test("applies correct gray classes for headers and cells based on hiddenColumn", () => {
     const ysqScores = { ysq_ed_score: "12-High" };
     const ysq456Scores = { ysq_ed_456: "8-Low" };
 
     const { getByText } = render(
       <YSQSchemasTable
-        grayedOutCol="raw"
+        hiddenColumn="raw"
         onHeaderClick={mockOnHeaderClick}
         onHeaderRightClick={mockOnHeaderRightClick}
         ysqScores={ysqScores}
@@ -168,7 +168,7 @@ describe("YSQSchemasTable", () => {
 
     const { getAllByRole } = render(
       <YSQSchemasTable
-        grayedOutCol="456"
+        hiddenColumn="456"
         onHeaderClick={mockOnHeaderClick}
         onHeaderRightClick={mockOnHeaderRightClick}
         ysqScores={ysqScores}

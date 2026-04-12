@@ -191,26 +191,26 @@ export const submitSMIForm = async (
 
     const dataUpdate: Record<string, unknown> = { ...defaultUpdateFields() };
 
-    for (const incomingKey in results) {
-      const avg = Number(results[incomingKey]?.average);
+    for (const resultKey in results) {
+      const avg = Number(results[resultKey]?.average);
       if (isNaN(avg)) {
         console.warn(
-          `Invalid average for key ${incomingKey}:`,
-          results[incomingKey]
+          `Invalid average for key ${resultKey}:`,
+          results[resultKey]
         );
         continue;
       }
 
       let boundaryKey: string | undefined;
-      if (incomingKey.startsWith("smi_") && smiBoundaries[incomingKey]) {
-        boundaryKey = incomingKey;
+      if (resultKey.startsWith("smi_") && smiBoundaries[resultKey]) {
+        boundaryKey = resultKey;
       } else {
-        const normalized = normalizeLabel(incomingKey);
+        const normalized = normalizeLabel(resultKey);
         boundaryKey = labelToBoundaryKey[normalized];
       }
 
       if (!boundaryKey || !smiBoundaries[boundaryKey]) {
-        console.warn(`No boundaries found for SMI key: ${incomingKey}`);
+        console.warn(`No boundaries found for SMI key: ${resultKey}`);
         continue;
       }
 

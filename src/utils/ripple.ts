@@ -9,13 +9,13 @@ export const initializeRippleEffect = (button: HTMLButtonElement): void => {
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
-      const ripples = document.createElement("span") as HTMLSpanElement;
-      ripples.style.left = `${x}px`;
-      ripples.style.top = `${y}px`;
-      button.appendChild(ripples);
+      const rippleElement = document.createElement("span") as HTMLSpanElement;
+      rippleElement.style.left = `${x}px`;
+      rippleElement.style.top = `${y}px`;
+      button.appendChild(rippleElement);
 
       setTimeout(() => {
-        ripples.remove();
+        rippleElement.remove();
       }, 600);
     }
   }

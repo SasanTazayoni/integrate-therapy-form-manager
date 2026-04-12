@@ -14,6 +14,6 @@ export function getErrorDisplay(
     err?.message ||
     fallbackMessage;
 
-  const rid = err?.response?.data?.requestId;
-  return rid ? `${msg} (ref: ${rid})` : msg;
+  const requestId = err?.response?.data?.requestId;
+  return requestId ? `${msg} (ref: ${requestId})` : msg;
 }

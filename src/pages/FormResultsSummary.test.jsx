@@ -204,10 +204,10 @@ describe("FormResultsSummary", () => {
     const rawHeader = getByTestId("raw-header");
 
     fireEvent.click(rawHeader);
-    expect(ysqTableProps.grayedOutCol).toBe("raw");
+    expect(ysqTableProps.hiddenColumn).toBe("raw");
 
     fireEvent.contextMenu(rawHeader);
-    expect(ysqTableProps.grayedOutCol).toBe(null);
+    expect(ysqTableProps.hiddenColumn).toBe(null);
   });
 
   test("opens and closes SMIModal", () => {
