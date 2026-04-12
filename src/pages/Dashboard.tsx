@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import ProtectedAccess from "../components/ProtectedAccess";
 import EmailInput from "../components/EmailInput";
@@ -64,10 +64,11 @@ export default function Dashboard() {
   const isInactive = clientFormsStatus?.inactive ?? false;
   const isFormActionInProgress = Object.values(formActionLoading).some(Boolean);
 
+  const handleCheckProgressRef = useRef<() => Promise<void>>(() => Promise.resolve());
+
   useEffect(() => {
     if (contextEmail) {
-      setEmail(contextEmail);
-      handleCheckProgress();
+      handleCheckProgressRef.current();
     }
   }, []);
 
@@ -132,6 +133,8 @@ export default function Dashboard() {
 
     setLoading(false);
   }, [email, confirmedEmail]);
+
+  handleCheckProgressRef.current = handleCheckProgress;
 
   const handleClear = () => {
     setEmail("");
