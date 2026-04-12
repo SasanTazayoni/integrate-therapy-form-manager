@@ -3,20 +3,21 @@ import { describe, test, expect, beforeEach, vi } from "vitest";
 import SMIModesTable from "./SMIModesTable";
 import * as SMIHelpers from "../utils/SMIHelpers";
 import { ClientProvider } from "../context/ClientContext";
+import type { RenderOptions } from "@testing-library/react";
 
-function renderWithClient(ui, options = {}) {
+function renderWithClient(ui: React.ReactNode, options: RenderOptions = {}) {
   return render(<ClientProvider>{ui}</ClientProvider>, options);
 }
 
 describe("SMIModesTable", () => {
   const mockOpenModal = vi.fn();
-  const smiScores = {
+  const smiScores: Record<string, string | null> = {
     "Detached Protector": "3-high",
     "Bully and Attack": "1-low",
     "Self-Aggrandizer": "5-severe",
   };
-  let mockSetLocalSmiScores;
-  let mockSetLocalSmiSubmittedAt;
+  let mockSetLocalSmiScores: ReturnType<typeof vi.fn>;
+  let mockSetLocalSmiSubmittedAt: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -30,12 +31,14 @@ describe("SMIModesTable", () => {
       return {
         display: num,
         rating,
-        highlightLevel:
+        score: 0,
+        highlightLevel: (
           rating === "high"
             ? "highlight"
             : rating === "severe"
             ? "severe"
-            : "none",
+            : "none"
+        ) as "highlight" | "severe" | "none",
       };
     });
 
@@ -66,7 +69,12 @@ describe("SMIModesTable", () => {
 
   test("applies yellow highlight for high-rated cells", () => {
     const { getAllByText } = renderWithClient(
-      <SMIModesTable openModal={mockOpenModal} smiScores={smiScores} />
+      <SMIModesTable
+        openModal={mockOpenModal}
+        smiScores={smiScores}
+        setLocalSmiScores={mockSetLocalSmiScores}
+        setLocalSmiSubmittedAt={mockSetLocalSmiSubmittedAt}
+      />
     );
 
     const td = getAllByText("Detached Protector")[0].closest("td");
@@ -76,7 +84,12 @@ describe("SMIModesTable", () => {
 
   test("applies red highlight for severe-rated cells", () => {
     const { getAllByText } = renderWithClient(
-      <SMIModesTable openModal={mockOpenModal} smiScores={smiScores} />
+      <SMIModesTable
+        openModal={mockOpenModal}
+        smiScores={smiScores}
+        setLocalSmiScores={mockSetLocalSmiScores}
+        setLocalSmiSubmittedAt={mockSetLocalSmiSubmittedAt}
+      />
     );
 
     const td = getAllByText("Self-Aggrandizer")[0].closest("td");
@@ -147,8 +160,8 @@ describe("SMIModesTable", () => {
   test("renders fallback '-' for missing data", () => {
     vi.spyOn(SMIHelpers, "getCellData").mockImplementation((cell) => {
       if (cell === "Vulnerable Child") return null;
-      if (cell === "Healthy Adult *") return {};
-      return { display: smiScores[cell], rating: "low" };
+      if (cell === "Healthy Adult *") return {} as ReturnType<typeof SMIHelpers.getCellData>;
+      return { display: smiScores[cell] ?? "", rating: "low", score: 0, highlightLevel: "none" };
     });
 
     const { getAllByText } = renderWithClient(
@@ -169,7 +182,7 @@ describe("SMIModesTable", () => {
   });
 
   test("closing SMI modal calls handleCloseSmiModal", async () => {
-    const { getByText, queryByText } = renderWithClient(
+    renderWithClient(
       <SMIModesTable
         openModal={mockOpenModal}
         smiScores={smiScores}
@@ -182,16 +195,16 @@ describe("SMIModesTable", () => {
       '[data-testid="db-icon-desktop"]'
     );
     await act(async () => {
-      fireEvent.click(desktopIcon);
+      fireEvent.click(desktopIcon!);
     });
 
     const modal = document.querySelector(".modal");
     expect(modal).toBeInTheDocument();
-    const closeButton = modal.querySelector("button");
-    fireEvent.click(closeButton);
+    const closeButton = modal!.querySelector("button");
+    fireEvent.click(closeButton!);
 
     await waitFor(() => {
-      expect(modal.parentElement).not.toBeInTheDocument();
+      expect(modal!.parentElement).not.toBeInTheDocument();
     });
   });
 });
