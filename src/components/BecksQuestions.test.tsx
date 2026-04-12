@@ -69,7 +69,7 @@ describe("BecksQuestions", () => {
       />
     );
 
-    const selectedInput = getByLabelText(/Okay/i);
+    const selectedInput = getByLabelText(/Okay/i) as HTMLInputElement;
     expect(selectedInput.checked).toBe(true);
   });
 
@@ -102,7 +102,7 @@ describe("BecksQuestions", () => {
       />
     );
 
-    const optionDiv = getByLabelText(/Okay/i).closest(".option");
+    const optionDiv = getByLabelText(/Okay/i).closest(".option")!;
     fireEvent.contextMenu(optionDiv);
 
     expect(handleChange).toHaveBeenCalledWith(mockItem.id, undefined);
@@ -120,7 +120,7 @@ describe("BecksQuestions", () => {
       />
     );
 
-    const optionDiv = getByLabelText(/Good/i).closest(".option");
+    const optionDiv = getByLabelText(/Good/i).closest(".option")!;
     fireEvent.contextMenu(optionDiv);
 
     expect(handleChange).not.toHaveBeenCalled();
