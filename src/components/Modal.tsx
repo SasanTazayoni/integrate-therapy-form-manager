@@ -41,6 +41,11 @@ export default function Modal({
   const overlayClass =
     visible && !closing ? "overlay fade-in" : "overlay fade-out";
 
+  const modalRoot = document.getElementById("modal-root");
+  if (!modalRoot) {
+    throw new Error("Modal requires a #modal-root element in the DOM");
+  }
+
   return ReactDOM.createPortal(
     <div
       className={overlayClass}
@@ -62,6 +67,6 @@ export default function Modal({
         {children}
       </div>
     </div>,
-    document.getElementById("modal-root")!
+    modalRoot
   );
 }

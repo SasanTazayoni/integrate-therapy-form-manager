@@ -22,7 +22,7 @@ describe("Modal", () => {
       </Modal>
     );
 
-    const portalRoot = document.getElementById("modal-root");
+    const portalRoot = document.getElementById("modal-root")!;
     const modal = portalRoot.querySelector(".modal");
 
     expect(modal).toBeInTheDocument();
@@ -38,8 +38,8 @@ describe("Modal", () => {
       </Modal>
     );
 
-    const portalRoot = document.getElementById("modal-root");
-    const overlay = portalRoot.querySelector(".overlay");
+    const portalRoot = document.getElementById("modal-root")!;
+    const overlay = portalRoot.querySelector(".overlay")!;
 
     fireEvent.click(overlay);
     expect(onOverlayClick).toHaveBeenCalled();
@@ -54,8 +54,8 @@ describe("Modal", () => {
       </Modal>
     );
 
-    const portalRoot = document.getElementById("modal-root");
-    const content = portalRoot.querySelector("[data-testid='modal-content']");
+    const portalRoot = document.getElementById("modal-root")!;
+    const content = portalRoot.querySelector("[data-testid='modal-content']")!;
 
     fireEvent.click(content);
     expect(onOverlayClick).not.toHaveBeenCalled();
@@ -86,8 +86,8 @@ describe("Modal", () => {
       </Modal>
     );
 
-    const portalRoot = document.getElementById("modal-root");
-    const overlay = portalRoot.querySelector(".overlay");
+    const portalRoot = document.getElementById("modal-root")!;
+    const overlay = portalRoot.querySelector(".overlay")!;
 
     expect(overlay).toHaveClass("overlay fade-in");
 
@@ -111,11 +111,27 @@ describe("Modal", () => {
       </Modal>
     );
 
-    const portalRoot = document.getElementById("modal-root");
-    const modal = portalRoot.querySelector(".modal");
+    const portalRoot = document.getElementById("modal-root")!;
+    const modal = portalRoot.querySelector(".modal")!;
 
     expect(modal).toHaveAttribute("role", "alertdialog");
     expect(modal).toHaveAttribute("aria-labelledby", "modal-title");
     expect(modal).toHaveAttribute("aria-describedby", "modal-desc");
+  });
+});
+
+describe("Modal without #modal-root", () => {
+  beforeEach(() => {
+    document.getElementById("modal-root")?.remove();
+  });
+
+  test("throws if #modal-root is missing from the DOM", () => {
+    expect(() =>
+      render(
+        <Modal ariaLabelledBy="modal-title">
+          <div>Content</div>
+        </Modal>
+      )
+    ).toThrow("Modal requires a #modal-root element in the DOM");
   });
 });
