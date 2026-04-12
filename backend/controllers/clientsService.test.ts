@@ -114,7 +114,7 @@ describe("clientsService", () => {
     });
   });
 
-  test("client exists but has no forms", async () => {
+  test("client with no forms has formsCompleted 0 and all statuses unsubmitted with no active tokens", async () => {
     const mockClient = {
       id: "1",
       email: "test@example.com",
