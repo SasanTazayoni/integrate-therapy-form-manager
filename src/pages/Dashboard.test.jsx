@@ -33,7 +33,7 @@ vi.mock("../components/EmailSearchControls", () => ({
 vi.mock("../components/ClientActions", () => ({
   default: () => <div data-testid="client-actions" />,
 }));
-vi.mock("../components/ui/Button", () => ({
+vi.mock("../components/Button", () => ({
   default: ({ children, onClick, disabled }) => (
     <button onClick={onClick} disabled={disabled}>{children}</button>
   ),

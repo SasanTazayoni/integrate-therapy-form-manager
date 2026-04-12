@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useClientContext } from "../context/ClientContext";
 import type { ClientFormsStatus } from "../types/formStatusTypes";
 import { parseScore } from "../utils/parseScores";
-import Button from "../components/ui/Button";
+import Button from "../components/Button";
 
 type ClientFormsStatusDetails = ClientFormsStatus & {
   clientName?: string;

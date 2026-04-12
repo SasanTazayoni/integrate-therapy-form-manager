@@ -5,7 +5,7 @@ import EmailInput from "../components/EmailInput";
 import FormButtons from "../components/FormButtons";
 import EmailSearchControls from "../components/EmailSearchControls";
 import RevokeConfirmModal from "../components/modals/RevokeConfirmModal";
-import Button from "../components/ui/Button";
+import Button from "../components/Button";
 import {
   fetchClientStatus,
   addClient,

@@ -8,7 +8,7 @@ import useValidateToken from "../hooks/useValidateToken";
 import BurnsQuestions from "../components/BurnsQuestions";
 import { submitBurnsForm } from "../api/formsFrontend";
 import { Loader2 } from "lucide-react";
-import Button from "../components/ui/Button";
+import Button from "../components/Button";
 import { submitFormWithToken } from "../utils/becksBurnsHelpers";
 
 const BURNS = () => {

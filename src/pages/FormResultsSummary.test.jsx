@@ -66,7 +66,7 @@ vi.mock("../components/ProtectedAccess", () => ({
   default: ({ children }) => <div>{children}</div>,
 }));
 
-vi.mock("../components/ui/Button", () => ({
+vi.mock("../components/Button", () => ({
   default: (props) => <button {...props}>{props.children}</button>,
 }));
 

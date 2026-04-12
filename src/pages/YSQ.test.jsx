@@ -20,7 +20,7 @@ vi.mock("../components/YSQInstructions", () => ({
   default: () => <div>Instructions</div>,
 }));
 
-vi.mock("../components/ui/Button", () => ({
+vi.mock("../components/Button", () => ({
   default: ({ children, ...props }) => <button {...props}>{children}</button>,
 }));
 

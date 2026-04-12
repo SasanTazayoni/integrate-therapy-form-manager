@@ -11,7 +11,7 @@ import Question from "../components/SMIQuestions";
 import { submitSMIForm } from "../api/formsFrontend";
 import { Loader2 } from "lucide-react";
 import SMIInstructions from "../components/SMIInstructions";
-import Button from "../components/ui/Button";
+import Button from "../components/Button";
 import { computeSMIScores } from "../utils/SMIHelpers";
 import { smiBoundaries, categoryKeyMap } from "../data/SMIBoundaries";
 import RatingScaleTooltip from "../components/RatingScaleTooltip";
