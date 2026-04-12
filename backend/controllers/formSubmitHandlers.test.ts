@@ -123,9 +123,7 @@ describe("submitBurnsForm", () => {
     const mockForm = { id: 1, token: "token123", bai_score: 10 };
     vi.mocked(validateTokenOrFail).mockResolvedValue(mockForm as never);
 
-    const rawScore = 18;
-    const expectedCategory = getBurnsScoreCategory(rawScore);
-    const combinedScore = `${rawScore}-${expectedCategory}`;
+    const combinedScore = "18-Mild anxiety";
 
     vi.mocked(parseAndCombineScore).mockReturnValue(combinedScore);
     mockPrisma.form.update.mockResolvedValue({
