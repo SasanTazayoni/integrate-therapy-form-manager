@@ -210,6 +210,7 @@ export default function Dashboard() {
         setSuccessMessage("All eligible forms have been sent successfully");
         setError("");
       } catch (err) {
+        console.error("Error sending all forms:", err);
         setError("Unexpected error occurred while sending all forms");
         setSuccessMessage("");
       } finally {
@@ -238,8 +239,7 @@ export default function Dashboard() {
   };
 
   const handleConfirmRevoke = async () => {
-    if (!revokeFormType) return;
-    await handleRevokeForm(revokeFormType);
+    await handleRevokeForm(revokeFormType!);
     closeRevokeModal();
   };
 
