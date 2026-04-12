@@ -12,8 +12,20 @@ beforeEach(() => {
   modalRoot.innerHTML = "";
 });
 
+type AdminLoginModalProps = {
+  username?: string;
+  password?: string;
+  error?: string;
+  closing?: boolean;
+  errorFading?: boolean;
+  onUsernameChange?: (val: string) => void;
+  onPasswordChange?: (val: string) => void;
+  onSubmit?: () => void;
+  onClear?: () => void;
+};
+
 describe("AdminLoginModal", () => {
-  const setup = (props = {}) => {
+  const setup = (props: AdminLoginModalProps = {}) => {
     const defaults = {
       username: "",
       password: "",
