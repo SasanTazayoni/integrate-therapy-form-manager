@@ -93,9 +93,7 @@ describe("FormButtonGroup", () => {
       />
     );
 
-    const sendButton = getByTestId("send-btn");
-    const revokeButton = getByTestId("revoke-btn");
-    expect(sendButton).toBeInTheDocument();
-    expect(revokeButton).toBeInTheDocument();
+    expect(getByTestId("send-btn")).toBeInTheDocument();
+    expect(getByTestId("revoke-btn")).toBeInTheDocument();
   });
 });
