@@ -35,7 +35,7 @@ describe("DeactivateClientModal", () => {
 
     expect(
       getByText(
-        (content, element) =>
+        (_content: string, element: Element | null) =>
           element?.textContent ===
           "This client will be deactivated. They will no longer be able to log in or submit forms, but their data will remain in the system for 1 year. Are you sure you want to deactivate this client?"
       )
