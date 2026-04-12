@@ -1,6 +1,6 @@
 import { renderHook, act } from "@testing-library/react";
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import useBecksForm from "./useBecksForm";
+import useBECKSForm from "./useBECKSForm";
 import BECKS_ITEMS from "../data/BECKSItems";
 
 describe("useBecksForm", () => {
@@ -9,7 +9,7 @@ describe("useBecksForm", () => {
   });
 
   test("initial state", () => {
-    const { result } = renderHook(() => useBecksForm());
+    const { result } = renderHook(() => useBECKSForm());
 
     expect(result.current.answers).toEqual({});
     expect(result.current.total).toBe(0);
@@ -20,7 +20,7 @@ describe("useBecksForm", () => {
   });
 
   test("handleChange sets an answer and updates total", () => {
-    const { result } = renderHook(() => useBecksForm());
+    const { result } = renderHook(() => useBECKSForm());
 
     act(() => {
       result.current.handleChange(BECKS_ITEMS[0].id, 2);
@@ -31,7 +31,7 @@ describe("useBecksForm", () => {
   });
 
   test("handleChange removes answer if val is undefined", () => {
-    const { result } = renderHook(() => useBecksForm());
+    const { result } = renderHook(() => useBECKSForm());
 
     act(() => {
       result.current.handleChange(BECKS_ITEMS[0].id, 3);
@@ -44,12 +44,12 @@ describe("useBecksForm", () => {
   });
 
   test("handleSubmit sets error if missing answers", () => {
-    const { result } = renderHook(() => useBecksForm());
+    const { result } = renderHook(() => useBECKSForm());
     const onValidSubmit = vi.fn();
 
     act(() => {
       const fakeEvent = { preventDefault: vi.fn() };
-      result.current.handleSubmit(onValidSubmit)(fakeEvent);
+      result.current.handleSubmit(onValidSubmit)(fakeEvent as unknown as React.FormEvent);
     });
 
     expect(result.current.formError).toBe("Please answer all questions");
@@ -58,7 +58,7 @@ describe("useBecksForm", () => {
   });
 
   test("handleSubmit calls onValidSubmit if all answered", () => {
-    const { result } = renderHook(() => useBecksForm());
+    const { result } = renderHook(() => useBECKSForm());
     const onValidSubmit = vi.fn();
 
     act(() => {
@@ -69,7 +69,7 @@ describe("useBecksForm", () => {
 
     act(() => {
       const fakeEvent = { preventDefault: vi.fn() };
-      result.current.handleSubmit(onValidSubmit)(fakeEvent);
+      result.current.handleSubmit(onValidSubmit)(fakeEvent as unknown as React.FormEvent);
     });
 
     expect(result.current.formError).toBeNull();
@@ -78,7 +78,7 @@ describe("useBecksForm", () => {
   });
 
   test("reset flow opens and confirms reset", () => {
-    const { result } = renderHook(() => useBecksForm());
+    const { result } = renderHook(() => useBECKSForm());
 
     act(() => {
       result.current.handleChange(BECKS_ITEMS[0].id, 2);
@@ -103,7 +103,7 @@ describe("useBecksForm", () => {
   });
 
   test("cancelReset just triggers modal closing", () => {
-    const { result } = renderHook(() => useBecksForm());
+    const { result } = renderHook(() => useBECKSForm());
 
     act(() => {
       result.current.cancelReset();
@@ -112,13 +112,9 @@ describe("useBecksForm", () => {
     expect(result.current.resetModalClosing).toBe(true);
   });
 
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   test("handleChange warns and ignores invalid value", () => {
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-    const { result } = renderHook(() => useBecksForm());
+    const { result } = renderHook(() => useBECKSForm());
 
     act(() => {
       result.current.handleChange(BECKS_ITEMS[0].id, 99);
