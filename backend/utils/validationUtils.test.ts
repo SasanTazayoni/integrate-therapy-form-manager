@@ -59,11 +59,11 @@ describe("validateRequestBodyFields", () => {
     });
   });
 
-  test("returns valid if no required fields are provided", () => {
-    const req = { body: { foo: "bar" } } as unknown as Request;
-    const res = { status: vi.fn(), json: vi.fn() } as unknown as Response;
+  test("ignores fields not listed in requiredFields", () => {
+    const req = { body: { name: "Alice" } } as unknown as Request;
+    const res = { status: vi.fn().mockReturnThis(), json: vi.fn() } as unknown as Response;
 
-    const result = validateRequestBodyFields(req, res, []);
+    const result = validateRequestBodyFields(req, res, ["name"]);
 
     expect(result).toEqual({ valid: true });
     expect(vi.mocked(res.status)).not.toHaveBeenCalled();
