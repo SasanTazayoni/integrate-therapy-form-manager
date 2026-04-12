@@ -1,7 +1,7 @@
 import { describe, test, expect } from "vitest";
-import { authReducer } from "./authReducer";
+import { authReducer, AuthState } from "./authReducer";
 
-const initialState = {
+const initialState: AuthState = {
   username: "",
   password: "",
   authenticated: false,
@@ -29,12 +29,7 @@ describe("authReducer", () => {
 
   test("LOGIN_SUCCESS sets authenticated true and clears error/flags", () => {
     const state = authReducer(
-      {
-        ...initialState,
-        error: "some error",
-        closing: true,
-        errorFading: true,
-      },
+      { ...initialState, error: "some error", closing: true, errorFading: true },
       { type: "LOGIN_SUCCESS" }
     );
     expect(state.authenticated).toBe(true);
@@ -69,7 +64,7 @@ describe("authReducer", () => {
   });
 
   test("CLEAR_FORM resets state to initial", () => {
-    const modifiedState = {
+    const modifiedState: AuthState = {
       username: "user",
       password: "pass",
       authenticated: true,
@@ -89,14 +84,14 @@ describe("authReducer", () => {
   });
 
   test("CLEAR_ERROR resets error and errorFading", () => {
-    const modifiedState = { ...initialState, error: "oops", errorFading: true };
+    const modifiedState: AuthState = { ...initialState, error: "oops", errorFading: true };
     const state = authReducer(modifiedState, { type: "CLEAR_ERROR" });
     expect(state.error).toBe("");
     expect(state.errorFading).toBe(false);
   });
 
   test("unknown action returns current state", () => {
-    const state = authReducer(initialState, { type: "UNKNOWN" });
+    const state = authReducer(initialState, { type: "UNKNOWN" } as never);
     expect(state).toBe(initialState);
   });
 });
