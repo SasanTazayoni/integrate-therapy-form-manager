@@ -1,6 +1,5 @@
-export const FORM_TYPES = ["YSQ", "SMI", "BECKS", "BURNS"] as const;
-
-export type FormType = (typeof FORM_TYPES)[number];
+export { FORM_TYPES, type FormType } from "../../backend/data/formTypes";
+import type { FormType } from "../../backend/data/formTypes";
 
 export const FORM_TITLES: Record<FormType, string> = {
   YSQ: "Young Schema Questionnaire (YSQ)",
