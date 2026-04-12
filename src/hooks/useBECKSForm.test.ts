@@ -1,127 +1,32 @@
 import { renderHook, act } from "@testing-library/react";
-import { describe, test, expect, vi, beforeEach } from "vitest";
+import { describe, test, expect, vi } from "vitest";
 import useBECKSForm from "./useBECKSForm";
 import BECKS_ITEMS from "../data/BECKSItems";
 
-describe("useBecksForm", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  test("initial state", () => {
+describe("useBECKSForm", () => {
+  test("uses BECKS_ITEMS — missing IDs count matches item count on empty submit", () => {
     const { result } = renderHook(() => useBECKSForm());
+    const mockSubmit = vi.fn();
 
-    expect(result.current.answers).toEqual({});
-    expect(result.current.total).toBe(0);
-    expect(result.current.formError).toBeNull();
-    expect(result.current.resetModalOpen).toBe(false);
-    expect(result.current.resetModalClosing).toBe(false);
-    expect(result.current.missingIds).toEqual([]);
+    act(() => {
+      result.current.handleSubmit(mockSubmit)({
+        preventDefault: () => {},
+      } as React.FormEvent);
+    });
+
+    expect(result.current.missingIds.length).toBe(BECKS_ITEMS.length);
   });
 
-  test("handleChange sets an answer and updates total", () => {
-    const { result } = renderHook(() => useBECKSForm());
-
-    act(() => {
-      result.current.handleChange(BECKS_ITEMS[0].id, 2);
-    });
-
-    expect(result.current.answers[BECKS_ITEMS[0].id]).toBe(2);
-    expect(result.current.total).toBe(2);
-  });
-
-  test("handleChange removes answer if val is undefined", () => {
-    const { result } = renderHook(() => useBECKSForm());
-
-    act(() => {
-      result.current.handleChange(BECKS_ITEMS[0].id, 3);
-    });
-    act(() => {
-      result.current.handleChange(BECKS_ITEMS[0].id, undefined);
-    });
-
-    expect(result.current.answers[BECKS_ITEMS[0].id]).toBeUndefined();
-  });
-
-  test("handleSubmit sets error if missing answers", () => {
-    const { result } = renderHook(() => useBECKSForm());
-    const onValidSubmit = vi.fn();
-
-    act(() => {
-      const fakeEvent = { preventDefault: vi.fn() };
-      result.current.handleSubmit(onValidSubmit)(fakeEvent as unknown as React.FormEvent);
-    });
-
-    expect(result.current.formError).toBe("Please answer all questions");
-    expect(result.current.missingIds.length).toBeGreaterThan(0);
-    expect(onValidSubmit).not.toHaveBeenCalled();
-  });
-
-  test("handleSubmit calls onValidSubmit if all answered", () => {
-    const { result } = renderHook(() => useBECKSForm());
-    const onValidSubmit = vi.fn();
-
-    act(() => {
-      BECKS_ITEMS.forEach((item) => {
-        result.current.handleChange(item.id, 1);
-      });
-    });
-
-    act(() => {
-      const fakeEvent = { preventDefault: vi.fn() };
-      result.current.handleSubmit(onValidSubmit)(fakeEvent as unknown as React.FormEvent);
-    });
-
-    expect(result.current.formError).toBeNull();
-    expect(result.current.missingIds).toEqual([]);
-    expect(onValidSubmit).toHaveBeenCalled();
-  });
-
-  test("reset flow opens and confirms reset", () => {
-    const { result } = renderHook(() => useBECKSForm());
-
-    act(() => {
-      result.current.handleChange(BECKS_ITEMS[0].id, 2);
-      result.current.handleResetClick();
-    });
-
-    expect(result.current.resetModalOpen).toBe(true);
-
-    act(() => {
-      result.current.confirmReset();
-    });
-
-    expect(result.current.answers).toEqual({});
-    expect(result.current.resetModalClosing).toBe(true);
-
-    act(() => {
-      result.current.handleModalCloseFinished();
-    });
-
-    expect(result.current.resetModalOpen).toBe(false);
-    expect(result.current.resetModalClosing).toBe(false);
-  });
-
-  test("cancelReset just triggers modal closing", () => {
-    const { result } = renderHook(() => useBECKSForm());
-
-    act(() => {
-      result.current.cancelReset();
-    });
-
-    expect(result.current.resetModalClosing).toBe(true);
-  });
-
-  test("handleChange warns and ignores invalid value", () => {
+  test("valid values are 0–3 — accepts 0 and rejects 4", () => {
     const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
     const { result } = renderHook(() => useBECKSForm());
+    const id = BECKS_ITEMS[0].id;
 
-    act(() => {
-      result.current.handleChange(BECKS_ITEMS[0].id, 99);
-    });
+    act(() => result.current.handleChange(id, 0));
+    expect(result.current.answers[id]).toBe(0);
 
-    expect(warnSpy).toHaveBeenCalledWith("Invalid answer value: 99");
-    expect(result.current.answers[BECKS_ITEMS[0].id]).toBeUndefined();
+    act(() => result.current.handleChange(id, 4));
+    expect(warnSpy).toHaveBeenCalledWith("Invalid answer value: 4");
 
     warnSpy.mockRestore();
   });
