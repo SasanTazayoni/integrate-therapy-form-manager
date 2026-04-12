@@ -682,6 +682,37 @@ describe("QuestionnaireForm component", () => {
     });
   });
 
+  test("does nothing if component unmounts before validateFormToken resolves", async () => {
+    let resolveToken;
+    vi.spyOn(api, "validateFormToken").mockImplementation(
+      () => new Promise((resolve) => { resolveToken = resolve; })
+    );
+
+    const router = createMemoryRouter(
+      [
+        {
+          path: "/",
+          element: (
+            <QuestionnaireForm title="Test" questionnaire="TEST_FORM" token="valid-token">
+              <div>Child</div>
+            </QuestionnaireForm>
+          ),
+        },
+      ],
+      { initialEntries: ["/"] }
+    );
+
+    const { unmount } = render(<RouterProvider router={router} />);
+    unmount();
+
+    resolveToken({
+      ok: true,
+      data: { valid: true, questionnaire: "TEST_FORM", client: { name: "John", dob: "1990-01-01" } },
+    });
+
+    await new Promise((r) => setTimeout(r, 50));
+  });
+
   test("uses DEFAULT_INVALID_MSG in catch block when thrown object has no message", async () => {
     vi.spyOn(api, "validateFormToken").mockImplementation(() =>
       Promise.reject({})
