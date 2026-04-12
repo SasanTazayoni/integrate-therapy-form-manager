@@ -3,12 +3,10 @@ import type { Form } from "@prisma/client";
 import * as clientsRepo from "./clientsRepository";
 import * as normalizeUtils from "../utils/normalizeEmail";
 import { getClientFormsStatus, createClient } from "./clientsService";
-import { getLatestForm } from "../utils/formHelpers";
 import { FORM_TYPES } from "../data/formTypes";
 
 vi.mock("./clientsRepository");
 vi.mock("../utils/normalizeEmail");
-vi.mock("../utils/formHelpers");
 
 describe("clientsService", () => {
   beforeEach(() => {
@@ -65,9 +63,6 @@ describe("clientsService", () => {
       vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("test@example.com");
       vi.mocked(clientsRepo.findClientByEmail).mockResolvedValue(mockClient as unknown as Awaited<ReturnType<typeof clientsRepo.findClientByEmail>>);
       vi.mocked(clientsRepo.getFormsByClientId).mockResolvedValue(mockForms as unknown as Form[]);
-      vi.mocked(getLatestForm).mockImplementation((forms: Form[], predicate: (f: Form) => boolean) =>
-        forms.find(predicate)
-      );
 
       const result = await getClientFormsStatus("test@example.com");
 
@@ -170,9 +165,6 @@ describe("clientsService", () => {
     vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("test@example.com");
     vi.mocked(clientsRepo.findClientByEmail).mockResolvedValue(mockClient as unknown as Awaited<ReturnType<typeof clientsRepo.findClientByEmail>>);
     vi.mocked(clientsRepo.getFormsByClientId).mockResolvedValue(mockForms as unknown as Form[]);
-    vi.mocked(getLatestForm).mockImplementation((forms: Form[], predicate: (f: Form) => boolean) =>
-      forms.find(predicate)
-    );
 
     const result = await getClientFormsStatus("test@example.com");
 
@@ -235,9 +227,6 @@ describe("clientsService", () => {
     vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("alice@example.com");
     vi.mocked(clientsRepo.findClientByEmail).mockResolvedValue(mockClient as unknown as Awaited<ReturnType<typeof clientsRepo.findClientByEmail>>);
     vi.mocked(clientsRepo.getFormsByClientId).mockResolvedValue([mockYsqForm] as unknown as Form[]);
-    vi.mocked(getLatestForm).mockImplementation((forms: Form[], predicate: (f: Form) => boolean) =>
-      forms.find(predicate)
-    );
 
     const result = await getClientFormsStatus("alice@example.com");
 
@@ -263,7 +252,6 @@ describe("clientsService", () => {
     vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("test@example.com");
     vi.mocked(clientsRepo.findClientByEmail).mockResolvedValue(mockClient as unknown as Awaited<ReturnType<typeof clientsRepo.findClientByEmail>>);
     vi.mocked(clientsRepo.getFormsByClientId).mockResolvedValue([]);
-    vi.mocked(getLatestForm).mockImplementation(() => undefined);
 
     const result = await getClientFormsStatus("test@example.com");
 
@@ -295,9 +283,6 @@ describe("clientsService", () => {
     vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("test@example.com");
     vi.mocked(clientsRepo.findClientByEmail).mockResolvedValue(mockClient as unknown as Awaited<ReturnType<typeof clientsRepo.findClientByEmail>>);
     vi.mocked(clientsRepo.getFormsByClientId).mockResolvedValue([mockForm] as unknown as Form[]);
-    vi.mocked(getLatestForm).mockImplementation((forms: Form[], predicate: (f: Form) => boolean) =>
-      forms.find(predicate)
-    );
 
     const result = await getClientFormsStatus("test@example.com");
     expect(result.scores!.smi.smi_q1).toBe("5");
@@ -330,9 +315,6 @@ describe("clientsService", () => {
     vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("test@example.com");
     vi.mocked(clientsRepo.findClientByEmail).mockResolvedValue(mockClient as unknown as Awaited<ReturnType<typeof clientsRepo.findClientByEmail>>);
     vi.mocked(clientsRepo.getFormsByClientId).mockResolvedValue(mockForms as unknown as Form[]);
-    vi.mocked(getLatestForm).mockImplementation((forms: Form[], predicate: (f: Form) => boolean) =>
-      forms.find(predicate)
-    );
 
     const result = await getClientFormsStatus("test@example.com");
 
@@ -368,9 +350,6 @@ describe("clientsService", () => {
     vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("test@example.com");
     vi.mocked(clientsRepo.findClientByEmail).mockResolvedValue(mockClient as unknown as Awaited<ReturnType<typeof clientsRepo.findClientByEmail>>);
     vi.mocked(clientsRepo.getFormsByClientId).mockResolvedValue(mockForms as unknown as Form[]);
-    vi.mocked(getLatestForm).mockImplementation((forms: Form[], predicate: (f: Form) => boolean) =>
-      forms.find(predicate)
-    );
 
     const result = await getClientFormsStatus("test@example.com");
 
