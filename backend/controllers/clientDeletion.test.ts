@@ -15,13 +15,21 @@ vi.mock("../prisma/client", async (importOriginal) => {
   };
 });
 
+const mockPrisma = prisma as unknown as {
+  client: {
+    findUnique: ReturnType<typeof vi.fn>;
+    delete: ReturnType<typeof vi.fn>;
+  };
+  $transaction: ReturnType<typeof vi.fn>;
+};
+
 describe("deleteClientByEmail", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   test("throws a generic error if client is not found", async () => {
-    prisma.client.findUnique.mockResolvedValue(null);
+    mockPrisma.client.findUnique.mockResolvedValue(null);
 
     await expect(deleteClientByEmail("test@example.com")).rejects.toThrow(
       "Failed to delete client and forms"
@@ -30,9 +38,9 @@ describe("deleteClientByEmail", () => {
 
   test("deletes client and associated forms in a transaction", async () => {
     const mockClient = { id: 1, email: "test@example.com" };
-    prisma.client.findUnique.mockResolvedValue(mockClient);
+    mockPrisma.client.findUnique.mockResolvedValue(mockClient);
 
-    prisma.$transaction.mockImplementation(async (fn) => {
+    mockPrisma.$transaction.mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
       return fn({
         form: {
           updateMany: vi.fn().mockResolvedValue(true),
@@ -48,9 +56,9 @@ describe("deleteClientByEmail", () => {
 
   test("throws a generic error if transaction fails", async () => {
     const mockClient = { id: 1, email: "test@example.com" };
-    prisma.client.findUnique.mockResolvedValue(mockClient);
+    mockPrisma.client.findUnique.mockResolvedValue(mockClient);
 
-    prisma.$transaction.mockRejectedValue(new Error("DB failure"));
+    mockPrisma.$transaction.mockRejectedValue(new Error("DB failure"));
 
     await expect(deleteClientByEmail("test@example.com")).rejects.toThrow(
       "Failed to delete client and forms"
