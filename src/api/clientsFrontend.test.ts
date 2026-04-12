@@ -1,3 +1,5 @@
+import { describe, test, expect, vi, beforeEach } from "vitest";
+import { AxiosError, type AxiosResponse } from "axios";
 import api from "./api";
 import {
   fetchClientStatus,
@@ -7,7 +9,6 @@ import {
   deactivateClient,
   activateClient,
 } from "./clientsFrontend";
-import { describe, test, expect, vi, beforeEach } from "vitest";
 
 vi.mock("./api", () => ({
   default: {
@@ -18,7 +19,13 @@ vi.mock("./api", () => ({
   },
 }));
 
-const mockedApi = api;
+const mockedApi = vi.mocked(api);
+
+function makeAxiosError(responseData: unknown): AxiosError {
+  const err = new AxiosError("Request failed");
+  err.response = { data: responseData } as unknown as AxiosResponse;
+  return err;
+}
 
 describe("fetchClientStatus", () => {
   beforeEach(() => vi.clearAllMocks());
@@ -34,14 +41,9 @@ describe("fetchClientStatus", () => {
   });
 
   test("returns ok false with error from real getErrorDisplay for API (Axios) error", async () => {
-    const axiosError = {
-      isAxiosError: true,
-      response: {
-        data: { message: "API fetch failed", requestId: "req-1" },
-      },
-      message: "Request failed",
-    };
-    mockedApi.get.mockRejectedValueOnce(axiosError);
+    mockedApi.get.mockRejectedValueOnce(
+      makeAxiosError({ message: "API fetch failed", requestId: "req-1" })
+    );
     const result = await fetchClientStatus("test@example.com");
     expect(result).toEqual({
       ok: false,
@@ -50,7 +52,7 @@ describe("fetchClientStatus", () => {
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
-    mockedApi.get.mockRejectedValueOnce("Unexpected error");
+    mockedApi.get.mockRejectedValueOnce(new Error("Unexpected error"));
     const result = await fetchClientStatus("test@example.com");
     expect(result).toEqual({
       ok: false,
@@ -75,14 +77,9 @@ describe("addClient", () => {
   });
 
   test("returns ok false with error from real getErrorDisplay for API (Axios) error", async () => {
-    const axiosError = {
-      isAxiosError: true,
-      response: {
-        data: { error: "API add failed", requestId: "req-2" },
-      },
-      message: "Request failed",
-    };
-    mockedApi.post.mockRejectedValueOnce(axiosError);
+    mockedApi.post.mockRejectedValueOnce(
+      makeAxiosError({ error: "API add failed", requestId: "req-2" })
+    );
     const result = await addClient("test@example.com");
     expect(result).toEqual({
       ok: false,
@@ -91,7 +88,7 @@ describe("addClient", () => {
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
-    mockedApi.post.mockRejectedValueOnce("Unexpected error");
+    mockedApi.post.mockRejectedValueOnce(new Error("Unexpected error"));
     const result = await addClient("test@example.com");
     expect(result).toEqual({
       ok: false,
@@ -115,14 +112,9 @@ describe("deleteClient & deleteClientByEmail", () => {
     });
 
     test(`${fn.name} returns ok false with error from real getErrorDisplay for API (Axios) error`, async () => {
-      const axiosError = {
-        isAxiosError: true,
-        response: {
-          data: { message: "API delete failed", requestId: "req-3" },
-        },
-        message: "Request failed",
-      };
-      mockedApi.delete.mockRejectedValueOnce(axiosError);
+      mockedApi.delete.mockRejectedValueOnce(
+        makeAxiosError({ message: "API delete failed", requestId: "req-3" })
+      );
       const result = await fn("test@example.com");
       expect(result).toEqual({
         ok: false,
@@ -131,7 +123,7 @@ describe("deleteClient & deleteClientByEmail", () => {
     });
 
     test(`${fn.name} returns ok false with generic error for non-axios error`, async () => {
-      mockedApi.delete.mockRejectedValueOnce("Unexpected error");
+      mockedApi.delete.mockRejectedValueOnce(new Error("Unexpected error"));
       const result = await fn("test@example.com");
       expect(result).toEqual({
         ok: false,
@@ -165,14 +157,9 @@ describe("deactivateClient", () => {
   });
 
   test("returns ok false with error from real getErrorDisplay for API (Axios) error", async () => {
-    const axiosError = {
-      isAxiosError: true,
-      response: {
-        data: { error: "API deactivate failed", requestId: "req-4" },
-      },
-      message: "Request failed",
-    };
-    mockedApi.patch.mockRejectedValueOnce(axiosError);
+    mockedApi.patch.mockRejectedValueOnce(
+      makeAxiosError({ error: "API deactivate failed", requestId: "req-4" })
+    );
     const result = await deactivateClient("test@example.com");
     expect(result).toEqual({
       ok: false,
@@ -181,7 +168,7 @@ describe("deactivateClient", () => {
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
-    mockedApi.patch.mockRejectedValueOnce("Unexpected error");
+    mockedApi.patch.mockRejectedValueOnce(new Error("Unexpected error"));
     const result = await deactivateClient("test@example.com");
     expect(result).toEqual({
       ok: false,
@@ -216,14 +203,9 @@ describe("activateClient", () => {
   });
 
   test("returns ok false with error from real getErrorDisplay for API (Axios) error", async () => {
-    const axiosError = {
-      isAxiosError: true,
-      response: {
-        data: { message: "API activate failed", requestId: "req-5" },
-      },
-      message: "Request failed",
-    };
-    mockedApi.patch.mockRejectedValueOnce(axiosError);
+    mockedApi.patch.mockRejectedValueOnce(
+      makeAxiosError({ message: "API activate failed", requestId: "req-5" })
+    );
     const result = await activateClient("test@example.com");
     expect(result).toEqual({
       ok: false,
@@ -232,7 +214,7 @@ describe("activateClient", () => {
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
-    mockedApi.patch.mockRejectedValueOnce("Unexpected error");
+    mockedApi.patch.mockRejectedValueOnce(new Error("Unexpected error"));
     const result = await activateClient("test@example.com");
     expect(result).toEqual({
       ok: false,
