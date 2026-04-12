@@ -1,4 +1,5 @@
 import { describe, test, expect } from "vitest";
+import { type Form } from "@prisma/client";
 import {
   getLatestForm,
   getActiveForms,
@@ -26,13 +27,13 @@ const formsMock = [
     is_active: true,
     submitted_at: new Date("2025-08-10T10:00:00Z"),
   },
-];
+] as unknown as Form[];
 
 describe("formHelpers", () => {
   describe("getLatestForm", () => {
     test("returns the latest form matching filter", () => {
       const latest = getLatestForm(formsMock, (f) => f.form_type === "YSQ");
-      expect(latest.token).toBe("t3");
+      expect(latest!.token).toBe("t3");
     });
 
     test("returns undefined if no forms match filter", () => {
@@ -52,9 +53,9 @@ describe("formHelpers", () => {
           form_type: "YSQ",
         },
         { token: "t3", submitted_at: undefined, form_type: "YSQ" },
-      ];
+      ] as unknown as Form[];
       const latest = getLatestForm(forms, (f) => f.form_type === "YSQ");
-      expect(latest.token).toBe("t2");
+      expect(latest!.token).toBe("t2");
     });
   });
 
