@@ -31,14 +31,15 @@ export default function FormButtons({
   const clientExists = clientFormsStatus?.exists ?? false;
   const formTypes = FORM_TYPES;
 
+  const isFormLocked = (status: FormStatus | undefined, formType: FormType) =>
+    !!status?.activeToken || (!!status?.submitted && formType !== "SMI");
+
   const sendableFormTypes = formTypes.filter((formType) => {
     const status = clientFormsStatus?.forms?.[formType];
     return (
       clientExists &&
       !clientInactive &&
-      !(status
-        ? status.activeToken || (status.submitted && formType !== "SMI")
-        : false) &&
+      !isFormLocked(status, formType) &&
       !formActionLoading[formType] &&
       !searchLoading
     );
@@ -70,9 +71,7 @@ export default function FormButtons({
           const sendDisabled =
             !clientExists ||
             clientInactive ||
-            (status
-              ? status.activeToken || (status.submitted && formType !== "SMI")
-              : false) ||
+            isFormLocked(status, formType) ||
             formActionLoading[formType] ||
             searchLoading;
 
