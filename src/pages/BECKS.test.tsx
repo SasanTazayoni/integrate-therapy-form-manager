@@ -6,8 +6,11 @@ import * as useBecksFormModule from "../hooks/useBECKSForm";
 import * as becksBurnsHelpers from "../utils/becksBurnsHelpers";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
+type ValidateTokenReturn = ReturnType<typeof useValidateTokenModule.default>;
+type BecksFormReturn = ReturnType<typeof useBecksFormModule.default>;
+
 vi.mock("../components/QuestionnaireForm", () => ({
-  default: (props) => (
+  default: (props: { onSubmit: () => void; children: React.ReactNode }) => (
     <div data-testid="questionnaire-form">
       <button data-testid="submit-btn" onClick={props.onSubmit}></button>
       {props.children}
@@ -16,7 +19,7 @@ vi.mock("../components/QuestionnaireForm", () => ({
 }));
 
 vi.mock("../components/modals/FormResetModal", () => ({
-  default: (props) => (
+  default: (props: { onConfirm: () => void; onCancel: () => void }) => (
     <div data-testid="reset-modal">
       <button data-testid="confirm-btn" onClick={props.onConfirm}></button>
       <button data-testid="cancel-btn" onClick={props.onCancel}></button>
@@ -28,10 +31,32 @@ vi.mock("../components/modals/InvalidTokenModal", () => ({
   default: () => <div data-testid="invalid-token-modal" />,
 }));
 
+const baseValidateToken: ValidateTokenReturn = {
+  isValid: true,
+  showInvalidTokenModal: false,
+  setShowInvalidTokenModal: vi.fn(),
+};
+
+const baseBecksForm: BecksFormReturn = {
+  answers: {},
+  total: 0,
+  formError: null,
+  resetModalOpen: false,
+  resetModalClosing: false,
+  handleChange: vi.fn(),
+  handleSubmit: (fn) => fn,
+  handleResetClick: vi.fn(),
+  confirmReset: vi.fn(),
+  cancelReset: vi.fn(),
+  handleModalCloseFinished: vi.fn(),
+  setFormError: vi.fn(),
+  missingIds: [],
+};
+
 describe("BECKS component", () => {
-  let mockSubmitFn;
-  let mockSetFormError;
-  let mockSetShowInvalidTokenModal;
+  let mockSubmitFn: ReturnType<typeof vi.fn>;
+  let mockSetFormError: ReturnType<typeof vi.fn>;
+  let mockSetShowInvalidTokenModal: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -46,9 +71,8 @@ describe("BECKS component", () => {
 
   test("renders loader when isValid is null", () => {
     vi.spyOn(useValidateTokenModule, "default").mockReturnValue({
+      ...baseValidateToken,
       isValid: null,
-      showInvalidTokenModal: false,
-      setShowInvalidTokenModal: vi.fn(),
     });
 
     const { container } = render(
@@ -62,9 +86,8 @@ describe("BECKS component", () => {
 
   test("renders InvalidTokenModal when showInvalidTokenModal is true", () => {
     vi.spyOn(useValidateTokenModule, "default").mockReturnValue({
-      isValid: true,
+      ...baseValidateToken,
       showInvalidTokenModal: true,
-      setShowInvalidTokenModal: vi.fn(),
     });
 
     const { getByTestId } = render(
@@ -77,25 +100,10 @@ describe("BECKS component", () => {
   });
 
   test("renders QuestionnaireForm and buttons", () => {
-    vi.spyOn(useValidateTokenModule, "default").mockReturnValue({
-      isValid: true,
-      showInvalidTokenModal: false,
-      setShowInvalidTokenModal: vi.fn(),
-    });
-
+    vi.spyOn(useValidateTokenModule, "default").mockReturnValue(baseValidateToken);
     vi.spyOn(useBecksFormModule, "default").mockReturnValue({
-      answers: { q1: 1 },
-      formError: null,
-      resetModalOpen: false,
-      resetModalClosing: false,
-      handleChange: vi.fn(),
-      handleSubmit: (fn) => fn,
-      handleResetClick: vi.fn(),
-      confirmReset: vi.fn(),
-      cancelReset: vi.fn(),
-      handleModalCloseFinished: vi.fn(),
-      setFormError: vi.fn(),
-      missingIds: [],
+      ...baseBecksForm,
+      answers: { 1: 1 },
     });
 
     const { getByTestId, getByText } = render(
@@ -110,25 +118,10 @@ describe("BECKS component", () => {
   });
 
   test("renders formError message", () => {
-    vi.spyOn(useValidateTokenModule, "default").mockReturnValue({
-      isValid: true,
-      showInvalidTokenModal: false,
-      setShowInvalidTokenModal: vi.fn(),
-    });
-
+    vi.spyOn(useValidateTokenModule, "default").mockReturnValue(baseValidateToken);
     vi.spyOn(useBecksFormModule, "default").mockReturnValue({
-      answers: {},
+      ...baseBecksForm,
       formError: "Error message",
-      resetModalOpen: false,
-      resetModalClosing: false,
-      handleChange: vi.fn(),
-      handleSubmit: (fn) => fn,
-      handleResetClick: vi.fn(),
-      confirmReset: vi.fn(),
-      cancelReset: vi.fn(),
-      handleModalCloseFinished: vi.fn(),
-      setFormError: vi.fn(),
-      missingIds: [],
     });
 
     const { getByText } = render(
@@ -144,25 +137,12 @@ describe("BECKS component", () => {
     const mockConfirm = vi.fn();
     const mockCancel = vi.fn();
 
-    vi.spyOn(useValidateTokenModule, "default").mockReturnValue({
-      isValid: true,
-      showInvalidTokenModal: false,
-      setShowInvalidTokenModal: vi.fn(),
-    });
-
+    vi.spyOn(useValidateTokenModule, "default").mockReturnValue(baseValidateToken);
     vi.spyOn(useBecksFormModule, "default").mockReturnValue({
-      answers: {},
-      formError: null,
+      ...baseBecksForm,
       resetModalOpen: true,
-      resetModalClosing: false,
-      handleChange: vi.fn(),
-      handleSubmit: (fn) => fn,
-      handleResetClick: vi.fn(),
       confirmReset: mockConfirm,
       cancelReset: mockCancel,
-      handleModalCloseFinished: vi.fn(),
-      setFormError: vi.fn(),
-      missingIds: [],
     });
 
     const { getByTestId } = render(
@@ -180,24 +160,13 @@ describe("BECKS component", () => {
 
   test("calls submitFormWithToken on valid submit", () => {
     vi.spyOn(useValidateTokenModule, "default").mockReturnValue({
-      isValid: true,
-      showInvalidTokenModal: false,
+      ...baseValidateToken,
       setShowInvalidTokenModal: mockSetShowInvalidTokenModal,
     });
-
     vi.spyOn(useBecksFormModule, "default").mockReturnValue({
-      answers: { q1: 2, q2: 3 },
-      formError: null,
-      resetModalOpen: false,
-      resetModalClosing: false,
-      handleChange: vi.fn(),
-      handleSubmit: (fn) => fn,
-      handleResetClick: vi.fn(),
-      confirmReset: vi.fn(),
-      cancelReset: vi.fn(),
-      handleModalCloseFinished: vi.fn(),
+      ...baseBecksForm,
+      answers: { 1: 2, 2: 3 },
       setFormError: mockSetFormError,
-      missingIds: [],
     });
 
     const { getByTestId } = render(
