@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Modal from "../Modal";
-import Button from "../ui/Button";
+import Button from "../Button";
 import { categoryKeyMap } from "../../data/SMIBoundaries";
 import { classifyBoundaryAndAlignment } from "../../utils/SMIUtils";
 import SMIModesScoreSummaryTable from "../../tables/SMIModesTableScores";
@@ -60,7 +60,7 @@ export default function SMISummaryModal({
     Object.entries(categoryKeyMap).map(([mode, key]) => [
       mode,
       classifyBoundaryAndAlignment(smiScores[key], key),
-    ])
+    ]),
   );
 
   const modeGroups = [

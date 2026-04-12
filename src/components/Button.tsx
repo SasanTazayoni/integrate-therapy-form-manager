@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { initializeRippleEffect } from "../../utils/ripple";
+import { initializeRippleEffect } from "../utils/ripple";
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "primary" | "danger";

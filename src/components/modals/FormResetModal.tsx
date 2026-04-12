@@ -1,5 +1,5 @@
 import Modal from "../Modal";
-import Button from "../ui/Button";
+import Button from "../Button";
 
 type Props = {
   onConfirm: () => void;

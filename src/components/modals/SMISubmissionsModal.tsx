@@ -4,7 +4,7 @@ import { useClientContext } from "../../context/ClientContext";
 import { fetchAllSmiForms } from "../../api/formsFrontend";
 import { formatDate } from "../../utils/formatDate";
 import Modal from "../Modal";
-import Button from "../ui/Button";
+import Button from "../Button";
 
 type SMISubmissionsModalProps = {
   isOpen: boolean;
@@ -61,7 +61,7 @@ export default function SMISubmissionsModal({
                 id: f.id,
                 submittedAt: formatDate(f.submittedAt),
                 smiScores: f.smiScores,
-              }))
+              })),
             );
           }
         } else {

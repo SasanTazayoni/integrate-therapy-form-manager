@@ -1,5 +1,5 @@
 import Modal from "../../components/Modal";
-import Button from "../ui/Button";
+import Button from "../Button";
 
 type Props = {
   name: string;
