@@ -23,7 +23,7 @@ describe("YSQQuestions", () => {
     const { getByRole } = render(
       <YSQQuestions item={item} value={3} onChange={() => {}} />
     );
-    const input = getByRole("spinbutton");
+    const input = getByRole("spinbutton") as HTMLInputElement;
     expect(input.value).toBe("3");
   });
 
@@ -79,7 +79,7 @@ describe("YSQQuestions", () => {
       <YSQQuestions item={item} value={3} onChange={() => {}} />
     );
 
-    const input = getByRole("spinbutton");
+    const input = getByRole("spinbutton") as HTMLInputElement;
     input.select = vi.fn();
     fireEvent.focus(input);
     expect(input.select).toHaveBeenCalled();
