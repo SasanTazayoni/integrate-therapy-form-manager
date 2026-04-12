@@ -10,6 +10,10 @@ vi.mock("../prisma/client", () => ({
   },
 }));
 
+const mockPrisma = prisma as unknown as {
+  client: { update: ReturnType<typeof vi.fn> };
+};
+
 describe("deactivateClient", () => {
   const email = "test@example.com";
 
@@ -19,11 +23,11 @@ describe("deactivateClient", () => {
 
   test("should return ok: true with client data when update succeeds", async () => {
     const mockClient = { email, status: "inactive" };
-    prisma.client.update.mockResolvedValue(mockClient);
+    mockPrisma.client.update.mockResolvedValue(mockClient);
 
     const result = await deactivateClient(email);
 
-    expect(prisma.client.update).toHaveBeenCalledWith(
+    expect(mockPrisma.client.update).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { email },
         data: expect.objectContaining({
@@ -35,7 +39,7 @@ describe("deactivateClient", () => {
   });
 
   test("should return ok: false when update fails", async () => {
-    prisma.client.update.mockRejectedValue(new Error("DB error"));
+    mockPrisma.client.update.mockRejectedValue(new Error("DB error"));
 
     const result = await deactivateClient(email);
 
@@ -55,11 +59,11 @@ describe("activateClient", () => {
 
   test("should return ok: true with client data when update succeeds", async () => {
     const mockClient = { email, status: "active" };
-    prisma.client.update.mockResolvedValue(mockClient);
+    mockPrisma.client.update.mockResolvedValue(mockClient);
 
     const result = await activateClient(email);
 
-    expect(prisma.client.update).toHaveBeenCalledWith(
+    expect(mockPrisma.client.update).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { email },
         data: expect.objectContaining({
@@ -71,7 +75,7 @@ describe("activateClient", () => {
   });
 
   test("should return ok: false when update fails", async () => {
-    prisma.client.update.mockRejectedValue(new Error("DB error"));
+    mockPrisma.client.update.mockRejectedValue(new Error("DB error"));
 
     const result = await activateClient(email);
 
