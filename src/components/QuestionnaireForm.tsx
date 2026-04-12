@@ -138,8 +138,6 @@ export default function QuestionnaireForm({
   }, [actionData?.error, onError]);
 
   const handleClientInfoSubmit = async () => {
-    if (!token) return;
-
     clearTimers();
 
     const trimmedName = modalState.name.trim();
@@ -157,7 +155,7 @@ export default function QuestionnaireForm({
     }
 
     const { ok, error } = await updateClientInfo({
-      token,
+      token: token!,
       name: trimmedName,
       dob: modalState.dob,
     });
