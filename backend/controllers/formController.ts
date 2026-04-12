@@ -8,7 +8,7 @@ import { findClientByEmail } from "../utils/clientUtils";
 import { deactivateInvalidActiveForms } from "../utils/formUtils";
 import { parseDateStrict } from "../utils/dates";
 import { getValidFormByToken } from "./formControllerHelpers/formTokenHelpers";
-import { getActiveForms, mapFormSafe } from "../utils/formHelpers";
+import { mapFormSafe } from "../utils/formHelpers";
 import { sendMultipleFormLinks } from "../utils/sendMultipleFormLinks";
 import { normalizeEmail } from "../utils/normalizeEmail";
 
@@ -29,10 +29,9 @@ export const sendForm = async (
 
     await deactivateInvalidActiveForms(client.id, formType);
 
-    const existingForm = getActiveForms(
-      await prisma.form.findMany({ where: { clientId: client.id } }),
-      formType
-    )[0];
+    const existingForm = await prisma.form.findFirst({
+      where: { clientId: client.id, form_type: formType, is_active: true },
+    });
 
     if (existingForm) {
       return res

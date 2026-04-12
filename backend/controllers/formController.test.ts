@@ -3,7 +3,6 @@ import { Prisma, type Client, type Form } from "@prisma/client";
 import prisma from "../prisma/client";
 import { sendFormLink } from "../utils/sendFormLink";
 import { findClientByEmail } from "../utils/clientUtils";
-import { getActiveForms } from "../utils/formHelpers";
 import { parseDateStrict } from "../utils/dates";
 import { getValidFormByToken } from "../controllers/formControllerHelpers/formTokenHelpers";
 import {
@@ -54,10 +53,7 @@ vi.mock("../utils/tokens", () => ({
 
 vi.mock("../utils/formHelpers", async (importOriginal) => {
   const actual = await importOriginal<typeof import("../utils/formHelpers")>();
-  return {
-    ...actual,
-    getActiveForms: vi.fn(() => []),
-  };
+  return { ...actual };
 });
 
 vi.mock("../utils/sendFormLink", () => ({
@@ -117,7 +113,6 @@ beforeEach(() => {
 
   vi.mocked(sendFormLink).mockResolvedValue(undefined);
 
-  vi.mocked(getActiveForms).mockReturnValue([]);
   mockPrisma.form.findFirst.mockResolvedValue(null);
   mockPrisma.form.findMany.mockResolvedValue([]);
 });
@@ -165,12 +160,7 @@ describe("formController", () => {
     vi.mocked(findClientByEmail).mockResolvedValue(
       mockClient as unknown as Client,
     );
-    mockPrisma.form.findMany.mockResolvedValue([
-      { id: "existing" },
-    ] as unknown as Form[]);
-    vi.mocked(getActiveForms).mockReturnValue([
-      { id: "existing" },
-    ] as unknown as Form[]);
+    mockPrisma.form.findFirst.mockResolvedValue({ id: "existing" } as unknown as Form);
 
     const req = {
       body: { email: "test@test.com" },
@@ -219,7 +209,7 @@ describe("formController", () => {
       id: "new-form",
       token: "mocked-token",
     } as unknown as Form);
-    vi.mocked(getActiveForms).mockReturnValue([]);
+
     vi.mocked(sendFormLink).mockRejectedValueOnce(
       new Error("Email delivery failed"),
     );
@@ -279,7 +269,7 @@ describe("formController", () => {
       is_active: true,
       submitted_at: null,
     } as unknown as Form);
-    vi.mocked(getActiveForms).mockReturnValue([]);
+
 
     const req = {
       body: { email: "test@test.com" },
@@ -342,7 +332,7 @@ describe("formController", () => {
       is_active: true,
       submitted_at: null,
     } as unknown as Form);
-    vi.mocked(getActiveForms).mockReturnValue([]);
+
 
     const req = {
       body: { email: "test@test.com" },
