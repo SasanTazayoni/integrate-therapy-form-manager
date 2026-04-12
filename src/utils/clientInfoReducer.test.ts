@@ -1,9 +1,9 @@
 import { describe, test, expect } from "vitest";
-import { clientInfoReducer, modalInitialState } from "./clientInfoReducer";
+import { clientInfoReducer, modalInitialState, ModalState } from "./clientInfoReducer";
 
 describe("clientInfoReducer", () => {
   test("returns initial state for unknown action", () => {
-    const state = clientInfoReducer(modalInitialState, { type: "UNKNOWN" });
+    const state = clientInfoReducer(modalInitialState, { type: "UNKNOWN" } as never);
     expect(state).toEqual(modalInitialState);
   });
 
@@ -40,7 +40,7 @@ describe("clientInfoReducer", () => {
   });
 
   test("clears error and resets errorFading when action is CLEAR_ERROR", () => {
-    const stateWithError = {
+    const stateWithError: ModalState = {
       ...modalInitialState,
       error: "Some error",
       errorFading: true,
