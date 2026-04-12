@@ -764,7 +764,7 @@ describe("QuestionnaireForm component", () => {
   });
 
   test("clearTimers should clear both timers on unmount", () => {
-    const clearSpy = vi.spyOn(global, "clearTimeout");
+    const clearSpy = vi.spyOn(globalThis, "clearTimeout");
 
     const { unmount } = render(
       <QuestionnaireForm
