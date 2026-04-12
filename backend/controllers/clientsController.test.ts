@@ -1,4 +1,5 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
+import type { Request, Response } from "express";
 import {
   getClientFormsStatusHandler,
   createClientHandler,
@@ -14,8 +15,13 @@ vi.mock("./clientsService");
 vi.mock("./clientDeletion");
 vi.mock("./clientStatus");
 
-const mockRes = () => {
-  const res = {};
+type MockResponse = {
+  status: ReturnType<typeof vi.fn>;
+  json: ReturnType<typeof vi.fn>;
+};
+
+const mockRes = (): MockResponse => {
+  const res = {} as MockResponse;
   res.status = vi.fn().mockReturnValue(res);
   res.json = vi.fn().mockReturnValue(res);
   return res;
@@ -28,34 +34,34 @@ describe("clientsController", () => {
 
   describe("getClientFormsStatusHandler", () => {
     test("returns 400 if email is missing", async () => {
-      const req = { query: {} };
+      const req = { query: {} } as unknown as Request;
       const res = mockRes();
 
-      getClientFormsStatus.mockResolvedValue({ error: "Email is required" });
+      vi.mocked(getClientFormsStatus).mockResolvedValue({ error: "Email is required" } as unknown as Awaited<ReturnType<typeof getClientFormsStatus>>);
 
-      await getClientFormsStatusHandler(req, res);
+      await getClientFormsStatusHandler(req, res as unknown as Response);
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({ error: "Email is required" });
     });
 
     test("returns 404 if client not found", async () => {
-      const req = { query: { email: "x@test.com" } };
+      const req = { query: { email: "x@test.com" } } as unknown as Request;
       const res = mockRes();
 
-      getClientFormsStatus.mockResolvedValue({ error: "Client not found" });
+      vi.mocked(getClientFormsStatus).mockResolvedValue({ error: "Client not found" } as unknown as Awaited<ReturnType<typeof getClientFormsStatus>>);
 
-      await getClientFormsStatusHandler(req, res);
+      await getClientFormsStatusHandler(req, res as unknown as Response);
 
       expect(res.status).toHaveBeenCalledWith(404);
       expect(res.json).toHaveBeenCalledWith({ error: "Client not found" });
     });
 
     test("returns client data if found", async () => {
-      const req = { query: { email: "x@test.com" } };
+      const req = { query: { email: "x@test.com" } } as unknown as Request;
       const res = mockRes();
 
-      getClientFormsStatus.mockResolvedValue({
+      vi.mocked(getClientFormsStatus).mockResolvedValue({
         clientExists: true,
         clientName: "John",
         clientDob: "2000-01-01",
@@ -63,9 +69,9 @@ describe("clientsController", () => {
         formsStatus: {},
         formsCompleted: 0,
         scores: {},
-      });
+      } as unknown as Awaited<ReturnType<typeof getClientFormsStatus>>);
 
-      await getClientFormsStatusHandler(req, res);
+      await getClientFormsStatusHandler(req, res as unknown as Response);
 
       expect(res.json).toHaveBeenCalledWith({
         exists: true,
@@ -79,10 +85,10 @@ describe("clientsController", () => {
     });
 
     test("returns default empty scores if scores missing", async () => {
-      const req = { query: { email: "x@test.com" } };
+      const req = { query: { email: "x@test.com" } } as unknown as Request;
       const res = mockRes();
 
-      getClientFormsStatus.mockResolvedValue({
+      vi.mocked(getClientFormsStatus).mockResolvedValue({
         clientExists: true,
         clientName: "John",
         clientDob: "2000-01-01",
@@ -90,9 +96,9 @@ describe("clientsController", () => {
         formsStatus: {},
         formsCompleted: 0,
         scores: undefined,
-      });
+      } as unknown as Awaited<ReturnType<typeof getClientFormsStatus>>);
 
-      await getClientFormsStatusHandler(req, res);
+      await getClientFormsStatusHandler(req, res as unknown as Response);
 
       expect(res.json).toHaveBeenCalledWith({
         exists: true,
@@ -112,22 +118,22 @@ describe("clientsController", () => {
     });
 
     test("returns 500 on unexpected error", async () => {
-      const req = { query: { email: "x@test.com" } };
+      const req = { query: { email: "x@test.com" } } as unknown as Request;
       const res = mockRes();
 
-      getClientFormsStatus.mockResolvedValue({ error: "Some unknown error" });
+      vi.mocked(getClientFormsStatus).mockResolvedValue({ error: "Some unknown error" } as unknown as Awaited<ReturnType<typeof getClientFormsStatus>>);
 
-      await getClientFormsStatusHandler(req, res);
+      await getClientFormsStatusHandler(req, res as unknown as Response);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({ error: "Internal server error" });
     });
 
     test("returns null for clientName and clientDob if missing", async () => {
-      const req = { query: { email: "x@test.com" } };
+      const req = { query: { email: "x@test.com" } } as unknown as Request;
       const res = mockRes();
 
-      getClientFormsStatus.mockResolvedValue({
+      vi.mocked(getClientFormsStatus).mockResolvedValue({
         clientExists: true,
         clientName: undefined,
         clientDob: undefined,
@@ -135,9 +141,9 @@ describe("clientsController", () => {
         formsStatus: {},
         formsCompleted: 0,
         scores: {},
-      });
+      } as unknown as Awaited<ReturnType<typeof getClientFormsStatus>>);
 
-      await getClientFormsStatusHandler(req, res);
+      await getClientFormsStatusHandler(req, res as unknown as Response);
 
       expect(res.json).toHaveBeenCalledWith({
         exists: true,
@@ -153,36 +159,36 @@ describe("clientsController", () => {
 
   describe("createClientHandler", () => {
     test("returns 400 if email is missing", async () => {
-      const req = { body: {} };
+      const req = { body: {} } as unknown as Request;
       const res = mockRes();
 
-      createClient.mockResolvedValue({ error: "Email is required" });
+      vi.mocked(createClient).mockResolvedValue({ error: "Email is required" } as unknown as Awaited<ReturnType<typeof createClient>>);
 
-      await createClientHandler(req, res);
+      await createClientHandler(req, res as unknown as Response);
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({ error: "Email is required" });
     });
 
     test("returns 201 and client if created", async () => {
-      const req = { body: { email: "test@test.com" } };
+      const req = { body: { email: "test@test.com" } } as unknown as Request;
       const res = mockRes();
 
-      createClient.mockResolvedValue({ client: { id: "123" } });
+      vi.mocked(createClient).mockResolvedValue({ client: { id: "123" } } as unknown as Awaited<ReturnType<typeof createClient>>);
 
-      await createClientHandler(req, res);
+      await createClientHandler(req, res as unknown as Response);
 
       expect(res.status).toHaveBeenCalledWith(201);
       expect(res.json).toHaveBeenCalledWith({ id: "123" });
     });
 
     test("returns 500 on unexpected error", async () => {
-      const req = { body: { email: "test@test.com" } };
+      const req = { body: { email: "test@test.com" } } as unknown as Request;
       const res = mockRes();
 
-      createClient.mockResolvedValue({ error: "Database unavailable" });
+      vi.mocked(createClient).mockResolvedValue({ error: "Database unavailable" } as unknown as Awaited<ReturnType<typeof createClient>>);
 
-      await createClientHandler(req, res);
+      await createClientHandler(req, res as unknown as Response);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({ error: "Database unavailable" });
@@ -191,22 +197,22 @@ describe("clientsController", () => {
 
   describe("deleteClientByEmailHandler", () => {
     test("returns 400 if email missing", async () => {
-      const req = { query: {} };
+      const req = { query: {} } as unknown as Request;
       const res = mockRes();
 
-      await deleteClientByEmailHandler(req, res);
+      await deleteClientByEmailHandler(req, res as unknown as Response);
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({ error: "Email is required" });
     });
 
     test("returns success if client deleted", async () => {
-      const req = { query: { email: "test@test.com" } };
+      const req = { query: { email: "test@test.com" } } as unknown as Request;
       const res = mockRes();
 
-      deleteClientByEmail.mockResolvedValue({ id: "123" });
+      vi.mocked(deleteClientByEmail).mockResolvedValue({ id: "123" } as unknown as Awaited<ReturnType<typeof deleteClientByEmail>>);
 
-      await deleteClientByEmailHandler(req, res);
+      await deleteClientByEmailHandler(req, res as unknown as Response);
 
       expect(res.json).toHaveBeenCalledWith({
         message: "Client and all forms deleted",
@@ -215,12 +221,12 @@ describe("clientsController", () => {
     });
 
     test("returns 500 if deletion throws", async () => {
-      const req = { query: { email: "test@test.com" } };
+      const req = { query: { email: "test@test.com" } } as unknown as Request;
       const res = mockRes();
 
-      deleteClientByEmail.mockRejectedValue(new Error("DB error"));
+      vi.mocked(deleteClientByEmail).mockRejectedValue(new Error("DB error"));
 
-      await deleteClientByEmailHandler(req, res);
+      await deleteClientByEmailHandler(req, res as unknown as Response);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({ error: "Failed to delete client" });
@@ -229,22 +235,22 @@ describe("clientsController", () => {
 
   describe("deactivateClientHandler", () => {
     test("returns 400 if email missing", async () => {
-      const req = { query: {} };
+      const req = { query: {} } as unknown as Request;
       const res = mockRes();
 
-      await deactivateClientHandler(req, res);
+      await deactivateClientHandler(req, res as unknown as Response);
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({ error: "Email is required" });
     });
 
     test("returns success if deactivated", async () => {
-      const req = { query: { email: "x@test.com" } };
+      const req = { query: { email: "x@test.com" } } as unknown as Request;
       const res = mockRes();
 
-      deactivateClient.mockResolvedValue({ ok: true, data: { id: "123" } });
+      vi.mocked(deactivateClient).mockResolvedValue({ ok: true, data: { id: "123" } } as unknown as Awaited<ReturnType<typeof deactivateClient>>);
 
-      await deactivateClientHandler(req, res);
+      await deactivateClientHandler(req, res as unknown as Response);
 
       expect(res.json).toHaveBeenCalledWith({
         message: "Client x@test.com deactivated",
@@ -253,27 +259,24 @@ describe("clientsController", () => {
     });
 
     test("returns 500 if service returns not ok", async () => {
-      const req = { query: { email: "x@test.com" } };
+      const req = { query: { email: "x@test.com" } } as unknown as Request;
       const res = mockRes();
 
-      deactivateClient.mockResolvedValue({
-        ok: false,
-        data: { error: "fail" },
-      });
+      vi.mocked(deactivateClient).mockResolvedValue({ ok: false, data: { error: "fail" } } as unknown as Awaited<ReturnType<typeof deactivateClient>>);
 
-      await deactivateClientHandler(req, res);
+      await deactivateClientHandler(req, res as unknown as Response);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({ error: "fail" });
     });
 
     test("returns 500 if service throws", async () => {
-      const req = { query: { email: "x@test.com" } };
+      const req = { query: { email: "x@test.com" } } as unknown as Request;
       const res = mockRes();
 
-      deactivateClient.mockRejectedValue(new Error("crash"));
+      vi.mocked(deactivateClient).mockRejectedValue(new Error("crash"));
 
-      await deactivateClientHandler(req, res);
+      await deactivateClientHandler(req, res as unknown as Response);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({ error: "Failed to deactivate client" });
@@ -282,22 +285,22 @@ describe("clientsController", () => {
 
   describe("activateClientHandler", () => {
     test("returns 400 if email missing", async () => {
-      const req = { query: {} };
+      const req = { query: {} } as unknown as Request;
       const res = mockRes();
 
-      await activateClientHandler(req, res);
+      await activateClientHandler(req, res as unknown as Response);
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.json).toHaveBeenCalledWith({ error: "Email is required" });
     });
 
     test("returns success if activated", async () => {
-      const req = { query: { email: "x@test.com" } };
+      const req = { query: { email: "x@test.com" } } as unknown as Request;
       const res = mockRes();
 
-      activateClient.mockResolvedValue({ ok: true, data: { id: "123" } });
+      vi.mocked(activateClient).mockResolvedValue({ ok: true, data: { id: "123" } } as unknown as Awaited<ReturnType<typeof activateClient>>);
 
-      await activateClientHandler(req, res);
+      await activateClientHandler(req, res as unknown as Response);
 
       expect(res.json).toHaveBeenCalledWith({
         message: "Client x@test.com activated",
@@ -306,24 +309,24 @@ describe("clientsController", () => {
     });
 
     test("returns 500 if service returns not ok", async () => {
-      const req = { query: { email: "x@test.com" } };
+      const req = { query: { email: "x@test.com" } } as unknown as Request;
       const res = mockRes();
 
-      activateClient.mockResolvedValue({ ok: false, data: { error: "fail" } });
+      vi.mocked(activateClient).mockResolvedValue({ ok: false, data: { error: "fail" } } as unknown as Awaited<ReturnType<typeof activateClient>>);
 
-      await activateClientHandler(req, res);
+      await activateClientHandler(req, res as unknown as Response);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({ error: "fail" });
     });
 
     test("returns 500 if service throws", async () => {
-      const req = { query: { email: "x@test.com" } };
+      const req = { query: { email: "x@test.com" } } as unknown as Request;
       const res = mockRes();
 
-      activateClient.mockRejectedValue(new Error("boom"));
+      vi.mocked(activateClient).mockRejectedValue(new Error("boom"));
 
-      await activateClientHandler(req, res);
+      await activateClientHandler(req, res as unknown as Response);
 
       expect(res.status).toHaveBeenCalledWith(500);
       expect(res.json).toHaveBeenCalledWith({ error: "Failed to activate client" });
