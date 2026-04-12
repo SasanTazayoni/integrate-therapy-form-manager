@@ -13,33 +13,43 @@ beforeEach(() => {
 });
 
 vi.mock("../../tables/SMIModesTableScores", () => ({
-  default: ({ label }) => <div data-testid={`table-${label}`}>{label}</div>,
+  default: ({ label }: { label: string }) => (
+    <div data-testid={`table-${label}`}>{label}</div>
+  ),
 }));
 
 vi.mock("../../tables/SMIModesScoreSummaryCards", () => ({
-  default: ({ modeGroups }) => (
+  default: ({ modeGroups }: { modeGroups: { label: string }[] }) => (
     <div data-testid="cards">{modeGroups.map((g) => g.label).join(",")}</div>
   ),
 }));
 
 vi.mock("../Modal", () => ({
-  default: ({ children, onCloseFinished, closing, onOverlayClick }) => {
-    return (
-      <div className="wide-modal" onClick={onOverlayClick}>
-        {children}
-        {closing && (
-          <button data-testid="finish-close" onClick={onCloseFinished} />
-        )}
-        <button data-testid="close-button" onClick={onOverlayClick}>
-          Close
-        </button>
-      </div>
-    );
-  },
+  default: ({
+    children,
+    onCloseFinished,
+    closing,
+    onOverlayClick,
+  }: {
+    children: React.ReactNode;
+    onCloseFinished?: () => void;
+    closing?: boolean;
+    onOverlayClick?: () => void;
+  }) => (
+    <div className="wide-modal" onClick={onOverlayClick}>
+      {children}
+      {closing && (
+        <button data-testid="finish-close" onClick={onCloseFinished} />
+      )}
+      <button data-testid="close-button" onClick={onOverlayClick}>
+        Close
+      </button>
+    </div>
+  ),
 }));
 
 describe("SMISummaryModal", () => {
-  const mockSmiScores = { vulnerableChild: "3" };
+  const mockSmiScores: Record<string, string | null> = { vulnerableChild: "3" };
   const mockSubmittedAt = "2025-08-21T00:00:00Z";
   const mockClientName = "John Doe";
   const mockClientDob = "1990-01-01";
@@ -89,7 +99,7 @@ describe("SMISummaryModal", () => {
       <SMISummaryModal isOpen={true} onClose={onClose} smiScores={{}} />
     );
 
-    fireEvent.click(container.querySelector(".wide-modal"));
+    fireEvent.click(container.querySelector(".wide-modal")!);
     fireEvent.click(getByTestId("finish-close"));
 
     expect(onClose).toHaveBeenCalledTimes(1);
