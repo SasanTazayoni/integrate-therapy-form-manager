@@ -17,6 +17,10 @@ const expectedPassword = import.meta.env.VITE_THERAPIST_PASSWORD;
 
 const SESSION_KEY = "integrateTherapyAuthenticated";
 
+export const MODAL_CLOSE_DURATION_MS = 500;
+export const ERROR_FADE_START_MS = 2500;
+export const ERROR_FADE_END_MS = ERROR_FADE_START_MS + 500;
+
 type Props = {
   children: React.ReactNode;
 };
@@ -74,7 +78,7 @@ export default function ProtectedAccess({ children }: Props) {
 
       fadeOutTimeoutRef.current = window.setTimeout(() => {
         dispatch({ type: "LOGIN_SUCCESS" });
-      }, 500);
+      }, MODAL_CLOSE_DURATION_MS);
     } else {
       dispatch({ type: "SET_ERROR", payload: "Invalid credentials" });
 
@@ -82,8 +86,8 @@ export default function ProtectedAccess({ children }: Props) {
         dispatch,
         "BEGIN_ERROR_FADE_OUT",
         "CLEAR_ERROR",
-        2500,
-        3000,
+        ERROR_FADE_START_MS,
+        ERROR_FADE_END_MS,
         fadeOutTimeoutRef,
         clearErrorTimeoutRef
       );
