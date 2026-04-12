@@ -9,8 +9,8 @@ describe("SMIModesScoreSummaryCards", () => {
   ];
 
   const smiTableData = {
-    "Vulnerable Child": { column: "Average - Moderate", alignment: "center" },
-    "Angry Child": { column: "High - Very High", alignment: "left" },
+    "Vulnerable Child": { column: "Average - Moderate", alignment: "center" as const },
+    "Angry Child": { column: "High - Very High", alignment: "left" as const },
     "Compliant Surrenderer": { column: null, alignment: null },
   };
 
@@ -61,13 +61,14 @@ describe("SMIModesScoreSummaryCards", () => {
     const secondCardItem = container
       .querySelectorAll(".border-2")[1]
       .querySelector("li");
-    expect(secondCardItem.textContent).toBe("Compliant Surrenderer:");
+    expect(secondCardItem).toBeTruthy();
+    expect(secondCardItem!.textContent).toBe("Compliant Surrenderer:");
   });
 
   test("renders all modes with their columns", () => {
     const smiTableData = {
-      "Vulnerable Child": { column: "Average - Moderate", alignment: "center" },
-      "Angry Child": { column: "Moderate - High", alignment: "right" },
+      "Vulnerable Child": { column: "Average - Moderate", alignment: "center" as const },
+      "Angry Child": { column: "Moderate - High", alignment: "right" as const },
     };
 
     const { container } = render(
