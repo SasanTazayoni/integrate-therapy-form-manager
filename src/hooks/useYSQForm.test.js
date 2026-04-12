@@ -65,7 +65,7 @@ describe("useYSQForm", () => {
     act(() => {
       result.current.handleChange(1, 99);
     });
-    expect(warnSpy).toHaveBeenCalledWith("Invalid YSQ answer value: 99");
+    expect(warnSpy).toHaveBeenCalledWith("Invalid answer value: 99");
     expect(result.current.answers[1]).toBeUndefined();
     warnSpy.mockRestore();
   });

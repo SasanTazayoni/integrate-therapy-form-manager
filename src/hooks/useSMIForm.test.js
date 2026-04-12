@@ -55,7 +55,7 @@ describe("useSMIForm", () => {
     });
 
     expect(result.current.answers[firstId]).toBeUndefined();
-    expect(consoleSpy).toHaveBeenCalledWith("Invalid SMI answer value: 99");
+    expect(consoleSpy).toHaveBeenCalledWith("Invalid answer value: 99");
     consoleSpy.mockRestore();
   });
 
