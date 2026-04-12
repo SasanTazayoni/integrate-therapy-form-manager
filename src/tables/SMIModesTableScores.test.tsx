@@ -13,9 +13,9 @@ describe("SMIModesScoreSummaryTable", () => {
 
   const items = ["Vulnerable Child", "Angry Child", "Enraged Child"];
   const smiTableData = {
-    "Vulnerable Child": { column: "Moderate - High", alignment: "center" },
-    "Angry Child": { column: "High - Very High", alignment: "right" },
-    "Enraged Child": { column: "Average - Moderate", alignment: "left" },
+    "Vulnerable Child": { column: "Moderate - High", alignment: "center" as const },
+    "Angry Child": { column: "High - Very High", alignment: "right" as const },
+    "Enraged Child": { column: "Average - Moderate", alignment: "left" as const },
   };
 
   test("renders table with correct headers", () => {
@@ -98,7 +98,7 @@ describe("SMIModesScoreSummaryTable", () => {
   test("handles mode with missing smiTableData entry", () => {
     const itemsWithMissing = ["Vulnerable Child", "Missing Mode"];
     const smiDataPartial = {
-      "Vulnerable Child": { column: "Moderate - High", alignment: "center" },
+      "Vulnerable Child": { column: "Moderate - High", alignment: "center" as const },
     };
 
     const { container, getByText } = render(
