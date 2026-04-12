@@ -35,6 +35,7 @@ export const deleteClientByEmail = async (email: string) => {
 
     return deletedClient;
   } catch (error) {
-    throw new Error("Failed to delete client and forms");
+    console.error("deleteClientByEmail failed:", error);
+    throw new Error("Failed to delete client and forms", { cause: error });
   }
 };
