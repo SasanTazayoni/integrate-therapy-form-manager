@@ -82,7 +82,7 @@ describe("RatingScaleTooltip", () => {
     const button = getByLabelText(`Show ${title}`);
     fireEvent.click(button);
     expect(queryByText(title)).toBeInTheDocument();
-    const outside = container.querySelector('[data-testid="outside"]');
+    const outside = container.querySelector('[data-testid="outside"]')!;
     fireEvent.mouseDown(outside);
     expect(queryByText(title)).not.toBeInTheDocument();
   });
