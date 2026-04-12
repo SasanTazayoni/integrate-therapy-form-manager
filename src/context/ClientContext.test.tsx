@@ -1,6 +1,7 @@
 import { render, act } from "@testing-library/react";
 import { describe, test, expect } from "vitest";
 import { ClientProvider, useClientContext } from "./ClientContext";
+import type { ClientFormsStatus } from "../types/formStatusTypes";
 
 describe("ClientContext", () => {
   test("throws error if used outside provider", () => {
@@ -15,7 +16,7 @@ describe("ClientContext", () => {
   });
 
   test("provides default state and setters", () => {
-    let contextValues = null;
+    let contextValues: ReturnType<typeof useClientContext> | null = null;
 
     const TestComponent = () => {
       contextValues = useClientContext();
@@ -29,14 +30,14 @@ describe("ClientContext", () => {
     );
 
     expect(contextValues).toHaveProperty("email", "");
-    expect(typeof contextValues.setEmail).toBe("function");
+    expect(typeof (contextValues as unknown as ReturnType<typeof useClientContext>).setEmail).toBe("function");
     expect(contextValues).toHaveProperty("clientFormsStatus", null);
     expect(contextValues).toHaveProperty("successMessage", "");
     expect(contextValues).toHaveProperty("error", "");
   });
 
   test("setters update context values", () => {
-    let contextValues = null;
+    let contextValues: ReturnType<typeof useClientContext> | null = null;
 
     const TestComponent = () => {
       contextValues = useClientContext();
@@ -50,16 +51,19 @@ describe("ClientContext", () => {
     );
 
     act(() => {
-      contextValues.setEmail("test@example.com");
-      contextValues.setError("Some error");
-      contextValues.setSuccessMessage("Success!");
-      contextValues.setClientFormsStatus({ YSQ: true, BECKS: false });
+      (contextValues as unknown as ReturnType<typeof useClientContext>).setEmail("test@example.com");
+      (contextValues as unknown as ReturnType<typeof useClientContext>).setError("Some error");
+      (contextValues as unknown as ReturnType<typeof useClientContext>).setSuccessMessage("Success!");
+      (contextValues as unknown as ReturnType<typeof useClientContext>).setClientFormsStatus(
+        { YSQ: true, BECKS: false } as unknown as ClientFormsStatus
+      );
     });
 
-    expect(contextValues.email).toBe("test@example.com");
-    expect(contextValues.error).toBe("Some error");
-    expect(contextValues.successMessage).toBe("Success!");
-    expect(contextValues.clientFormsStatus).toEqual({
+    const updated = contextValues as unknown as ReturnType<typeof useClientContext>;
+    expect(updated.email).toBe("test@example.com");
+    expect(updated.error).toBe("Some error");
+    expect(updated.successMessage).toBe("Success!");
+    expect(updated.clientFormsStatus).toEqual({
       YSQ: true,
       BECKS: false,
     });
