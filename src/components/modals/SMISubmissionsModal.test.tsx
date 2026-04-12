@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import SMISubmissionsModal from "./SMISubmissionsModal";
 import { useClientContext } from "../../context/ClientContext";
 import { fetchAllSmiForms } from "../../api/formsFrontend";
+import type { FetchAllSmiFormsResult } from "../../api/formsFrontend";
 
 vi.mock("../../context/ClientContext");
 vi.mock("../../api/formsFrontend");
@@ -25,7 +26,16 @@ describe("SMISubmissionsModal", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    useClientContext.mockReturnValue({ email: mockEmail });
+    vi.mocked(useClientContext).mockReturnValue({
+      email: mockEmail,
+      setEmail: vi.fn(),
+      clientFormsStatus: null,
+      setClientFormsStatus: vi.fn(),
+      successMessage: "",
+      setSuccessMessage: vi.fn(),
+      error: "",
+      setError: vi.fn(),
+    });
   });
 
   test("does not render when isOpen is false", () => {
@@ -42,10 +52,10 @@ describe("SMISubmissionsModal", () => {
   });
 
   test("renders modal with loader initially and shows empty message", async () => {
-    fetchAllSmiForms.mockResolvedValue({
+    vi.mocked(fetchAllSmiForms).mockResolvedValue({
       ok: true,
       data: { smiForms: [] },
-    });
+    } as FetchAllSmiFormsResult);
 
     const { getByTestId, queryByTestId } = render(
       <SMISubmissionsModal
@@ -67,7 +77,7 @@ describe("SMISubmissionsModal", () => {
   });
 
   test("renders a list of SMI submissions", async () => {
-    fetchAllSmiForms.mockResolvedValue({
+    vi.mocked(fetchAllSmiForms).mockResolvedValue({
       ok: true,
       data: {
         smiForms: [
@@ -78,7 +88,7 @@ describe("SMISubmissionsModal", () => {
           },
         ],
       },
-    });
+    } as FetchAllSmiFormsResult);
 
     const { getByTestId } = render(
       <SMISubmissionsModal
@@ -101,10 +111,10 @@ describe("SMISubmissionsModal", () => {
       smiScores: { vc: "1.0-Average" },
     };
 
-    fetchAllSmiForms.mockResolvedValue({
+    vi.mocked(fetchAllSmiForms).mockResolvedValue({
       ok: true,
       data: { smiForms: [smiForm] },
-    });
+    } as FetchAllSmiFormsResult);
 
     const { getByTestId } = render(
       <SMISubmissionsModal
@@ -143,7 +153,7 @@ describe("SMISubmissionsModal", () => {
   });
 
   test("normalizes undefined and null values to null", async () => {
-    fetchAllSmiForms.mockResolvedValue({
+    vi.mocked(fetchAllSmiForms).mockResolvedValue({
       ok: true,
       data: {
         smiForms: [
@@ -151,14 +161,14 @@ describe("SMISubmissionsModal", () => {
             id: "1",
             submittedAt: "2025-09-06T00:00:00Z",
             smiScores: {
-              vc: undefined,
+              vc: undefined as unknown as null,
               ac: null,
               ec: "5",
             },
           },
         ],
       },
-    });
+    } as FetchAllSmiFormsResult);
 
     const { getByTestId } = render(
       <SMISubmissionsModal
@@ -182,7 +192,16 @@ describe("SMISubmissionsModal", () => {
   });
 
   test("sets error and clears forms if no client email is available", async () => {
-    useClientContext.mockReturnValue({ email: null });
+    vi.mocked(useClientContext).mockReturnValue({
+      email: "",
+      setEmail: vi.fn(),
+      clientFormsStatus: null,
+      setClientFormsStatus: vi.fn(),
+      successMessage: "",
+      setSuccessMessage: vi.fn(),
+      error: "",
+      setError: vi.fn(),
+    });
 
     const { getByTestId, queryByTestId } = render(
       <SMISubmissionsModal
@@ -203,10 +222,10 @@ describe("SMISubmissionsModal", () => {
   });
 
   test("shows error and clears forms when fetchAllSmiForms returns ok: false", async () => {
-    fetchAllSmiForms.mockResolvedValue({
+    vi.mocked(fetchAllSmiForms).mockResolvedValue({
       ok: false,
       data: { error: "some backend failure" },
-    });
+    } as FetchAllSmiFormsResult);
 
     const { getByTestId, queryByTestId } = render(
       <SMISubmissionsModal
@@ -231,7 +250,9 @@ describe("SMISubmissionsModal", () => {
   });
 
   test("sets error and clears forms when fetchAllSmiForms throws", async () => {
-    fetchAllSmiForms.mockRejectedValueOnce(new Error("Network failure"));
+    vi.mocked(fetchAllSmiForms).mockRejectedValueOnce(
+      new Error("Network failure")
+    );
 
     const { getByTestId, queryByTestId } = render(
       <SMISubmissionsModal
@@ -255,14 +276,14 @@ describe("SMISubmissionsModal", () => {
   });
 
   test("applies disabled class when smiScores is empty", async () => {
-    fetchAllSmiForms.mockResolvedValueOnce({
+    vi.mocked(fetchAllSmiForms).mockResolvedValueOnce({
       ok: true,
       data: {
         smiForms: [
           { id: "1", submittedAt: "2025-09-06T00:00:00Z", smiScores: {} },
         ],
       },
-    });
+    } as FetchAllSmiFormsResult);
 
     const { getByTestId } = render(
       <SMISubmissionsModal
@@ -278,14 +299,14 @@ describe("SMISubmissionsModal", () => {
   });
 
   test("does not call handleSelect when disabled item is clicked", async () => {
-    fetchAllSmiForms.mockResolvedValueOnce({
+    vi.mocked(fetchAllSmiForms).mockResolvedValueOnce({
       ok: true,
       data: {
         smiForms: [
           { id: "1", submittedAt: "2025-09-06T00:00:00Z", smiScores: {} },
         ],
       },
-    });
+    } as FetchAllSmiFormsResult);
 
     const { getByTestId } = render(
       <SMISubmissionsModal
