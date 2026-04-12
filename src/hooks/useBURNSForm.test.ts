@@ -1,14 +1,14 @@
 import { renderHook, act } from "@testing-library/react";
 import { describe, test, expect, vi, beforeEach } from "vitest";
-import useBurnsForm from "./useBurnsForm";
+import useBurnsForm from "./useBURNSForm";
 import BURNS_ITEMS from "../data/BURNSItems";
 
 describe("useBurnsForm", () => {
-  let firstId;
+  let firstId: string;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    firstId = BURNS_ITEMS[0]?.id || "q1";
+    firstId = BURNS_ITEMS[0]?.id ?? "q1";
   });
 
   test("initial state is correct", () => {
@@ -58,7 +58,7 @@ describe("useBurnsForm", () => {
     const mockSubmit = vi.fn();
 
     act(() => {
-      result.current.handleSubmit(mockSubmit)({ preventDefault: () => {} });
+      result.current.handleSubmit(mockSubmit)({ preventDefault: () => {} } as React.FormEvent);
     });
 
     expect(result.current.formError).toBe("Please answer all questions");
@@ -75,7 +75,7 @@ describe("useBurnsForm", () => {
     });
 
     act(() =>
-      result.current.handleSubmit(mockSubmit)({ preventDefault: () => {} })
+      result.current.handleSubmit(mockSubmit)({ preventDefault: () => {} } as React.FormEvent)
     );
 
     expect(result.current.formError).toBeNull();
