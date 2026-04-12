@@ -63,9 +63,7 @@ export const deleteClientByEmailHandler = async (
     res.json({ message: "Client and all forms deleted", client });
   } catch (error: unknown) {
     console.error("Error deleting client:", error);
-    const errorMessage =
-      error instanceof Error ? error.message : "Failed to delete client";
-    res.status(500).json({ error: errorMessage });
+    res.status(500).json({ error: "Failed to delete client" });
   }
 };
 
@@ -82,9 +80,7 @@ export const deactivateClientHandler = async (req: Request, res: Response) => {
     res.json({ message: `Client ${email} deactivated`, client: result.data });
   } catch (error: unknown) {
     console.error("Error deactivating client:", error);
-    const errorMessage =
-      error instanceof Error ? error.message : "Failed to deactivate client";
-    res.status(500).json({ error: errorMessage });
+    res.status(500).json({ error: "Failed to deactivate client" });
   }
 };
 
@@ -101,8 +97,6 @@ export const activateClientHandler = async (req: Request, res: Response) => {
     res.json({ message: `Client ${email} activated`, client: result.data });
   } catch (error: unknown) {
     console.error("Error activating client:", error);
-    const errorMessage =
-      error instanceof Error ? error.message : "Failed to activate client";
-    res.status(500).json({ error: errorMessage });
+    res.status(500).json({ error: "Failed to activate client" });
   }
 };
