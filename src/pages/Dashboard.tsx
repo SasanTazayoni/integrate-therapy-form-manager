@@ -21,6 +21,7 @@ import {
 import validateEmail from "../utils/validators";
 import truncateEmail from "../utils/truncateEmail";
 import normalizeEmail from "../utils/normalizeEmail";
+import { FORM_TYPES } from "../constants/formTypes";
 import type { FormType } from "../constants/formTypes";
 import type { ClientFormsStatus } from "../types/formStatusTypes";
 import { useClientContext } from "../context/ClientContext";
@@ -396,7 +397,7 @@ export default function Dashboard() {
           {clientFormsStatus
             ? `Client Email — Forms completed: ${
                 clientFormsStatus.formsCompleted ?? 0
-              } / 4`
+              } / ${FORM_TYPES.length}`
             : "Please enter client email to check the progress"}
         </label>
 
