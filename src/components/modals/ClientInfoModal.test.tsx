@@ -36,8 +36,8 @@ describe("ClientInfoModal", () => {
 
     expect(getByText("Your information")).toBeInTheDocument();
 
-    const nameInput = getByLabelText("Full Name");
-    const dobInput = getByLabelText("Date of Birth");
+    const nameInput = getByLabelText("Full Name") as HTMLInputElement;
+    const dobInput = getByLabelText("Date of Birth") as HTMLInputElement;
 
     expect(nameInput.value).toBe("John Doe");
     expect(dobInput.value).toBe("2000-01-01");
