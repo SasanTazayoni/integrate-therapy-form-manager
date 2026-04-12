@@ -1,29 +1,10 @@
 import api from "./api";
 import axios from "axios";
 import { getErrorDisplay } from "../utils/getErrorDisplay";
-
-type SchemaCodes =
-  | "ed"
-  | "ab"
-  | "ma"
-  | "si"
-  | "ds"
-  | "fa"
-  | "di"
-  | "vu"
-  | "eu"
-  | "sb"
-  | "ss"
-  | "ei"
-  | "us"
-  | "et"
-  | "is"
-  | "as"
-  | "np"
-  | "pu";
+import type { YSQSchemaCode } from "../../backend/data/ysqSchemaCodes";
 
 type Scores = Partial<{
-  [K in SchemaCodes as `ysq_${K}_answers`]: number[];
+  [K in YSQSchemaCode as `ysq_${K}_answers`]: number[];
 }>;
 
 export async function sendFormToken(email: string, formType: string) {

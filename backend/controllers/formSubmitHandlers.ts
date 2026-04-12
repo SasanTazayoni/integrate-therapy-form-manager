@@ -13,29 +13,7 @@ import {
   labelToBoundaryKey,
 } from "../data/SMIBoundariesBackend";
 import { mapFormSafe, defaultUpdateFields } from "../utils/formHelpers";
-
-const YSQ_SCHEMAS = [
-  "ed",
-  "ab",
-  "ma",
-  "si",
-  "ds",
-  "fa",
-  "di",
-  "vu",
-  "eu",
-  "sb",
-  "ss",
-  "ei",
-  "us",
-  "et",
-  "is",
-  "as",
-  "np",
-  "pu",
-] as const;
-
-type YSQSchemaCode = (typeof YSQ_SCHEMAS)[number];
+import { YSQ_SCHEMAS, type YSQSchemaCode } from "../data/ysqSchemaCodes";
 
 export const submitBecksForm = async (
   req: Request<{}, unknown, { token: string; result: string }>,
