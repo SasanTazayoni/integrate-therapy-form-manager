@@ -421,6 +421,25 @@ describe("submitSMIForm", () => {
     });
   });
 
+  test("should succeed with empty results object and call update with no smi fields", async () => {
+    req.body.results = {};
+
+    mockPrisma.form.update.mockResolvedValue({ id: 1, token: "token123" });
+    vi.mocked(mapFormSafe).mockReturnValue({ id: 1, token: "token123" } as unknown as ReturnType<typeof mapFormSafe>);
+
+    await submitSMIForm(req, res);
+
+    expect(vi.mocked(classifyScore)).not.toHaveBeenCalled();
+    expect(mockPrisma.form.update).toHaveBeenCalledWith({
+      where: { token: "token123" },
+      data: expect.not.objectContaining({ smi_depression: expect.anything() }),
+    });
+    expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({
+      success: true,
+      form: { id: 1, token: "token123" },
+    });
+  });
+
   test("should skip if normalized key maps to missing smiBoundaries entry", async () => {
     req.body.results = { Stress: { average: 8 } };
 
