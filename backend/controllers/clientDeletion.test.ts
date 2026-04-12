@@ -2,8 +2,7 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import prisma from "../prisma/client";
 import { deleteClientByEmail } from "./clientDeletion";
 
-vi.mock("../prisma/client", async (importOriginal) => {
-  const actual = await importOriginal();
+vi.mock("../prisma/client", async () => {
   return {
     default: {
       client: {
