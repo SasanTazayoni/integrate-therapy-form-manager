@@ -24,7 +24,7 @@ describe("EmailInput", () => {
 
   test("renders the input with the correct value", () => {
     const { getByTestId } = render(<EmailInput {...defaultProps} />);
-    const input = getByTestId("email-input");
+    const input = getByTestId("email-input") as HTMLInputElement;
     expect(input.value).toBe("");
   });
 
