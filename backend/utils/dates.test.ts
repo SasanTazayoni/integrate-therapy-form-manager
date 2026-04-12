@@ -6,14 +6,14 @@ describe("parseDateStrict", () => {
     const date = new Date("2025-08-24T12:00:00Z");
     const result = parseDateStrict(date);
     expect(result).toBeInstanceOf(Date);
-    expect(result?.getTime()).toBe(date.getTime());
+    expect(result!.getTime()).toBe(date.getTime());
   });
 
   test("parses a valid date string correctly", () => {
     const dateStr = "2025-08-24T12:00:00Z";
     const result = parseDateStrict(dateStr);
     expect(result).toBeInstanceOf(Date);
-    expect(result?.getTime()).toBe(new Date(dateStr).getTime());
+    expect(result!.getTime()).toBe(new Date(dateStr).getTime());
   });
 
   test("returns null for invalid date string", () => {
