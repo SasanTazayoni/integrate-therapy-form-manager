@@ -67,7 +67,7 @@ describe("deactivateInvalidActiveForms", () => {
 
     const result = await formUtils.deactivateInvalidActiveForms(
       clientId,
-      formType
+      formType as never
     );
 
     expect(mockUpdateMany).toHaveBeenCalledWith({
@@ -84,5 +84,24 @@ describe("deactivateInvalidActiveForms", () => {
     });
 
     expect(result).toEqual({ count: 2 });
+  });
+
+  test("returns count 0 when no matching forms exist", async () => {
+    mockUpdateMany.mockResolvedValue({ count: 0 });
+
+    const result = await formUtils.deactivateInvalidActiveForms(
+      "client123",
+      "YSQ"
+    );
+
+    expect(result).toEqual({ count: 0 });
+  });
+
+  test("throws if prisma throws", async () => {
+    mockUpdateMany.mockRejectedValue(new Error("DB error"));
+
+    await expect(
+      formUtils.deactivateInvalidActiveForms("client123", "YSQ")
+    ).rejects.toThrow("DB error");
   });
 });
