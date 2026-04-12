@@ -3,17 +3,18 @@ import RouteError from "./RouteError";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 vi.mock("react-router-dom", async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal<typeof import("react-router-dom")>();
   return {
     ...actual,
     useRouteError: vi.fn(),
-    isRouteErrorResponse: (err) =>
-      typeof err?.status === "number" && typeof err?.statusText === "string",
+    isRouteErrorResponse: (err: unknown) =>
+      typeof (err as { status?: unknown })?.status === "number" &&
+      typeof (err as { statusText?: unknown })?.statusText === "string",
   };
 });
 
 vi.mock("../components/Modal", () => ({
-  default: ({ children, ...props }) => (
+  default: ({ children, ...props }: { children: React.ReactNode }) => (
     <div data-testid="modal" {...props}>
       {children}
     </div>
@@ -28,7 +29,7 @@ describe("RouteError", () => {
   });
 
   test("falls back to default when not a RouteErrorResponse", () => {
-    useRouteError.mockReturnValue(new Error("Boom"));
+    vi.mocked(useRouteError).mockReturnValue(new Error("Boom"));
     const { getByText } = render(<RouteError />);
     expect(getByText("Something went wrong")).toBeInTheDocument();
     expect(
@@ -37,7 +38,7 @@ describe("RouteError", () => {
   });
 
   test("uses data string", () => {
-    useRouteError.mockReturnValue({
+    vi.mocked(useRouteError).mockReturnValue({
       status: 400,
       statusText: "Bad Request",
       data: "Custom string",
@@ -48,7 +49,7 @@ describe("RouteError", () => {
   });
 
   test("uses data.message from object", () => {
-    useRouteError.mockReturnValue({
+    vi.mocked(useRouteError).mockReturnValue({
       status: 404,
       statusText: "Not Found",
       data: { message: "Not found msg" },
@@ -59,7 +60,7 @@ describe("RouteError", () => {
   });
 
   test("falls back if data is empty object", () => {
-    useRouteError.mockReturnValue({
+    vi.mocked(useRouteError).mockReturnValue({
       status: 500,
       statusText: "Internal Server Error",
       data: {},
@@ -72,7 +73,7 @@ describe("RouteError", () => {
   });
 
   test("falls back if data is null", () => {
-    useRouteError.mockReturnValue({
+    vi.mocked(useRouteError).mockReturnValue({
       status: 418,
       statusText: "I'm a teapot",
       data: null,
@@ -85,7 +86,7 @@ describe("RouteError", () => {
   });
 
   test("falls back to default if data.message is empty string", () => {
-    useRouteError.mockReturnValue({
+    vi.mocked(useRouteError).mockReturnValue({
       status: 422,
       statusText: "Unprocessable Entity",
       data: { message: "" },
@@ -98,7 +99,7 @@ describe("RouteError", () => {
   });
 
   test("falls back to default if RouteErrorResponse data is an empty string", () => {
-    useRouteError.mockReturnValue({
+    vi.mocked(useRouteError).mockReturnValue({
       status: 500,
       statusText: "Server Error",
       data: "",
