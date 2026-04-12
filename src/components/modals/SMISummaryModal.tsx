@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { formatDate } from "../../utils/formatDate";
 import Modal from "../Modal";
 import Button from "../Button";
 import { categoryKeyMap } from "../../data/SMIBoundaries";
@@ -26,12 +27,8 @@ export default function SMISummaryModal({
   const [closing, setClosing] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
 
-  const formattedDob = clientDob
-    ? new Date(clientDob).toLocaleDateString()
-    : "";
-  const formattedSubmittedAt = submittedAt
-    ? `(${new Date(submittedAt).toLocaleDateString()})`
-    : "";
+  const formattedDob = formatDate(clientDob);
+  const formattedSubmittedAt = submittedAt ? `(${formatDate(submittedAt)})` : "";
 
   useEffect(() => {
     if (!isOpen) setClosing(true);

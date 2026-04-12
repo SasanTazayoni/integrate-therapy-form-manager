@@ -1,23 +1,13 @@
 import { Loader2 } from "lucide-react";
 import type { FormStatus } from "../types/formStatusTypes";
 import type { FormType } from "../constants/formTypes";
+import { formatDate } from "../utils/formatDate";
 
 type Props = {
   status?: FormStatus;
   formType: FormType;
   formActionLoading: Record<FormType, boolean>;
   clientInactive: boolean;
-};
-
-export const formatDate = (value?: string | Date | null) => {
-  if (!value) return "";
-  const d = value instanceof Date ? value : new Date(value);
-  if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
 };
 
 export default function FormStatusMessage({

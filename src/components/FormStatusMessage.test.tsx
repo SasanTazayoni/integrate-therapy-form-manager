@@ -1,6 +1,7 @@
 import { render } from "@testing-library/react";
 import { describe, test, expect } from "vitest";
-import FormStatusMessage, { formatDate } from "./FormStatusMessage";
+import FormStatusMessage from "./FormStatusMessage";
+import { formatDate } from "../utils/formatDate";
 import type { FormType } from "../constants/formTypes";
 import type { FormStatus } from "../types/formStatusTypes";
 

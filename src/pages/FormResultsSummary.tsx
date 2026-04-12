@@ -1,4 +1,5 @@
 import SMISummaryModal from "../components/modals/SMISummaryModal";
+import { formatDate } from "../utils/formatDate";
 import ScoreCard from "../components/BecksBurnsScoreCard";
 import SMIModesTable from "../tables/SMIModesTable";
 import YSQSchemasTable from "../tables/YSQSchemasTable";
@@ -90,7 +91,7 @@ const FormResultsSummary = () => {
           <div>
             <strong>Date of Birth:</strong>{" "}
             {clientFormsStatus?.clientDob
-              ? new Date(clientFormsStatus.clientDob).toLocaleDateString()
+              ? formatDate(clientFormsStatus.clientDob)
               : ""}
           </div>
         </div>

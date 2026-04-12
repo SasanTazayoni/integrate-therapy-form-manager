@@ -1,7 +1,8 @@
-export const formatDate = (iso?: string) => {
-  if (!iso) return "";
-  const date = new Date(iso);
-  return date.toLocaleDateString(undefined, {
+export const formatDate = (value?: string | Date | null): string => {
+  if (!value) return "";
+  const d = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleDateString(undefined, {
     year: "numeric",
     month: "short",
     day: "numeric",

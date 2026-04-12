@@ -1,4 +1,5 @@
 import React from "react";
+import { formatDate } from "../utils/formatDate";
 import {
   normalizeCode,
   extractNumber,
@@ -92,7 +93,7 @@ export default function YSQSchemasTable({
         YSQ Schemas{" "}
         {ysqSubmittedAt && (
           <span className="text-gray-400">
-            ({new Date(ysqSubmittedAt).toLocaleDateString()})
+            ({formatDate(ysqSubmittedAt)})
           </span>
         )}
       </h2>

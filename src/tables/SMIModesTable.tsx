@@ -1,4 +1,5 @@
 import { FileText, Database } from "lucide-react";
+import { formatDate } from "../utils/formatDate";
 import { useState } from "react";
 import { getCellData } from "../utils/SMIHelpers";
 import SMISubmissionsModal from "../components/modals/SMISubmissionsModal";
@@ -134,7 +135,7 @@ export default function SMIModesTable({
         SMI Modes{" "}
         {submittedAt && (
           <span className="text-gray-400">
-            ({new Date(submittedAt).toLocaleDateString()})
+            ({formatDate(submittedAt)})
           </span>
         )}
       </h2>

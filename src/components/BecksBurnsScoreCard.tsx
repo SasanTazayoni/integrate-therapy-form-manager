@@ -1,3 +1,5 @@
+import { formatDate } from "../utils/formatDate";
+
 type ScoreCardProps = {
   title: string;
   value: string;
@@ -21,7 +23,7 @@ export default function ScoreCard({
         {title}{" "}
         {submittedAt && (
           <span className="text-gray-400">
-            ({new Date(submittedAt).toLocaleDateString()})
+            ({formatDate(submittedAt)})
           </span>
         )}
       </h3>
