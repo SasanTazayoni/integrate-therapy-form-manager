@@ -1,6 +1,7 @@
 import { render } from "@testing-library/react";
 import { describe, test, expect } from "vitest";
 import ScoreCard from "./BecksBurnsScoreCard";
+import { formatDate } from "../utils/formatDate";
 
 describe("ScoreCard component", () => {
   test("renders title and value", () => {
@@ -15,8 +16,7 @@ describe("ScoreCard component", () => {
       <ScoreCard title="YSQ" value="42" submittedAt={dateStr} />
     );
 
-    const formattedDate = new Date(dateStr).toLocaleDateString();
-    expect(getByText(`(${formattedDate})`)).toBeTruthy();
+    expect(getByText(`(${formatDate(dateStr)})`)).toBeTruthy();
   });
 
   test("applies highlight styles when highlight is true", () => {

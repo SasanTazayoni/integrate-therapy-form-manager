@@ -22,7 +22,7 @@ describe("formatDate", () => {
   });
 
   test("handles invalid date string gracefully", () => {
-    expect(formatDate("invalid-date")).toBe("Invalid Date");
+    expect(formatDate("invalid-date")).toBe("");
   });
 
   test("formats a date far in the past", () => {

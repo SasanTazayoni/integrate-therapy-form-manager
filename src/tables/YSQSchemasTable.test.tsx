@@ -1,4 +1,5 @@
 import { render, fireEvent } from "@testing-library/react";
+import { formatDate } from "../utils/formatDate";
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import YSQSchemasTable, {
   headerTextClass,
@@ -106,7 +107,7 @@ describe("YSQSchemasTable", () => {
 
   test("renders submitted date if provided", () => {
     const date = new Date("2025-08-24T12:00:00.000Z");
-    const formattedDate = `(${date.toLocaleDateString()})`;
+    const formattedDate = `(${formatDate(date.toISOString())})`;
 
     const { getByText } = render(
       <YSQSchemasTable
