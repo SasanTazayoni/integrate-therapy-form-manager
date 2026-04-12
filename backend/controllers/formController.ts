@@ -145,10 +145,6 @@ export const sendMultipleForms = async (
     }
 
     if (createdForms.length === 0) {
-      console.log(
-        `No forms to send for ${client.email}: all forms are either active or already submitted.`
-      );
-
       return res.status(409).json({
         message:
           "No forms to send. Active tokens or submitted forms already exist.",
