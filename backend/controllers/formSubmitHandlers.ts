@@ -15,69 +15,44 @@ import {
 import { mapFormSafe, defaultUpdateFields } from "../utils/formHelpers";
 import { YSQ_SCHEMAS, type YSQSchemaCode } from "../data/ysqSchemaCodes";
 
-export const submitBecksForm = async (
-  req: Request<{}, unknown, { token: string; result: string }>,
-  res: Response
-) => {
-  const validation = validateRequestBodyFields(req, res, ["token", "result"]);
-  if (!validation.valid) return;
+const submitScoreForm = (
+  scoreField: "bdi_score" | "bai_score",
+  categoryFn: (score: number) => string
+) =>
+  async (
+    req: Request<{}, unknown, { token: string; result: string }>,
+    res: Response
+  ) => {
+    const validation = validateRequestBodyFields(req, res, ["token", "result"]);
+    if (!validation.valid) return;
 
-  const { token, result } = req.body;
+    const { token, result } = req.body;
 
-  try {
-    const form = await validateTokenOrFail(token, res);
-    if (!form) return;
+    try {
+      const form = await validateTokenOrFail(token, res);
+      if (!form) return;
 
-    const combinedScore = parseAndCombineScore(result, getBecksScoreCategory);
+      const combinedScore = parseAndCombineScore(result, categoryFn);
 
-    const updatedForm = await prisma.form.update({
-      where: { token },
-      data: {
-        ...defaultUpdateFields(),
-        bdi_score: combinedScore,
-      },
-    });
+      const updatedForm = await prisma.form.update({
+        where: { token },
+        data: {
+          ...defaultUpdateFields(),
+          [scoreField]: combinedScore,
+        },
+      });
 
-    res.json({ success: true, form: mapFormSafe(updatedForm) });
-  } catch (error) {
-    console.error("Error submitting Becks form:", error);
-    res
-      .status(500)
-      .json({ error: "Failed to submit form", code: "SUBMIT_ERROR" });
-  }
-};
+      res.json({ success: true, form: mapFormSafe(updatedForm) });
+    } catch (error) {
+      console.error(`Error submitting ${scoreField} form:`, error);
+      res
+        .status(500)
+        .json({ error: "Failed to submit form", code: "SUBMIT_ERROR" });
+    }
+  };
 
-export const submitBurnsForm = async (
-  req: Request<{}, unknown, { token: string; result: string }>,
-  res: Response
-) => {
-  const validation = validateRequestBodyFields(req, res, ["token", "result"]);
-  if (!validation.valid) return;
-
-  const { token, result } = req.body;
-
-  try {
-    const form = await validateTokenOrFail(token, res);
-    if (!form) return;
-
-    const combinedScore = parseAndCombineScore(result, getBurnsScoreCategory);
-
-    const updatedForm = await prisma.form.update({
-      where: { token },
-      data: {
-        ...defaultUpdateFields(),
-        bai_score: combinedScore,
-      },
-    });
-
-    res.json({ success: true, form: mapFormSafe(updatedForm) });
-  } catch (error) {
-    console.error("Error submitting Burns form:", error);
-    res
-      .status(500)
-      .json({ error: "Failed to submit form", code: "SUBMIT_ERROR" });
-  }
-};
+export const submitBecksForm = submitScoreForm("bdi_score", getBecksScoreCategory);
+export const submitBurnsForm = submitScoreForm("bai_score", getBurnsScoreCategory);
 
 export const submitYSQForm = async (
   req: Request<

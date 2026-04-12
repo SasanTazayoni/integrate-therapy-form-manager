@@ -10,6 +10,7 @@ import { validateTokenOrFail } from "./formControllerHelpers/formTokenHelpers";
 import { validateRequestBodyFields } from "../utils/validationUtils";
 import { parseAndCombineScore } from "../utils/scoreUtils";
 import { mapFormSafe } from "../utils/formHelpers";
+import getBecksScoreCategory from "../utils/becksScoreUtils";
 import getBurnsScoreCategory from "../utils/burnsScoreUtils";
 import { getScoreCategory } from "../utils/YSQScoreUtils";
 import { classifyScore, normalizeLabel } from "../utils/SMIScoreUtilsBackend";
@@ -43,42 +44,35 @@ const mockPrisma = prisma as unknown as {
   form: { update: ReturnType<typeof vi.fn> };
 };
 
-describe("submitBecksForm", () => {
+describe("submitScoreForm (shared factory behaviour)", () => {
   let req: Request;
   let res: Response;
 
   beforeEach(() => {
     vi.clearAllMocks();
-
     mockPrisma.form = { update: vi.fn() };
-
     req = { body: { token: "token123", result: "someResult" } } as unknown as Request;
     res = { json: vi.fn(), status: vi.fn().mockReturnThis() } as unknown as Response;
-
     vi.mocked(validateRequestBodyFields).mockReturnValue({ valid: true });
+    vi.mocked(validateTokenOrFail).mockResolvedValue({ id: 1, token: "token123" } as never);
   });
 
-  test("should successfully submit the Becks form", async () => {
-    const mockForm = { id: 1, token: "token123", bdi_score: 10 };
-    vi.mocked(validateTokenOrFail).mockResolvedValue(mockForm as never);
-    vi.mocked(parseAndCombineScore).mockReturnValue(15 as unknown as ReturnType<typeof parseAndCombineScore>);
-    mockPrisma.form.update.mockResolvedValue({ ...mockForm, bdi_score: 15 });
-    vi.mocked(mapFormSafe).mockReturnValue({ id: 1, bdi_score: 15 } as unknown as ReturnType<typeof mapFormSafe>);
-
+  test("returns early if field validation fails", async () => {
+    vi.mocked(validateRequestBodyFields).mockReturnValue({ valid: false });
     await submitBecksForm(req, res);
-
-    expect(mockPrisma.form.update).toHaveBeenCalled();
-    expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({
-      success: true,
-      form: { id: 1, bdi_score: 15 },
-    });
+    expect(mockPrisma.form.update).not.toHaveBeenCalled();
   });
 
-  test("should handle errors thrown during submission", async () => {
+  test("returns early if token validation returns null", async () => {
+    vi.mocked(validateTokenOrFail).mockResolvedValue(null as never);
+    await submitBecksForm(req, res);
+    expect(mockPrisma.form.update).not.toHaveBeenCalled();
+    expect((res.json as ReturnType<typeof vi.fn>)).not.toHaveBeenCalled();
+  });
+
+  test("returns 500 on unexpected error", async () => {
     vi.mocked(validateTokenOrFail).mockRejectedValue(new Error("DB Error"));
-
     await submitBecksForm(req, res);
-
     expect((res.status as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith(500);
     expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({
       error: "Failed to submit form",
@@ -86,97 +80,36 @@ describe("submitBecksForm", () => {
     });
   });
 
-  test("should return early if validation fails", async () => {
-    vi.mocked(validateRequestBodyFields).mockReturnValue({ valid: false });
-
-    await submitBecksForm(req, res);
-
-    expect(mockPrisma.form.update).not.toHaveBeenCalled();
-  });
-
-  test("should return early if token validation returns null", async () => {
-    req.body = { token: "token123", result: "someResult" };
-
-    vi.mocked(validateTokenOrFail).mockResolvedValue(null as never);
-    await submitBecksForm(req, res);
-    expect(mockPrisma.form.update).not.toHaveBeenCalled();
-    expect((res.json as ReturnType<typeof vi.fn>)).not.toHaveBeenCalled();
-  });
-});
-
-describe("submitBurnsForm", () => {
-  let req: Request;
-  let res: Response;
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-
-    mockPrisma.form = { update: vi.fn() };
-
-    req = { body: { token: "token123", result: "someResult" } } as unknown as Request;
-    res = { json: vi.fn(), status: vi.fn().mockReturnThis() } as unknown as Response;
-
-    vi.mocked(validateRequestBodyFields).mockReturnValue({ valid: true });
-  });
-
-  test("should successfully submit the Burns form", async () => {
-    const mockForm = { id: 1, token: "token123", bai_score: 10 };
-    vi.mocked(validateTokenOrFail).mockResolvedValue(mockForm as never);
-
-    const combinedScore = "18-Mild anxiety";
-
+  test("submitBecksForm writes bdi_score and calls getBecksScoreCategory", async () => {
+    const combinedScore = "10-Minimal depression";
     vi.mocked(parseAndCombineScore).mockReturnValue(combinedScore);
-    mockPrisma.form.update.mockResolvedValue({
-      ...mockForm,
-      bai_score: combinedScore,
+    mockPrisma.form.update.mockResolvedValue({ id: 1 });
+    vi.mocked(mapFormSafe).mockReturnValue({ id: 1 } as never);
+
+    await submitBecksForm(req, res);
+
+    expect(vi.mocked(parseAndCombineScore)).toHaveBeenCalledWith("someResult", getBecksScoreCategory);
+    expect(mockPrisma.form.update).toHaveBeenCalledWith({
+      where: { token: "token123" },
+      data: expect.objectContaining({ bdi_score: combinedScore }),
     });
-    vi.mocked(mapFormSafe).mockReturnValue({ id: 1, bai_score: combinedScore } as unknown as ReturnType<typeof mapFormSafe>);
+    expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({ success: true, form: { id: 1 } });
+  });
+
+  test("submitBurnsForm writes bai_score and calls getBurnsScoreCategory", async () => {
+    const combinedScore = "18-Mild anxiety";
+    vi.mocked(parseAndCombineScore).mockReturnValue(combinedScore);
+    mockPrisma.form.update.mockResolvedValue({ id: 1 });
+    vi.mocked(mapFormSafe).mockReturnValue({ id: 1 } as never);
 
     await submitBurnsForm(req, res);
 
-    expect(vi.mocked(validateTokenOrFail)).toHaveBeenCalledWith("token123", res);
-    expect(vi.mocked(parseAndCombineScore)).toHaveBeenCalledWith(
-      "someResult",
-      getBurnsScoreCategory
-    );
+    expect(vi.mocked(parseAndCombineScore)).toHaveBeenCalledWith("someResult", getBurnsScoreCategory);
     expect(mockPrisma.form.update).toHaveBeenCalledWith({
       where: { token: "token123" },
       data: expect.objectContaining({ bai_score: combinedScore }),
     });
-    expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({
-      success: true,
-      form: { id: 1, bai_score: combinedScore },
-    });
-  });
-
-  test("should return early if validation fails", async () => {
-    vi.mocked(validateRequestBodyFields).mockReturnValue({ valid: false });
-
-    await submitBurnsForm(req, res);
-
-    expect(mockPrisma.form.update).not.toHaveBeenCalled();
-    expect((res.json as ReturnType<typeof vi.fn>)).not.toHaveBeenCalled();
-  });
-
-  test("should handle errors thrown during submission", async () => {
-    vi.mocked(validateTokenOrFail).mockRejectedValue(new Error("DB Error"));
-
-    await submitBurnsForm(req, res);
-
-    expect((res.status as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith(500);
-    expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({
-      error: "Failed to submit form",
-      code: "SUBMIT_ERROR",
-    });
-  });
-
-  test("should return early if token validation returns null", async () => {
-    vi.mocked(validateTokenOrFail).mockResolvedValue(null as never);
-
-    await submitBurnsForm(req, res);
-
-    expect(mockPrisma.form.update).not.toHaveBeenCalled();
-    expect((res.json as ReturnType<typeof vi.fn>)).not.toHaveBeenCalled();
+    expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({ success: true, form: { id: 1 } });
   });
 });
 
