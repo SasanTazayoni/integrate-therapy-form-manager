@@ -4,11 +4,11 @@ import useSMIForm from "./useSMIForm";
 import SMIItems from "../data/SMIItems";
 
 describe("useSMIForm", () => {
-  let firstId;
+  let firstId: number;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    firstId = SMIItems[0]?.id || 1;
+    firstId = SMIItems[0]?.id ?? 1;
   });
 
   test("initial state is correct", () => {
@@ -64,7 +64,7 @@ describe("useSMIForm", () => {
     const mockSubmit = vi.fn();
 
     act(() => {
-      result.current.handleSubmit(mockSubmit)({ preventDefault: () => {} });
+      result.current.handleSubmit(mockSubmit)({ preventDefault: () => {} } as React.FormEvent);
     });
 
     expect(result.current.formError).toBe("Please answer all questions");
@@ -83,7 +83,7 @@ describe("useSMIForm", () => {
     });
 
     act(() => {
-      result.current.handleSubmit(mockSubmit)({ preventDefault: () => {} });
+      result.current.handleSubmit(mockSubmit)({ preventDefault: () => {} } as React.FormEvent);
     });
 
     expect(result.current.formError).toBeNull();
