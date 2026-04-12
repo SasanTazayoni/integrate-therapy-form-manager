@@ -19,16 +19,16 @@ afterEach(() => {
 describe("InvalidTokenModal", () => {
   test("renders heading and description, and focuses heading", () => {
     const { container } = render(<InvalidTokenModal />, {
-      container: document.getElementById("modal-root"),
+      container: document.getElementById("modal-root")!,
     });
 
     const heading = container.querySelector("#invalid-token-title");
     expect(heading).toBeTruthy();
-    expect(heading.textContent).toBe("Invalid Form");
+    expect(heading!.textContent).toBe("Invalid Form");
 
     const description = container.querySelector("#invalid-token-desc");
     expect(description).toBeTruthy();
-    expect(description.textContent).toBe(
+    expect(description!.textContent).toBe(
       "This form is not available. Please contact your therapist to receive a new form."
     );
 
