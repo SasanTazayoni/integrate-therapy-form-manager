@@ -2,6 +2,7 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import { getValidFormByToken, validateTokenOrFail } from "./formTokenHelpers";
 import prisma from "../../prisma/client";
 import { isFormTokenUsable } from "../../utils/formUtils";
+import type { Response } from "express";
 
 vi.mock("../../prisma/client", () => {
   return {
@@ -17,6 +18,15 @@ vi.mock("../../utils/formUtils", () => ({
   isFormTokenUsable: vi.fn(),
 }));
 
+const mockPrisma = prisma as unknown as {
+  form: { findUnique: ReturnType<typeof vi.fn> };
+};
+
+type MockResponse = {
+  status: ReturnType<typeof vi.fn>;
+  json: ReturnType<typeof vi.fn>;
+};
+
 describe("getValidFormByToken", () => {
   const mockForm = { id: 1, token: "abc123", client: {} };
 
@@ -26,21 +36,21 @@ describe("getValidFormByToken", () => {
   });
 
   test("returns null if prisma returns null", async () => {
-    prisma.form.findUnique.mockResolvedValue(null);
+    mockPrisma.form.findUnique.mockResolvedValue(null);
     const result = await getValidFormByToken("abc123");
     expect(result).toBeNull();
   });
 
   test("returns null if form is not usable", async () => {
-    prisma.form.findUnique.mockResolvedValue(mockForm);
-    isFormTokenUsable.mockReturnValue(false);
+    mockPrisma.form.findUnique.mockResolvedValue(mockForm);
+    vi.mocked(isFormTokenUsable).mockReturnValue(false);
     const result = await getValidFormByToken("abc123");
     expect(result).toBeNull();
   });
 
   test("returns the form if token is valid and usable", async () => {
-    prisma.form.findUnique.mockResolvedValue(mockForm);
-    isFormTokenUsable.mockReturnValue(true);
+    mockPrisma.form.findUnique.mockResolvedValue(mockForm);
+    vi.mocked(isFormTokenUsable).mockReturnValue(true);
     const result = await getValidFormByToken("abc123");
     expect(result).toBe(mockForm);
   });
@@ -48,7 +58,7 @@ describe("getValidFormByToken", () => {
 
 describe("validateTokenOrFail", () => {
   const mockForm = { id: 1, token: "abc123", client: {} };
-  const mockRes = {
+  const mockRes: MockResponse = {
     status: vi.fn().mockReturnThis(),
     json: vi.fn(),
   };
@@ -58,8 +68,8 @@ describe("validateTokenOrFail", () => {
   });
 
   test("returns null and sends 403 if form is invalid", async () => {
-    prisma.form.findUnique.mockResolvedValue(null);
-    const result = await validateTokenOrFail("abc123", mockRes);
+    mockPrisma.form.findUnique.mockResolvedValue(null);
+    const result = await validateTokenOrFail("abc123", mockRes as unknown as Response);
     expect(result).toBeNull();
     expect(mockRes.status).toHaveBeenCalledWith(403);
     expect(mockRes.json).toHaveBeenCalledWith({
@@ -69,9 +79,9 @@ describe("validateTokenOrFail", () => {
   });
 
   test("returns the form if token is valid", async () => {
-    prisma.form.findUnique.mockResolvedValue(mockForm);
-    isFormTokenUsable.mockReturnValue(true);
-    const result = await validateTokenOrFail("abc123", mockRes);
+    mockPrisma.form.findUnique.mockResolvedValue(mockForm);
+    vi.mocked(isFormTokenUsable).mockReturnValue(true);
+    const result = await validateTokenOrFail("abc123", mockRes as unknown as Response);
     expect(result).toBe(mockForm);
     expect(mockRes.status).not.toHaveBeenCalled();
   });
