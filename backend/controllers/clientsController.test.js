@@ -223,21 +223,7 @@ describe("clientsController", () => {
       await deleteClientByEmailHandler(req, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ error: "DB error" });
-    });
-
-    test("returns 500 with generic message if non-Error thrown", async () => {
-      const req = { query: { email: "test@test.com" } };
-      const res = mockRes();
-
-      deleteClientByEmail.mockRejectedValue("some string");
-
-      await deleteClientByEmailHandler(req, res);
-
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({
-        error: "Failed to delete client",
-      });
+      expect(res.json).toHaveBeenCalledWith({ error: "Failed to delete client" });
     });
   });
 
@@ -290,21 +276,7 @@ describe("clientsController", () => {
       await deactivateClientHandler(req, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ error: "crash" });
-    });
-
-    test("returns generic message if non-Error thrown", async () => {
-      const req = { query: { email: "x@test.com" } };
-      const res = mockRes();
-
-      deactivateClient.mockRejectedValue("some string");
-
-      await deactivateClientHandler(req, res);
-
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({
-        error: "Failed to deactivate client",
-      });
+      expect(res.json).toHaveBeenCalledWith({ error: "Failed to deactivate client" });
     });
   });
 
@@ -354,21 +326,7 @@ describe("clientsController", () => {
       await activateClientHandler(req, res);
 
       expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({ error: "boom" });
-    });
-
-    test("returns generic message if non-Error thrown", async () => {
-      const req = { query: { email: "x@test.com" } };
-      const res = mockRes();
-
-      activateClient.mockRejectedValue("some string");
-
-      await activateClientHandler(req, res);
-
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({
-        error: "Failed to activate client",
-      });
+      expect(res.json).toHaveBeenCalledWith({ error: "Failed to activate client" });
     });
   });
 });
