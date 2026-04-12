@@ -1,4 +1,4 @@
-import { describe, test, expect, vi } from "vitest";
+import { describe, test, expect } from "vitest";
 import { generateToken, computeExpiry, TOKEN_TTL_DAYS } from "./tokens";
 
 describe("tokenUtils", () => {
