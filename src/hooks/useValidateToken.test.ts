@@ -19,7 +19,7 @@ describe("useValidateToken", () => {
   });
 
   test("sets valid when API resolves with ok=true", async () => {
-    validateFormToken.mockResolvedValueOnce({ ok: true });
+    vi.mocked(validateFormToken).mockResolvedValueOnce({ ok: true, data: {} });
 
     const { result } = renderHook(() => useValidateToken("valid-token"));
 
@@ -30,7 +30,7 @@ describe("useValidateToken", () => {
   });
 
   test("sets invalid + modal when API resolves with ok=false", async () => {
-    validateFormToken.mockResolvedValueOnce({ ok: false });
+    vi.mocked(validateFormToken).mockResolvedValueOnce({ ok: false, data: {} });
 
     const { result } = renderHook(() => useValidateToken("bad-token"));
 
@@ -41,8 +41,8 @@ describe("useValidateToken", () => {
   });
 
   test("does nothing if component unmounts before API resolves", async () => {
-    let resolveFn;
-    validateFormToken.mockImplementationOnce(
+    let resolveFn!: (value: { ok: boolean; data: object }) => void;
+    vi.mocked(validateFormToken).mockImplementationOnce(
       () => new Promise((resolve) => (resolveFn = resolve))
     );
 
@@ -52,7 +52,7 @@ describe("useValidateToken", () => {
 
     unmount();
     act(() => {
-      resolveFn({ ok: false });
+      resolveFn({ ok: false, data: {} });
     });
 
     expect(result.current.isValid).toBe(null);
