@@ -57,19 +57,21 @@ describe("cron callback execution", () => {
       .spyOn(console, "error")
       .mockImplementation(() => {});
 
-    await import("./cronSetup");
+    try {
+      await import("./cronSetup");
 
-    await scheduledFn();
+      await scheduledFn();
 
-    expect(
-      cleanupModule.deleteInactiveClientsOlderThanOneYear
-    ).toHaveBeenCalled();
-    expect(consoleErrorMock).toHaveBeenCalledWith(
-      "[cron] Cleanup failed:",
-      expect.any(Error)
-    );
-
-    consoleErrorMock.mockRestore();
+      expect(
+        cleanupModule.deleteInactiveClientsOlderThanOneYear
+      ).toHaveBeenCalled();
+      expect(consoleErrorMock).toHaveBeenCalledWith(
+        "[cron] Cleanup failed:",
+        expect.any(Error)
+      );
+    } finally {
+      consoleErrorMock.mockRestore();
+    }
   });
 });
 
