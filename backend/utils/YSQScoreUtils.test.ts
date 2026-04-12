@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { getScoreCategory } from "./YSQScoreUtils";
+import type { SchemaType } from "../data/YSQBoundariesBackend";
 
-const boundaries = {
+const boundaries: Record<SchemaType, [number, number, number]> = {
   ED: [8, 18, 30],
   AB: [12, 25, 39],
   MA: [12, 25, 39],
@@ -23,7 +24,7 @@ const boundaries = {
 };
 
 describe("getScoreCategory", () => {
-  Object.entries(boundaries).forEach(([schema, [lowMax, medMax, highMax]]) => {
+  (Object.entries(boundaries) as [SchemaType, [number, number, number]][]).forEach(([schema, [lowMax, medMax, highMax]]) => {
     it(`${schema} returns correct categories`, () => {
       expect(getScoreCategory(schema, lowMax - 1)).toBe("Low");
       expect(getScoreCategory(schema, lowMax)).toBe("Low");
