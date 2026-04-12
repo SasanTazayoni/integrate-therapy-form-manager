@@ -72,8 +72,6 @@ export default function Dashboard() {
     }
   }, []);
 
-  useEffect(() => setContextEmail(email), [email, setContextEmail]);
-
   useEffect(
     () => setContextClientFormsStatus(clientFormsStatus),
     [clientFormsStatus, setContextClientFormsStatus]
