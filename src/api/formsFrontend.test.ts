@@ -98,13 +98,13 @@ describe("validateFormToken", () => {
     );
 
     const result = await validateFormToken(token);
-    expect(result).toEqual({ ok: false, error: "Mocked error display" });
+    expect(result).toEqual({ ok: false, data: { error: "Mocked error display" } });
   });
 
   test("returns ok false with generic error for non-axios error", async () => {
     mockedApi.get.mockRejectedValueOnce(new Error("Unexpected error"));
     const result = await validateFormToken(token);
-    expect(result).toEqual({ ok: false, error: "Unexpected error occurred." });
+    expect(result).toEqual({ ok: false, data: { error: "Unexpected error occurred." } });
   });
 });
 

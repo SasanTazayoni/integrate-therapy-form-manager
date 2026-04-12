@@ -74,10 +74,10 @@ export async function validateFormToken(token: string) {
     if (axios.isAxiosError(err)) {
       return {
         ok: false,
-        error: getErrorDisplay(err, "Unknown error validating token"),
+        data: { error: getErrorDisplay(err, "Unknown error validating token") },
       };
     }
-    return { ok: false, error: "Unexpected error occurred." };
+    return { ok: false, data: { error: "Unexpected error occurred." } };
   }
 }
 
