@@ -1,6 +1,6 @@
 import { describe, test, vi, expect } from "vitest";
 import { render, fireEvent } from "@testing-library/react";
-import RatingScaleTooltip from "./RatingScaleToolTip";
+import RatingScaleTooltip from "./RatingScaleTooltip";
 
 vi.mock("lucide-react", () => ({
   Info: () => <svg data-testid="icon-info" />,

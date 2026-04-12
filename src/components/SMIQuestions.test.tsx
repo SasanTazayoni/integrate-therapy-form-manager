@@ -3,7 +3,12 @@ import { render, fireEvent } from "@testing-library/react";
 import SMIQuestion from "./SMIQuestions";
 
 describe("SMIQuestions", () => {
-  const item = { id: 1, prompt: "Sample question?" };
+  const item = {
+    id: 1,
+    prompt: "Sample question?",
+    options: [] as { value: 1 | 2 | 3 | 4 | 5 | 6; text: string }[],
+    category: "test",
+  };
 
   test("renders question number and prompt", () => {
     const { getByText, getByTestId } = render(
