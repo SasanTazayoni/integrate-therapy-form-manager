@@ -4,7 +4,6 @@ import ProtectedAccess, { MODAL_CLOSE_DURATION_MS } from "./ProtectedAccess";
 
 vi.mock("../api/authFrontend", () => ({
   login: vi.fn().mockResolvedValue({ ok: false, error: "Invalid credentials" }),
-  TOKEN_KEY: "integrateTherapyToken",
 }));
 
 vi.mock("./modals/AdminLoginModal", () => ({

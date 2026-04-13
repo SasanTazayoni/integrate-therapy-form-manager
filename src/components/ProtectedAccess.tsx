@@ -2,7 +2,7 @@ import React, { useReducer, useRef, useEffect } from "react";
 import AdminLoginModal from "./modals/AdminLoginModal";
 import { authReducer, AuthState } from "../utils/authReducer";
 import setErrorTimers from "../utils/startErrorFadeTimers";
-import { login, TOKEN_KEY } from "../api/authFrontend";
+import { login } from "../api/authFrontend";
 
 const initialState: AuthState = {
   username: "",
@@ -47,9 +47,6 @@ export default function ProtectedAccess({ children }: Props) {
   useEffect(() => {
     if (state.authenticated) {
       sessionStorage.setItem(SESSION_KEY, "true");
-    } else {
-      sessionStorage.removeItem(SESSION_KEY);
-      sessionStorage.removeItem(TOKEN_KEY);
     }
   }, [state.authenticated]);
 
