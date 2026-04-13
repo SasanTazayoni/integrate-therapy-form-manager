@@ -931,8 +931,8 @@ describe("formController", () => {
     mockPrisma.client.findUnique.mockResolvedValue({
       id: "1",
       name: "John Doe",
+      forms: [],
     } as unknown as Client);
-    mockPrisma.form.findMany.mockResolvedValue([]);
 
     const req = {
       query: { email: "test@test.com" },
@@ -951,27 +951,27 @@ describe("formController", () => {
     mockPrisma.client.findUnique.mockResolvedValue({
       id: "1",
       name: "John Doe",
+      forms: [
+        {
+          id: "form1",
+          submitted_at: new Date("2025-01-01T00:00:00Z"),
+          smi_dp_score: 1,
+          smi_dss_score: 2,
+          smi_ba_score: 3,
+          smi_sa_score: 4,
+          smi_cs_score: 5,
+          smi_ic_score: 6,
+          smi_uc_score: 7,
+          smi_cc_score: 8,
+          smi_vc_score: 9,
+          smi_dc_score: 10,
+          smi_pp_score: 11,
+          smi_ac_score: 12,
+          smi_ec_score: 13,
+          smi_ha_score: 14,
+        },
+      ],
     } as unknown as Client);
-    mockPrisma.form.findMany.mockResolvedValue([
-      {
-        id: "form1",
-        submitted_at: new Date("2025-01-01T00:00:00Z"),
-        smi_dp_score: 1,
-        smi_dss_score: 2,
-        smi_ba_score: 3,
-        smi_sa_score: 4,
-        smi_cs_score: 5,
-        smi_ic_score: 6,
-        smi_uc_score: 7,
-        smi_cc_score: 8,
-        smi_vc_score: 9,
-        smi_dc_score: 10,
-        smi_pp_score: 11,
-        smi_ac_score: 12,
-        smi_ec_score: 13,
-        smi_ha_score: 14,
-      },
-    ] as unknown as Form[]);
 
     const req = {
       query: { email: "test@test.com" },
@@ -1028,8 +1028,8 @@ describe("formController", () => {
     mockPrisma.client.findUnique.mockResolvedValue({
       id: "2",
       name: undefined,
+      forms: [],
     } as unknown as Client);
-    mockPrisma.form.findMany.mockResolvedValue([]);
 
     const req = {
       query: { email: "test2@test.com" },

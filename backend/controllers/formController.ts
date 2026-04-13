@@ -213,8 +213,8 @@ export const validateToken = async (
       valid: true,
       questionnaire: form.form_type,
       client: {
-        name: form.client?.name ?? null,
-        dob: form.client?.dob ?? null,
+        name: form.client.name ?? null,
+        dob: form.client.dob ?? null,
       },
     });
   } catch (error) {
@@ -323,22 +323,19 @@ export const getAllSubmittedSMIForms = async (req: Request, res: Response) => {
   try {
     const client = await prisma.client.findUnique({
       where: { email },
+      include: {
+        forms: {
+          where: { form_type: "SMI", submitted_at: { not: null } },
+          orderBy: { submitted_at: "desc" },
+        },
+      },
     });
 
     if (!client) {
       return res.status(404).json({ error: "Client not found" });
     }
 
-    const smiForms = await prisma.form.findMany({
-      where: {
-        clientId: client.id,
-        form_type: "SMI",
-        submitted_at: { not: null },
-      },
-      orderBy: { submitted_at: "desc" },
-    });
-
-    const results = smiForms.map((form) => ({
+    const results = client.forms.map((form) => ({
       id: form.id,
       submittedAt: form.submitted_at,
       smiScores: {
