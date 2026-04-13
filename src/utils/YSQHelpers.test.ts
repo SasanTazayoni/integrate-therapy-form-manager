@@ -83,11 +83,11 @@ describe("YSQHelpers", () => {
     const setShowInvalidTokenModal = vi.fn();
     const navigate = vi.fn();
 
-    submitYSQForm.mockResolvedValue({ ok: true });
+    vi.mocked(submitYSQForm).mockResolvedValue({ ok: true } as never);
 
     const schemas = [
       { key: "ed", label: "Emotional Deprivation", data: [{ id: "q1" }] },
-    ];
+    ] as never;
     const answers = { q1: 5 };
 
     await submitYSQWithToken({
@@ -99,7 +99,7 @@ describe("YSQHelpers", () => {
       navigate,
     });
 
-    expect(submitYSQForm).toHaveBeenCalledWith({
+    expect(vi.mocked(submitYSQForm)).toHaveBeenCalledWith({
       token: "token123",
       scores: { ysq_ed_answers: [5] },
     });
@@ -113,11 +113,11 @@ describe("YSQHelpers", () => {
     const setShowInvalidTokenModal = vi.fn();
     const navigate = vi.fn();
 
-    submitYSQForm.mockResolvedValue({
+    vi.mocked(submitYSQForm).mockResolvedValue({
       ok: false,
       code: "INVALID_TOKEN",
       error: "Invalid token",
-    });
+    } as never);
 
     await submitYSQWithToken({
       token: "token123",
@@ -138,11 +138,11 @@ describe("YSQHelpers", () => {
     const setShowInvalidTokenModal = vi.fn();
     const navigate = vi.fn();
 
-    submitYSQForm.mockResolvedValue({
+    vi.mocked(submitYSQForm).mockResolvedValue({
       ok: false,
       code: "OTHER_ERROR",
       error: "Some error",
-    });
+    } as never);
 
     await submitYSQWithToken({
       token: "token123",
@@ -163,11 +163,11 @@ describe("YSQHelpers", () => {
     const setShowInvalidTokenModal = vi.fn();
     const navigate = vi.fn();
 
-    submitYSQForm.mockResolvedValue({
+    vi.mocked(submitYSQForm).mockResolvedValue({
       ok: false,
       code: "OTHER_ERROR",
       error: undefined,
-    });
+    } as never);
 
     await submitYSQWithToken({
       token: "token123",
@@ -188,7 +188,7 @@ describe("YSQHelpers", () => {
     const setShowInvalidTokenModal = vi.fn();
     const navigate = vi.fn();
 
-    submitYSQForm.mockResolvedValue({ ok: true });
+    vi.mocked(submitYSQForm).mockResolvedValue({ ok: true } as never);
 
     const schemas = [
       {
@@ -196,7 +196,7 @@ describe("YSQHelpers", () => {
         label: "Emotional Deprivation",
         data: [{ id: "q1" }, { id: "q2" }],
       },
-    ];
+    ] as never;
     const answers = { q1: 5 };
 
     await submitYSQWithToken({
@@ -208,7 +208,7 @@ describe("YSQHelpers", () => {
       navigate,
     });
 
-    expect(submitYSQForm).toHaveBeenCalledWith({
+    expect(vi.mocked(submitYSQForm)).toHaveBeenCalledWith({
       token: "token123",
       scores: { ysq_ed_answers: [5, 0] },
     });
