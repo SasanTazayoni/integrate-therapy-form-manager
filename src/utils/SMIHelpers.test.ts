@@ -1,5 +1,5 @@
-import { describe, test, expect, vi } from "vitest";
-import { getCellData, computeSMIScores, shouldHighlight } from "./SMIHelpers";
+import { describe, test, expect } from "vitest";
+import { getCellData, computeSMIScores } from "./SMIHelpers";
 import { categoryKeyMap, smiBoundaries } from "../data/SMIBoundaries";
 
 describe("SMIHelpers", () => {
@@ -23,7 +23,7 @@ describe("SMIHelpers", () => {
     const items = [
       { id: "q1", category: "Vulnerable Child" },
       { id: "q2", category: "Vulnerable Child" },
-    ];
+    ] as never;
     const answers = { q1: 3, q2: 4 };
 
     const result = computeSMIScores(
@@ -55,7 +55,7 @@ describe("SMIHelpers", () => {
 
   test("returns 'Unknown' if categoryKeyMap or smiBoundaries missing for a category", () => {
     const answers = { q1: 5 };
-    const items = [{ id: "q1", category: "NonExistentCategory" }];
+    const items = [{ id: "q1", category: "NonExistentCategory" }] as never;
     const fakeCategoryKeyMap = {};
     const fakeSmiBoundaries = {};
 
@@ -70,7 +70,7 @@ describe("SMIHelpers", () => {
   });
 
   test("defaults undefined answer to 0", () => {
-    const items = [{ id: "q1", category: "Test Category" }];
+    const items = [{ id: "q1", category: "Test Category" }] as never;
     const answers = {};
 
     const result = computeSMIScores(
@@ -83,8 +83,8 @@ describe("SMIHelpers", () => {
   });
 
   test("parses numeric string answer correctly", () => {
-    const items = [{ id: "q1", category: "Test Category" }];
-    const answers = { q1: "3" };
+    const items = [{ id: "q1", category: "Test Category" }] as never;
+    const answers = { q1: "3" } as never;
 
     const result = computeSMIScores(
       answers,
@@ -96,8 +96,8 @@ describe("SMIHelpers", () => {
   });
 
   test("treats null answer as 0", () => {
-    const items = [{ id: "q1", category: "Test Category" }];
-    const answers = { q1: null };
+    const items = [{ id: "q1", category: "Test Category" }] as never;
+    const answers = { q1: null } as never;
 
     const result = computeSMIScores(
       answers,
