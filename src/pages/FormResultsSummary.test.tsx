@@ -3,6 +3,7 @@ import { describe, test, expect, vi, beforeEach } from "vitest";
 import FormResultsSummary from "./FormResultsSummary";
 import { useClientContext } from "../context/ClientContext";
 import { useNavigate } from "react-router-dom";
+import type { ClientFormsStatus } from "../types/formStatusTypes";
 
 vi.mock("../context/ClientContext");
 
@@ -11,11 +12,11 @@ vi.mock("react-router-dom", () => ({
 }));
 
 vi.mock("../utils/parseScores", () => ({
-  parseScore: vi.fn((score) => ({ score, label: "MockLabel" })),
+  parseScore: vi.fn((score: unknown) => ({ score, label: "MockLabel" })),
 }));
 
 vi.mock("../components/modals/SMISummaryModal", () => ({
-  default: ({ isOpen, onClose }) =>
+  default: ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) =>
     isOpen ? (
       <div data-testid="smi-modal">
         <button onClick={onClose}>Close</button>
@@ -23,10 +24,22 @@ vi.mock("../components/modals/SMISummaryModal", () => ({
     ) : null,
 }));
 
-const smiTableProps = {};
+type SMITableProps = {
+  openModal?: () => void;
+  smiScores: Record<string, string | null>;
+  hiddenColumn?: "raw" | "456" | null;
+};
+
+type YSQTableProps = {
+  hiddenColumn: "raw" | "456" | null;
+  onHeaderClick: (col: "raw" | "456") => void;
+  onHeaderRightClick: (e: React.MouseEvent, col: "raw" | "456") => void;
+};
+
+let smiTableProps: SMITableProps = { smiScores: {} };
 vi.mock("../tables/SMIModesTable", () => ({
-  default: (props) => {
-    Object.assign(smiTableProps, props);
+  default: (props: SMITableProps) => {
+    smiTableProps = props;
     return (
       <div data-testid="smi-table" onClick={() => props.openModal?.()}>
         SMIModesTable
@@ -35,10 +48,14 @@ vi.mock("../tables/SMIModesTable", () => ({
   },
 }));
 
-const ysqTableProps = {};
+let ysqTableProps: YSQTableProps = {
+  hiddenColumn: null,
+  onHeaderClick: () => {},
+  onHeaderRightClick: () => {},
+};
 vi.mock("../tables/YSQSchemasTable", () => ({
-  default: (props) => {
-    Object.assign(ysqTableProps, props);
+  default: (props: YSQTableProps) => {
+    ysqTableProps = props;
     return (
       <table data-testid="ysq-table">
         <thead>
@@ -59,41 +76,62 @@ vi.mock("../tables/YSQSchemasTable", () => ({
 }));
 
 vi.mock("../components/BecksBurnsScoreCard", () => ({
-  default: ({ title }) => <div>{title} ScoreCard</div>,
+  default: ({ title }: { title: string }) => <div>{title} ScoreCard</div>,
 }));
 
 vi.mock("../components/ProtectedAccess", () => ({
-  default: ({ children }) => <div>{children}</div>,
+  default: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
 }));
 
 vi.mock("../components/Button", () => ({
-  default: (props) => <button {...props}>{props.children}</button>,
+  default: (
+    props: React.ButtonHTMLAttributes<HTMLButtonElement> & {
+      children: React.ReactNode;
+    }
+  ) => <button {...props}>{props.children}</button>,
 }));
+
+const baseClientFormsStatus: ClientFormsStatus = {
+  exists: true,
+  clientName: "John Doe",
+  clientDob: "1990-01-01",
+  clientStatus: "active",
+  scores: {
+    bdi: { bdi_score: "10", submitted_at: null },
+    bai: { bai_score: "15", submitted_at: null },
+    smi: {},
+    ysq: {},
+    ysq456: {},
+  },
+  forms: {
+    SMI: { submitted: true, activeToken: false, submittedAt: "2025-08-25T12:00:00Z" },
+    YSQ: { submitted: true, activeToken: false, submittedAt: "2025-08-25T12:00:00Z" },
+    BURNS: { submitted: true, activeToken: false, submittedAt: "2025-08-25T12:00:00Z" },
+    BECKS: { submitted: true, activeToken: false, submittedAt: "2025-08-25T12:00:00Z" },
+  },
+};
+
+const baseContext = {
+  email: "",
+  setEmail: vi.fn(),
+  setClientFormsStatus: vi.fn(),
+  successMessage: "",
+  setSuccessMessage: vi.fn(),
+  error: "",
+  setError: vi.fn(),
+};
 
 describe("FormResultsSummary", () => {
   const mockNavigate = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
-    useNavigate.mockReturnValue(mockNavigate);
-    useClientContext.mockReturnValue({
-      clientFormsStatus: {
-        clientName: "John Doe",
-        clientDob: "1990-01-01",
-        scores: {
-          bdi: { bdi_score: 10 },
-          bai: { bai_score: 15 },
-          smi: {},
-          ysq: {},
-          ysq456: {},
-        },
-        forms: {
-          SMI: { submittedAt: "2025-08-25T12:00:00Z" },
-          YSQ: { submittedAt: "2025-08-25T12:00:00Z" },
-          BURNS: { submittedAt: "2025-08-25T12:00:00Z" },
-          BECKS: { submittedAt: "2025-08-25T12:00:00Z" },
-        },
-      },
+    vi.mocked(useNavigate).mockReturnValue(mockNavigate);
+    vi.mocked(useClientContext).mockReturnValue({
+      ...baseContext,
+      clientFormsStatus: baseClientFormsStatus,
     });
   });
 
@@ -119,12 +157,9 @@ describe("FormResultsSummary", () => {
   });
 
   test("renders empty string for missing clientDob", () => {
-    useClientContext.mockReturnValue({
-      clientFormsStatus: {
-        clientName: "Jane Doe",
-        scores: { bdi: {}, bai: {}, smi: {}, ysq: {}, ysq456: {} },
-        forms: { SMI: {}, YSQ: {}, BURNS: {}, BECKS: {} },
-      },
+    vi.mocked(useClientContext).mockReturnValue({
+      ...baseContext,
+      clientFormsStatus: { ...baseClientFormsStatus, clientDob: undefined, clientName: "Jane Doe" },
     });
     const { getByText } = render(<FormResultsSummary />);
     expect(getByText(/Date of Birth:/)).toHaveTextContent("Date of Birth:");
@@ -146,12 +181,9 @@ describe("FormResultsSummary", () => {
   });
 
   test("renders empty string when clientName is missing", () => {
-    useClientContext.mockReturnValue({
-      clientFormsStatus: {
-        clientDob: "1990-01-01",
-        scores: { bdi: {}, bai: {}, smi: {}, ysq: {}, ysq456: {} },
-        forms: { SMI: {}, YSQ: {}, BURNS: {}, BECKS: {} },
-      },
+    vi.mocked(useClientContext).mockReturnValue({
+      ...baseContext,
+      clientFormsStatus: { ...baseClientFormsStatus, clientName: undefined },
     });
     const { getByText } = render(<FormResultsSummary />);
     expect(getByText(/^Client:/)).toHaveTextContent("Client:");
@@ -169,24 +201,12 @@ describe("FormResultsSummary", () => {
   });
 
   test("passes smiScores prop correctly when present", () => {
-    const smiScoresMock = { Q1: "5", Q2: "3" };
-    useClientContext.mockReturnValue({
+    const smiScoresMock: Record<string, string | null> = { Q1: "5", Q2: "3" };
+    vi.mocked(useClientContext).mockReturnValue({
+      ...baseContext,
       clientFormsStatus: {
-        clientName: "John Doe",
-        clientDob: "1990-01-01",
-        scores: {
-          smi: smiScoresMock,
-          bdi: { bdi_score: 10 },
-          bai: { bai_score: 15 },
-          ysq: {},
-          ysq456: {},
-        },
-        forms: {
-          SMI: { submittedAt: "2025-08-25T12:00:00Z" },
-          YSQ: { submittedAt: "2025-08-25T12:00:00Z" },
-          BURNS: { submittedAt: "2025-08-25T12:00:00Z" },
-          BECKS: { submittedAt: "2025-08-25T12:00:00Z" },
-        },
+        ...baseClientFormsStatus,
+        scores: { ...baseClientFormsStatus.scores, smi: smiScoresMock },
       },
     });
     render(<FormResultsSummary />);
@@ -194,7 +214,10 @@ describe("FormResultsSummary", () => {
   });
 
   test("defaults smiScores to empty object if clientFormsStatus is null", () => {
-    useClientContext.mockReturnValue({ clientFormsStatus: null });
+    vi.mocked(useClientContext).mockReturnValue({
+      ...baseContext,
+      clientFormsStatus: null,
+    });
     render(<FormResultsSummary />);
     expect(smiTableProps.smiScores).toEqual({});
   });
