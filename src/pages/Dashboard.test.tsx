@@ -6,7 +6,7 @@ import { useClientContext } from "../context/ClientContext";
 import { fetchClientStatus } from "../api/clientsFrontend";
 import { sendFormToken, sendMultipleFormTokens } from "../api/formsFrontend";
 import validateEmail from "../utils/validators";
-import normalizeEmail from "../utils/normalizeEmail";
+import { normalizeEmail } from "../utils/normalizeEmail";
 
 vi.mock("../context/ClientContext");
 vi.mock("../api/clientsFrontend");

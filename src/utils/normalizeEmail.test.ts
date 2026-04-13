@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import normalizeEmail from "../utils/normalizeEmail";
+import { normalizeEmail } from "../utils/normalizeEmail";
 
 describe("normalizeEmail", () => {
   test("trims whitespace from start and end", () => {

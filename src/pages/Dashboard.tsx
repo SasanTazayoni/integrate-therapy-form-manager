@@ -20,7 +20,7 @@ import {
 } from "../api/formsFrontend";
 import validateEmail from "../utils/validators";
 import truncateEmail from "../utils/truncateEmail";
-import normalizeEmail from "../utils/normalizeEmail";
+import { normalizeEmail } from "../utils/normalizeEmail";
 import { FORM_TYPES } from "../constants/formTypes";
 import type { FormType } from "../constants/formTypes";
 import type { ClientFormsStatus } from "../types/formStatusTypes";
