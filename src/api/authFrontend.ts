@@ -1,6 +1,8 @@
 import api from "./api";
 import axios from "axios";
 
+export const TOKEN_KEY = "integrateTherapyToken";
+
 type LoginResult = { ok: true } | { ok: false; error: string };
 
 export async function login(
@@ -8,7 +10,11 @@ export async function login(
   password: string
 ): Promise<LoginResult> {
   try {
-    await api.post("/auth/login", { username, password });
+    const response = await api.post<{ token: string }>("/auth/login", {
+      username,
+      password,
+    });
+    sessionStorage.setItem(TOKEN_KEY, response.data.token);
     return { ok: true };
   } catch (err: unknown) {
     if (axios.isAxiosError(err) && err.response?.status === 401) {

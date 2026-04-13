@@ -6,8 +6,11 @@ import {
   deactivateClientHandler,
   activateClientHandler,
 } from "../controllers/clientsController";
+import { requireAuth } from "../middleware/requireAuth";
 
 const router = Router();
+
+router.use(requireAuth);
 
 router.post("/add", createClientHandler);
 router.get("/form-status", getClientFormsStatusHandler);

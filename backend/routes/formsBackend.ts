@@ -13,18 +13,22 @@ import {
   submitYSQForm,
   submitSMIForm,
 } from "../controllers/formSubmitHandlers";
+import { requireAuth } from "../middleware/requireAuth";
 
 const router = Router();
 
-router.post("/send-token/:formType", sendForm);
-router.post("/send-multiple", sendMultipleForms);
-router.post("/revoke-token/:formType", revokeFormToken);
+// Client-facing routes (no auth required)
 router.get("/validate-token", validateToken);
 router.post("/submit/becks", submitBecksForm);
 router.post("/submit/burns", submitBurnsForm);
 router.post("/submit/ysq", submitYSQForm);
 router.post("/submit/smi", submitSMIForm);
 router.post("/update-client-info", updateClientInfo);
-router.get("/smi/all", getAllSubmittedSMIForms);
+
+// Therapist-only routes
+router.post("/send-token/:formType", requireAuth, sendForm);
+router.post("/send-multiple", requireAuth, sendMultipleForms);
+router.post("/revoke-token/:formType", requireAuth, revokeFormToken);
+router.get("/smi/all", requireAuth, getAllSubmittedSMIForms);
 
 export default router;
