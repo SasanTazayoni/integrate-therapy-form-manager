@@ -669,10 +669,9 @@ describe("formController", () => {
   });
 
   test("sendMultipleForms returns 409 if no forms to send", async () => {
-    mockPrisma.form.findFirst.mockResolvedValue({
-      id: "1",
-      is_active: true,
-    } as unknown as Form);
+    mockPrisma.form.findMany.mockResolvedValue(
+      FORM_TYPES.map((form_type) => ({ form_type, is_active: true, submitted_at: null })) as unknown as Form[]
+    );
 
     const req = {
       body: { email: "test@test.com" },
@@ -788,10 +787,9 @@ describe("formController", () => {
   });
 
   test("skips creating form if existing active form exists", async () => {
-    mockPrisma.form.findFirst.mockResolvedValue({
-      id: "1",
-      is_active: true,
-    } as unknown as Form);
+    mockPrisma.form.findMany.mockResolvedValue(
+      FORM_TYPES.map((form_type) => ({ form_type, is_active: true, submitted_at: null })) as unknown as Form[]
+    );
 
     const req = {
       body: { email: "test@test.com" },
@@ -808,10 +806,9 @@ describe("formController", () => {
   });
 
   test("skips creating form if submitted form exists and formType !== SMI", async () => {
-    mockPrisma.form.findFirst
-      .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce({ submitted_at: new Date() } as unknown as Form)
-      .mockResolvedValue(null);
+    mockPrisma.form.findMany.mockResolvedValue([
+      { form_type: "YSQ", is_active: false, submitted_at: new Date() },
+    ] as unknown as Form[]);
 
     const req = {
       body: { email: "test@test.com" },
@@ -827,12 +824,9 @@ describe("formController", () => {
   });
 
   test("creates SMI form even if a submitted form exists", async () => {
-    mockPrisma.form.findFirst
-      .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce({ submitted_at: new Date() } as unknown as Form)
-      .mockResolvedValue(null);
+    mockPrisma.form.findMany.mockResolvedValue([
+      { form_type: "SMI", is_active: false, submitted_at: new Date() },
+    ] as unknown as Form[]);
 
     const req = {
       body: { email: "test@test.com" },

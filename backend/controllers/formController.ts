@@ -104,24 +104,30 @@ export const sendMultipleForms = async (
 
     const now = new Date();
 
+    await prisma.form.updateMany({
+      where: {
+        clientId: client.id,
+        form_type: { in: [...FORM_TYPES] },
+        is_active: true,
+        OR: [
+          { token_expires_at: { lt: now } },
+          { submitted_at: { not: null } },
+        ],
+      },
+      data: { is_active: false },
+    });
+
+    const existingForms = await prisma.form.findMany({
+      where: { clientId: client.id },
+    });
+
     for (const formType of FORM_TYPES) {
-      await deactivateInvalidActiveForms(client.id, formType);
-
-      const existingActiveForm = await prisma.form.findFirst({
-        where: {
-          clientId: client.id,
-          form_type: formType,
-          is_active: true,
-        },
-      });
-
-      const submittedForm = await prisma.form.findFirst({
-        where: {
-          clientId: client.id,
-          form_type: formType,
-          submitted_at: { not: null },
-        },
-      });
+      const existingActiveForm = existingForms.find(
+        (f) => f.form_type === formType && f.is_active
+      );
+      const submittedForm = existingForms.find(
+        (f) => f.form_type === formType && f.submitted_at !== null
+      );
 
       if (existingActiveForm || (submittedForm && formType !== "SMI")) continue;
 
