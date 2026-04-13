@@ -7,6 +7,10 @@ export default defineConfig(({ mode }: ConfigEnv) => ({
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
+      "/auth": {
+        target: "http://localhost:3001",
+        changeOrigin: true,
+      },
       "/clients": {
         target: "http://localhost:3001",
         changeOrigin: true,

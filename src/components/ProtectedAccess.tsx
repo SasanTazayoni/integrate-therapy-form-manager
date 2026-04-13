@@ -2,6 +2,7 @@ import React, { useReducer, useRef, useEffect } from "react";
 import AdminLoginModal from "./modals/AdminLoginModal";
 import { authReducer, AuthState } from "../utils/authReducer";
 import setErrorTimers from "../utils/startErrorFadeTimers";
+import { login } from "../api/authFrontend";
 
 const initialState: AuthState = {
   username: "",
@@ -11,9 +12,6 @@ const initialState: AuthState = {
   closing: false,
   errorFading: false,
 };
-
-const expectedUsername = import.meta.env.VITE_THERAPIST_USERNAME;
-const expectedPassword = import.meta.env.VITE_THERAPIST_PASSWORD;
 
 const SESSION_KEY = "integrateTherapyAuthenticated";
 
@@ -60,11 +58,10 @@ export default function ProtectedAccess({ children }: Props) {
     dispatch({ type: "SET_PASSWORD", payload: val });
   const handleClearForm = () => dispatch({ type: "CLEAR_FORM" });
 
-  const handleSubmit = () => {
-    if (
-      state.username.trim() === expectedUsername &&
-      state.password.trim() === expectedPassword
-    ) {
+  const handleSubmit = async () => {
+    const result = await login(state.username.trim(), state.password.trim());
+
+    if (result.ok) {
       if (fadeOutTimeoutRef.current) {
         clearTimeout(fadeOutTimeoutRef.current);
         fadeOutTimeoutRef.current = null;
@@ -80,7 +77,7 @@ export default function ProtectedAccess({ children }: Props) {
         dispatch({ type: "LOGIN_SUCCESS" });
       }, MODAL_CLOSE_DURATION_MS);
     } else {
-      dispatch({ type: "SET_ERROR", payload: "Invalid credentials" });
+      dispatch({ type: "SET_ERROR", payload: result.error });
 
       setErrorTimers(
         dispatch,

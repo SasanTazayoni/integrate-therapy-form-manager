@@ -5,6 +5,7 @@ import path from "path";
 import crypto from "crypto";
 import clientRoutes from "./routes/clientsBackend";
 import formRoutes from "./routes/formsBackend";
+import authRoutes from "./routes/authBackend";
 import { getFrontendBaseUrl } from "./utils/getFrontendBaseUrl";
 
 const app = express();
@@ -41,6 +42,7 @@ app.use(
 app.use(express.json());
 
 // --- API routes ---
+app.use("/auth", authRoutes);
 app.use("/clients", clientRoutes);
 app.use("/forms", formRoutes);
 

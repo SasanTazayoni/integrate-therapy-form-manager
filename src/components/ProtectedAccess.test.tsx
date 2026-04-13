@@ -2,6 +2,10 @@ import { render, fireEvent, act } from "@testing-library/react";
 import { describe, vi, beforeEach, test, afterEach, expect } from "vitest";
 import ProtectedAccess, { MODAL_CLOSE_DURATION_MS } from "./ProtectedAccess";
 
+vi.mock("../api/authFrontend", () => ({
+  login: vi.fn().mockResolvedValue({ ok: false, error: "Invalid credentials" }),
+}));
+
 vi.mock("./modals/AdminLoginModal", () => ({
   default: ({
     username,
@@ -46,9 +50,6 @@ beforeEach(() => {
   const modalRoot = document.createElement("div");
   modalRoot.setAttribute("id", "modal-root");
   document.body.appendChild(modalRoot);
-
-  vi.stubEnv("VITE_THERAPIST_USERNAME", "admin");
-  vi.stubEnv("VITE_THERAPIST_PASSWORD", "password");
 });
 
 afterEach(() => {
@@ -103,7 +104,7 @@ describe("ProtectedAccess", () => {
     expect(passwordInput).toHaveValue("newpass");
   });
 
-  test("shows error with invalid credentials", () => {
+  test("shows error with invalid credentials", async () => {
     const { getByRole, getByText } = render(
       <ProtectedAccess>
         <div>Child</div>
@@ -112,7 +113,7 @@ describe("ProtectedAccess", () => {
 
     const submitButton = getByRole("button", { name: /login/i });
 
-    act(() => {
+    await act(async () => {
       fireEvent.click(submitButton);
     });
 
@@ -142,16 +143,18 @@ describe("ProtectedAccess", () => {
   });
 
   test("successful login hides the modal and saves session after animation", async () => {
-    vi.resetModules();
-    const { default: PA } = await import("./ProtectedAccess");
+    const { login } = await import("../api/authFrontend");
+    vi.mocked(login)
+      .mockResolvedValueOnce({ ok: false, error: "Invalid credentials" })
+      .mockResolvedValueOnce({ ok: true });
 
     const { getByLabelText, getByRole, queryByRole } = render(
-      <PA>
+      <ProtectedAccess>
         <div>Child</div>
-      </PA>
+      </ProtectedAccess>
     );
 
-    act(() => {
+    await act(async () => {
       fireEvent.change(getByLabelText(/username/i), {
         target: { value: "wrong" },
       });
@@ -161,7 +164,7 @@ describe("ProtectedAccess", () => {
       fireEvent.click(getByRole("button", { name: /login/i }));
     });
 
-    act(() => {
+    await act(async () => {
       fireEvent.change(getByLabelText(/username/i), {
         target: { value: "admin" },
       });
@@ -179,7 +182,12 @@ describe("ProtectedAccess", () => {
     expect(sessionStorage.getItem("integrateTherapyAuthenticated")).toBe("true");
   });
 
-  test("second handleSubmit clears existing fadeOut and clearError timers", () => {
+  test("second handleSubmit clears existing fadeOut and clearError timers", async () => {
+    const { login } = await import("../api/authFrontend");
+    vi.mocked(login)
+      .mockResolvedValueOnce({ ok: false, error: "Invalid credentials" })
+      .mockResolvedValueOnce({ ok: true });
+
     vi.useFakeTimers();
     const clearSpy = vi.spyOn(window, "clearTimeout");
 
@@ -193,13 +201,13 @@ describe("ProtectedAccess", () => {
     const passwordInput = getByLabelText(/password/i);
     const submitButton = getByRole("button", { name: /login/i });
 
-    act(() => {
+    await act(async () => {
       fireEvent.change(usernameInput, { target: { value: "wronguser" } });
       fireEvent.change(passwordInput, { target: { value: "wrongpass" } });
       fireEvent.click(submitButton);
     });
 
-    act(() => {
+    await act(async () => {
       fireEvent.change(usernameInput, { target: { value: "admin" } });
       fireEvent.change(passwordInput, { target: { value: "password" } });
       fireEvent.click(submitButton);
