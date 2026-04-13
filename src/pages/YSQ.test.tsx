@@ -140,20 +140,22 @@ describe("YSQ Component", () => {
     const { getByText } = render(
       <MemoryRouter>
         <YSQ />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(getByText("Invalid Token")).toBeInTheDocument();
   });
 
   test("renders questions when token is valid", () => {
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(baseValidateToken);
+    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
+      baseValidateToken,
+    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue(baseYSQForm);
 
     const { getByText, getAllByText } = render(
       <MemoryRouter>
         <YSQ />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(getByText("Instructions")).toBeInTheDocument();
@@ -161,7 +163,9 @@ describe("YSQ Component", () => {
   });
 
   test("calls submitYSQWithToken on valid submit", async () => {
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(baseValidateToken);
+    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
+      baseValidateToken,
+    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue(baseYSQForm);
 
     const mockSubmit = vi
@@ -171,7 +175,7 @@ describe("YSQ Component", () => {
     const { getByTestId } = render(
       <MemoryRouter>
         <YSQ />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     fireEvent.click(getByTestId("mock-submit"));
@@ -185,7 +189,9 @@ describe("YSQ Component", () => {
     const confirmReset = vi.fn();
     const cancelReset = vi.fn();
 
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(baseValidateToken);
+    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
+      baseValidateToken,
+    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue({
       ...baseYSQForm,
       resetModalOpen: true,
@@ -196,7 +202,7 @@ describe("YSQ Component", () => {
     const { getByTestId, getByText } = render(
       <MemoryRouter>
         <YSQ />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(getByText("Reset Modal")).toBeInTheDocument();
@@ -217,7 +223,7 @@ describe("YSQ Component", () => {
     const { container, getByTestId } = render(
       <MemoryRouter>
         <YSQ />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(container.querySelector("[aria-busy]")).toBeInTheDocument();
@@ -229,7 +235,9 @@ describe("YSQ Component", () => {
   });
 
   test("renders formError message when set", () => {
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(baseValidateToken);
+    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
+      baseValidateToken,
+    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue({
       ...baseYSQForm,
       formError: "This is an error",
@@ -238,7 +246,7 @@ describe("YSQ Component", () => {
     const { getByText } = render(
       <MemoryRouter>
         <YSQ />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const errorMessage = getByText("This is an error");
@@ -249,7 +257,9 @@ describe("YSQ Component", () => {
   test("calls handleResetClick when Reset button is clicked", () => {
     const handleResetClick = vi.fn();
 
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(baseValidateToken);
+    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
+      baseValidateToken,
+    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue({
       ...baseYSQForm,
       handleResetClick,
@@ -258,7 +268,7 @@ describe("YSQ Component", () => {
     const { getByText } = render(
       <MemoryRouter>
         <YSQ />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     fireEvent.click(getByText("Reset"));
@@ -282,14 +292,18 @@ describe("YSQ Component", () => {
 
     const mockSubmit = vi
       .spyOn(YSQHelpers, "submitYSQWithToken")
-      .mockImplementation((({ navigate }: { navigate: (path: string) => void }) => {
+      .mockImplementation((({
+        navigate,
+      }: {
+        navigate: (path: string) => void;
+      }) => {
         navigate("/success");
       }) as never);
 
     const { getByTestId } = render(
       <MemoryRouter>
         <YSQ />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     fireEvent.click(getByTestId("mock-submit"));
@@ -312,20 +326,24 @@ describe("YSQ Component", () => {
       YSQEmotionalDeprivation[1].id,
     ];
 
-    const renderSpy = vi
-      .spyOn(YSQQuestions, "default")
-      .mockImplementation(
-        (({ item, showError }: { item: { id: number }; showError?: boolean }) => (
-          <div
-            data-testid={`question-${item.id}`}
-            data-show-error={showError ? "true" : "false"}
-          >
-            Question Component
-          </div>
-        )) as never
-      );
+    const renderSpy = vi.spyOn(YSQQuestions, "default").mockImplementation((({
+      item,
+      showError,
+    }: {
+      item: { id: number };
+      showError?: boolean;
+    }) => (
+      <div
+        data-testid={`question-${item.id}`}
+        data-show-error={showError ? "true" : "false"}
+      >
+        Question Component
+      </div>
+    )) as never);
 
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(baseValidateToken);
+    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
+      baseValidateToken,
+    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue({
       ...baseYSQForm,
       missingIds,
@@ -334,14 +352,14 @@ describe("YSQ Component", () => {
     const { getByTestId } = render(
       <MemoryRouter>
         <YSQ />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     YSQEmotionalDeprivation.forEach((item) => {
       const question = getByTestId(`question-${item.id}`);
       expect(question).toHaveAttribute(
         "data-show-error",
-        missingIds.includes(item.id) ? "true" : "false"
+        missingIds.includes(item.id) ? "true" : "false",
       );
     });
 
@@ -353,7 +371,9 @@ describe("YSQ Component", () => {
     const cancelReset = vi.fn();
     const handleModalCloseFinished = vi.fn();
 
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(baseValidateToken);
+    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
+      baseValidateToken,
+    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue({
       ...baseYSQForm,
       resetModalOpen: true,
@@ -366,7 +386,7 @@ describe("YSQ Component", () => {
     const { getByTestId, getByText } = render(
       <MemoryRouter>
         <YSQ />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     fireEvent.click(getByTestId("reset-confirm"));
@@ -382,29 +402,33 @@ describe("YSQ Component", () => {
     const handleChange = vi.fn();
     const questionItem = YSQEmotionalDeprivation[0];
 
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(baseValidateToken);
+    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
+      baseValidateToken,
+    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue({
       ...baseYSQForm,
       handleChange,
     });
 
-    const renderSpy = vi
-      .spyOn(YSQQuestions, "default")
-      .mockImplementation(
-        (({ item, onChange }: { item: { id: number }; onChange: (v: unknown) => void }) => (
-          <div
-            data-testid={`question-${item.id}`}
-            onClick={() => onChange("test-value")}
-          >
-            Question Component
-          </div>
-        )) as never
-      );
+    const renderSpy = vi.spyOn(YSQQuestions, "default").mockImplementation((({
+      item,
+      onChange,
+    }: {
+      item: { id: number };
+      onChange: (v: unknown) => void;
+    }) => (
+      <div
+        data-testid={`question-${item.id}`}
+        onClick={() => onChange("test-value")}
+      >
+        Question Component
+      </div>
+    )) as never);
 
     const { getByTestId } = render(
       <MemoryRouter>
         <YSQ />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     fireEvent.click(getByTestId(`question-${questionItem.id}`));
@@ -416,42 +440,44 @@ describe("YSQ Component", () => {
   test("ArrowDown focuses the next input", () => {
     const questionRefs: { focus: ReturnType<typeof vi.fn> }[] = [];
 
-    const renderSpy = vi
-      .spyOn(YSQQuestions, "default")
-      .mockImplementation(
-        (({ item, onArrowDown, ref }: {
-          item: { id: number; prompt: string };
-          onArrowDown?: () => void;
-          ref?: (el: { focus: () => void } | null) => void;
-        }) => {
-          const inputRef = { focus: vi.fn() };
-          if (ref) ref(inputRef);
-          questionRefs.push(inputRef);
-          return (
-            <div
-              data-testid={`question-${item.id}`}
-              onKeyDown={(e) => {
-                if (e.key === "ArrowDown") onArrowDown?.();
-              }}
-            >
-              {item.prompt}
-            </div>
-          );
-        }) as never
+    const renderSpy = vi.spyOn(YSQQuestions, "default").mockImplementation((({
+      item,
+      onArrowDown,
+      ref,
+    }: {
+      item: { id: number; prompt: string };
+      onArrowDown?: () => void;
+      ref?: (el: { focus: () => void } | null) => void;
+    }) => {
+      const inputRef = { focus: vi.fn() };
+      if (ref) ref(inputRef);
+      questionRefs.push(inputRef);
+      return (
+        <div
+          data-testid={`question-${item.id}`}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowDown") onArrowDown?.();
+          }}
+        >
+          {item.prompt}
+        </div>
       );
+    }) as never);
 
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(baseValidateToken);
+    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
+      baseValidateToken,
+    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue(baseYSQForm);
 
     const { getByTestId } = render(
       <MemoryRouter>
         <YSQ />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     fireEvent.keyDown(
       getByTestId(`question-${YSQEmotionalDeprivation[0].id}`),
-      { key: "ArrowDown" }
+      { key: "ArrowDown" },
     );
 
     const secondRef = questionRefs[1];
@@ -465,42 +491,44 @@ describe("YSQ Component", () => {
   test("ArrowUp focuses the previous input", () => {
     const questionRefs: { focus: ReturnType<typeof vi.fn> }[] = [];
 
-    const renderSpy = vi
-      .spyOn(YSQQuestions, "default")
-      .mockImplementation(
-        (({ item, onArrowUp, ref }: {
-          item: { id: number; prompt: string };
-          onArrowUp?: () => void;
-          ref?: (el: { focus: () => void } | null) => void;
-        }) => {
-          const inputRef = { focus: vi.fn() };
-          if (ref) ref(inputRef);
-          questionRefs.push(inputRef);
-          return (
-            <div
-              data-testid={`question-${item.id}`}
-              onKeyDown={(e) => {
-                if (e.key === "ArrowUp") onArrowUp?.();
-              }}
-            >
-              {item.prompt}
-            </div>
-          );
-        }) as never
+    const renderSpy = vi.spyOn(YSQQuestions, "default").mockImplementation((({
+      item,
+      onArrowUp,
+      ref,
+    }: {
+      item: { id: number; prompt: string };
+      onArrowUp?: () => void;
+      ref?: (el: { focus: () => void } | null) => void;
+    }) => {
+      const inputRef = { focus: vi.fn() };
+      if (ref) ref(inputRef);
+      questionRefs.push(inputRef);
+      return (
+        <div
+          data-testid={`question-${item.id}`}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowUp") onArrowUp?.();
+          }}
+        >
+          {item.prompt}
+        </div>
       );
+    }) as never);
 
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(baseValidateToken);
+    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
+      baseValidateToken,
+    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue(baseYSQForm);
 
     const { getByTestId } = render(
       <MemoryRouter>
         <YSQ />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     fireEvent.keyDown(
       getByTestId(`question-${YSQEmotionalDeprivation[1].id}`),
-      { key: "ArrowUp" }
+      { key: "ArrowUp" },
     );
 
     const firstRef = questionRefs[0];
@@ -512,13 +540,15 @@ describe("YSQ Component", () => {
   });
 
   test("renders RatingScaleTooltip with correct items", () => {
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(baseValidateToken);
+    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
+      baseValidateToken,
+    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue(baseYSQForm);
 
     const { getByTestId, getByText } = render(
       <MemoryRouter>
         <YSQ />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const tooltip = getByTestId("rating-scale-tooltip");
