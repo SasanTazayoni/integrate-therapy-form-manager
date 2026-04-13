@@ -6,7 +6,14 @@ vi.mock("../utils/requiredEnv", () => ({
   getEnvVar: vi.fn((key: string) => {
     if (key === "THERAPIST_USERNAME") return "admin";
     if (key === "THERAPIST_PASSWORD") return "secret";
+    if (key === "JWT_SECRET") return "test-secret";
   }),
+}));
+
+vi.mock("jsonwebtoken", () => ({
+  default: {
+    sign: vi.fn(() => "mocked.jwt.token"),
+  },
 }));
 
 type MockResponse = {
@@ -26,14 +33,14 @@ describe("loginHandler", () => {
     vi.clearAllMocks();
   });
 
-  test("returns 200 with ok: true for correct credentials", () => {
+  test("returns 200 with a token for correct credentials", () => {
     const req = { body: { username: "admin", password: "secret" } } as unknown as Request;
     const res = mockRes();
 
     loginHandler(req, res as unknown as Response);
 
     expect(res.status).not.toHaveBeenCalled();
-    expect(res.json).toHaveBeenCalledWith({ ok: true });
+    expect(res.json).toHaveBeenCalledWith({ token: "mocked.jwt.token" });
   });
 
   test("returns 401 for wrong username", () => {
