@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { getClientFormsStatus, createClient } from "./clientsService";
 import { deleteClientByEmail } from "./clientDeletion";
 import { deactivateClient, activateClient } from "./clientStatus";
+import { normalizeEmail } from "../utils/normalizeEmail";
 
 export const getClientFormsStatusHandler = async (
   req: Request,
@@ -59,7 +60,7 @@ export const deleteClientByEmailHandler = async (
     return res.status(400).json({ error: "Email is required" });
   }
   try {
-    const client = await deleteClientByEmail(email);
+    const client = await deleteClientByEmail(normalizeEmail(email));
     res.json({ message: "Client and all forms deleted", client });
   } catch (error: unknown) {
     console.error("Error deleting client:", error);
@@ -73,7 +74,7 @@ export const deactivateClientHandler = async (req: Request, res: Response) => {
     return res.status(400).json({ error: "Email is required" });
   }
   try {
-    const result = await deactivateClient(email);
+    const result = await deactivateClient(normalizeEmail(email));
     if (!result.ok) {
       return res.status(500).json({ error: result.data.error });
     }
@@ -90,7 +91,7 @@ export const activateClientHandler = async (req: Request, res: Response) => {
     return res.status(400).json({ error: "Email is required" });
   }
   try {
-    const result = await activateClient(email);
+    const result = await activateClient(normalizeEmail(email));
     if (!result.ok) {
       return res.status(500).json({ error: result.data.error });
     }
