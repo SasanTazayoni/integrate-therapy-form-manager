@@ -1,5 +1,6 @@
 import { describe, test, expect, vi, beforeEach, type Mock } from "vitest";
 import { sendFormLink } from "./sendFormLink";
+import { THERAPIST_SIGNATURE } from "./therapistSignature";
 import type { FormType } from "../data/formTypes";
 
 vi.mock("./requiredEnv", () => ({
@@ -49,6 +50,7 @@ describe("sendFormLink", () => {
     expect(callArgs.html).toContain("Dear Alice");
     expect(callArgs.html).toContain("YSQ");
     expect(callArgs.html).toContain("https://test.com/YSQ/abc123");
+    expect(callArgs.html).toContain(THERAPIST_SIGNATURE);
   });
 
   test("throws an error if formType is invalid", async () => {

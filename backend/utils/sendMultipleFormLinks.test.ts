@@ -1,6 +1,7 @@
 import { describe, test, expect, vi, beforeEach, type Mock } from "vitest";
 import type { Form } from "@prisma/client";
 import { sendMultipleFormLinks } from "./sendMultipleFormLinks";
+import { THERAPIST_SIGNATURE } from "./therapistSignature";
 
 vi.mock("./requiredEnv", () => ({
   getEnvVar: vi.fn((key: string) => {
@@ -55,6 +56,7 @@ describe("sendMultipleFormLinks", () => {
     expect(callArgs.html).toContain("SMI");
     expect(callArgs.html).toContain("https://test.com/YSQ/token1");
     expect(callArgs.html).toContain("https://test.com/SMI/token2");
+    expect(callArgs.html).toContain(THERAPIST_SIGNATURE);
   });
 
   test("throws Email delivery failed if Resend returns an error", async () => {

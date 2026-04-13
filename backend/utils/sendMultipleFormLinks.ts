@@ -3,6 +3,7 @@ import { getEnvVar } from "./requiredEnv";
 import { getFrontendBaseUrl } from "./getFrontendBaseUrl";
 import { Form } from "@prisma/client";
 import { FORM_TITLES } from "../data/formTypes";
+import { THERAPIST_SIGNATURE } from "./therapistSignature";
 
 const baseUrl = getFrontendBaseUrl();
 const resend = new Resend(getEnvVar("RESEND_API_KEY"));
@@ -34,17 +35,7 @@ export async function sendMultipleFormLinks({
     <p>Dear ${nameToUse},</p>
     <p>You have been sent the following forms to complete:</p>
     ${htmlLinks}
-    <p>Best wishes,</p>
-    <p>
-      Simon Burgess Dip MBACP<br/>
-      Integrate Therapy<br/>
-      The Foundry Building<br/>
-      2 Smiths Square<br/>
-      77 Fulham Palace Road<br/>
-      London<br/>
-      W6 8AF<br/>
-      Tel: 0784 604 3703
-    </p>
+    ${THERAPIST_SIGNATURE}
   `;
 
   const { error } = await resend.emails.send({

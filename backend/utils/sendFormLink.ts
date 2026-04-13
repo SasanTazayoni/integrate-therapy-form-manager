@@ -2,6 +2,7 @@ import { Resend } from "resend";
 import { getEnvVar } from "./requiredEnv";
 import { getFrontendBaseUrl } from "./getFrontendBaseUrl";
 import { FORM_TITLES, type FormType } from "../data/formTypes";
+import { THERAPIST_SIGNATURE } from "./therapistSignature";
 
 const baseUrl = getFrontendBaseUrl();
 const resend = new Resend(getEnvVar("RESEND_API_KEY"));
@@ -43,17 +44,7 @@ export async function sendFormLink({
     <p>Dear ${nameToUse},</p>
     <p>You have been sent a <strong>${formTitle}</strong> to complete.</p>
     <p><a href="${link}">Click here to complete your form</a></p>
-    <p>Best wishes,</p>
-    <p>
-      Simon Burgess Dip MBACP<br/>
-      Integrate Therapy<br/>
-      The Foundry Building<br/>
-      2 Smiths Square<br/>
-      77 Fulham Palace Road<br/>
-      London<br/>
-      W6 8AF<br/>
-      Tel: 0784 604 3703
-    </p>
+    ${THERAPIST_SIGNATURE}
   `;
 
   const { error } = await resend.emails.send({
