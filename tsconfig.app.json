@@ -22,5 +22,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "backend/data/formTypes.ts", "backend/data/ysqSchemaCodes.ts"]
+  "include": ["src", "backend/data/formTypes.ts", "backend/data/ysqSchemaCodes.ts", "backend/utils/classifyScore.ts"]
 }

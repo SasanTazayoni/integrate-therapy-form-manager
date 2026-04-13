@@ -1,17 +1,7 @@
-import { smiBoundaries, labels } from "../data/SMIBoundariesBackend";
+import { smiBoundaries } from "../data/SMIBoundariesBackend";
+import { classifyScore } from "./classifyScore";
 
-export function classifyScore(score: number, boundaries: number[]): string {
-  let closestIndex = 0;
-  let smallestDiff = Infinity;
-  boundaries.forEach((boundary, idx) => {
-    const diff = Math.abs(score - boundary);
-    if (diff < smallestDiff) {
-      smallestDiff = diff;
-      closestIndex = idx;
-    }
-  });
-  return labels[closestIndex];
-}
+export { classifyScore };
 
 export function normalizeLabel(label: string) {
   return label

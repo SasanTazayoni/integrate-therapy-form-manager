@@ -1,23 +1,6 @@
 import { describe, test, expect } from "vitest";
-import { classifyScore, classifyBoundaryAndAlignment } from "./SMIUtils";
-import { smiBoundaries, labels } from "../data/SMIBoundaries";
-
-describe("classifyScore", () => {
-  test("returns the label of the closest boundary", () => {
-    const boundaries = [0, 10, 20];
-    expect(classifyScore(9, boundaries)).toBe(labels[1]);
-  });
-
-  test("returns the first label if score matches exactly the first boundary", () => {
-    const boundaries = [0, 10, 20];
-    expect(classifyScore(0, boundaries)).toBe(labels[0]);
-  });
-
-  test("returns the last label if score matches exactly the last boundary", () => {
-    const boundaries = [0, 10, 20];
-    expect(classifyScore(20, boundaries)).toBe(labels[2]);
-  });
-});
+import { classifyBoundaryAndAlignment } from "./SMIUtils";
+import { smiBoundaries } from "../data/SMIBoundaries";
 
 describe("classifyBoundaryAndAlignment", () => {
   test("returns nulls when scoreStr is null", () => {
