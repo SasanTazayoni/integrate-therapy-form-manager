@@ -1,13 +1,13 @@
 # Integrate Therapy Form Manager
 
-![HTML](./tech/html.png) ![CSS](./tech/css.png) ![Javascript](./tech/javascript.png) ![Typescript](./tech/typescript.png) ![Vite](./tech/vite.png) ![React](./tech/react.png) ![Jest](./tech/jest.png) ![Tailwind](./tech/tailwind.png) ![REST-API](./tech/restapi.png) ![Prisma](./tech/prisma.png) ![PostgreSQL](./tech/postgresql.png) ![Neon](./tech/neon.png) ![Node](./tech/node.png) ![Express](./tech/express.png) ![ChatGPT](./tech/chatgpt.png) ![Claude](./tech/claude.png) ![VSCode](./tech/vscode.png) ![render](./tech/render.png)
+![HTML](./tech/html.png) ![CSS](./tech/css.png) ![Typescript](./tech/typescript.png) ![Vite](./tech/vite.png) ![React](./tech/react.png) ![Jest](./tech/jest.png) ![Tailwind](./tech/tailwind.png) ![REST-API](./tech/restapi.png) ![Prisma](./tech/prisma.png) ![PostgreSQL](./tech/postgresql.png) ![Neon](./tech/neon.png) ![Node](./tech/node.png) ![Express](./tech/express.png) ![ChatGPT](./tech/chatgpt.png) ![Claude](./tech/claude.png) ![VSCode](./tech/vscode.png) ![render](./tech/render.png)
 
 > **⚠️ Note:** This is a production application handling sensitive therapy client data. A live demo is not publicly available for privacy and GDPR compliance reasons. Please see the [video demonstrations](#introduction) and [screenshots](#features) below.
 
 ## 🎯 Quick Links
 
 - [Video Demonstrations](#introduction) - See the app in action
-- [Features](#existing-features) - Detailed feature breakdown  
+- [Features](#existing-features) - Detailed feature breakdown
 - [Tech Stack](#tools--technologies-used) - Technologies used
 - [Architecture](#database-design) - Database design (ERD)
 - [Testing](#testing) - Test coverage & results
@@ -19,14 +19,14 @@ This project was developed for a sole-trader psychotherapist to address a specif
 
 ## Problems with the Previous Process
 
-* Some clients submitted partially filled forms.
-* Sometimes clients did not fill out the forms at all.
-* Some clients altered questions in the form, either accidentally or intentionally.
-* Some clients edited the form unnecessarily, changing its format.
-* Manually adding results was time-consuming and prone to errors.
-* Creating charts from the results was also time-consuming.
-* Tracking client results over time was difficult.
-* Retrieving old submissions for repeatable forms to compare with new submissions was time-consuming.
+- Some clients submitted partially filled forms.
+- Sometimes clients did not fill out the forms at all.
+- Some clients altered questions in the form, either accidentally or intentionally.
+- Some clients edited the form unnecessarily, changing its format.
+- Manually adding results was time-consuming and prone to errors.
+- Creating charts from the results was also time-consuming.
+- Tracking client results over time was difficult.
+- Retrieving old submissions for repeatable forms to compare with new submissions was time-consuming.
 
 The purpose of this project is to simplify the therapist’s workflow and save many hours of unnecessary manual work - such as calculating scores, creating charts, and sending multiple emails back and forth to correct client mistakes. What started as a seemingly simple idea turned out to be far more complex and involved than initially anticipated. I began by drafting a blueprint of how the system should function, but this design evolved continuously as I gained a deeper understanding of how the process could be refined and automated.
 
@@ -42,10 +42,10 @@ This application is hosted on the cloud platform Render. Due to the sensitive na
 
 [Video 1](https://youtu.be/3WnS_OHUOWU) shows the general functions of the main dashboard. This includes:
 
-* Searching up users who have submitted a form.
-* Searching up users who have expired forms.
-* Sending a new form to a user.
-* Revoking a form from a user.
+- Searching up users who have submitted a form.
+- Searching up users who have expired forms.
+- Sending a new form to a user.
+- Revoking a form from a user.
 
 [Video 2](https://youtu.be/W1-StyVjz9g) shows an interchangeable UI for the form results summary page when a user has submitted multiple SMI forms.
 
@@ -164,21 +164,21 @@ EPIC 8: Analytics
 <details>
 <summary> Click here to see the Dashboard wireframes </summary>
 
-  - ![Dashboard page desktop](documentation/dashboard.jpg)
-  - ![Dashboard page mobile](documentation/dashboardmobile.jpg)
+- ![Dashboard page desktop](documentation/dashboard.jpg)
+- ![Dashboard page mobile](documentation/dashboardmobile.jpg)
 
 </details>
 <details>
 <summary> Click here to see the Form Results Summary wireframes </summary>
 
-  - ![Form Results Summary page desktop](documentation/formresults.jpg)
-  - ![Form Results Summary page mobile](documentation/formresultsmobile.jpg)
+- ![Form Results Summary page desktop](documentation/formresults.jpg)
+- ![Form Results Summary page mobile](documentation/formresultsmobile.jpg)
 
 </details>
 <details>
 <summary> Click here to see the Form wireframes (These forms look very similar on desktop and mobile therefore multiple wireframes were not needed for these) </summary>
 
-  - ![SMI/YSQ forms followed by BDI/BAI forms](documentation/forms.jpg)
+- ![SMI/YSQ forms followed by BDI/BAI forms](documentation/forms.jpg)
 
 </details>
 
@@ -190,39 +190,39 @@ EPIC 8: Analytics
 
 The Dashboard page consists of:
 
-* An authentication modal to gain access to the application (for security):
+- An authentication modal to gain access to the application (for security):
 
 ![Admin login modal](documentation/adminlogin.png) <br>
 
-* A title with a logo either side: <br>
+- A title with a logo either side: <br>
 
 ![Title for Dashboard page](documentation/titlewithlogo.png) <br>
 
-* A search bar for searching up clients via their email: <br>
+- A search bar for searching up clients via their email: <br>
 
 ![Search bar](documentation/searchbar.png) <br>
 ![Search bar empty](documentation/searchbarred.png) <br>
 ![Search bar with successful search](documentation/searchbargreen.png) <br>
 ![Search bar loading](documentation/searchbarloadingspinner.png) <br>
 
-* A deactivate button which deactivates the client, disables form access and deletes the client after 1 year.
-* An activate button which appears when the client is deactivated in order to reactivate them.
-* A delete button to permanently delete the client. <br>
+- A deactivate button which deactivates the client, disables form access and deletes the client after 1 year.
+- An activate button which appears when the client is deactivated in order to reactivate them.
+- A delete button to permanently delete the client. <br>
 
 ![Deactivate an Delete buttons](documentation/deactivatedelete.png) <br>
 ![Deactivate confirmation modal](documentation/deactivatemodal.png) <br>
 ![Activate confirmation modal](documentation/activatemodal.png) <br>
 ![Delete confirmation modal](documentation/deletemodal.png) <br>
 
-* A prompt for adding new users to the database: <br>
+- A prompt for adding new users to the database: <br>
 
 ![New user](documentation/newuser.png) <br>
 
-* A hover animation on all buttons: <br>
+- A hover animation on all buttons: <br>
 
 ![Hover animation](documentation/hoveranimation.png) <br>
 
-* A control panel for sending and revoking forms as well as to see the status of forms for each particular person. <br>
+- A control panel for sending and revoking forms as well as to see the status of forms for each particular person. <br>
 
 ![Control panel](documentation/controlpanel.png) <br>
 ![Active form](documentation/activeform.png) <br>
@@ -230,7 +230,7 @@ The Dashboard page consists of:
 ![Resendable SMI form](documentation/resendablesmi.png) <br>
 ![Sending form](documentation/sendingform.png) <br>
 
-* A summary button to access the Form Results Summary page: <br>
+- A summary button to access the Form Results Summary page: <br>
 
 ![Summary button](documentation/summarybutton.png) <br>
 
@@ -238,29 +238,29 @@ The Dashboard page consists of:
 
 The Form Results Summary page consists of:
 
-* A header which has has a button that links back to the dashboard, the credentials of the user if the have been recorded, the title of the page and an icon to print the page from: <br>
+- A header which has has a button that links back to the dashboard, the credentials of the user if the have been recorded, the title of the page and an icon to print the page from: <br>
 
 ![Summary page header](documentation/summarypageheader.png) <br>
 
-* A SMI modes table with the date of submission (if one has been submitted): <br>
+- A SMI modes table with the date of submission (if one has been submitted): <br>
 
 ![SMI modes table](documentation/smimodestable.png) <br>
 
-* An SMI summary sheet which is accessible via the SMI modes table by clicking on the paper icon: <br>
+- An SMI summary sheet which is accessible via the SMI modes table by clicking on the paper icon: <br>
 
 ![SMI summary sheet](documentation/smiscoresummarysheet.png) <br>
 ![SMI summary sheet lower half](documentation/smiscoresummarysheet2.png) <br>
 
-* An SMI submissions modal for previous submissions which is accessible via the SMI modes table by clicking on the database icon: <br>
+- An SMI submissions modal for previous submissions which is accessible via the SMI modes table by clicking on the database icon: <br>
 
 ![SMI submissions modal](documentation/smisubmissionsmodal.png) <br>
 
-* A YSQ schemas table which can toggle scores: <br>
+- A YSQ schemas table which can toggle scores: <br>
 
 ![YSQ schemas table](documentation/ysqschemastable.png) <br>
 ![YSQ schemas table inactive](documentation/ysqschemastableinactive.png) <br>
 
-* Small card showing the BDI and BAI scores if they are recorded: <br>
+- Small card showing the BDI and BAI scores if they are recorded: <br>
 
 ![BDI and BAI cards](documentation/bdibaicards.png) <br>
 
@@ -270,35 +270,35 @@ There are 4 distinct questionnaires - YSQ, SMI, BDI, BAI.
 
 The YSQ questionnaire consists of:
 
-* A set of instructions explaining how the form should be filled: <br>
+- A set of instructions explaining how the form should be filled: <br>
 
 ![YSQ instructions](documentation/ysqinstructions.png) <br>
 
-* A dropdown togglable menu with quick instructions for the form: <br>
+- A dropdown togglable menu with quick instructions for the form: <br>
 
 ![YSQ dropdown instructions](documentation/ysqdropdown.png) <br>
 
-* A large questionnaire: <br>
+- A large questionnaire: <br>
 
 ![YSQ questionnaire](documentation/ysqquestionnaire.png) <br>
 
 The SMI questionnaire consists of (similar to YSQ):
 
-* A set of instructions explaining how the form should be filled: <br>
+- A set of instructions explaining how the form should be filled: <br>
 
 ![SMI instructions](documentation/smiinstructions.png) <br>
 
-* A dropdown togglable menu with quick instructions for the form: <br>
+- A dropdown togglable menu with quick instructions for the form: <br>
 
 ![SMI dropdown instructions](documentation/smiquestionnaire.png) <br>
 
-* A large questionnaire: <br>
+- A large questionnaire: <br>
 
 ![SMI questionnaire](documentation/smiquestionnaire.png) <br>
 
 The BDI questionnaire consists of:
 
-* A small questionnaire which is somewhat different to the SMI and YSQ with togglable answers: <br>
+- A small questionnaire which is somewhat different to the SMI and YSQ with togglable answers: <br>
 
 ![BDI questionnaire](documentation/bdiquestionnaire.png) <br>
 
@@ -308,7 +308,7 @@ The BAI questionnaire consists of (similar to BDI):
 
 All questionnaires consist of:
 
-* A reset button which opens a modal to confirm and a submission message when a form is submitted: <br>
+- A reset button which opens a modal to confirm and a submission message when a form is submitted: <br>
 
 ![Form reset confirmation modal](documentation/resetmodal.png) <br>
 ![Form submission message](documentation/submissionmessage.png) <br>
@@ -327,34 +327,34 @@ All new users will be asked to provide a name and a date of birth:
 
 ## Future features
 
-* Autosave in-progress forms is useful because it prevents users from losing their work if they accidentally close the page, lose internet connection, or experience a system error. By automatically saving entered information as the user types, it saves time, reduces frustration, and ensures data accuracy. This feature improves user experience and productivity, especially for long or complex forms that would otherwise need to be filled out again from scratch.
-* Therapist Analytics Dashboard is useful because it allows therapists to track key metrics about their clients, sessions, and outcomes in one place. It helps visualize trends such as client progress, session frequency, and treatment effectiveness, making it easier to identify patterns and adjust therapeutic approaches. By providing clear data insights, the dashboard supports evidence-based practice, improves client care, and enhances the therapist’s ability to manage workload and measure success over time.
+- Autosave in-progress forms is useful because it prevents users from losing their work if they accidentally close the page, lose internet connection, or experience a system error. By automatically saving entered information as the user types, it saves time, reduces frustration, and ensures data accuracy. This feature improves user experience and productivity, especially for long or complex forms that would otherwise need to be filled out again from scratch.
+- Therapist Analytics Dashboard is useful because it allows therapists to track key metrics about their clients, sessions, and outcomes in one place. It helps visualize trends such as client progress, session frequency, and treatment effectiveness, making it easier to identify patterns and adjust therapeutic approaches. By providing clear data insights, the dashboard supports evidence-based practice, improves client care, and enhances the therapist’s ability to manage workload and measure success over time.
 
 # Tools & technologies used
 
-* [Coolors](https://coolors.co/) used to display colour palette used on the website.
-* [Google Fonts](https://fonts.google.com/) used to import 'Lora' and 'Open sans' fonts.
-* [Github](https://github.com/) used to manage version control on project development.
-* [Render](https://render.com/) used to deploy the frontend as a live static site directly from the repository and to host the backend as a web service.
-* [VSCode](https://code.visualstudio.com/) used as the code editor/IDE to develop the project.
-* [Amiresposive](https://amiresponsive.co.uk/) used to display website on the most common devices.
-* [ChatGPT](https://chat.openai.com/) used to assist with creating APIs, to assist with test suites and to verify code.
-* [Claude](https://claude.ai/) used to assist with code reviews, refactoring, and test suite improvements.
-* [Favicon.io](https://favicon.io/) used to generate favicon.
-* [React Router](https://reactrouter.com/) used for client-side routing and navigation between pages.
-* [Resend API](https://resend.com/) used for sending emails in my application.
-* [PostgreSQL database by Neon](http://neon.tech/) used as the Postgres database from Neon Tech.
-* PostgreSQL used as the relational database management.
-* HTML used to provide the structure and markup for the frontend components.
-* CSS used for the main site design and layout.
-* TypeScript used for static typing and improved developer tooling to the React codebase for safer, more maintainable code.
-* React to build the interactive frontend user interface and manage component-based layouts.
-* Vite used as the frontend build tool and development server for fast bundling and hot module replacement.
-* Jest used to write unit and integration tests to ensure code reliability.
-* Tailwind CSS used as a utility-first CSS framework to style components efficiently.
-* REST API used as the architecture for communication between the frontend and backend services.
-* Node.js used as the JavaScript runtime environment to run backend code.
-* Express used as the Node.js framework to build API endpoints and manage server-side logic.
+- [Coolors](https://coolors.co/) used to display colour palette used on the website.
+- [Google Fonts](https://fonts.google.com/) used to import 'Lora' and 'Open sans' fonts.
+- [Github](https://github.com/) used to manage version control on project development.
+- [Render](https://render.com/) used to deploy the frontend as a live static site directly from the repository and to host the backend as a web service.
+- [VSCode](https://code.visualstudio.com/) used as the code editor/IDE to develop the project.
+- [Amiresposive](https://amiresponsive.co.uk/) used to display website on the most common devices.
+- [ChatGPT](https://chat.openai.com/) used to assist with creating APIs, to assist with test suites and to verify code.
+- [Claude](https://claude.ai/) used to assist with code reviews, refactoring, and test suite improvements.
+- [Favicon.io](https://favicon.io/) used to generate favicon.
+- [React Router](https://reactrouter.com/) used for client-side routing and navigation between pages.
+- [Resend API](https://resend.com/) used for sending emails in my application.
+- [PostgreSQL database by Neon](http://neon.tech/) used as the Postgres database from Neon Tech.
+- PostgreSQL used as the relational database management.
+- HTML used to provide the structure and markup for the frontend components.
+- CSS used for the main site design and layout.
+- TypeScript used for static typing and improved developer tooling to the React codebase for safer, more maintainable code.
+- React to build the interactive frontend user interface and manage component-based layouts.
+- Vite used as the frontend build tool and development server for fast bundling and hot module replacement.
+- Jest used to write unit and integration tests to ensure code reliability.
+- Tailwind CSS used as a utility-first CSS framework to style components efficiently.
+- REST API used as the architecture for communication between the frontend and backend services.
+- Node.js used as the JavaScript runtime environment to run backend code.
+- Express used as the Node.js framework to build API endpoints and manage server-side logic.
 
 # Database design
 
@@ -390,9 +390,9 @@ GitHub Issues served as an another Agile tool. There, I used my own **User Story
 I've decomposed my Epics into stories prior to prioritizing and implementing them.
 Using this approach, I was able to apply the MoSCow prioritization and labels to my user stories within the Issues tab.
 
-- **Must Have**: guaranteed to be delivered (*max 60% of stories*)
-- **Should Have**: adds significant value, but not vital (*the rest ~20% of stories*)
-- **Could Have**: has small impact if left out (*20% of stories*)
+- **Must Have**: guaranteed to be delivered (_max 60% of stories_)
+- **Should Have**: adds significant value, but not vital (_the rest ~20% of stories_)
+- **Could Have**: has small impact if left out (_20% of stories_)
 - **Won't Have**: not a priority for this iteration
 
 # Testing
@@ -401,14 +401,14 @@ Using this approach, I was able to apply the MoSCow prioritization and labels to
 
 I've tested my deployed project using the Lighthouse Audit tool to check for any major issues.
 
-| Page | Mobile | Desktop | Notes |
-| --- | --- | --- | --- |
-| Dashboard | ![screenshot](documentation/lighthouse-dashboard-mobile.png) | ![screenshot](documentation/lighthouse-dashboard-desktop.png) | No warnings |
+| Page                 | Mobile                                                                | Desktop                                                                | Notes       |
+| -------------------- | --------------------------------------------------------------------- | ---------------------------------------------------------------------- | ----------- |
+| Dashboard            | ![screenshot](documentation/lighthouse-dashboard-mobile.png)          | ![screenshot](documentation/lighthouse-dashboard-desktop.png)          | No warnings |
 | Form results summary | ![screenshot](documentation/lighthouse-formresultssummary-mobile.png) | ![screenshot](documentation/lighthouse-formresultssummary-desktop.png) | No warnings |
-| YSQ | ![screenshot](documentation/lighthouse-ysq-mobile.png) | ![screenshot](documentation/lighthouse-ysq-desktop.png) | No warnings |
-| SMI | ![screenshot](documentation/lighthouse-smi-mobile.png) | ![screenshot](documentation/lighthouse-smi-desktop.png) | No warnings |
-| BDI | ![screenshot](documentation/lighthouse-bdi-mobile.png) | ![screenshot](documentation/lighthouse-bdi-desktop.png) | No warnings |
-| BAI | ![screenshot](documentation/lighthouse-bai-mobile.png) | ![screenshot](documentation/lighthouse-bai-desktop.png) | No warnings |
+| YSQ                  | ![screenshot](documentation/lighthouse-ysq-mobile.png)                | ![screenshot](documentation/lighthouse-ysq-desktop.png)                | No warnings |
+| SMI                  | ![screenshot](documentation/lighthouse-smi-mobile.png)                | ![screenshot](documentation/lighthouse-smi-desktop.png)                | No warnings |
+| BDI                  | ![screenshot](documentation/lighthouse-bdi-mobile.png)                | ![screenshot](documentation/lighthouse-bdi-desktop.png)                | No warnings |
+| BAI                  | ![screenshot](documentation/lighthouse-bai-mobile.png)                | ![screenshot](documentation/lighthouse-bai-desktop.png)                | No warnings |
 
 ## Automated Testing
 
@@ -420,11 +420,11 @@ I have used Vitest, a fast unit testing framework for Vite projects, to test the
 
 In order to run the tests, I ran the following command in the terminal each time:
 
-```npm run test```
+`npm run test`
 
 To create the coverage report, I would then run the following command:
 
-```npm run test -- --coverage```
+`npm run test -- --coverage`
 
 Below are the results from all the files on my application that I've tested:
 
@@ -468,31 +468,31 @@ To obtain your own Postgres Database, sign-up with your GitHub account, then fol
 
 Store these in your project .env (or secret manager):
 
-```DATABASE_URL=postgresql:XXXXXXXXXXXXX```
+`DATABASE_URL=postgresql:XXXXXXXXXXXXX`
 
 ## Resend API
 
 This project uses Resend to handle sending transactional emails (account verification, purchase confirmations, etc.).
 Once you've created a Resend account and logged in, follow these steps to connect your Node server:
 
-* Log in to your Resend dashboard at Resend.
-* Go to API Keys (or Settings → API keys) and create a new API key.
-* Copy the key immediately — you will not be able to view the full key again after creation.
-  * Save this somewhere secure (local ```.env```, secrets manager, etc.) and do not commit it to source control.
-  * ```RESEND_API_KEY``` = your Resend API key (e.g. ```re_xxxxxxxxxxxxx```)
-* (Recommended) Verify a sending domain:
-  * In the dashboard, go to Domains → Add Domain (e.g., yourdomain.com).
-  * Add the DNS records Resend provides (SPF/TXT, DKIM) with your DNS provider. [Instructions here](https://resend.com/docs/send-with-smtp)
-  * Wait for propagation and confirm verification in the Resend dashboard — verified domains improve deliverability.
- 
+- Log in to your Resend dashboard at Resend.
+- Go to API Keys (or Settings → API keys) and create a new API key.
+- Copy the key immediately — you will not be able to view the full key again after creation.
+  - Save this somewhere secure (local `.env`, secrets manager, etc.) and do not commit it to source control.
+  - `RESEND_API_KEY` = your Resend API key (e.g. `re_xxxxxxxxxxxxx`)
+- (Recommended) Verify a sending domain:
+  - In the dashboard, go to Domains → Add Domain (e.g., yourdomain.com).
+  - Add the DNS records Resend provides (SPF/TXT, DKIM) with your DNS provider. [Instructions here](https://resend.com/docs/send-with-smtp)
+  - Wait for propagation and confirm verification in the Resend dashboard — verified domains improve deliverability.
+
 ### Environment variables
 
 Store these in your project .env (or secret manager):
 
-```RESEND_API_KEY=re_xxxxxxxxxxxxxxxxx```
-```EMAIL_FROM="Your Name <noreply@yourdomain.com>"```
+`RESEND_API_KEY=re_xxxxxxxxxxxxxxxxx`
+`EMAIL_FROM="Your Name <noreply@yourdomain.com>"`
 
-Install the Node SDK by running ```npm install resend```.
+Install the Node SDK by running `npm install resend`.
 
 ## Render Deployment
 
@@ -502,35 +502,35 @@ Deployment steps are as follows, after account setup (including workspace setup)
 
 ### Backend
 
-* Select "Projects" which should open a page to select a service.
-* Click the "+ New" button in the top right corner.
-* Select "New Web Service" for the backend.
-* Connect to your Git provider (Github in my case) and then to the repository (e.g. https://github.com/SasanTazayoni/integrate-therapy-form-manager in my case).
-* Give a unique name for the static site (should be different to the frontend site name).
-* Set the Region to one that is closest to you.
-* Set the "Root Directory" to the name of the folder which contains the backend file (in my case it is "backend").
-* Set the "Start Command" to "npm run start".
-* Set the following Environment Variables:
-  * DATABASE_URL = [YOUR DATABASE API KEY]
-  * FROM_EMAIL = [Your email <youremail@yourdomain.com>]
-  * FRONTEND_BASE_URL = [NAME OF FRONTEND SERVER]
-  * RESEND_API_KEY = [YOUR RESEND API KEY]
+- Select "Projects" which should open a page to select a service.
+- Click the "+ New" button in the top right corner.
+- Select "New Web Service" for the backend.
+- Connect to your Git provider (Github in my case) and then to the repository (e.g. https://github.com/SasanTazayoni/integrate-therapy-form-manager in my case).
+- Give a unique name for the static site (should be different to the frontend site name).
+- Set the Region to one that is closest to you.
+- Set the "Root Directory" to the name of the folder which contains the backend file (in my case it is "backend").
+- Set the "Start Command" to "npm run start".
+- Set the following Environment Variables:
+  - DATABASE_URL = [YOUR DATABASE API KEY]
+  - FROM_EMAIL = [Your email <youremail@yourdomain.com>]
+  - FRONTEND_BASE_URL = [NAME OF FRONTEND SERVER]
+  - RESEND_API_KEY = [YOUR RESEND API KEY]
 
 ### Frontend
 
-* Click the "+ New" button in the top right corner again.
-* Select "New Static Site" for the frontend.
-* Connect to your Git provider (Github in my case) and then to the repository (e.g. https://github.com/SasanTazayoni/integrate-therapy-form-manager in my case).
-* Give a unique name for the static site (usually autofilled).
-* Set the Publish Directory as "dist".
-* Set the following Environment Variables:
-  * VITE_API_URL = [NAME OF BACKEND SERVER]
-  * VITE_BASE_PATH = /
-  * VITE_THERAPIST_USERNAME = [DECIDE A USERNAME]
-  * VITE_THERAPIST_PASSWORD = [DECIDE A PASSWORD]
-* Click "Deploy Static Site" which will deploy the frontend from the latest commit.
-* On the left sidebar menu, click the "Redirects/Rewrites" tab.
-* Under "Source" add "/*", under "Destination" add "/index.html", under "Action" add "Rewrite".
+- Click the "+ New" button in the top right corner again.
+- Select "New Static Site" for the frontend.
+- Connect to your Git provider (Github in my case) and then to the repository (e.g. https://github.com/SasanTazayoni/integrate-therapy-form-manager in my case).
+- Give a unique name for the static site (usually autofilled).
+- Set the Publish Directory as "dist".
+- Set the following Environment Variables:
+  - VITE_API_URL = [NAME OF BACKEND SERVER]
+  - VITE_BASE_PATH = /
+  - VITE_THERAPIST_USERNAME = [DECIDE A USERNAME]
+  - VITE_THERAPIST_PASSWORD = [DECIDE A PASSWORD]
+- Click "Deploy Static Site" which will deploy the frontend from the latest commit.
+- On the left sidebar menu, click the "Redirects/Rewrites" tab.
+- Under "Source" add "/\*", under "Destination" add "/index.html", under "Action" add "Rewrite".
 
 The application should be accessible via the frontend URL when both the frontend and backend are hosted.
 
@@ -538,7 +538,7 @@ The application should be accessible via the frontend URL when both the frontend
 
 This project can be cloned or forked in order to make a local copy on your own system.
 
-For either method, you will need to install any applicable packages found within the *package.json* file.
+For either method, you will need to install any applicable packages found within the _package.json_ file.
 
 - `npm install`.
 
@@ -549,31 +549,31 @@ You will need to create a new file called `.env` at the root-level of the fronte
 
 Sample `.env` file (frontend):
 
-* ```VITE_THERAPIST_USERNAME=yourusername```
-* ```VITE_THERAPIST_PASSWORD=yourpassword```
-* ```VITE_API_URL=/```
-* ```VITE_BASE_PATH=/integrate-therapy-form-manager```
+- `VITE_THERAPIST_USERNAME=yourusername`
+- `VITE_THERAPIST_PASSWORD=yourpassword`
+- `VITE_API_URL=/`
+- `VITE_BASE_PATH=/integrate-therapy-form-manager`
 
 Sample `.env` file (backend):
 
-* ```DATABASE_URL='yourdatabaseurl'```
-* ```RESEND_API_KEY="yourresendapikey"```
-* ```FROM_EMAIL="Your email <youremail@yourdomain.com>"```
-* ```FRONTEND_BASE_URL="yourfrontendservername"```
+- `DATABASE_URL='yourdatabaseurl'`
+- `RESEND_API_KEY="yourresendapikey"`
+- `FROM_EMAIL="Your email <youremail@yourdomain.com>"`
+- `FRONTEND_BASE_URL="yourfrontendservername"`
 
 Local environment only (do not include these in production/deployment!)
 
 Once the project is cloned or forked, in order to run it locally, you'll need to follow these steps:
 
-* Open a terminal and change directories into the frontend folder.
-* Type "npm run dev" which should build then run the frontend server.
-* Open a second terminal and change directories into the backend folder.
-* Before running the backend, make sure your database is properly migrated using Prisma:
-  * Type npx prisma migrate dev --name init which will apply the latest Prisma schema changes to your local database.
-* Type "npm run dev" which should build then run the backend server.
-* Both of these can be stopped with `CTRL+C`.
+- Open a terminal and change directories into the frontend folder.
+- Type "npm run dev" which should build then run the frontend server.
+- Open a second terminal and change directories into the backend folder.
+- Before running the backend, make sure your database is properly migrated using Prisma:
+  - Type npx prisma migrate dev --name init which will apply the latest Prisma schema changes to your local database.
+- Type "npm run dev" which should build then run the backend server.
+- Both of these can be stopped with `CTRL+C`.
 
-In the production version the frontend is served via the backend therefore in order to run it locally, ```src/api/api.ts``` can be deleted, ```‎src/api/clientsFrontend.ts``` and ```‎src/api/formsFrontend.ts``` should be replaced respectively with these files:
+In the production version the frontend is served via the backend therefore in order to run it locally, `src/api/api.ts` can be deleted, `‎src/api/clientsFrontend.ts` and `‎src/api/formsFrontend.ts` should be replaced respectively with these files:
 
 ```ts
 import axios from "axios";
@@ -595,7 +595,7 @@ type AddClientResult =
   | { ok: false; data: { error: string } };
 
 export async function fetchClientStatus(
-  email: string
+  email: string,
 ): Promise<FetchClientStatusResult> {
   try {
     const res = await axios.get<ClientFormsStatus>("/clients/form-status", {
@@ -609,7 +609,7 @@ export async function fetchClientStatus(
         data: {
           error: getErrorDisplay(
             err,
-            "Network error while fetching client status."
+            "Network error while fetching client status.",
           ),
         },
       };
@@ -674,7 +674,7 @@ export async function deleteClient(email: string): Promise<DeleteClientResult> {
 }
 
 export async function deleteClientByEmail(
-  email: string
+  email: string,
 ): Promise<DeleteClientResult> {
   return await deleteClient(email);
 }
@@ -696,13 +696,13 @@ type DeactivateClientResult =
   | { ok: false; data: { error: string } };
 
 export async function deactivateClient(
-  email: string
+  email: string,
 ): Promise<DeactivateClientResult> {
   try {
     const res = await axios.patch<DeactivateClientResponse>(
       "/clients/deactivate",
       null,
-      { params: { email } }
+      { params: { email } },
     );
     return { ok: true, data: res.data };
   } catch (err: unknown) {
@@ -712,7 +712,7 @@ export async function deactivateClient(
         data: {
           error: getErrorDisplay(
             err,
-            "Network error while deactivating client."
+            "Network error while deactivating client.",
           ),
         },
       };
@@ -743,13 +743,13 @@ type ActivateClientResult =
   | { ok: false; data: { error: string } };
 
 export async function activateClient(
-  email: string
+  email: string,
 ): Promise<ActivateClientResult> {
   try {
     const res = await axios.patch<ActivateClientResponse>(
       "/clients/activate",
       null,
-      { params: { email } }
+      { params: { email } },
     );
     return { ok: true, data: res.data };
   } catch (err: unknown) {
@@ -810,7 +810,7 @@ export async function sendFormToken(email: string, formType: string) {
         data: {
           error: getErrorDisplay(
             err,
-            "Network error while sending form token."
+            "Network error while sending form token.",
           ),
         },
       };
@@ -835,7 +835,7 @@ export async function sendMultipleFormTokens(email: string) {
         data: {
           error: getErrorDisplay(
             err,
-            "Network error while sending multiple form tokens."
+            "Network error while sending multiple form tokens.",
           ),
         },
       };
@@ -881,7 +881,7 @@ export async function revokeFormToken(email: string, formType: string) {
         data: {
           error: getErrorDisplay(
             err,
-            "Network error while revoking form token."
+            "Network error while revoking form token.",
           ),
         },
       };
@@ -910,7 +910,7 @@ export async function submitBecksForm({
       const code = err?.response?.data?.code;
       const message = getErrorDisplay(
         err,
-        "Network error while submitting form."
+        "Network error while submitting form.",
       );
 
       return {
@@ -941,7 +941,7 @@ export async function submitBurnsForm({
       const code = err?.response?.data?.code;
       const message = getErrorDisplay(
         err,
-        "Network error while submitting form."
+        "Network error while submitting form.",
       );
 
       return {
@@ -976,7 +976,7 @@ export async function submitYSQForm({
       const code = err?.response?.data?.code;
       const message = getErrorDisplay(
         err,
-        "Network error while submitting YSQ form."
+        "Network error while submitting YSQ form.",
       );
 
       return { ok: false, error: message, code };
@@ -1004,7 +1004,7 @@ export async function submitSMIForm({
       const code = err?.response?.data?.code;
       const message = getErrorDisplay(
         err,
-        "Network error while submitting SMI form."
+        "Network error while submitting SMI form.",
       );
 
       return { ok: false, error: message, code };
@@ -1055,7 +1055,7 @@ export type FetchAllSmiFormsResult = {
 };
 
 export async function fetchAllSmiForms(
-  email: string
+  email: string,
 ): Promise<FetchAllSmiFormsResult> {
   try {
     const res = await axios.get<{
@@ -1070,7 +1070,7 @@ export async function fetchAllSmiForms(
         data: {
           error: getErrorDisplay(
             err,
-            "Network error while fetching SMI forms."
+            "Network error while fetching SMI forms.",
           ),
         },
       };
@@ -1087,13 +1087,13 @@ export async function fetchAllSmiForms(
 
 You can clone the repository by following these steps:
 
-1. Go to the [GitHub repository](https://github.com/SasanTazayoni/integrate-therapy-form-manager) 
-2. Locate the Code button above the list of files and click it 
+1. Go to the [GitHub repository](https://github.com/SasanTazayoni/integrate-therapy-form-manager)
+2. Locate the Code button above the list of files and click it
 3. Select if you prefer to clone using HTTPS, SSH, or GitHub CLI and click the copy button to copy the URL to your clipboard
 4. Open Git Bash or Terminal
 5. Change the current working directory to the one where you want the cloned directory
 6. In your IDE Terminal, type the following command to clone my repository:
-	- `git clone https://github.com/SasanTazayoni/integrate-therapy-form-manager.git`
+   - `git clone https://github.com/SasanTazayoni/integrate-therapy-form-manager.git`
 7. Press Enter to create your local clone.
 
 ### Forking
