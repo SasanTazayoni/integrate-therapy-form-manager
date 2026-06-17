@@ -3,6 +3,7 @@ import { Loader } from "lucide-react";
 import { useClientContext } from "../../context/ClientContext";
 import { fetchAllSmiForms } from "../../api/formsFrontend";
 import { formatDate } from "../../utils/formatDate";
+import { smiBoundaries } from "../../data/SMIBoundaries";
 import Modal from "../Modal";
 import Button from "../Button";
 
@@ -83,28 +84,11 @@ export default function SMISubmissionsModal({
     submittedAt: string;
     smiScores: Record<string, string | null>;
   }) => {
-    const keyMap: Record<string, string> = {
-      vc: "smi_vc_score",
-      ac: "smi_ac_score",
-      ec: "smi_ec_score",
-      ic: "smi_ic_score",
-      uc: "smi_uc_score",
-      cc: "smi_cc_score",
-      cs: "smi_cs_score",
-      dp: "smi_dp_score",
-      dss: "smi_dss_score",
-      sa: "smi_sa_score",
-      ba: "smi_ba_score",
-      pp: "smi_pp_score",
-      dc: "smi_dc_score",
-      ha: "smi_ha_score",
-    };
-
     const normalizedScores: Record<string, string | null> = {};
 
     Object.entries(form.smiScores).forEach(([shortKey, value]) => {
-      const fullKey = keyMap[shortKey];
-      if (fullKey) normalizedScores[fullKey] = value ?? null;
+      const fullKey = `smi_${shortKey}_score`;
+      if (fullKey in smiBoundaries) normalizedScores[fullKey] = value ?? null;
     });
 
     setLocalSmiScores(normalizedScores);
