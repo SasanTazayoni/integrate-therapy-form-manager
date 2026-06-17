@@ -15,7 +15,6 @@ const DEFAULT_INVALID_MSG =
   "This form is not available. Please contact your therapist to receive a new form.";
 
 type QuestionnaireFormProps = {
-  title: string;
   questionnaire: FormType;
   token?: string;
   children: React.ReactNode;
@@ -42,7 +41,6 @@ export function reducer(state: State, action: Action): State {
 }
 
 export default function QuestionnaireForm({
-  title,
   questionnaire,
   children,
   token,
@@ -187,14 +185,7 @@ export default function QuestionnaireForm({
   }
 
   if (state.status === "error") {
-    return (
-      <div className="relative min-h-screen">
-        <div className="blurred">
-          <h1>{title}</h1>
-        </div>
-        <InvalidTokenModal />
-      </div>
-    );
+    return <InvalidTokenModal />;
   }
 
   return (

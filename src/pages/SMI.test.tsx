@@ -3,7 +3,6 @@ import { render, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import SMI from "../pages/SMI";
 import * as useSMIFormHook from "../hooks/useSMIForm";
-import * as useValidateTokenHook from "../hooks/useValidateToken";
 import * as SMIHelpers from "../utils/SMIHelpers";
 import * as SMIQuestions from "../components/SMIQuestions";
 import SMIItems from "../data/SMIItems";
@@ -94,18 +93,6 @@ vi.mock("../components/Button", () => ({
   }) => <button {...props}>{children}</button>,
 }));
 
-vi.mock("lucide-react", () => ({
-  Loader2: ({
-    className,
-    size,
-  }: {
-    className?: string;
-    size?: number;
-  }) => (
-    <div data-testid="loader" className={className} data-size={size}></div>
-  ),
-}));
-
 vi.mock("../components/QuestionnaireForm", () => ({
   default: ({
     onSubmit,
@@ -150,14 +137,7 @@ vi.mock("../components/RatingScaleTooltip", () => ({
   ),
 }));
 
-type ValidateTokenReturn = ReturnType<typeof useValidateTokenHook.default>;
 type SMIFormReturn = ReturnType<typeof useSMIFormHook.default>;
-
-const baseValidateToken: ValidateTokenReturn = {
-  isValid: true,
-  showInvalidTokenModal: false,
-  setShowInvalidTokenModal: vi.fn(),
-};
 
 const baseSMIForm: SMIFormReturn = {
   answers: {},
@@ -181,40 +161,25 @@ describe("SMI Component", () => {
     mockedUseParams = vi.fn(() => ({ token: "dummy-token" as string | undefined }));
   });
 
-  test("renders loader when isValid is null", () => {
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue({
-      ...baseValidateToken,
-      isValid: null,
-    });
+  test("renders InvalidTokenModal when INVALID_TOKEN returned on submit", async () => {
+    vi.spyOn(SMIHelpers, "computeSMIScores").mockReturnValue({ foo: "bar" } as never);
+    vi.spyOn(API, "submitSMIForm").mockResolvedValue({
+      ok: false,
+      code: "INVALID_TOKEN",
+    } as never);
+    vi.spyOn(useSMIFormHook, "default").mockReturnValue(baseSMIForm);
 
-    const { getByTestId, container } = render(
+    const { getByTestId, findByText } = render(
       <MemoryRouter>
         <SMI />
       </MemoryRouter>
     );
 
-    expect(container.querySelector("[aria-busy]")).toBeInTheDocument();
-    expect(getByTestId("loader")).toBeInTheDocument();
-  });
-
-  test("renders InvalidTokenModal when token is invalid", () => {
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue({
-      ...baseValidateToken,
-      isValid: false,
-      showInvalidTokenModal: true,
-    });
-
-    const { getByText } = render(
-      <MemoryRouter>
-        <SMI />
-      </MemoryRouter>
-    );
-
-    expect(getByText("Invalid Token")).toBeInTheDocument();
+    fireEvent.click(getByTestId("mock-submit"));
+    expect(await findByText("Invalid Token")).toBeInTheDocument();
   });
 
   test("renders questions and instructions when token is valid", () => {
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(baseValidateToken);
     vi.spyOn(useSMIFormHook, "default").mockReturnValue(baseSMIForm);
 
     const { getByText, getAllByTestId } = render(
@@ -233,7 +198,6 @@ describe("SMI Component", () => {
       .spyOn(API, "submitSMIForm")
       .mockResolvedValue({ ok: true } as never);
 
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(baseValidateToken);
     vi.spyOn(useSMIFormHook, "default").mockReturnValue(baseSMIForm);
 
     const { getByTestId } = render(
@@ -257,7 +221,6 @@ describe("SMI Component", () => {
     const cancelReset = vi.fn();
     const handleModalCloseFinished = vi.fn();
 
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(baseValidateToken);
     vi.spyOn(useSMIFormHook, "default").mockReturnValue({
       ...baseSMIForm,
       resetModalOpen: true,
@@ -287,7 +250,6 @@ describe("SMI Component", () => {
 
     const setFormError = vi.fn();
 
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(baseValidateToken);
     vi.spyOn(useSMIFormHook, "default").mockReturnValue({
       ...baseSMIForm,
       setFormError,
@@ -306,16 +268,9 @@ describe("SMI Component", () => {
     });
   });
 
-  test("onValidSubmit handles submission errors", async () => {
+  test("onValidSubmit handles non-token submission errors", async () => {
     const setFormError = vi.fn();
-    const setShowInvalidTokenModal = vi.fn();
 
-    mockedUseParams = vi.fn(() => ({ token: "dummy-token" as string | undefined }));
-
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue({
-      ...baseValidateToken,
-      setShowInvalidTokenModal,
-    });
     vi.spyOn(useSMIFormHook, "default").mockReturnValue({
       ...baseSMIForm,
       setFormError,
@@ -324,7 +279,8 @@ describe("SMI Component", () => {
 
     vi.spyOn(API, "submitSMIForm").mockResolvedValue({
       ok: false,
-      code: "INVALID_TOKEN",
+      code: "SOME_OTHER_ERROR",
+      error: "Something went wrong",
     } as never);
 
     const { getByTestId } = render(
@@ -336,24 +292,7 @@ describe("SMI Component", () => {
     fireEvent.click(getByTestId("mock-submit"));
 
     await waitFor(() => {
-      expect(setShowInvalidTokenModal).toHaveBeenCalledWith(true);
-      expect(setFormError).not.toHaveBeenCalled();
-    });
-
-    setShowInvalidTokenModal.mockClear();
-    setFormError.mockClear();
-
-    vi.spyOn(API, "submitSMIForm").mockResolvedValue({
-      ok: false,
-      code: "SOME_OTHER_ERROR",
-      error: "Something went wrong",
-    } as never);
-
-    fireEvent.click(getByTestId("mock-submit"));
-
-    await waitFor(() => {
       expect(setFormError).toHaveBeenCalledWith("Something went wrong");
-      expect(setShowInvalidTokenModal).not.toHaveBeenCalled();
     });
 
     setFormError.mockClear();
@@ -372,7 +311,6 @@ describe("SMI Component", () => {
   });
 
   test("renders formError message when formError is set", () => {
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(baseValidateToken);
     vi.spyOn(useSMIFormHook, "default").mockReturnValue({
       ...baseSMIForm,
       formError: "Test error message",
@@ -392,7 +330,6 @@ describe("SMI Component", () => {
   test("calls handleChange when SMIQuestion input changes", () => {
     const handleChange = vi.fn();
 
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(baseValidateToken);
     vi.spyOn(useSMIFormHook, "default").mockReturnValue({
       ...baseSMIForm,
       handleChange,
@@ -441,6 +378,8 @@ describe("SMI Component", () => {
         }) as never
       );
 
+    vi.spyOn(useSMIFormHook, "default").mockReturnValue(baseSMIForm);
+
     const { getByTestId } = render(
       <MemoryRouter>
         <SMI />
@@ -486,6 +425,8 @@ describe("SMI Component", () => {
         }) as never
       );
 
+    vi.spyOn(useSMIFormHook, "default").mockReturnValue(baseSMIForm);
+
     const { getByTestId } = render(
       <MemoryRouter>
         <SMI />
@@ -504,7 +445,6 @@ describe("SMI Component", () => {
   });
 
   test("renders RatingScaleTooltip with correct items", () => {
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(baseValidateToken);
     vi.spyOn(useSMIFormHook, "default").mockReturnValue(baseSMIForm);
 
     const { getByTestId, getByText } = render(

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import QuestionnaireForm from "../components/QuestionnaireForm";
 import FormResetModal from "../components/modals/FormResetModal";
@@ -5,17 +6,14 @@ import InvalidTokenModal from "../components/modals/InvalidTokenModal";
 import BECKS_ITEMS from "../data/BECKSItems";
 import useBecksForm from "../hooks/useBECKSForm";
 import { submitBecksForm } from "../api/formsFrontend";
-import useValidateToken from "../hooks/useValidateToken";
 import BecksQuestions from "../components/BecksQuestions";
-import { Loader2 } from "lucide-react";
 import Button from "../components/Button";
 import { submitFormWithToken } from "../utils/becksBurnsHelpers";
 
 const BECKS = () => {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
-  const { isValid, showInvalidTokenModal, setShowInvalidTokenModal } =
-    useValidateToken(token);
+  const [showInvalidTokenModal, setShowInvalidTokenModal] = useState(false);
 
   const {
     answers,
@@ -47,21 +45,12 @@ const BECKS = () => {
       navigate,
     });
 
-  if (isValid === null) {
-    return (
-      <div className="flex justify-center items-center min-h-screen" aria-busy>
-        <Loader2 className="animate-spin text-blue-600" size={120} />
-      </div>
-    );
-  }
-
   if (showInvalidTokenModal) {
     return <InvalidTokenModal />;
   }
 
   return (
     <QuestionnaireForm
-      title="BECKS"
       questionnaire="BECKS"
       token={token}
       onError={setFormError}

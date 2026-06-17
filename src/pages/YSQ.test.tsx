@@ -3,7 +3,6 @@ import { render, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import YSQ from "../pages/YSQ";
 import * as useYSQFormHook from "../hooks/useYSQForm";
-import * as useValidateTokenHook from "../hooks/useValidateToken";
 import * as YSQHelpers from "../utils/YSQHelpers";
 import * as YSQQuestions from "../components/YSQQuestions";
 import YSQEmotionalDeprivation from "../data/YSQEmotionalDeprivation";
@@ -27,12 +26,6 @@ vi.mock("../components/Button", () => ({
   }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
     children: React.ReactNode;
   }) => <button {...props}>{children}</button>,
-}));
-
-vi.mock("lucide-react", () => ({
-  Loader2: ({ className, size }: { className?: string; size?: number }) => (
-    <div data-testid="loader" className={className} data-size={size}></div>
-  ),
 }));
 
 vi.mock("../components/QuestionnaireForm", () => ({
@@ -100,14 +93,7 @@ vi.mock("../components/RatingScaleTooltip", () => ({
   ),
 }));
 
-type ValidateTokenReturn = ReturnType<typeof useValidateTokenHook.default>;
 type YSQFormReturn = ReturnType<typeof useYSQFormHook.default>;
-
-const baseValidateToken: ValidateTokenReturn = {
-  isValid: true,
-  showInvalidTokenModal: false,
-  setShowInvalidTokenModal: vi.fn(),
-};
 
 const baseYSQForm: YSQFormReturn = {
   answers: {},
@@ -130,26 +116,25 @@ describe("YSQ Component", () => {
     vi.clearAllMocks();
   });
 
-  test("renders InvalidTokenModal when token is invalid", () => {
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue({
-      ...baseValidateToken,
-      isValid: false,
-      showInvalidTokenModal: true,
-    });
+  test("renders InvalidTokenModal when token triggers INVALID_TOKEN", async () => {
+    vi.spyOn(useYSQFormHook, "default").mockReturnValue(baseYSQForm);
+    vi.spyOn(YSQHelpers, "submitYSQWithToken").mockImplementation(
+      (({ setShowInvalidTokenModal }: { setShowInvalidTokenModal: (v: boolean) => void }) => {
+        setShowInvalidTokenModal(true);
+      }) as never
+    );
 
-    const { getByText } = render(
+    const { getByTestId, findByText } = render(
       <MemoryRouter>
         <YSQ />
       </MemoryRouter>,
     );
 
-    expect(getByText("Invalid Token")).toBeInTheDocument();
+    fireEvent.click(getByTestId("mock-submit"));
+    expect(await findByText("Invalid Token")).toBeInTheDocument();
   });
 
   test("renders questions when token is valid", () => {
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
-      baseValidateToken,
-    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue(baseYSQForm);
 
     const { getByText, getAllByText } = render(
@@ -163,9 +148,6 @@ describe("YSQ Component", () => {
   });
 
   test("calls submitYSQWithToken on valid submit", async () => {
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
-      baseValidateToken,
-    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue(baseYSQForm);
 
     const mockSubmit = vi
@@ -189,9 +171,6 @@ describe("YSQ Component", () => {
     const confirmReset = vi.fn();
     const cancelReset = vi.fn();
 
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
-      baseValidateToken,
-    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue({
       ...baseYSQForm,
       resetModalOpen: true,
@@ -214,30 +193,7 @@ describe("YSQ Component", () => {
     expect(cancelReset).toHaveBeenCalled();
   });
 
-  test("renders loader when isValid is null", () => {
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue({
-      ...baseValidateToken,
-      isValid: null,
-    });
-
-    const { container, getByTestId } = render(
-      <MemoryRouter>
-        <YSQ />
-      </MemoryRouter>,
-    );
-
-    expect(container.querySelector("[aria-busy]")).toBeInTheDocument();
-
-    const loaderIcon = getByTestId("loader");
-    expect(loaderIcon).toBeInTheDocument();
-    expect(loaderIcon).toHaveClass("animate-spin text-blue-600");
-    expect(loaderIcon.dataset.size).toBe("120");
-  });
-
   test("renders formError message when set", () => {
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
-      baseValidateToken,
-    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue({
       ...baseYSQForm,
       formError: "This is an error",
@@ -257,9 +213,6 @@ describe("YSQ Component", () => {
   test("calls handleResetClick when Reset button is clicked", () => {
     const handleResetClick = vi.fn();
 
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
-      baseValidateToken,
-    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue({
       ...baseYSQForm,
       handleResetClick,
@@ -277,12 +230,6 @@ describe("YSQ Component", () => {
 
   test("submitYSQWithToken called with correct arguments and navigate is functional", async () => {
     const mockSetFormError = vi.fn();
-    const mockSetShowInvalidTokenModal = vi.fn();
-
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue({
-      ...baseValidateToken,
-      setShowInvalidTokenModal: mockSetShowInvalidTokenModal,
-    });
 
     vi.spyOn(useYSQFormHook, "default").mockReturnValue({
       ...baseYSQForm,
@@ -315,7 +262,7 @@ describe("YSQ Component", () => {
       expect(args.answers).toEqual({ 1: 1, 2: 2 });
       expect(Array.isArray(args.schemas)).toBe(true);
       expect(args.setFormError).toBe(mockSetFormError);
-      expect(args.setShowInvalidTokenModal).toBe(mockSetShowInvalidTokenModal);
+      expect(typeof args.setShowInvalidTokenModal).toBe("function");
       expect(typeof args.navigate).toBe("function");
     });
   });
@@ -341,9 +288,6 @@ describe("YSQ Component", () => {
       </div>
     )) as never);
 
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
-      baseValidateToken,
-    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue({
       ...baseYSQForm,
       missingIds,
@@ -371,9 +315,6 @@ describe("YSQ Component", () => {
     const cancelReset = vi.fn();
     const handleModalCloseFinished = vi.fn();
 
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
-      baseValidateToken,
-    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue({
       ...baseYSQForm,
       resetModalOpen: true,
@@ -402,9 +343,6 @@ describe("YSQ Component", () => {
     const handleChange = vi.fn();
     const questionItem = YSQEmotionalDeprivation[0];
 
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
-      baseValidateToken,
-    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue({
       ...baseYSQForm,
       handleChange,
@@ -464,9 +402,6 @@ describe("YSQ Component", () => {
       );
     }) as never);
 
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
-      baseValidateToken,
-    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue(baseYSQForm);
 
     const { getByTestId } = render(
@@ -515,9 +450,6 @@ describe("YSQ Component", () => {
       );
     }) as never);
 
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
-      baseValidateToken,
-    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue(baseYSQForm);
 
     const { getByTestId } = render(
@@ -540,9 +472,6 @@ describe("YSQ Component", () => {
   });
 
   test("renders RatingScaleTooltip with correct items", () => {
-    vi.spyOn(useValidateTokenHook, "default").mockReturnValue(
-      baseValidateToken,
-    );
     vi.spyOn(useYSQFormHook, "default").mockReturnValue(baseYSQForm);
 
     const { getByTestId, getByText } = render(

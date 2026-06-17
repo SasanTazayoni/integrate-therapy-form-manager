@@ -1,21 +1,19 @@
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import QuestionnaireForm from "../components/QuestionnaireForm";
 import FormResetModal from "../components/modals/FormResetModal";
 import InvalidTokenModal from "../components/modals/InvalidTokenModal";
 import BURNS_ITEMS from "../data/BURNSItems";
 import useBurnsForm from "../hooks/useBURNSForm";
-import useValidateToken from "../hooks/useValidateToken";
 import BurnsQuestions from "../components/BurnsQuestions";
 import { submitBurnsForm } from "../api/formsFrontend";
-import { Loader2 } from "lucide-react";
 import Button from "../components/Button";
 import { submitFormWithToken } from "../utils/becksBurnsHelpers";
 
 const BURNS = () => {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
-  const { isValid, showInvalidTokenModal, setShowInvalidTokenModal } =
-    useValidateToken(token);
+  const [showInvalidTokenModal, setShowInvalidTokenModal] = useState(false);
 
   const {
     answers,
@@ -43,21 +41,12 @@ const BURNS = () => {
       navigate,
     });
 
-  if (isValid === null) {
-    return (
-      <div className="flex justify-center items-center min-h-screen" aria-busy>
-        <Loader2 className="animate-spin text-blue-600" size={120} />
-      </div>
-    );
-  }
-
   if (showInvalidTokenModal) {
     return <InvalidTokenModal />;
   }
 
   return (
     <QuestionnaireForm
-      title="Burns Anxiety Inventory"
       questionnaire="BURNS"
       token={token}
       onError={setFormError}

@@ -1,12 +1,10 @@
 import { render, fireEvent } from "@testing-library/react";
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import BECKS from "./BECKS";
-import * as useValidateTokenModule from "../hooks/useValidateToken";
 import * as useBecksFormModule from "../hooks/useBECKSForm";
 import * as becksBurnsHelpers from "../utils/becksBurnsHelpers";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 
-type ValidateTokenReturn = ReturnType<typeof useValidateTokenModule.default>;
 type BecksFormReturn = ReturnType<typeof useBecksFormModule.default>;
 
 vi.mock("../components/QuestionnaireForm", () => ({
@@ -31,12 +29,6 @@ vi.mock("../components/modals/InvalidTokenModal", () => ({
   default: () => <div data-testid="invalid-token-modal" />,
 }));
 
-const baseValidateToken: ValidateTokenReturn = {
-  isValid: true,
-  showInvalidTokenModal: false,
-  setShowInvalidTokenModal: vi.fn(),
-};
-
 const baseBecksForm: BecksFormReturn = {
   answers: {},
   total: 0,
@@ -56,51 +48,38 @@ const baseBecksForm: BecksFormReturn = {
 describe("BECKS component", () => {
   let mockSubmitFn: ReturnType<typeof vi.fn>;
   let mockSetFormError: ReturnType<typeof vi.fn>;
-  let mockSetShowInvalidTokenModal: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockSubmitFn = vi.fn();
     mockSetFormError = vi.fn();
-    mockSetShowInvalidTokenModal = vi.fn();
 
     vi.spyOn(becksBurnsHelpers, "submitFormWithToken").mockImplementation(
       mockSubmitFn
     );
   });
 
-  test("renders loader when isValid is null", () => {
-    vi.spyOn(useValidateTokenModule, "default").mockReturnValue({
-      ...baseValidateToken,
-      isValid: null,
-    });
+  test("renders InvalidTokenModal when showInvalidTokenModal becomes true", async () => {
+    vi.spyOn(becksBurnsHelpers, "submitFormWithToken").mockImplementation(
+      (({ setShowInvalidTokenModal }: { setShowInvalidTokenModal: (v: boolean) => void }) => {
+        setShowInvalidTokenModal(true);
+      }) as never
+    );
+    vi.spyOn(useBecksFormModule, "default").mockReturnValue(baseBecksForm);
 
-    const { container } = render(
-      <MemoryRouter>
-        <BECKS />
+    const { getByTestId, findByTestId } = render(
+      <MemoryRouter initialEntries={["/becks/abc123"]}>
+        <Routes>
+          <Route path="/becks/:token" element={<BECKS />} />
+        </Routes>
       </MemoryRouter>
     );
 
-    expect(container.querySelector("[aria-busy]")).toBeTruthy();
-  });
-
-  test("renders InvalidTokenModal when showInvalidTokenModal is true", () => {
-    vi.spyOn(useValidateTokenModule, "default").mockReturnValue({
-      ...baseValidateToken,
-      showInvalidTokenModal: true,
-    });
-
-    const { getByTestId } = render(
-      <MemoryRouter>
-        <BECKS />
-      </MemoryRouter>
-    );
-
-    expect(getByTestId("invalid-token-modal")).toBeTruthy();
+    fireEvent.click(getByTestId("submit-btn"));
+    expect(await findByTestId("invalid-token-modal")).toBeTruthy();
   });
 
   test("renders QuestionnaireForm and buttons", () => {
-    vi.spyOn(useValidateTokenModule, "default").mockReturnValue(baseValidateToken);
     vi.spyOn(useBecksFormModule, "default").mockReturnValue({
       ...baseBecksForm,
       answers: { 1: 1 },
@@ -118,7 +97,6 @@ describe("BECKS component", () => {
   });
 
   test("renders formError message", () => {
-    vi.spyOn(useValidateTokenModule, "default").mockReturnValue(baseValidateToken);
     vi.spyOn(useBecksFormModule, "default").mockReturnValue({
       ...baseBecksForm,
       formError: "Error message",
@@ -137,7 +115,6 @@ describe("BECKS component", () => {
     const mockConfirm = vi.fn();
     const mockCancel = vi.fn();
 
-    vi.spyOn(useValidateTokenModule, "default").mockReturnValue(baseValidateToken);
     vi.spyOn(useBecksFormModule, "default").mockReturnValue({
       ...baseBecksForm,
       resetModalOpen: true,
@@ -159,10 +136,6 @@ describe("BECKS component", () => {
   });
 
   test("calls submitFormWithToken on valid submit", () => {
-    vi.spyOn(useValidateTokenModule, "default").mockReturnValue({
-      ...baseValidateToken,
-      setShowInvalidTokenModal: mockSetShowInvalidTokenModal,
-    });
     vi.spyOn(useBecksFormModule, "default").mockReturnValue({
       ...baseBecksForm,
       answers: { 1: 2, 2: 3 },

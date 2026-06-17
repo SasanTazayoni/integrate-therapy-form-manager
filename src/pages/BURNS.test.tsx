@@ -2,7 +2,6 @@ import { render, fireEvent } from "@testing-library/react";
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import React from "react";
 import BURNS from "./BURNS";
-import * as useValidateTokenModule from "../hooks/useValidateToken";
 import * as useBurnsFormModule from "../hooks/useBURNSForm";
 import * as becksBurnsHelpers from "../utils/becksBurnsHelpers";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
@@ -38,14 +37,7 @@ vi.mock("../components/modals/InvalidTokenModal", () => ({
   default: () => <div data-testid="invalid-token-modal" />,
 }));
 
-type ValidateTokenReturn = ReturnType<typeof useValidateTokenModule.default>;
 type BurnsFormReturn = ReturnType<typeof useBurnsFormModule.default>;
-
-const baseValidateToken: ValidateTokenReturn = {
-  isValid: true,
-  showInvalidTokenModal: false,
-  setShowInvalidTokenModal: vi.fn(),
-};
 
 const baseBurnsForm: BurnsFormReturn = {
   answers: {},
@@ -66,38 +58,26 @@ const baseBurnsForm: BurnsFormReturn = {
 describe("BURNS component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(useValidateTokenModule, "default").mockReturnValue(baseValidateToken);
     vi.spyOn(useBurnsFormModule, "default").mockReturnValue(baseBurnsForm);
   });
 
-  test("renders loader when isValid is null", () => {
-    vi.spyOn(useValidateTokenModule, "default").mockReturnValue({
-      ...baseValidateToken,
-      isValid: null,
-    });
+  test("renders InvalidTokenModal when showInvalidTokenModal becomes true", async () => {
+    vi.spyOn(becksBurnsHelpers, "submitFormWithToken").mockImplementation(
+      (({ setShowInvalidTokenModal }: { setShowInvalidTokenModal: (v: boolean) => void }) => {
+        setShowInvalidTokenModal(true);
+      }) as never
+    );
 
-    const { container } = render(
-      <MemoryRouter>
-        <BURNS />
+    const { getByTestId, findByTestId } = render(
+      <MemoryRouter initialEntries={["/burns/abc123"]}>
+        <Routes>
+          <Route path="/burns/:token" element={<BURNS />} />
+        </Routes>
       </MemoryRouter>
     );
 
-    expect(container.querySelector("[aria-busy]")).toBeTruthy();
-  });
-
-  test("renders InvalidTokenModal when showInvalidTokenModal is true", () => {
-    vi.spyOn(useValidateTokenModule, "default").mockReturnValue({
-      ...baseValidateToken,
-      showInvalidTokenModal: true,
-    });
-
-    const { getByTestId } = render(
-      <MemoryRouter>
-        <BURNS />
-      </MemoryRouter>
-    );
-
-    expect(getByTestId("invalid-token-modal")).toBeTruthy();
+    fireEvent.click(getByTestId("submit-btn"));
+    expect(await findByTestId("invalid-token-modal")).toBeTruthy();
   });
 
   test("renders QuestionnaireForm and buttons", () => {

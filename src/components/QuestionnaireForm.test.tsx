@@ -1,4 +1,4 @@
-import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
+﻿import { describe, test, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, waitFor, fireEvent } from "@testing-library/react";
 import QuestionnaireForm, { reducer } from "./QuestionnaireForm";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
@@ -107,7 +107,6 @@ describe("QuestionnaireForm component", () => {
           path: "/",
           element: (
             <QuestionnaireForm
-              title="Test Form"
               questionnaire={TEST_FORM}
               token="dummy-token"
             >
@@ -143,7 +142,6 @@ describe("QuestionnaireForm component", () => {
           path: "/",
           element: (
             <QuestionnaireForm
-              title="Test Form"
               questionnaire={TEST_FORM}
               token="bad-token"
             >
@@ -181,7 +179,6 @@ describe("QuestionnaireForm component", () => {
           path: "/",
           element: (
             <QuestionnaireForm
-              title="Test Form"
               questionnaire={TEST_FORM}
               token="valid-token"
             >
@@ -220,7 +217,6 @@ describe("QuestionnaireForm component", () => {
           path: "/",
           element: (
             <QuestionnaireForm
-              title="Test Form"
               questionnaire={TEST_FORM}
               token={mockToken}
             >
@@ -258,7 +254,6 @@ describe("QuestionnaireForm component", () => {
           path: "/",
           element: (
             <QuestionnaireForm
-              title="Test Form"
               questionnaire={TEST_FORM}
               token="token-missing-info"
             >
@@ -290,7 +285,6 @@ describe("QuestionnaireForm component", () => {
           path: "/",
           element: (
             <QuestionnaireForm
-              title="Test Form"
               questionnaire={TEST_FORM}
               token="valid-token"
               onError={onError}
@@ -346,7 +340,6 @@ describe("QuestionnaireForm component", () => {
           path: "/",
           element: (
             <QuestionnaireForm
-              title="Test"
               questionnaire={TEST_FORM}
               token="token"
             >
@@ -392,7 +385,6 @@ describe("QuestionnaireForm component", () => {
           path: "/",
           element: (
             <QuestionnaireForm
-              title="Test Form"
               questionnaire={TEST_FORM}
               token="some-token"
             >
@@ -430,7 +422,6 @@ describe("QuestionnaireForm component", () => {
           path: "/",
           element: (
             <QuestionnaireForm
-              title="Test Form"
               questionnaire={TEST_FORM}
               token="token"
             >
@@ -488,7 +479,6 @@ describe("QuestionnaireForm component", () => {
           path: "/",
           element: (
             <QuestionnaireForm
-              title="Test"
               questionnaire={TEST_FORM}
               token="token"
             >
@@ -536,7 +526,6 @@ describe("QuestionnaireForm component", () => {
           path: "/",
           element: (
             <QuestionnaireForm
-              title="Test"
               questionnaire={TEST_FORM}
               token="token"
             >
@@ -581,7 +570,6 @@ describe("QuestionnaireForm component", () => {
           path: "/",
           element: (
             <QuestionnaireForm
-              title="Test"
               questionnaire={TEST_FORM}
               token="token"
             >
@@ -614,7 +602,7 @@ describe("QuestionnaireForm component", () => {
         {
           path: "/",
           element: (
-            <QuestionnaireForm title="No Token Form" questionnaire={TEST_FORM}>
+            <QuestionnaireForm questionnaire={TEST_FORM}>
               <div>Child Content</div>
             </QuestionnaireForm>
           ),
@@ -644,7 +632,6 @@ describe("QuestionnaireForm component", () => {
           path: "/",
           element: (
             <QuestionnaireForm
-              title="Fallback Test Form"
               questionnaire={TEST_FORM}
               token="token-fallback-ok"
             >
@@ -681,7 +668,6 @@ describe("QuestionnaireForm component", () => {
           path: "/",
           element: (
             <QuestionnaireForm
-              title="Fallback Msg Test"
               questionnaire={TEST_FORM}
               token="token-fallback-mismatch"
             >
@@ -712,7 +698,7 @@ describe("QuestionnaireForm component", () => {
         {
           path: "/",
           element: (
-            <QuestionnaireForm title="Test" questionnaire={TEST_FORM} token="valid-token">
+            <QuestionnaireForm questionnaire={TEST_FORM} token="valid-token">
               <div>Child</div>
             </QuestionnaireForm>
           ),
@@ -743,7 +729,6 @@ describe("QuestionnaireForm component", () => {
           path: "/",
           element: (
             <QuestionnaireForm
-              title="Fallback Catch Test"
               questionnaire={TEST_FORM}
               token="token-fallback-catch"
             >
@@ -768,7 +753,6 @@ describe("QuestionnaireForm component", () => {
 
     const { unmount } = render(
       <QuestionnaireForm
-        title="Test Form"
         questionnaire={TEST_FORM}
         token="valid-token"
       >
@@ -800,7 +784,6 @@ describe("QuestionnaireForm component", () => {
 
     render(
       <QuestionnaireForm
-        title="Test Form"
         questionnaire={TEST_FORM}
         token="valid-token"
       >

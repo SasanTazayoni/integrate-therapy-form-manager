@@ -1,15 +1,13 @@
+import { useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useRef } from "react";
 import QuestionnaireForm from "../components/QuestionnaireForm";
 import FormResetModal from "../components/modals/FormResetModal";
 import InvalidTokenModal from "../components/modals/InvalidTokenModal";
 import SMIItems from "../data/SMIItems";
 import { Item } from "../data/SMICommon";
 import useSMIForm from "../hooks/useSMIForm";
-import useValidateToken from "../hooks/useValidateToken";
 import Question from "../components/SMIQuestions";
 import { submitSMIForm } from "../api/formsFrontend";
-import { Loader2 } from "lucide-react";
 import SMIInstructions from "../components/SMIInstructions";
 import Button from "../components/Button";
 import { computeSMIScores } from "../utils/SMIHelpers";
@@ -29,8 +27,7 @@ const SMI = () => {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
 
-  const { isValid, showInvalidTokenModal, setShowInvalidTokenModal } =
-    useValidateToken(token);
+  const [showInvalidTokenModal, setShowInvalidTokenModal] = useState(false);
 
   const {
     answers,
@@ -101,14 +98,6 @@ const SMI = () => {
     navigate("/submitted");
   };
 
-  if (isValid === null) {
-    return (
-      <div className="flex justify-center items-center min-h-screen" aria-busy>
-        <Loader2 className="animate-spin text-blue-600" size={120} />
-      </div>
-    );
-  }
-
   if (showInvalidTokenModal) {
     return <InvalidTokenModal />;
   }
@@ -121,7 +110,6 @@ const SMI = () => {
       />
 
       <QuestionnaireForm
-        title="SMI"
         questionnaire="SMI"
         token={token}
         onError={setFormError}
