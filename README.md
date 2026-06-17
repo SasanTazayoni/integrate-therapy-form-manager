@@ -511,10 +511,16 @@ Deployment steps are as follows, after account setup (including workspace setup)
 - Set the "Root Directory" to the name of the folder which contains the backend file (in my case it is "backend").
 - Set the "Start Command" to "npm run start".
 - Set the following Environment Variables:
-  - DATABASE_URL = [YOUR DATABASE API KEY]
+  - DATABASE_URL = [YOUR DATABASE URL]
+  - NODE_ENV = production
+  - RESEND_API_KEY = [YOUR RESEND API KEY]
   - FROM_EMAIL = [Your email <youremail@yourdomain.com>]
   - FRONTEND_BASE_URL = [NAME OF FRONTEND SERVER]
-  - RESEND_API_KEY = [YOUR RESEND API KEY]
+  - CRON_ENABLED = true
+  - CRON_SCHEDULE = [YOUR CRON SCHEDULE (e.g. 0 0 1 * *)]
+  - THERAPIST_USERNAME = [DECIDE A USERNAME]
+  - THERAPIST_PASSWORD = [DECIDE A PASSWORD]
+  - JWT_SECRET = [A LONG RANDOM SECRET STRING]
 
 ### Frontend
 
@@ -553,11 +559,16 @@ Sample `.env` file (frontend):
 Sample `.env` file (backend):
 
 - `DATABASE_URL='yourdatabaseurl'`
+- `PORT=3001`
+- `NODE_ENV=development`
 - `RESEND_API_KEY="yourresendapikey"`
 - `FROM_EMAIL="Your email <youremail@yourdomain.com>"`
-- `FRONTEND_BASE_URL="yourfrontendservername"`
-
-Local environment only (do not include these in production/deployment!)
+- `FRONTEND_BASE_URL="http://localhost:5173"`
+- `CRON_ENABLED=true`
+- `CRON_SCHEDULE="0 0 1 * *"`
+- `THERAPIST_USERNAME=yourusername`
+- `THERAPIST_PASSWORD=yourpassword`
+- `JWT_SECRET="yourlongrandomsecret"`
 
 Once the project is cloned or forked, in order to run it locally, you'll need to follow these steps:
 
