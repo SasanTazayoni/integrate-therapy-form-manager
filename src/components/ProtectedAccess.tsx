@@ -1,4 +1,4 @@
-import React, { useReducer, useRef, useEffect } from "react";
+import React, { useReducer, useRef, useEffect, useState } from "react";
 import AdminLoginModal from "./modals/AdminLoginModal";
 import { authReducer, AuthState } from "../utils/authReducer";
 import setErrorTimers from "../utils/startErrorFadeTimers";
@@ -28,12 +28,16 @@ export default function ProtectedAccess({ children }: Props) {
 
   const fadeOutTimeoutRef = useRef<number | null>(null);
   const clearErrorTimeoutRef = useRef<number | null>(null);
+  const countdownIntervalRef = useRef<number | null>(null);
+  const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
     return () => {
       if (fadeOutTimeoutRef.current) clearTimeout(fadeOutTimeoutRef.current);
       if (clearErrorTimeoutRef.current)
         clearTimeout(clearErrorTimeoutRef.current);
+      if (countdownIntervalRef.current)
+        clearInterval(countdownIntervalRef.current);
     };
   }, []);
 
@@ -74,6 +78,29 @@ export default function ProtectedAccess({ children }: Props) {
       fadeOutTimeoutRef.current = window.setTimeout(() => {
         dispatch({ type: "LOGIN_SUCCESS" });
       }, MODAL_CLOSE_DURATION_MS);
+    } else if (result.retryAfter) {
+      if (fadeOutTimeoutRef.current) {
+        clearTimeout(fadeOutTimeoutRef.current);
+        fadeOutTimeoutRef.current = null;
+      }
+      if (clearErrorTimeoutRef.current) {
+        clearTimeout(clearErrorTimeoutRef.current);
+        clearErrorTimeoutRef.current = null;
+      }
+      if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
+      setCountdown(result.retryAfter);
+      dispatch({ type: "SET_ERROR", payload: result.error });
+      countdownIntervalRef.current = window.setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) {
+            clearInterval(countdownIntervalRef.current!);
+            countdownIntervalRef.current = null;
+            dispatch({ type: "CLEAR_ERROR" });
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
     } else {
       dispatch({ type: "SET_ERROR", payload: result.error });
 
@@ -97,7 +124,11 @@ export default function ProtectedAccess({ children }: Props) {
         <AdminLoginModal
           username={state.username}
           password={state.password}
-          error={state.error}
+          error={
+            countdown > 0
+              ? `Too many incorrect attempts, please wait ${countdown} seconds`
+              : state.error
+          }
           closing={state.closing}
           errorFading={state.errorFading}
           onUsernameChange={handleUsernameChange}

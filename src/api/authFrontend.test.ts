@@ -16,9 +16,9 @@ const mockedApi = api as unknown as {
   post: ReturnType<typeof vi.fn>;
 };
 
-function makeAxiosError(status: number): AxiosError {
+function makeAxiosError(status: number, data?: unknown): AxiosError {
   const err = new AxiosError("Request failed");
-  err.response = { status } as unknown as AxiosResponse;
+  err.response = { status, data } as unknown as AxiosResponse;
   return err;
 }
 
@@ -39,6 +39,32 @@ describe("login", () => {
     });
     expect(result).toEqual({ ok: true });
     expect(sessionStorage.getItem(TOKEN_KEY)).toBe("jwt.token.here");
+  });
+
+  test("returns ok: false with error and retryAfter on a 429 response", async () => {
+    mockedApi.post.mockRejectedValueOnce(
+      makeAxiosError(429, { error: "Too many incorrect attempts", retryAfter: 42 })
+    );
+
+    const result = await login("admin", "wrong");
+
+    expect(result).toEqual({
+      ok: false,
+      error: "Too many incorrect attempts",
+      retryAfter: 42,
+    });
+  });
+
+  test("falls back to default error message when 429 response has no error field", async () => {
+    mockedApi.post.mockRejectedValueOnce(makeAxiosError(429, { retryAfter: 30 }));
+
+    const result = await login("admin", "wrong");
+
+    expect(result).toEqual({
+      ok: false,
+      error: "Too many attempts, please wait",
+      retryAfter: 30,
+    });
   });
 
   test("returns ok: false with 'Invalid credentials' on a 401 response", async () => {

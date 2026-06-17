@@ -182,6 +182,106 @@ describe("ProtectedAccess", () => {
     expect(sessionStorage.getItem("integrateTherapyAuthenticated")).toBe("true");
   });
 
+  test("shows live countdown message when rate-limited (429)", async () => {
+    const { login } = await import("../api/authFrontend");
+    vi.mocked(login).mockResolvedValueOnce({
+      ok: false,
+      error: "Too many incorrect attempts",
+      retryAfter: 3,
+    });
+
+    const { getByRole, getByText } = render(
+      <ProtectedAccess>
+        <div>Child</div>
+      </ProtectedAccess>
+    );
+
+    await act(async () => {
+      fireEvent.click(getByRole("button", { name: /login/i }));
+    });
+
+    expect(getByText(/please wait 3 seconds/i)).toBeInTheDocument();
+
+    act(() => { vi.advanceTimersByTime(1000); });
+    expect(getByText(/please wait 2 seconds/i)).toBeInTheDocument();
+
+    act(() => { vi.advanceTimersByTime(1000); });
+    expect(getByText(/please wait 1 seconds/i)).toBeInTheDocument();
+  });
+
+  test("clears fade timers from a prior 401 when a 429 arrives", async () => {
+    const { login } = await import("../api/authFrontend");
+    vi.mocked(login)
+      .mockResolvedValueOnce({ ok: false, error: "Invalid credentials" })
+      .mockResolvedValueOnce({ ok: false, error: "Too many incorrect attempts", retryAfter: 5 });
+
+    const clearSpy = vi.spyOn(window, "clearTimeout");
+
+    const { getByRole, getByText } = render(
+      <ProtectedAccess>
+        <div>Child</div>
+      </ProtectedAccess>
+    );
+
+    const loginBtn = getByRole("button", { name: /login/i });
+
+    await act(async () => { fireEvent.click(loginBtn); });
+    // fade timers are now set — don't advance time
+    await act(async () => { fireEvent.click(loginBtn); });
+
+    expect(clearSpy).toHaveBeenCalled();
+    expect(getByText(/please wait 5 seconds/i)).toBeInTheDocument();
+    clearSpy.mockRestore();
+  });
+
+  test("clears existing countdown interval when a second 429 arrives", async () => {
+    const { login } = await import("../api/authFrontend");
+    vi.mocked(login)
+      .mockResolvedValueOnce({ ok: false, error: "Too many incorrect attempts", retryAfter: 60 })
+      .mockResolvedValueOnce({ ok: false, error: "Too many incorrect attempts", retryAfter: 60 });
+
+    const clearIntervalSpy = vi.spyOn(window, "clearInterval");
+
+    const { getByRole } = render(
+      <ProtectedAccess>
+        <div>Child</div>
+      </ProtectedAccess>
+    );
+
+    const loginBtn = getByRole("button", { name: /login/i });
+
+    await act(async () => { fireEvent.click(loginBtn); });
+    // countdown is now running
+    await act(async () => { fireEvent.click(loginBtn); });
+
+    expect(clearIntervalSpy).toHaveBeenCalled();
+    clearIntervalSpy.mockRestore();
+  });
+
+  test("clears error and stops countdown when timer reaches zero", async () => {
+    const { login } = await import("../api/authFrontend");
+    vi.mocked(login).mockResolvedValueOnce({
+      ok: false,
+      error: "Too many incorrect attempts",
+      retryAfter: 2,
+    });
+
+    const { getByRole, queryByText } = render(
+      <ProtectedAccess>
+        <div>Child</div>
+      </ProtectedAccess>
+    );
+
+    await act(async () => {
+      fireEvent.click(getByRole("button", { name: /login/i }));
+    });
+
+    act(() => { vi.advanceTimersByTime(2000); });
+
+    expect(queryByText(/please wait/i)).not.toBeInTheDocument();
+    expect(queryByText(/too many/i)).not.toBeInTheDocument();
+  });
+
   test("second handleSubmit clears existing fadeOut and clearError timers", async () => {
     const { login } = await import("../api/authFrontend");
     vi.mocked(login)
