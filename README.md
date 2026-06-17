@@ -290,7 +290,7 @@ The SMI questionnaire consists of (similar to YSQ):
 
 - A dropdown togglable menu with quick instructions for the form: <br>
 
-![SMI dropdown instructions](documentation/smiquestionnaire.png) <br>
+![SMI dropdown instructions](documentation/smidropdown.png) <br>
 
 - A large questionnaire: <br>
 
