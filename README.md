@@ -526,8 +526,6 @@ Deployment steps are as follows, after account setup (including workspace setup)
 - Set the following Environment Variables:
   - VITE_API_URL = [NAME OF BACKEND SERVER]
   - VITE_BASE_PATH = /
-  - VITE_THERAPIST_USERNAME = [DECIDE A USERNAME]
-  - VITE_THERAPIST_PASSWORD = [DECIDE A PASSWORD]
 - Click "Deploy Static Site" which will deploy the frontend from the latest commit.
 - On the left sidebar menu, click the "Redirects/Rewrites" tab.
 - Under "Source" add "/\*", under "Destination" add "/index.html", under "Action" add "Rewrite".
@@ -549,10 +547,8 @@ You will need to create a new file called `.env` at the root-level of the fronte
 
 Sample `.env` file (frontend):
 
-- `VITE_THERAPIST_USERNAME=yourusername`
-- `VITE_THERAPIST_PASSWORD=yourpassword`
-- `VITE_API_URL=/`
-- `VITE_BASE_PATH=/integrate-therapy-form-manager`
+- `VITE_API_URL=http://localhost:3001`
+- `VITE_BASE_PATH=/`
 
 Sample `.env` file (backend):
 
