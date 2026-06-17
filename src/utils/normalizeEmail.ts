@@ -1,2 +1,1 @@
-export const normalizeEmail = (email: string): string =>
-  email.trim().toLowerCase();
+export { normalizeEmail } from "../../backend/utils/normalizeEmail";
