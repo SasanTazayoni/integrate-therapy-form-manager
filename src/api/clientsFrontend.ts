@@ -98,7 +98,7 @@ export async function deleteClientByEmail(
   return await deleteClient(email);
 }
 
-type DeactivateClientResponse = {
+type ClientStatusResponse = {
   message: string;
   client: {
     id: string;
@@ -110,15 +110,15 @@ type DeactivateClientResponse = {
   };
 };
 
-type DeactivateClientResult =
-  | { ok: true; data: DeactivateClientResponse }
+type ClientStatusResult =
+  | { ok: true; data: ClientStatusResponse }
   | { ok: false; data: { error: string } };
 
 export async function deactivateClient(
   email: string
-): Promise<DeactivateClientResult> {
+): Promise<ClientStatusResult> {
   try {
-    const res = await api.patch<DeactivateClientResponse>(
+    const res = await api.patch<ClientStatusResponse>(
       "/clients/deactivate",
       null,
       { params: { email } }
@@ -145,27 +145,11 @@ export async function deactivateClient(
   }
 }
 
-type ActivateClientResponse = {
-  message: string;
-  client: {
-    id: string;
-    email: string;
-    name: string;
-    status: string;
-    inactivated_at: string | null;
-    delete_inactive: string | null;
-  };
-};
-
-type ActivateClientResult =
-  | { ok: true; data: ActivateClientResponse }
-  | { ok: false; data: { error: string } };
-
 export async function activateClient(
   email: string
-): Promise<ActivateClientResult> {
+): Promise<ClientStatusResult> {
   try {
-    const res = await api.patch<ActivateClientResponse>(
+    const res = await api.patch<ClientStatusResponse>(
       "/clients/activate",
       null,
       { params: { email } }
