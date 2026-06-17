@@ -80,26 +80,30 @@ export default function SMIModesTable({
 
         {isLastCell && (
           <div className="flex justify-center gap-4 mt-4">
-            <div
-              className="relative inline-flex justify-center group cursor-pointer"
+            <button
+              type="button"
+              className="relative inline-flex justify-center group cursor-pointer bg-transparent border-0 p-0"
               onClick={handleOpenSummarySheet}
+              aria-label="SMI score summary sheet"
             >
               <FileText className="w-10 h-10 text-gray-400 transition-colors duration-200 hover:text-gray-600" />
               <div className="absolute bottom-full hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-50">
                 SMI score summary sheet
               </div>
-            </div>
+            </button>
 
-            <div
+            <button
+              type="button"
               data-testid="db-icon-desktop"
-              className="relative inline-flex justify-center group cursor-pointer"
+              className="relative inline-flex justify-center group cursor-pointer bg-transparent border-0 p-0"
               onClick={handleOpenSmiModal}
+              aria-label="Previous SMI Submissions"
             >
               <Database className="w-10 h-10 text-gray-400 transition-colors duration-200 hover:text-gray-600" />
               <div className="absolute bottom-full hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-50">
                 Previous SMI Submissions
               </div>
-            </div>
+            </button>
           </div>
         )}
       </td>
@@ -180,26 +184,30 @@ export default function SMIModesTable({
         {smiModes.map(renderMobileCell)}
 
         <div className="p-4 rounded bg-gray-100 border border-gray-300 flex flex-col items-center justify-center col-span-2 sm:col-span-1 gap-4">
-          <div
-            className="relative inline-flex justify-center group cursor-pointer"
+          <button
+            type="button"
+            className="relative inline-flex justify-center group cursor-pointer bg-transparent border-0 p-0"
             onClick={handleOpenSummarySheet}
+            aria-label="SMI score summary sheet"
           >
             <FileText className="w-10 h-10 text-gray-400 transition-colors duration-200 hover:text-gray-600" />
             <div className="absolute bottom-full hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-50">
               SMI score summary sheet
             </div>
-          </div>
+          </button>
 
-          <div
+          <button
+            type="button"
             data-testid="db-icon-mobile"
-            className="relative inline-flex justify-center group cursor-pointer"
+            className="relative inline-flex justify-center group cursor-pointer bg-transparent border-0 p-0"
             onClick={handleOpenSmiModal}
+            aria-label="Previous SMI Submissions"
           >
             <Database className="w-10 h-10 text-gray-400 transition-colors duration-200 hover:text-gray-600" />
             <div className="absolute bottom-full hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 whitespace-nowrap z-50">
               Previous SMI Submissions
             </div>
-          </div>
+          </button>
         </div>
       </div>
 

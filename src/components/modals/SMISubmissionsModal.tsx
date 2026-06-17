@@ -152,17 +152,19 @@ export default function SMISubmissionsModal({
             const disabled = Object.keys(form.smiScores).length === 0;
             return (
               <li key={form.id} data-testid={`smi-form-${form.id}`}>
-                <span
-                  onClick={() => !disabled && handleSelect(form)}
-                  className={`cursor-pointer ${
+                <button
+                  type="button"
+                  onClick={() => handleSelect(form)}
+                  disabled={disabled}
+                  className={`bg-transparent border-0 p-0 ${
                     disabled
                       ? "cursor-not-allowed text-gray-400"
-                      : "text-blue-500 hover:text-blue-700"
+                      : "cursor-pointer text-blue-500 hover:text-blue-700"
                   }`}
                   data-testid={`smi-form-item-${form.id}`}
                 >
                   {form.submittedAt}
-                </span>
+                </button>
               </li>
             );
           })}
