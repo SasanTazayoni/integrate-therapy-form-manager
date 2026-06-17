@@ -5,9 +5,6 @@ import { Form } from "@prisma/client";
 import { FORM_TITLES } from "../data/formTypes";
 import { THERAPIST_SIGNATURE } from "./therapistSignature";
 
-const baseUrl = getFrontendBaseUrl();
-const resend = new Resend(getEnvVar("RESEND_API_KEY"));
-
 export type SendMultipleFormLinksParams = {
   email: string;
   clientName?: string;
@@ -21,6 +18,8 @@ export async function sendMultipleFormLinks({
 }: SendMultipleFormLinksParams): Promise<void> {
   if (forms.length === 0) return;
 
+  const baseUrl = getFrontendBaseUrl();
+  const resend = new Resend(getEnvVar("RESEND_API_KEY"));
   const nameToUse = clientName ?? "Sir/Madam";
   const htmlLinks = forms
     .map(

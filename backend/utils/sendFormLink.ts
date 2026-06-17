@@ -4,9 +4,6 @@ import { getFrontendBaseUrl } from "./getFrontendBaseUrl";
 import { FORM_TITLES, type FormType } from "../data/formTypes";
 import { THERAPIST_SIGNATURE } from "./therapistSignature";
 
-const baseUrl = getFrontendBaseUrl();
-const resend = new Resend(getEnvVar("RESEND_API_KEY"));
-
 function getFromEmail(): string {
   return getEnvVar("FROM_EMAIL");
 }
@@ -35,6 +32,8 @@ export async function sendFormLink({
   const formPath = pathMap[formType];
   if (!formPath) throw new Error(`Invalid form type: ${formType}`);
 
+  const baseUrl = getFrontendBaseUrl();
+  const resend = new Resend(getEnvVar("RESEND_API_KEY"));
   const formTitle = FORM_TITLES[formType];
   const link = `${baseUrl}${formPath}/${token}`;
   const nameToUse = clientName ?? "Sir/Madam";
