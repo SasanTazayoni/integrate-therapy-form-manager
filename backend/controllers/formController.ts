@@ -7,7 +7,7 @@ import { generateToken, computeExpiry } from "../utils/tokens";
 import { findClientByEmail } from "../utils/clientUtils";
 import { deactivateInvalidActiveForms } from "../utils/formUtils";
 import { parseDateStrict } from "../utils/dates";
-import { getValidFormByToken } from "./formControllerHelpers/formTokenHelpers";
+import { getValidFormByToken, validateTokenOrFail } from "./formControllerHelpers/formTokenHelpers";
 import { mapFormSafe } from "../utils/formHelpers";
 import { sendMultipleFormLinks } from "../utils/sendMultipleFormLinks";
 import { normalizeEmail } from "../utils/normalizeEmail";
@@ -289,12 +289,10 @@ export const updateClientInfo = async (req: Request, res: Response) => {
   }
 
   try {
-    const form = await prisma.form.findUnique({
-      where: { token },
-      include: { client: true },
-    });
+    const form = await validateTokenOrFail(token, res);
+    if (!form) return;
 
-    if (!form || !form.client) {
+    if (!form.client) {
       return res.status(404).json({ message: "Form or client not found" });
     }
 

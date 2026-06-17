@@ -4,7 +4,7 @@ import prisma from "../prisma/client";
 import { sendFormLink } from "../utils/sendFormLink";
 import { findClientByEmail } from "../utils/clientUtils";
 import { parseDateStrict } from "../utils/dates";
-import { getValidFormByToken } from "../controllers/formControllerHelpers/formTokenHelpers";
+import { getValidFormByToken, validateTokenOrFail } from "../controllers/formControllerHelpers/formTokenHelpers";
 import {
   sendForm,
   sendMultipleForms,
@@ -74,6 +74,7 @@ vi.mock("../utils/dates", () => ({
 
 vi.mock("../controllers/formControllerHelpers/formTokenHelpers", () => ({
   getValidFormByToken: vi.fn(),
+  validateTokenOrFail: vi.fn(),
 }));
 
 vi.mock("../utils/sendMultipleFormLinks", () => ({
@@ -577,8 +578,21 @@ describe("formController", () => {
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
-  test("updateClientInfo returns 404 if form or client not found", async () => {
-    mockPrisma.form.findUnique.mockResolvedValue(null);
+  test("updateClientInfo skips update when token is invalid or expired", async () => {
+    vi.mocked(validateTokenOrFail).mockResolvedValue(null);
+    const req = {
+      body: { token: "t", name: "John", dob: "2000-01-01" },
+    } as unknown as UpdateClientInfoReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as UpdateClientInfoRes;
+    await updateClientInfo(req, res);
+    expect(mockPrisma.client.update).not.toHaveBeenCalled();
+  });
+
+  test("updateClientInfo returns 404 if client not found on form", async () => {
+    vi.mocked(validateTokenOrFail).mockResolvedValue({ client: null } as unknown as ValidForm);
     const req = {
       body: { token: "t", name: "John", dob: "2000-01-01" },
     } as unknown as UpdateClientInfoReq;
@@ -591,9 +605,9 @@ describe("formController", () => {
   });
 
   test("updateClientInfo returns 400 if dob invalid", async () => {
-    mockPrisma.form.findUnique.mockResolvedValue({
+    vi.mocked(validateTokenOrFail).mockResolvedValue({
       client: { id: "1" },
-    } as unknown as Form);
+    } as unknown as ValidForm);
     vi.mocked(parseDateStrict).mockReturnValue(null);
     const req = {
       body: { token: "t", name: "John", dob: "invalid" },
@@ -607,9 +621,9 @@ describe("formController", () => {
   });
 
   test("updateClientInfo updates client successfully", async () => {
-    mockPrisma.form.findUnique.mockResolvedValue({
+    vi.mocked(validateTokenOrFail).mockResolvedValue({
       client: { id: "1" },
-    } as unknown as Form);
+    } as unknown as ValidForm);
     vi.mocked(parseDateStrict).mockReturnValue(new Date("2000-01-01"));
     const req = {
       body: { token: "t", name: "John", dob: "2000-01-01" },
@@ -621,7 +635,7 @@ describe("formController", () => {
   });
 
   test("updateClientInfo handles server error", async () => {
-    mockPrisma.form.findUnique.mockRejectedValue(new Error("DB error"));
+    vi.mocked(validateTokenOrFail).mockRejectedValue(new Error("DB error"));
     const req = {
       body: { token: "t", name: "John", dob: "2000-01-01" },
     } as unknown as UpdateClientInfoReq;
