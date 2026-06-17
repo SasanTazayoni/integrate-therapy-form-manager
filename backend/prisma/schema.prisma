@@ -90,12 +90,3 @@ model Form {
 
   @@index([clientId])
 }
-
-model ActivityLog {
-  id           String   @id @default(uuid())
-  event_type   String
-  timestamp    DateTime @default(now())
-  client_email String
-  notes        String?
-  created_at   DateTime @default(now())
-}
