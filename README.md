@@ -2,9 +2,9 @@
 
 ![HTML](./tech/html.png) ![CSS](./tech/css.png) ![Typescript](./tech/typescript.png) ![Vite](./tech/vite.png) ![React](./tech/react.png) ![Jest](./tech/jest.png) ![Tailwind](./tech/tailwind.png) ![REST-API](./tech/restapi.png) ![Prisma](./tech/prisma.png) ![PostgreSQL](./tech/postgresql.png) ![Neon](./tech/neon.png) ![Node](./tech/node.png) ![Express](./tech/express.png) ![ChatGPT](./tech/chatgpt.png) ![Claude](./tech/claude.png) ![VSCode](./tech/vscode.png) ![render](./tech/render.png)
 
-> **âš ï¸ Note:** This is a production application handling sensitive therapy client data. A live demo is not publicly available for privacy and GDPR compliance reasons. Please see the [video demonstrations](#introduction) and [screenshots](#features) below.
+> **⚠️ Note:** This is a production application handling sensitive therapy client data. A live demo is not publicly available for privacy and GDPR compliance reasons. Please see the [video demonstrations](#introduction) and [screenshots](#features) below.
 
-## ðŸŽ¯ Quick Links
+## 🎯 Quick Links
 
 - [Video Demonstrations](#introduction) - See the app in action
 - [Features](#existing-features) - Detailed feature breakdown
@@ -15,7 +15,7 @@
 
 # Introduction
 
-This project was developed for a sole-trader psychotherapist to address a specific business challenge. Previously, the therapist manually sent forms stored in Excel spreadsheets to clients via email. Clients would complete the forms and return them, after which the therapist manually calculated scores based on each clientâ€™s responses. Finally, the results were compiled into charts for each questionnaire, which were used to assist in the therapy process during client sessions.
+This project was developed for a sole-trader psychotherapist to address a specific business challenge. Previously, the therapist manually sent forms stored in Excel spreadsheets to clients via email. Clients would complete the forms and return them, after which the therapist manually calculated scores based on each client’s responses. Finally, the results were compiled into charts for each questionnaire, which were used to assist in the therapy process during client sessions.
 
 ## Problems with the Previous Process
 
@@ -28,7 +28,7 @@ This project was developed for a sole-trader psychotherapist to address a specif
 - Tracking client results over time was difficult.
 - Retrieving old submissions for repeatable forms to compare with new submissions was time-consuming.
 
-The purpose of this project is to simplify the therapistâ€™s workflow and save many hours of unnecessary manual work - such as calculating scores, creating charts, and sending multiple emails back and forth to correct client mistakes. What started as a seemingly simple idea turned out to be far more complex and involved than initially anticipated. I began by drafting a blueprint of how the system should function, but this design evolved continuously as I gained a deeper understanding of how the process could be refined and automated.
+The purpose of this project is to simplify the therapist’s workflow and save many hours of unnecessary manual work - such as calculating scores, creating charts, and sending multiple emails back and forth to correct client mistakes. What started as a seemingly simple idea turned out to be far more complex and involved than initially anticipated. I began by drafting a blueprint of how the system should function, but this design evolved continuously as I gained a deeper understanding of how the process could be refined and automated.
 
 This application was developed progressively throughout 2025 as a full-stack web application. It proved to be a challenging project because there were many aspects to consider simultaneously. While I am not yet at a software architect level, I leveraged significant assistance from AI tools throughout development to improve efficiency, code quality, and system design.
 
@@ -36,7 +36,7 @@ This project includes a password-protected admin dashboard that manages the dist
 
 Emails are sent through the Resend API, and each contains a unique access token that allows the client to securely open their assigned form. Tokens remain valid for 14 days and are automatically deactivated after expiry or once the form is submitted, preventing clients from retaining indefinite access.
 
-Form submissions are automatically scored by backend scripts, and both the scores and responses are stored in a PostgreSQL (Neon) database. These results can be retrieved through the dashboard, where the â€œSummaryâ€ view displays pre-generated charts for clients who have completed specific questionnaires.
+Form submissions are automatically scored by backend scripts, and both the scores and responses are stored in a PostgreSQL (Neon) database. These results can be retrieved through the dashboard, where the “Summary” view displays pre-generated charts for clients who have completed specific questionnaires.
 
 This application is hosted on the cloud platform Render. Due to the sensitive nature of the data, a live demo is not publicly available. However, the features section includes multiple screenshots, and I have posted a series of video examples using dummy data, both of which clearly demonstrate how the application works.
 
@@ -57,7 +57,7 @@ This application is hosted on the cloud platform Render. Due to the sensitive na
 
 ![Integrate Therapy Form Manager on various devices](documentation/amiresponsive.png)
 
-## ðŸ”§ Key Technical Challenges Solved
+## 🔧 Key Technical Challenges Solved
 
 ### 1. Token-Based Security Without User Accounts
 
@@ -86,7 +86,7 @@ This application is hosted on the cloud platform Render. Due to the sensitive na
 
 # UX
 
-The Integrate Therapy Form Manager was designed to streamline the therapistâ€™s workflow while providing a clear, intuitive experience for clients completing forms. The UX focuses on two main personas: therapists or administrators managing forms, and clients filling them out. For therapists, efficiency is key - the admin dashboard consolidates sending forms, revoking access, reviewing submissions, and visualising results into a single interface. Tasks like creating new clients, sending multiple forms, and generating summary charts now take just a few clicks, saving significant time.
+The Integrate Therapy Form Manager was designed to streamline the therapist’s workflow while providing a clear, intuitive experience for clients completing forms. The UX focuses on two main personas: therapists or administrators managing forms, and clients filling them out. For therapists, efficiency is key - the admin dashboard consolidates sending forms, revoking access, reviewing submissions, and visualising results into a single interface. Tasks like creating new clients, sending multiple forms, and generating summary charts now take just a few clicks, saving significant time.
 
 Accessibility and clarity are at the heart of the experience. Forms are easy to read and navigate on any device, with intuitive layouts that guide users naturally from start to finish. Therapists can quickly interpret client data through clear, pre-generated charts and summaries, while clients encounter a calm, approachable interface that makes completing sensitive forms straightforward and stress-free.
 
@@ -100,7 +100,7 @@ This colour palette works well for the website because the combination of bright
 
 ## Typography
 
-Open Sans is used for body text, while Lora is used for headings. This combination was a deliberate choice to create a calm, professional, and approachable aesthetic. Open Sans provides clean, highly readable text for comfortable reading, and Lora adds elegance and visual distinction to headings, helping guide the userâ€™s attention while reinforcing a sense of trust and credibility throughout the site.
+Open Sans is used for body text, while Lora is used for headings. This combination was a deliberate choice to create a calm, professional, and approachable aesthetic. Open Sans provides clean, highly readable text for comfortable reading, and Lora adds elegance and visual distinction to headings, helping guide the user’s attention while reinforcing a sense of trust and credibility throughout the site.
 
 # User stories
 
@@ -114,7 +114,7 @@ EPIC 1: Authentication
 
 EPIC 2: User Management
 
-- User Search and Form Status Tracking - As an admin I can search for a user in the database so that I can see the userâ€™s status and track their submitted, pending, and expired forms. `(MUST HAVE)`
+- User Search and Form Status Tracking - As an admin I can search for a user in the database so that I can see the user’s status and track their submitted, pending, and expired forms. `(MUST HAVE)`
 - Client Deactivation and Automatic Deletion (GDPR Compliant) - As an admin I can deactivate a client so that their data becomes inaccessible and is automatically deleted after 1 year of inactivity so that the system remains GDPR compliant and does not retain personal data unnecessarily. `(COULD HAVE)`
 - Client Activation - As an admin I can reactivate a previously deactivated client so that they can resume receiving forms and their data becomes accessible again. `(COULD HAVE)`
 - Client Deletion - As an admin I can permanently delete a client and all their associated data so that their personal information and forms are fully removed from the system in compliance with GDPR. `(MUST HAVE)`
@@ -131,16 +131,16 @@ EPIC 3: Form Sending & Management
 EPIC 4: Form Status & Results Tracking
 
 - Display Form Status for Each Client - As an admin I can see the status of each form for a client so that I can quickly understand which forms have been sent, submitted, revoked, expired, or pending without checking individual records. `(SHOULD HAVE)`
-- View Form Results Summary - As an admin I can view a summary of all filled-out forms for a client so that I can quickly review the clientâ€™s submitted data in one place. `(MUST HAVE)`
-- Print Form Results Summary - As an admin I can print the form results summary page and SMI modal so that I can generate a physical copy of the clientâ€™s submitted data for review or record keeping. `(COULD HAVE)`
+- View Form Results Summary - As an admin I can view a summary of all filled-out forms for a client so that I can quickly review the client’s submitted data in one place. `(MUST HAVE)`
+- Print Form Results Summary - As an admin I can print the form results summary page and SMI modal so that I can generate a physical copy of the client’s submitted data for review or record keeping. `(COULD HAVE)`
 - Capture Client Name and Date of Birth on First Access - As a user I can enter my name and date of birth the first time I access a form so that my identity can be recorded and associated with my form submissions. `(MUST HAVE)`
 
 EPIC 5: Specific Assessment Forms
 
 - YSQ Form with Ratings and Validation - As a user I can complete the YSQ form with guidance, navigation, and validation so that I can accurately submit my responses and have them scored. `(MUST HAVE)`
 - SMI Form with Ratings and Validation - As a user I can complete the SMI form with guidance, navigation, and validation so that I can accurately submit my responses and have them scored by subcategory. `(MUST HAVE)`
-- Burns Anxiety Inventory (BAI) with Validation - As a user I can complete the BAI form by selecting answers that are scored 0â€“3 so that I can quickly assess my level of anxiety and submit my responses. `(MUST HAVE)`
-- Beck Depression Inventory (BDI) with Validation - As a user I can complete the BDI form by selecting answers that are scored 0â€“3 so that I can quickly assess my level of depression and submit my responses. `(MUST HAVE)`
+- Burns Anxiety Inventory (BAI) with Validation - As a user I can complete the BAI form by selecting answers that are scored 0–3 so that I can quickly assess my level of anxiety and submit my responses. `(MUST HAVE)`
+- Beck Depression Inventory (BDI) with Validation - As a user I can complete the BDI form by selecting answers that are scored 0–3 so that I can quickly assess my level of depression and submit my responses. `(MUST HAVE)`
 
 EPIC 6: Results Summary Table
 
@@ -148,16 +148,16 @@ EPIC 6: Results Summary Table
 - SMI Score Scale Modal - As an admin I can open a modal to see the SMI score scale so that I can understand the meaning of the SMI scores. `(COULD HAVE)`
 - Retrieve Older SMIs - As an admin I can retrieve previously submitted SMI forms so that I can view older results and update the UI for printing or comparison. `(COULD HAVE)`
 - YSQ Table with Toggleable Scores - As an admin I can view the YSQ table with score ratings and totals so that I can analyze client data with the option to toggle raw scores or 4-5-6 scores. `(MUST HAVE)`
-- BAI and BDI Small Cards with Scores - As an admin I can view the Burnâ€™s Anxiety Inventory (BAI) and Beckâ€™s Depression Inventory (BDI) in small cards so that I can quickly see anxiety and depression scores for the client. `(MUST HAVE)`
+- BAI and BDI Small Cards with Scores - As an admin I can view the Burn’s Anxiety Inventory (BAI) and Beck’s Depression Inventory (BDI) in small cards so that I can quickly see anxiety and depression scores for the client. `(MUST HAVE)`
 
 EPIC 7: UI / UX Enhancements
 
 - Button Hover Ripple Animation Effect - As a user I can see a unique ripple animation when hovering over buttons so that the interface feels interactive and visually engaging. `(COULD HAVE)`
-- Autosave In-Progress Forms - As a user I can have my form responses automatically saved while I am filling out a form so that I donâ€™t lose my progress if I leave the page, navigate away, or experience a technical issue. `(WON'T HAVE)`
+- Autosave In-Progress Forms - As a user I can have my form responses automatically saved while I am filling out a form so that I don’t lose my progress if I leave the page, navigate away, or experience a technical issue. `(WON'T HAVE)`
 
 EPIC 8: Analytics
 
-- Therapist Analytics Dashboard - As an admin I can view an analytics dashboard that shows aggregated data about all my clientsâ€™ form activity and results so that I can monitor overall progress, identify trends, and make informed clinical decisions. `(WON'T HAVE)`
+- Therapist Analytics Dashboard - As an admin I can view an analytics dashboard that shows aggregated data about all my clients’ form activity and results so that I can monitor overall progress, identify trends, and make informed clinical decisions. `(WON'T HAVE)`
 
 # Wireframes
 
@@ -328,7 +328,7 @@ All new users will be asked to provide a name and a date of birth:
 ## Future features
 
 - Autosave in-progress forms is useful because it prevents users from losing their work if they accidentally close the page, lose internet connection, or experience a system error. By automatically saving entered information as the user types, it saves time, reduces frustration, and ensures data accuracy. This feature improves user experience and productivity, especially for long or complex forms that would otherwise need to be filled out again from scratch.
-- Therapist Analytics Dashboard is useful because it allows therapists to track key metrics about their clients, sessions, and outcomes in one place. It helps visualize trends such as client progress, session frequency, and treatment effectiveness, making it easier to identify patterns and adjust therapeutic approaches. By providing clear data insights, the dashboard supports evidence-based practice, improves client care, and enhances the therapistâ€™s ability to manage workload and measure success over time.
+- Therapist Analytics Dashboard is useful because it allows therapists to track key metrics about their clients, sessions, and outcomes in one place. It helps visualize trends such as client progress, session frequency, and treatment effectiveness, making it easier to identify patterns and adjust therapeutic approaches. By providing clear data insights, the dashboard supports evidence-based practice, improves client care, and enhances the therapist’s ability to manage workload and measure success over time.
 
 # Tools & technologies used
 
@@ -476,14 +476,14 @@ This project uses Resend to handle sending transactional emails (account verific
 Once you've created a Resend account and logged in, follow these steps to connect your Node server:
 
 - Log in to your Resend dashboard at Resend.
-- Go to API Keys (or Settings â†’ API keys) and create a new API key.
-- Copy the key immediately â€” you will not be able to view the full key again after creation.
+- Go to API Keys (or Settings → API keys) and create a new API key.
+- Copy the key immediately — you will not be able to view the full key again after creation.
   - Save this somewhere secure (local `.env`, secrets manager, etc.) and do not commit it to source control.
   - `RESEND_API_KEY` = your Resend API key (e.g. `re_xxxxxxxxxxxxx`)
 - (Recommended) Verify a sending domain:
-  - In the dashboard, go to Domains â†’ Add Domain (e.g., yourdomain.com).
+  - In the dashboard, go to Domains → Add Domain (e.g., yourdomain.com).
   - Add the DNS records Resend provides (SPF/TXT, DKIM) with your DNS provider. [Instructions here](https://resend.com/docs/send-with-smtp)
-  - Wait for propagation and confirm verification in the Resend dashboard â€” verified domains improve deliverability.
+  - Wait for propagation and confirm verification in the Resend dashboard — verified domains improve deliverability.
 
 ### Environment variables
 
@@ -580,7 +580,7 @@ Once the project is cloned or forked, in order to run it locally, you'll need to
 - Type "npm run dev" which should build then run the backend server.
 - Both of these can be stopped with `CTRL+C`.
 
-When running locally, the frontend (default: `http://localhost:5173`) and backend (default: `http://localhost:3001`) run as separate servers. Set `VITE_API_URL=http://localhost:3001` in the frontend `.env` so the frontend knows where to send API requests. No file changes are required — `src/api/api.ts` acts as the central axios instance and automatically attaches the JWT Bearer token to all requests.
+When running locally, the frontend (default: `http://localhost:5173`) and backend (default: `http://localhost:3001`) run as separate servers. Set `VITE_API_URL=http://localhost:3001` in the frontend `.env` so the frontend knows where to send API requests. No file changes are required — � `src/api/api.ts` acts as the central axios instance and automatically attaches the JWT Bearer token to all requests.
 
 ### Cloning
 
