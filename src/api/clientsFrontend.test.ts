@@ -5,7 +5,6 @@ import {
   fetchClientStatus,
   addClient,
   deleteClient,
-  deleteClientByEmail,
   deactivateClient,
   activateClient,
 } from "./clientsFrontend";
@@ -102,38 +101,36 @@ describe("addClient", () => {
   });
 });
 
-describe("deleteClient & deleteClientByEmail", () => {
+describe("deleteClient", () => {
   beforeEach(() => vi.clearAllMocks());
   const mockData = { message: "Client deleted" };
 
-  [deleteClient, deleteClientByEmail].forEach((fn) => {
-    test(`${fn.name} returns ok true when API DELETE succeeds`, async () => {
-      mockedApi.delete.mockResolvedValueOnce({ data: mockData });
-      const result = await fn("test@example.com");
-      expect(mockedApi.delete).toHaveBeenCalledWith("/clients/by-email", {
-        params: { email: "test@example.com" },
-      });
-      expect(result).toEqual({ ok: true, data: mockData });
+  test("returns ok true when API DELETE succeeds", async () => {
+    mockedApi.delete.mockResolvedValueOnce({ data: mockData });
+    const result = await deleteClient("test@example.com");
+    expect(mockedApi.delete).toHaveBeenCalledWith("/clients/by-email", {
+      params: { email: "test@example.com" },
     });
+    expect(result).toEqual({ ok: true, data: mockData });
+  });
 
-    test(`${fn.name} returns ok false with error from real getErrorDisplay for API (Axios) error`, async () => {
-      mockedApi.delete.mockRejectedValueOnce(
-        makeAxiosError({ message: "API delete failed", requestId: "req-3" })
-      );
-      const result = await fn("test@example.com");
-      expect(result).toEqual({
-        ok: false,
-        data: { error: "API delete failed (ref: req-3)" },
-      });
+  test("returns ok false with error from real getErrorDisplay for API (Axios) error", async () => {
+    mockedApi.delete.mockRejectedValueOnce(
+      makeAxiosError({ message: "API delete failed", requestId: "req-3" })
+    );
+    const result = await deleteClient("test@example.com");
+    expect(result).toEqual({
+      ok: false,
+      data: { error: "API delete failed (ref: req-3)" },
     });
+  });
 
-    test(`${fn.name} returns ok false with generic error for non-axios error`, async () => {
-      mockedApi.delete.mockRejectedValueOnce(new Error("Unexpected error"));
-      const result = await fn("test@example.com");
-      expect(result).toEqual({
-        ok: false,
-        data: { error: "An unexpected error occurred while deleting client." },
-      });
+  test("returns ok false with generic error for non-axios error", async () => {
+    mockedApi.delete.mockRejectedValueOnce(new Error("Unexpected error"));
+    const result = await deleteClient("test@example.com");
+    expect(result).toEqual({
+      ok: false,
+      data: { error: "An unexpected error occurred while deleting client." },
     });
   });
 });

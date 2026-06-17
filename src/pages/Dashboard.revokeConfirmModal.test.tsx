@@ -19,7 +19,6 @@ vi.mock("../api/clientsFrontend", () => ({
   fetchClientStatus: vi.fn(),
   addClient: vi.fn(),
   deleteClient: vi.fn(),
-  deleteClientByEmail: vi.fn(),
   deactivateClient: vi.fn(),
   activateClient: vi.fn(),
 }));

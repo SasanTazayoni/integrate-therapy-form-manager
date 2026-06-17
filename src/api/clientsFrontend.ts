@@ -92,11 +92,6 @@ export async function deleteClient(email: string): Promise<DeleteClientResult> {
   }
 }
 
-export async function deleteClientByEmail(
-  email: string
-): Promise<DeleteClientResult> {
-  return await deleteClient(email);
-}
 
 type ClientStatusResponse = {
   message: string;
