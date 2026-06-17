@@ -1,4 +1,4 @@
-import { render, fireEvent, waitFor, act } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
 import { describe, test, expect, beforeEach, vi } from "vitest";
 import SMIModesTable from "./SMIModesTable";
 import * as SMIHelpers from "../utils/SMIHelpers";
@@ -200,8 +200,7 @@ describe("SMIModesTable", () => {
 
     const modal = document.querySelector(".modal");
     expect(modal).toBeInTheDocument();
-    const closeButton = modal!.querySelector("button");
-    fireEvent.click(closeButton!);
+    fireEvent.click(screen.getByRole("button", { name: "Close" }));
 
     await waitFor(() => {
       expect(modal!.parentElement).not.toBeInTheDocument();
