@@ -8,22 +8,14 @@ import { useState } from "react";
 import ProtectedAccess from "../components/ProtectedAccess";
 import { useNavigate } from "react-router-dom";
 import { useClientContext } from "../context/ClientContext";
-import type { ClientFormsStatus } from "../types/formStatusTypes";
 import { parseScore } from "../utils/parseScores";
 import Button from "../components/Button";
-
-type ClientFormsStatusDetails = ClientFormsStatus & {
-  clientName?: string;
-  smiScores?: Record<string, string | null>;
-};
 
 const FormResultsSummary = () => {
   const [hiddenColumn, setHiddenColumn] = useState<"raw" | "456" | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { clientFormsStatus } = useClientContext() as {
-    clientFormsStatus: ClientFormsStatusDetails | null;
-  };
+  const { clientFormsStatus } = useClientContext();
   const [localSmiScores, setLocalSmiScores] = useState(
     clientFormsStatus?.scores?.smi ?? {}
   );
