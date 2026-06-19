@@ -15,7 +15,7 @@ export function requireAuth(
   }
 
   try {
-    jwt.verify(authHeader.slice(7), getEnvVar("JWT_SECRET"));
+    jwt.verify(authHeader.slice(7), getEnvVar("JWT_SECRET"), { algorithms: ["HS256"] });
     next();
   } catch {
     res.status(401).json({ error: "Unauthorised" });

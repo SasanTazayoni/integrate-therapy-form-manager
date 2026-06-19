@@ -39,6 +39,11 @@ describe("requireAuth", () => {
     requireAuth(req, res, next);
 
     expect(next).toHaveBeenCalled();
+    expect(vi.mocked(jwt.verify)).toHaveBeenCalledWith(
+      "valid.token.here",
+      "test-secret",
+      { algorithms: ["HS256"] }
+    );
     expect((res as unknown as { status: ReturnType<typeof vi.fn> }).status).not.toHaveBeenCalled();
   });
 
