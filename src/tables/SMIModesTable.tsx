@@ -133,6 +133,17 @@ export default function SMIModesTable({
     );
   };
 
+  const CHUNK_SIZE = 5;
+  const smiRows = Array.from(
+    { length: Math.ceil(smiModes.length / CHUNK_SIZE) },
+    (_, i) => {
+      const chunk = smiModes.slice(i * CHUNK_SIZE, (i + 1) * CHUNK_SIZE);
+      return chunk.length < CHUNK_SIZE
+        ? [...chunk, ...Array<string>(CHUNK_SIZE - chunk.length).fill("")]
+        : chunk;
+    }
+  );
+
   return (
     <section className="mb-12">
       <h2 className="question-title text-[var(--color-primary)] text-center text-2xl md:text-[18px]">
@@ -147,32 +158,10 @@ export default function SMIModesTable({
       {/* Desktop Table */}
       <table className="hidden lg:table w-full table-fixed text-center text-sm rounded overflow-hidden shadow-sm">
         <tbody>
-          {[
-            [
-              "Detached Protector",
-              "Bully and Attack",
-              "Self-Aggrandizer",
-              "Impulsive Child",
-              "Undisciplined Child",
-            ],
-            [
-              "Vulnerable Child",
-              "Angry Child",
-              "Enraged Child",
-              "Detached Self-Soother",
-              "Compliant Surrenderer",
-            ],
-            [
-              "Contented Child *",
-              "Demanding Parent",
-              "Punitive Parent",
-              "Healthy Adult *",
-              "",
-            ],
-          ].map((row, i) => (
+          {smiRows.map((row, i) => (
             <tr key={i} className="border-b border-gray-300">
               {row.map((cell, idx) =>
-                renderTableCell(cell, i === 2 && idx === 4)
+                renderTableCell(cell, i === smiRows.length - 1 && idx === row.length - 1)
               )}
             </tr>
           ))}
