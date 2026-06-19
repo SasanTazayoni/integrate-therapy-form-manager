@@ -7,6 +7,7 @@ vi.mock("../utils/requiredEnv", () => ({
     if (key === "THERAPIST_USERNAME") return "admin";
     if (key === "THERAPIST_PASSWORD") return "secret";
     if (key === "JWT_SECRET") return "test-secret";
+    throw new Error(`Unknown getEnvVar key: ${key}`);
   }),
 }));
 

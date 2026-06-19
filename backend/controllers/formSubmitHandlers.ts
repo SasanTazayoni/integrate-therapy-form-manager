@@ -109,10 +109,10 @@ export const submitYSQForm = async (
       where: { token },
       data: dataUpdate,
     });
-    res.json({ success: true, form: mapFormSafe(updatedForm) });
+    return res.json({ success: true, form: mapFormSafe(updatedForm) });
   } catch (error) {
     console.error("Error submitting YSQ form:", error);
-    res
+    return res
       .status(500)
       .json({ error: "Failed to submit YSQ form", code: "SUBMIT_ERROR" });
   }
@@ -175,10 +175,10 @@ export const submitSMIForm = async (
       where: { token },
       data: dataUpdate,
     });
-    res.json({ success: true, form: mapFormSafe(updatedForm) });
+    return res.json({ success: true, form: mapFormSafe(updatedForm) });
   } catch (error) {
     console.error("Error submitting SMI form:", error);
-    res
+    return res
       .status(500)
       .json({ error: "Failed to submit SMI form", code: "SUBMIT_ERROR" });
   }

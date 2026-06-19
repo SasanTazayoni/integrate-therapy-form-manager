@@ -7,6 +7,7 @@ vi.mock("./requiredEnv", () => ({
   getEnvVar: vi.fn((key: string) => {
     if (key === "RESEND_API_KEY") return "test-api-key";
     if (key === "FROM_EMAIL") return "from@test.com";
+    throw new Error(`Unknown getEnvVar key: ${key}`);
   }),
 }));
 

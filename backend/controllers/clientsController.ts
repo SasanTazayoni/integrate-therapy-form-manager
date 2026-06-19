@@ -21,7 +21,7 @@ export const getClientFormsStatusHandler = async (
     }
   }
 
-  res.json({
+  return res.json({
     exists: result.clientExists,
     clientName: result.clientName ?? null,
     clientDob: result.clientDob ?? null,
@@ -48,7 +48,7 @@ export const createClientHandler = async (req: Request, res: Response) => {
       return res.status(500).json({ error: result.error });
     }
   }
-  res.status(201).json(result.client);
+  return res.status(201).json(result.client);
 };
 
 export const deleteClientByEmailHandler = async (
@@ -61,10 +61,10 @@ export const deleteClientByEmailHandler = async (
   }
   try {
     const client = await deleteClientByEmail(normalizeEmail(email));
-    res.json({ message: "Client and all forms deleted", client });
+    return res.json({ message: "Client and all forms deleted", client });
   } catch (error: unknown) {
     console.error("Error deleting client:", error);
-    res.status(500).json({ error: "Failed to delete client" });
+    return res.status(500).json({ error: "Failed to delete client" });
   }
 };
 
@@ -78,10 +78,10 @@ export const deactivateClientHandler = async (req: Request, res: Response) => {
     if (!result.ok) {
       return res.status(500).json({ error: result.data.error });
     }
-    res.json({ message: `Client ${email} deactivated`, client: result.data });
+    return res.json({ message: `Client ${email} deactivated`, client: result.data });
   } catch (error: unknown) {
     console.error("Error deactivating client:", error);
-    res.status(500).json({ error: "Failed to deactivate client" });
+    return res.status(500).json({ error: "Failed to deactivate client" });
   }
 };
 
@@ -95,9 +95,9 @@ export const activateClientHandler = async (req: Request, res: Response) => {
     if (!result.ok) {
       return res.status(500).json({ error: result.data.error });
     }
-    res.json({ message: `Client ${email} activated`, client: result.data });
+    return res.json({ message: `Client ${email} activated`, client: result.data });
   } catch (error: unknown) {
     console.error("Error activating client:", error);
-    res.status(500).json({ error: "Failed to activate client" });
+    return res.status(500).json({ error: "Failed to activate client" });
   }
 };

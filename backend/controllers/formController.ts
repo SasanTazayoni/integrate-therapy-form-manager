@@ -62,7 +62,7 @@ export const sendForm = async (
       clientName: client.name ?? undefined,
     });
 
-    res
+    return res
       .status(201)
       .json({ message: "Form sent via email", form: mapFormSafe(form) });
   } catch (error) {
@@ -83,7 +83,7 @@ export const sendForm = async (
       });
     }
     console.error("Unexpected error in sendForm:", error);
-    res.status(500).json({
+    return res.status(500).json({
       error: "Something went wrong. If this keeps happening please contact support.",
     });
   }
@@ -162,7 +162,7 @@ export const sendMultipleForms = async (
       forms: createdForms,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       message: "Forms sent via email",
       sentForms: createdForms.map(mapFormSafe),
     });
@@ -190,7 +190,7 @@ export const sendMultipleForms = async (
       });
     }
     console.error("Unexpected error in sendMultipleForms:", error);
-    res.status(500).json({
+    return res.status(500).json({
       error: "Something went wrong. If this keeps happening please contact support.",
     });
   }
@@ -271,13 +271,13 @@ export const revokeFormToken = async (
       orderBy: { revoked_at: "desc" },
     });
 
-    res.json({
+    return res.json({
       message: "Form token(s) revoked successfully",
       revokedAt: revokedForm?.revoked_at ?? null,
     });
   } catch (error) {
     console.error("Error revoking form token:", error);
-    res.status(500).json({ error: "Failed to revoke form token" });
+    return res.status(500).json({ error: "Failed to revoke form token" });
   }
 };
 
