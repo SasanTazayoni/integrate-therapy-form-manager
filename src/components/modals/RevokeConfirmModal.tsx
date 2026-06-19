@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import Modal from "../Modal";
 import Button from "../Button";
 
@@ -14,6 +15,9 @@ export default function RevokeConfirmModal({
   closing,
   onCloseFinished,
 }: Props) {
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  useEffect(() => { headingRef.current?.focus(); }, []);
+
   function handleConfirm() {
     onConfirm();
   }
@@ -33,7 +37,7 @@ export default function RevokeConfirmModal({
       data-testid="revoke-modal"
     >
       <div>
-        <h2 id="revoke-title" className="text-xl font-bold mb-4">
+        <h2 ref={headingRef} tabIndex={-1} id="revoke-title" className="text-xl font-bold mb-4">
           Confirm Revoke
         </h2>
 

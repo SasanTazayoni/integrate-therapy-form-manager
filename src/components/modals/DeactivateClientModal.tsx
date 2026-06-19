@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import Modal from "../Modal";
 import Button from "../Button";
 
@@ -14,6 +15,9 @@ export default function DeactivateClientModal({
   onCloseFinished,
   onConfirm,
 }: Props) {
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  useEffect(() => { headingRef.current?.focus(); }, []);
+
   function handleConfirm() {
     onConfirm();
   }
@@ -31,7 +35,7 @@ export default function DeactivateClientModal({
       onOverlayClick={handleCancel}
     >
       <div>
-        <h2 id="deactivate-client-title" className="text-xl font-bold mb-4">
+        <h2 ref={headingRef} tabIndex={-1} id="deactivate-client-title" className="text-xl font-bold mb-4">
           Confirm Deactivation
         </h2>
 
