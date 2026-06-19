@@ -288,6 +288,10 @@ export const updateClientInfo = async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
+  if (name.length > 100) {
+    return res.status(400).json({ message: "Name is too long" });
+  }
+
   try {
     const form = await validateTokenOrFail(token, res);
     if (!form) return;

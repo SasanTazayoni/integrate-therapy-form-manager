@@ -111,4 +111,18 @@ describe("sendMultipleFormLinks", () => {
     const callArgs = sendMock.mock.calls[0][0];
     expect(callArgs.html).toContain("Dear Sir/Madam");
   });
+
+  test("HTML-encodes clientName in email body", async () => {
+    const forms = [{ form_type: "YSQ", token: "token1" }] as unknown as Form[];
+
+    await sendMultipleFormLinks({
+      email: "test@example.com",
+      clientName: '<script>alert("xss")</script>',
+      forms,
+    });
+
+    const callArgs = sendMock.mock.calls[0][0];
+    expect(callArgs.html).toContain("&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;");
+    expect(callArgs.html).not.toContain("<script>");
+  });
 });

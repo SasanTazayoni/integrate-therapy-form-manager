@@ -103,4 +103,17 @@ describe("sendFormLink", () => {
     const callArgs = sendMock.mock.calls[0][0];
     expect(callArgs.html).toContain("Dear Sir/Madam");
   });
+
+  test("HTML-encodes clientName in email body", async () => {
+    await sendFormLink({
+      to: "test@example.com",
+      token: "abc123",
+      formType: "YSQ",
+      clientName: '<script>alert("xss")</script>',
+    });
+
+    const callArgs = sendMock.mock.calls[0][0];
+    expect(callArgs.html).toContain("&lt;script&gt;alert(&quot;xss&quot;)&lt;/script&gt;");
+    expect(callArgs.html).not.toContain("<script>");
+  });
 });

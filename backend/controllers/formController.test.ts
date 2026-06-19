@@ -578,6 +578,19 @@ describe("formController", () => {
     expect(res.status).toHaveBeenCalledWith(400);
   });
 
+  test("updateClientInfo returns 400 if name exceeds 100 characters", async () => {
+    const req = {
+      body: { token: "t", name: "a".repeat(101), dob: "2000-01-01" },
+    } as unknown as UpdateClientInfoReq;
+    const res = {
+      status: vi.fn().mockReturnThis(),
+      json: vi.fn(),
+    } as unknown as UpdateClientInfoRes;
+    await updateClientInfo(req, res);
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ message: "Name is too long" });
+  });
+
   test("updateClientInfo skips update when token is invalid or expired", async () => {
     vi.mocked(validateTokenOrFail).mockResolvedValue(null);
     const req = {

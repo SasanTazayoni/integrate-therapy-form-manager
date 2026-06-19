@@ -20,7 +20,10 @@ export async function sendMultipleFormLinks({
 
   const baseUrl = getFrontendBaseUrl();
   const resend = new Resend(getEnvVar("RESEND_API_KEY"));
-  const nameToUse = clientName ?? "Sir/Madam";
+  const escapeHtml = (s: string) =>
+    s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+  const nameToUse = escapeHtml(clientName ?? "Sir/Madam");
   const htmlLinks = forms
     .map(
       (f) =>
