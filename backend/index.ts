@@ -48,10 +48,10 @@ app.use("/forms", formRoutes);
 
 // --- API 404s ---
 app.use("/clients", (_req, res) => {
-  res.status(404).json({ message: "Route not found" });
+  res.status(404).json({ error: "Route not found" });
 });
 app.use("/forms", (_req, res) => {
-  res.status(404).json({ message: "Route not found" });
+  res.status(404).json({ error: "Route not found" });
 });
 
 // --- SPA static + fallback (production only) ---
@@ -88,12 +88,12 @@ app.use(
       console.error(`[${requestId}]`, err);
     }
 
-    const message =
+    const error =
       status === 500
         ? "Internal server error"
         : (typeof err?.message === "string" && err.message) || "Request failed";
 
-    res.status(status).json({ message, requestId });
+    res.status(status).json({ error });
   }
 );
 

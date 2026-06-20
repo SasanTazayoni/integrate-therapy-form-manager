@@ -1,19 +1,12 @@
 import type { AxiosError } from "axios";
 
 export function getErrorDisplay(
-  err: AxiosError<{
-    message?: string;
-    error?: string;
-    requestId?: string;
-  }>,
+  err: AxiosError<{ error?: string }>,
   fallbackMessage = "Something went wrong"
 ): string {
-  const msg =
-    err?.response?.data?.message ||
+  return (
     err?.response?.data?.error ||
     err?.message ||
-    fallbackMessage;
-
-  const requestId = err?.response?.data?.requestId;
-  return requestId ? `${msg} (ref: ${requestId})` : msg;
+    fallbackMessage
+  );
 }
