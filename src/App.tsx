@@ -1,14 +1,17 @@
+import { lazy, Suspense } from "react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
-import SMI from "./pages/SMI";
-import YSQ from "./pages/YSQ";
-import BECKS from "./pages/BECKS";
-import BURNS from "./pages/BURNS";
-import NotFound from "./pages/NotFoundPage";
-import SubmittedPage from "./pages/Submitted";
-import FormResultsSummary from "./pages/FormResultsSummary";
+import { Loader2 } from "lucide-react";
 import RouteError from "./components/RouteError";
 import { ClientProvider } from "./context/ClientContext";
+
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const SMI = lazy(() => import("./pages/SMI"));
+const YSQ = lazy(() => import("./pages/YSQ"));
+const BECKS = lazy(() => import("./pages/BECKS"));
+const BURNS = lazy(() => import("./pages/BURNS"));
+const NotFound = lazy(() => import("./pages/NotFoundPage"));
+const SubmittedPage = lazy(() => import("./pages/Submitted"));
+const FormResultsSummary = lazy(() => import("./pages/FormResultsSummary"));
 
 const router = createBrowserRouter(
   [
@@ -32,10 +35,18 @@ const router = createBrowserRouter(
   }
 );
 
+const PageFallback = () => (
+  <div className="flex justify-center items-center min-h-screen" aria-busy>
+    <Loader2 className="animate-spin text-blue-600" size={120} />
+  </div>
+);
+
 export default function App() {
   return (
     <ClientProvider>
-      <RouterProvider router={router} />
+      <Suspense fallback={<PageFallback />}>
+        <RouterProvider router={router} />
+      </Suspense>
     </ClientProvider>
   );
 }
