@@ -138,9 +138,9 @@ export default function YSQSchemasTable({
 
             const bgClass =
               highlightLevel === "severe"
-                ? "bg-red-300 border-red-500"
+                ? "bg-red-300"
                 : highlightLevel === "highlight"
-                ? "bg-yellow-200 border-yellow-400"
+                ? "bg-yellow-200"
                 : "";
 
             return (

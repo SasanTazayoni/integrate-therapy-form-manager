@@ -185,12 +185,12 @@ describe("YSQSchemasTable", () => {
       const rating = cell.getAttribute("data-rating") || "";
       if (rating.toLowerCase().includes("severe")) {
         expect(cell).toHaveClass("bg-red-300");
-        expect(cell).toHaveClass("border-red-500");
+        expect(cell).not.toHaveClass("border-red-500");
       } else if (
         ["high", "very high"].some((r) => rating.toLowerCase().includes(r))
       ) {
         expect(cell).toHaveClass("bg-yellow-200");
-        expect(cell).toHaveClass("border-yellow-400");
+        expect(cell).not.toHaveClass("border-yellow-400");
       } else {
         expect(cell).not.toHaveClass("bg-yellow-200");
         expect(cell).not.toHaveClass("border-yellow-400");
