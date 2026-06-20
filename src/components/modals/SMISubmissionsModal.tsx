@@ -31,7 +31,7 @@ export default function SMISubmissionsModal({
     {
       id: string;
       submittedAt: string;
-      smiScores: Record<string, string | null>;
+      smiScores: Record<string, number | null>;
     }[]
   >([]);
 
@@ -82,13 +82,13 @@ export default function SMISubmissionsModal({
 
   const handleSelect = (form: {
     submittedAt: string;
-    smiScores: Record<string, string | null>;
+    smiScores: Record<string, number | null>;
   }) => {
     const normalizedScores: Record<string, string | null> = {};
 
     Object.entries(form.smiScores).forEach(([shortKey, value]) => {
       const fullKey = `smi_${shortKey}_score`;
-      if (fullKey in smiBoundaries) normalizedScores[fullKey] = value ?? null;
+      if (fullKey in smiBoundaries) normalizedScores[fullKey] = value != null ? String(value) : null;
     });
 
     setLocalSmiScores(normalizedScores);

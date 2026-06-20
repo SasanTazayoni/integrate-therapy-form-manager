@@ -84,7 +84,7 @@ describe("SMISubmissionsModal", () => {
           {
             id: "1",
             submittedAt: "2025-09-06T00:00:00Z",
-            smiScores: { vc: "1.0-Average" },
+            smiScores: { vc: 1.5 },
           },
         ],
       },
@@ -108,7 +108,7 @@ describe("SMISubmissionsModal", () => {
     const smiForm = {
       id: "1",
       submittedAt: "2025-09-06T00:00:00Z",
-      smiScores: { vc: "1.0-Average" },
+      smiScores: { vc: 1.5 },
     };
 
     vi.mocked(fetchAllSmiForms).mockResolvedValue({
@@ -130,7 +130,7 @@ describe("SMISubmissionsModal", () => {
 
     await waitFor(() => {
       expect(mockSetLocalSmiScores).toHaveBeenCalledWith({
-        smi_vc_score: "1.0-Average",
+        smi_vc_score: "1.5",
       });
       expect(mockSetLocalSmiSubmittedAt).toHaveBeenCalledWith("6 Sept 2025");
     });
@@ -163,7 +163,7 @@ describe("SMISubmissionsModal", () => {
             smiScores: {
               vc: undefined as unknown as null,
               ac: null,
-              ec: "5",
+              ec: 5,
             },
           },
         ],

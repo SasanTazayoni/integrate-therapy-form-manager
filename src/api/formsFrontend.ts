@@ -200,7 +200,7 @@ export async function updateClientInfo({
 export type SmiForm = {
   id: string;
   submittedAt: string;
-  smiScores: Record<string, string | null>;
+  smiScores: Record<string, number | null>;
 };
 
 export type FetchAllSmiFormsResult = {
