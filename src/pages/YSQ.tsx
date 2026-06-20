@@ -136,7 +136,6 @@ const YSQ = () => {
       <QuestionnaireForm
         questionnaire="YSQ"
         token={token}
-        onError={setFormError}
         onSubmit={handleSubmit(onValidSubmit)}
       >
         <YSQInstructions />

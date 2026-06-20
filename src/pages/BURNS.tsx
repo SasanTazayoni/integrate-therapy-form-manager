@@ -49,7 +49,6 @@ const BURNS = () => {
     <QuestionnaireForm
       questionnaire="BURNS"
       token={token}
-      onError={setFormError}
       onSubmit={handleSubmit(onValidSubmit)}
     >
       <div className="questionnaire">

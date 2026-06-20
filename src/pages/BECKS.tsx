@@ -53,7 +53,6 @@ const BECKS = () => {
     <QuestionnaireForm
       questionnaire="BECKS"
       token={token}
-      onError={setFormError}
       onSubmit={handleSubmit(onValidSubmit)}
     >
       <div className="questionnaire">

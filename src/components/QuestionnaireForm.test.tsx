@@ -15,13 +15,6 @@ vi.spyOn(api, "validateFormToken").mockResolvedValue({
   data: { error: "Invalid token" },
 });
 
-vi.mock("react-router-dom", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("react-router-dom")>();
-  return {
-    ...actual,
-    useActionData: () => ({ error: "Something went wrong" }),
-  };
-});
 
 vi.mock("./modals/InvalidTokenModal", () => ({
   default: () => (
@@ -274,31 +267,6 @@ describe("QuestionnaireForm component", () => {
     expect(nameInput.value).toBe("Jane Doe");
     fireEvent.change(dobInput, { target: { value: "2000-12-31" } });
     expect(dobInput.value).toBe("2000-12-31");
-  });
-
-  test("calls onError when actionData.error is present", () => {
-    const onError = vi.fn();
-
-    const router = createMemoryRouter(
-      [
-        {
-          path: "/",
-          element: (
-            <QuestionnaireForm
-              questionnaire={TEST_FORM}
-              token="valid-token"
-              onError={onError}
-            >
-              <div>Child Content</div>
-            </QuestionnaireForm>
-          ),
-        },
-      ],
-      { initialEntries: ["/"] }
-    );
-
-    render(<RouterProvider router={router} />);
-    expect(onError).toHaveBeenCalledWith("Something went wrong");
   });
 
   test("dispatches fadeOutAction then clearAction at the right times", async () => {

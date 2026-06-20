@@ -112,7 +112,6 @@ const SMI = () => {
       <QuestionnaireForm
         questionnaire="SMI"
         token={token}
-        onError={setFormError}
         onSubmit={handleSubmit(onValidSubmit)}
       >
         <SMIInstructions />

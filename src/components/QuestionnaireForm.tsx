@@ -1,5 +1,4 @@
 import { useEffect, useReducer, useState, useRef } from "react";
-import { useActionData } from "react-router-dom";
 import { validateFormToken, updateClientInfo } from "../api/formsFrontend";
 import ClientInfoModal from "./modals/ClientInfoModal";
 import InvalidTokenModal from "./modals/InvalidTokenModal";
@@ -18,7 +17,6 @@ type QuestionnaireFormProps = {
   questionnaire: FormType;
   token?: string;
   children: React.ReactNode;
-  onError?: (error: string) => void;
   onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;
 };
 
@@ -44,10 +42,8 @@ export default function QuestionnaireForm({
   questionnaire,
   children,
   token,
-  onError,
   onSubmit,
 }: QuestionnaireFormProps) {
-  const actionData = useActionData() as { error?: string; success?: boolean };
   const [state, dispatch] = useReducer(reducer, { status: "loading" });
   const [modalState, modalDispatch] = useReducer(
     clientInfoReducer,
@@ -128,12 +124,6 @@ export default function QuestionnaireForm({
       active = false;
     };
   }, [token, questionnaire]);
-
-  useEffect(() => {
-    if (actionData?.error && onError) {
-      onError(actionData.error);
-    }
-  }, [actionData?.error, onError]);
 
   const handleClientInfoSubmit = async () => {
     clearTimers();
