@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import { FocusTrap } from "focus-trap-react";
 
@@ -24,6 +24,7 @@ export default function Modal({
   className,
 }: Props) {
   const [visible, setVisible] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setVisible(true);
@@ -48,7 +49,7 @@ export default function Modal({
   }
 
   return ReactDOM.createPortal(
-    <FocusTrap>
+    <FocusTrap focusTrapOptions={{ fallbackFocus: () => modalRef.current! }}>
       <div
         className={overlayClass}
         aria-hidden={false}
@@ -59,6 +60,8 @@ export default function Modal({
         }}
       >
         <div
+          ref={modalRef}
+          tabIndex={-1}
           className={`modal ${className}`}
           role={role}
           aria-modal="true"
