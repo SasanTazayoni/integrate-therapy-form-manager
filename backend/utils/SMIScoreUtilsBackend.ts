@@ -17,13 +17,11 @@ function randomScoreBetween(min: number, max: number): number {
   return Math.round(randomValue * 100) / 100;
 }
 
-export function generateScore(scaleKey: string): string {
+export function generateScore(scaleKey: string): number {
   const boundaries = smiBoundaries[scaleKey];
   const segment = Math.floor(Math.random() * (boundaries.length - 1));
   let lowerBoundary = boundaries[segment];
   let upperBoundary = boundaries[segment + 1];
   if (lowerBoundary > upperBoundary) [lowerBoundary, upperBoundary] = [upperBoundary, lowerBoundary];
-  const score = randomScoreBetween(lowerBoundary, upperBoundary);
-  const category = classifyScore(score, boundaries);
-  return `${score} - ${category}`;
+  return randomScoreBetween(lowerBoundary, upperBoundary);
 }

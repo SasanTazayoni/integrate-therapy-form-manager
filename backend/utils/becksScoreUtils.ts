@@ -1,8 +1,14 @@
+export const BECKS_NORMAL_MAX = 10;
+export const BECKS_MILD_MAX = 16;
+export const BECKS_BORDERLINE_MAX = 20;
+export const BECKS_MODERATE_MAX = 30;
+export const BECKS_SEVERE_MAX = 40;
+
 export default function getBecksScoreCategory(score: number): string {
-  if (score <= 10) return "Normal";
-  if (score <= 16) return "Mild mood disturbance";
-  if (score <= 20) return "Borderline clinical depression";
-  if (score <= 30) return "Moderate depression";
-  if (score <= 40) return "Severe depression";
+  if (score <= BECKS_NORMAL_MAX) return "Normal";
+  if (score <= BECKS_MILD_MAX) return "Mild mood disturbance";
+  if (score <= BECKS_BORDERLINE_MAX) return "Borderline clinical depression";
+  if (score <= BECKS_MODERATE_MAX) return "Moderate depression";
+  if (score <= BECKS_SEVERE_MAX) return "Severe depression";
   return "Extreme depression";
 }
