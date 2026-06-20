@@ -169,9 +169,8 @@ export const sendMultipleForms = async (
   } catch (error) {
     if (error instanceof Error && error.message === "Email delivery failed") {
       if (createdForms.length > 0) {
-        await prisma.form.updateMany({
+        await prisma.form.deleteMany({
           where: { id: { in: createdForms.map((form) => form.id) } },
-          data: { is_active: false },
         });
       }
       console.error("Email delivery failed:", error.cause);

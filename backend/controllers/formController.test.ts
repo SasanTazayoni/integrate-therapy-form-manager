@@ -38,6 +38,7 @@ vi.mock("../prisma/client", () => ({
       findFirst: vi.fn(),
       findUnique: vi.fn(),
       updateMany: vi.fn(),
+      deleteMany: vi.fn(),
     },
     client: {
       update: vi.fn(),
@@ -88,6 +89,7 @@ const mockPrisma = prisma as unknown as {
     findFirst: Mock;
     findUnique: Mock;
     updateMany: Mock;
+    deleteMany: Mock;
   };
   client: { update: Mock; findUnique: Mock };
 };
@@ -781,9 +783,8 @@ describe("formController", () => {
 
     await sendMultipleForms(req, res);
 
-    expect(mockPrisma.form.updateMany).toHaveBeenCalledWith({
+    expect(mockPrisma.form.deleteMany).toHaveBeenCalledWith({
       where: { id: { in: expect.any(Array) } },
-      data: { is_active: false },
     });
     expect(res.status).toHaveBeenCalledWith(502);
     expect(res.json).toHaveBeenCalledWith({
