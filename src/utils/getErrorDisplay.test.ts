@@ -10,8 +10,12 @@ describe("getErrorDisplay", () => {
     expect(getErrorDisplay(asAxios({ response: { data: { error: "Validation failed" } } }))).toBe("Validation failed");
   });
 
-  test("returns err.message if response.data missing", () => {
-    expect(getErrorDisplay(asAxios({ message: "Network error" }))).toBe("Network error");
+  test("returns err.message when there is no response (network error)", () => {
+    expect(getErrorDisplay(asAxios({ message: "Network Error" }))).toBe("Network Error");
+  });
+
+  test("uses fallback when server responded but no error field", () => {
+    expect(getErrorDisplay(asAxios({ response: { data: {} }, message: "Request failed with status code 500" }), "Something went wrong")).toBe("Something went wrong");
   });
 
   test("uses fallback message if nothing else is present", () => {

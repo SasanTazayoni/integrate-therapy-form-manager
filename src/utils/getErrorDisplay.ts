@@ -6,7 +6,7 @@ export function getErrorDisplay(
 ): string {
   return (
     err?.response?.data?.error ||
-    err?.message ||
+    (!err?.response ? err?.message : null) ||
     fallbackMessage
   );
 }
