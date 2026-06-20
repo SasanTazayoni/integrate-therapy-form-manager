@@ -174,6 +174,46 @@ describe("clientsService", () => {
     expect(result.formsStatus![FORM_TYPES[1]].activeToken).toBe(true);
   });
 
+  test("SMI submitted stays true after a new SMI token is sent", async () => {
+    const now = new Date();
+    const mockClient = {
+      id: "1",
+      email: "test@example.com",
+      name: "Alice",
+      dob: null,
+      status: "active",
+      inactivated_at: null,
+    };
+    const mockForms = [
+      {
+        id: "f1",
+        form_type: "SMI",
+        submitted_at: new Date(now.getTime() - 10000),
+        token_sent_at: new Date(now.getTime() - 20000),
+        token_expires_at: new Date(now.getTime() - 10000),
+        is_active: false,
+        revoked_at: null,
+      },
+      {
+        id: "f2",
+        form_type: "SMI",
+        submitted_at: null,
+        token_sent_at: now,
+        token_expires_at: new Date(now.getTime() + 100000),
+        is_active: true,
+        revoked_at: null,
+      },
+    ];
+    vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("test@example.com");
+    vi.mocked(clientsRepo.findClientByEmail).mockResolvedValue(mockClient as unknown as Awaited<ReturnType<typeof clientsRepo.findClientByEmail>>);
+    vi.mocked(clientsRepo.getFormsByClientId).mockResolvedValue(mockForms as unknown as Form[]);
+
+    const result = await getClientFormsStatus("test@example.com");
+
+    expect(result.formsStatus!.SMI.submitted).toBe(true);
+    expect(result.formsStatus!.SMI.activeToken).toBe(true);
+  });
+
   test("createClient converts DOB string to Date", async () => {
     const mockClient = {
       id: "1",

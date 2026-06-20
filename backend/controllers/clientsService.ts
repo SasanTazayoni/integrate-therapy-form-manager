@@ -87,13 +87,18 @@ export const getClientFormsStatus = async (
       .filter((f) => f.form_type === type)
       .sort((a, b) => b.token_sent_at.getTime() - a.token_sent_at.getTime())[0];
 
+    const everSubmitted =
+      type === "SMI"
+        ? forms.some((f) => f.form_type === "SMI" && f.submitted_at !== null)
+        : !!mostRecent?.submitted_at;
+
     formsStatus[type] = mostRecent
       ? {
           activeToken:
             mostRecent.is_active &&
             !mostRecent.submitted_at &&
             mostRecent.token_expires_at > new Date(),
-          submitted: !!mostRecent.submitted_at,
+          submitted: everSubmitted,
           submittedAt: mostRecent.submitted_at,
           tokenCreatedAt: mostRecent.token_sent_at,
           tokenExpiresAt: mostRecent.token_expires_at,
