@@ -157,7 +157,6 @@ body {
   .modal {
     margin: 2rem;
     max-width: calc(100% - 4rem);
-    padding: 1rem;
   }
 
   .wide-modal {
@@ -535,7 +534,9 @@ input.small-square-input {
 input.small-square-input.error {
   border: solid 2px rgb(255, 46, 46);
   background: #ffbfbf;
-  transition: rgb(255, 155, 155) und-color 0.3s ease, border-color 0.3s ease;
+  transition:
+    rgb(255, 155, 155) und-color 0.3s ease,
+    border-color 0.3s ease;
 }
 
 input.small-square-input:focus {
