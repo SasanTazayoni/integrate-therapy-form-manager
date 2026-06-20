@@ -79,7 +79,7 @@ describe("SMIModesTable", () => {
 
     const td = getAllByText("Detached Protector")[0].closest("td");
     expect(td).toHaveClass("bg-yellow-200");
-    expect(td).toHaveClass("border-yellow-400");
+    expect(td).not.toHaveClass("border-yellow-400");
   });
 
   test("applies red highlight for severe-rated cells", () => {
@@ -94,7 +94,7 @@ describe("SMIModesTable", () => {
 
     const td = getAllByText("Self-Aggrandizer")[0].closest("td");
     expect(td).toHaveClass("bg-red-300");
-    expect(td).toHaveClass("border-red-500");
+    expect(td).not.toHaveClass("border-red-500");
   });
 
   test("clicking summary sheet icon calls openModal", () => {

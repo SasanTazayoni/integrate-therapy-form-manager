@@ -59,16 +59,16 @@ export default function SMIModesTable({
 
     const bgClass =
       highlightLevel === "severe"
-        ? "bg-red-300 border-red-500"
+        ? "bg-red-300"
         : highlightLevel === "highlight"
-        ? "bg-yellow-200 border-yellow-400"
-        : "bg-[var(--color-block--grey)] border-gray-300";
+        ? "bg-yellow-200"
+        : "bg-[var(--color-block--grey)]";
 
     return (
       <td
         key={cell}
-        className={`border-r p-3 align-center ${
-          isLastCell ? "bg-gray-100 border-gray-300" : bgClass
+        className={`border-r border-gray-300 p-3 align-center ${
+          isLastCell ? "bg-gray-100" : bgClass
         }`}
       >
         <div className="font-semibold text-sm text-gray-600">{cell}</div>
@@ -116,10 +116,10 @@ export default function SMIModesTable({
 
     const bgClass =
       highlightLevel === "severe"
-        ? "bg-red-300 border-red-500"
+        ? "bg-red-300"
         : highlightLevel === "highlight"
-        ? "bg-yellow-200 border-yellow-400"
-        : "bg-[var(--color-block--grey)] border-gray-300";
+        ? "bg-yellow-200"
+        : "bg-[var(--color-block--grey)]";
 
     return (
       <div key={cell} className={`p-4 rounded ${bgClass}`}>
