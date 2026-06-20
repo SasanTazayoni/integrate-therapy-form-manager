@@ -24,7 +24,7 @@ model Client {
 
 model Form {
   id               String    @id @default(uuid())
-  client           Client    @relation(fields: [clientId], references: [id])
+  client           Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
   clientId         String
   form_type        String
   token            String    @unique
