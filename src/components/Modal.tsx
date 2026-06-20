@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
+import { FocusTrap } from "focus-trap-react";
 
 type Props = {
   children: React.ReactNode;
@@ -47,26 +48,28 @@ export default function Modal({
   }
 
   return ReactDOM.createPortal(
-    <div
-      className={overlayClass}
-      aria-hidden={false}
-      onClick={(e) => {
-        if ((e.target as HTMLElement).classList.contains("overlay")) {
-          onOverlayClick?.();
-        }
-      }}
-    >
+    <FocusTrap>
       <div
-        className={`modal ${className}`}
-        role={role}
-        aria-modal="true"
-        aria-labelledby={ariaLabelledBy}
-        aria-describedby={ariaDescribedBy}
-        onClick={(e) => e.stopPropagation()}
+        className={overlayClass}
+        aria-hidden={false}
+        onClick={(e) => {
+          if ((e.target as HTMLElement).classList.contains("overlay")) {
+            onOverlayClick?.();
+          }
+        }}
       >
-        {children}
+        <div
+          className={`modal ${className}`}
+          role={role}
+          aria-modal="true"
+          aria-labelledby={ariaLabelledBy}
+          aria-describedby={ariaDescribedBy}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {children}
+        </div>
       </div>
-    </div>,
+    </FocusTrap>,
     modalRoot
   );
 }

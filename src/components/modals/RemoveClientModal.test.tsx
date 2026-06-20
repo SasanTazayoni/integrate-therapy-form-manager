@@ -2,6 +2,10 @@ import { render, fireEvent } from "@testing-library/react";
 import { describe, test, vi, beforeEach, afterEach, expect } from "vitest";
 import RemoveClientModal from "./RemoveClientModal";
 
+vi.mock("focus-trap-react", () => ({
+  FocusTrap: ({ children }: { children: React.ReactNode }) => children,
+}));
+
 beforeEach(() => {
   let modalRoot = document.getElementById("modal-root");
   if (!modalRoot) {

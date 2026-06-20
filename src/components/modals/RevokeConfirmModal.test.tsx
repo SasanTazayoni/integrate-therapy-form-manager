@@ -2,6 +2,10 @@ import { render, fireEvent } from "@testing-library/react";
 import { describe, test, expect, vi, afterEach, beforeEach } from "vitest";
 import RevokeConfirmModal from "./RevokeConfirmModal";
 
+vi.mock("focus-trap-react", () => ({
+  FocusTrap: ({ children }: { children: React.ReactNode }) => children,
+}));
+
 beforeEach(() => {
   let modalRoot = document.getElementById("modal-root");
   if (!modalRoot) {
