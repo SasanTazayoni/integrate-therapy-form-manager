@@ -4,6 +4,11 @@ import * as clientsRepo from "./clientsRepository";
 import * as normalizeUtils from "../utils/normalizeEmail";
 import { getClientFormsStatus, createClient } from "./clientsService";
 import { FORM_TYPES } from "../data/formTypes";
+import getBecksScoreCategory, { BECKS_NORMAL_MAX, BECKS_MILD_MAX } from "../utils/becksScoreUtils";
+import getBurnsScoreCategory, { BURNS_MILD_MAX, BURNS_BORDERLINE_MAX } from "../utils/burnsScoreUtils";
+import { getScoreCategory, YSQ_BOUNDARIES } from "../utils/YSQScoreUtils";
+import { classifyScore } from "../utils/SMIScoreUtilsBackend";
+import { smiBoundaries } from "../data/SMIBoundariesBackend";
 
 vi.mock("./clientsRepository");
 vi.mock("../utils/normalizeEmail");
@@ -42,7 +47,7 @@ describe("clientsService", () => {
         {
           id: "f1",
           form_type: "BDI",
-          bdi_score: 10,
+          bdi_score: BECKS_NORMAL_MAX,
           submitted_at: new Date(),
           token_sent_at: new Date(),
           token_expires_at: new Date(Date.now() + 10000),
@@ -52,7 +57,7 @@ describe("clientsService", () => {
         {
           id: "f2",
           form_type: "BURNS",
-          bai_score: 20,
+          bai_score: BURNS_MILD_MAX,
           submitted_at: null,
           token_sent_at: new Date(),
           token_expires_at: new Date(Date.now() + 10000),
@@ -69,8 +74,8 @@ describe("clientsService", () => {
       expect(result.clientExists).toBe(true);
       expect(result.clientName).toBe("Alice");
       expect(result.formsStatus).toBeDefined();
-      expect(result.scores!.bdi?.bdi_score).toBe("10");
-      expect(result.scores!.bai?.bai_score).toBe("20");
+      expect(result.scores!.bdi?.bdi_score).toBe(`${BECKS_NORMAL_MAX}-${getBecksScoreCategory(BECKS_NORMAL_MAX)}`);
+      expect(result.scores!.bai?.bai_score).toBe(`${BURNS_MILD_MAX}-${getBurnsScoreCategory(BURNS_MILD_MAX)}`);
     });
   });
 
@@ -248,6 +253,11 @@ describe("clientsService", () => {
       inactivated_at: null,
     };
 
+    const edScore = YSQ_BOUNDARIES.ED[0];   // 8, at Low boundary for ED
+    const ed456Score = 2;                    // well within Low for ED
+    const maScore = YSQ_BOUNDARIES.MA[0];   // 12, at Low boundary for MA
+    const ma456Score = 4;                   // well within Low for MA
+
     const mockYsqForm = {
       id: "f1",
       form_type: "YSQ",
@@ -256,10 +266,10 @@ describe("clientsService", () => {
       is_active: true,
       revoked_at: null,
       submitted_at: new Date(),
-      ysq_ed_score: 5,
-      ysq_ed_456: 2,
-      ysq_ma_score: 10,
-      ysq_ma_456: 4,
+      ysq_ed_score: edScore,
+      ysq_ed_456: ed456Score,
+      ysq_ma_score: maScore,
+      ysq_ma_456: ma456Score,
       bdi_score: null,
       bai_score: null,
     };
@@ -271,12 +281,12 @@ describe("clientsService", () => {
     const result = await getClientFormsStatus("alice@example.com");
 
     expect(result.scores!.ysq).toEqual({
-      ysq_ed_score: "5",
-      ysq_ma_score: "10",
+      ysq_ed_score: `${edScore}-${getScoreCategory("ED", edScore)}`,
+      ysq_ma_score: `${maScore}-${getScoreCategory("MA", maScore)}`,
     });
     expect(result.scores!.ysq456).toEqual({
-      ysq_ed_456: "2",
-      ysq_ma_456: "4",
+      ysq_ed_456: `${ed456Score}-${getScoreCategory("ED", ed456Score)}`,
+      ysq_ma_456: `${ma456Score}-${getScoreCategory("MA", ma456Score)}`,
     });
   });
 
@@ -318,6 +328,7 @@ describe("clientsService", () => {
       smi_q1: 5,
       smi_q2: null,
       smi_hidden: 99,
+      smi_vc_score: 3,
     };
 
     vi.mocked(normalizeUtils.normalizeEmail).mockReturnValue("test@example.com");
@@ -327,6 +338,7 @@ describe("clientsService", () => {
     const result = await getClientFormsStatus("test@example.com");
     expect(result.scores!.smi.smi_q1).toBe("5");
     expect(result.scores!.smi.smi_q2).toBeNull();
+    expect(result.scores!.smi.smi_vc_score).toBe(`3-${classifyScore(3, smiBoundaries["smi_vc_score"])}`);
     expect(result.scores!.ysq456).toEqual({});
   });
 
@@ -343,7 +355,7 @@ describe("clientsService", () => {
       {
         id: "f1",
         form_type: "BAI",
-        bai_score: 12,
+        bai_score: BURNS_BORDERLINE_MAX,
         submitted_at: new Date("2024-01-01"),
         token_sent_at: new Date(),
         token_expires_at: new Date(Date.now() + 10000),
@@ -360,7 +372,7 @@ describe("clientsService", () => {
 
     expect(result.scores!.bdi).toBeNull();
     expect(result.scores!.bai).toEqual({
-      bai_score: "12",
+      bai_score: `${BURNS_BORDERLINE_MAX}-${getBurnsScoreCategory(BURNS_BORDERLINE_MAX)}`,
       submitted_at: "2024-01-01T00:00:00.000Z",
     });
   });
@@ -378,7 +390,7 @@ describe("clientsService", () => {
       {
         id: "f1",
         form_type: "BDI",
-        bdi_score: 15,
+        bdi_score: BECKS_MILD_MAX,
         submitted_at: null,
         token_sent_at: new Date(),
         token_expires_at: new Date(Date.now() + 10000),
@@ -394,7 +406,7 @@ describe("clientsService", () => {
     const result = await getClientFormsStatus("test@example.com");
 
     expect(result.scores!.bdi).toEqual({
-      bdi_score: "15",
+      bdi_score: `${BECKS_MILD_MAX}-${getBecksScoreCategory(BECKS_MILD_MAX)}`,
       submitted_at: null,
     });
   });

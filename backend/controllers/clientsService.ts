@@ -8,6 +8,12 @@ import { FORM_TYPES, FormType } from "../data/formTypes";
 import { normalizeEmail } from "../utils/normalizeEmail";
 import { getLatestForm } from "../utils/formHelpers";
 import { CLIENT_STATUS } from "../data/clientStatus";
+import getBecksScoreCategory from "../utils/becksScoreUtils";
+import getBurnsScoreCategory from "../utils/burnsScoreUtils";
+import { getScoreCategory } from "../utils/YSQScoreUtils";
+import { SchemaType } from "../data/YSQBoundariesBackend";
+import { classifyScore } from "../utils/SMIScoreUtilsBackend";
+import { smiBoundaries } from "../data/SMIBoundariesBackend";
 
 export type FormStatus = {
   activeToken: boolean;
@@ -53,28 +59,55 @@ export const getClientFormsStatus = async (
   const extractScores = (
     form: Form | undefined,
     formTypePrefix: string,
-    scoreKeyFilter?: (key: string) => boolean
+    scoreKeyFilter: ((key: string) => boolean) | undefined,
+    labelFn: (key: string, value: number) => string
   ): Record<string, string | null> => {
     const scores: Record<string, string | null> = {};
     if (!form) return scores;
     Object.entries(form).forEach(([key, value]) => {
       if (key.startsWith(formTypePrefix) && (!scoreKeyFilter || scoreKeyFilter(key))) {
-        scores[key] = value !== null ? String(value) : null;
+        if (value === null) {
+          scores[key] = null;
+        } else {
+          const num = value as number;
+          const label = labelFn(key, num);
+          scores[key] = label ? `${num}-${label}` : String(num);
+        }
       }
     });
     return scores;
   };
 
   const latestSmiForm = getLatestForm(forms, (f) => f.form_type === "SMI");
-  const smiScores = extractScores(latestSmiForm, "smi_");
+  const smiScores = extractScores(
+    latestSmiForm,
+    "smi_",
+    undefined,
+    (key, value) => {
+      const boundaries = smiBoundaries[key];
+      return boundaries ? classifyScore(value, boundaries) : "";
+    }
+  );
   const smiSubmittedAt = latestSmiForm?.submitted_at?.toISOString() ?? null;
 
   const latestYsqForm = getLatestForm(forms, (f) => f.form_type === "YSQ");
-  const ysqScores = extractScores(latestYsqForm, "ysq_", (key) =>
-    key.endsWith("_score")
+  const ysqScores = extractScores(
+    latestYsqForm,
+    "ysq_",
+    (key) => key.endsWith("_score"),
+    (key, value) => {
+      const schema = key.replace("ysq_", "").replace("_score", "").toUpperCase() as SchemaType;
+      return getScoreCategory(schema, value);
+    }
   );
-  const ysq456Scores = extractScores(latestYsqForm, "ysq_", (key) =>
-    key.endsWith("_456")
+  const ysq456Scores = extractScores(
+    latestYsqForm,
+    "ysq_",
+    (key) => key.endsWith("_456"),
+    (key, value) => {
+      const schema = key.replace("ysq_", "").replace("_456", "").toUpperCase() as SchemaType;
+      return getScoreCategory(schema, value);
+    }
   );
 
   const formsStatus: Record<FormType, FormStatus> = {} as Record<
@@ -126,13 +159,13 @@ export const getClientFormsStatus = async (
     scores: {
       bdi: bdiForm
         ? {
-            bdi_score: String(bdiForm.bdi_score),
+            bdi_score: `${bdiForm.bdi_score!}-${getBecksScoreCategory(bdiForm.bdi_score!)}`,
             submitted_at: bdiForm.submitted_at?.toISOString() ?? null,
           }
         : null,
       bai: baiForm
         ? {
-            bai_score: String(baiForm.bai_score),
+            bai_score: `${baiForm.bai_score!}-${getBurnsScoreCategory(baiForm.bai_score!)}`,
             submitted_at: baiForm.submitted_at?.toISOString() ?? null,
           }
         : null,

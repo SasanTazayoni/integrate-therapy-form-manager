@@ -8,37 +8,32 @@ import {
 } from "./formSubmitHandlers";
 import { validateTokenOrFail } from "./formControllerHelpers/formTokenHelpers";
 import { validateRequestBodyFields } from "../utils/validationUtils";
-import { parseAndCombineScore } from "../utils/scoreUtils";
 import { mapFormSafe } from "../utils/formHelpers";
-import getBecksScoreCategory from "../utils/becksScoreUtils";
-import getBurnsScoreCategory from "../utils/burnsScoreUtils";
-import { getScoreCategory } from "../utils/YSQScoreUtils";
-import { classifyScore, normalizeLabel } from "../utils/SMIScoreUtilsBackend";
+import { normalizeLabel } from "../utils/SMIScoreUtilsBackend";
 import {
   smiBoundaries,
   labelToBoundaryKey,
 } from "../data/SMIBoundariesBackend";
+import { BECKS_NORMAL_MAX } from "../utils/becksScoreUtils";
+import { BURNS_MILD_MAX } from "../utils/burnsScoreUtils";
 import type { Request, Response } from "express";
 
 vi.mock("../prisma/client");
 vi.mock("./formControllerHelpers/formTokenHelpers");
-vi.mock("../utils/scoreUtils");
 vi.mock("../utils/formHelpers");
 vi.mock("../utils/validationUtils");
-vi.mock("../utils/YSQScoreUtils");
-vi.mock("../utils/SMIScoreUtilsBackend");
-vi.mock("../data/SMIBoundariesBackend", async () => {
-  return {
-    smiBoundaries: {
-      smi_depression: { low: 0, medium: 10, high: 20 },
-    },
-    labelToBoundaryKey: {},
-  };
-});
 vi.mock("../utils/SMIScoreUtilsBackend", () => ({
   normalizeLabel: vi.fn(),
   classifyScore: vi.fn(),
 }));
+vi.mock("../data/SMIBoundariesBackend", async () => {
+  return {
+    smiBoundaries: {
+      smi_depression: [1, 1.59, 2.11, 2.95, 3.89, 6],
+    },
+    labelToBoundaryKey: {},
+  };
+});
 
 const mockPrisma = prisma as unknown as {
   form: { update: ReturnType<typeof vi.fn> };
@@ -51,7 +46,7 @@ describe("submitScoreForm (shared factory behaviour)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockPrisma.form = { update: vi.fn() };
-    req = { body: { token: "token123", result: "someResult" } } as unknown as Request;
+    req = { body: { token: "token123", result: String(BECKS_NORMAL_MAX) } } as unknown as Request;
     res = { json: vi.fn(), status: vi.fn().mockReturnThis() } as unknown as Response;
     vi.mocked(validateRequestBodyFields).mockReturnValue({ valid: true });
     vi.mocked(validateTokenOrFail).mockResolvedValue({ id: 1, token: "token123" } as never);
@@ -80,34 +75,29 @@ describe("submitScoreForm (shared factory behaviour)", () => {
     });
   });
 
-  test("submitBecksForm writes bdi_score and calls getBecksScoreCategory", async () => {
-    const combinedScore = "10-Minimal depression";
-    vi.mocked(parseAndCombineScore).mockReturnValue(combinedScore);
+  test("submitBecksForm writes bdi_score as Int", async () => {
     mockPrisma.form.update.mockResolvedValue({ id: 1 });
     vi.mocked(mapFormSafe).mockReturnValue({ id: 1 } as never);
 
     await submitBecksForm(req, res);
 
-    expect(vi.mocked(parseAndCombineScore)).toHaveBeenCalledWith("someResult", getBecksScoreCategory);
     expect(mockPrisma.form.update).toHaveBeenCalledWith({
       where: { token: "token123" },
-      data: expect.objectContaining({ bdi_score: combinedScore }),
+      data: expect.objectContaining({ bdi_score: BECKS_NORMAL_MAX }),
     });
     expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({ success: true, form: { id: 1 } });
   });
 
-  test("submitBurnsForm writes bai_score and calls getBurnsScoreCategory", async () => {
-    const combinedScore = "18-Mild anxiety";
-    vi.mocked(parseAndCombineScore).mockReturnValue(combinedScore);
+  test("submitBurnsForm writes bai_score as Int", async () => {
+    req = { body: { token: "token123", result: String(BURNS_MILD_MAX) } } as unknown as Request;
     mockPrisma.form.update.mockResolvedValue({ id: 1 });
     vi.mocked(mapFormSafe).mockReturnValue({ id: 1 } as never);
 
     await submitBurnsForm(req, res);
 
-    expect(vi.mocked(parseAndCombineScore)).toHaveBeenCalledWith("someResult", getBurnsScoreCategory);
     expect(mockPrisma.form.update).toHaveBeenCalledWith({
       where: { token: "token123" },
-      data: expect.objectContaining({ bai_score: combinedScore }),
+      data: expect.objectContaining({ bai_score: BURNS_MILD_MAX }),
     });
     expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({ success: true, form: { id: 1 } });
   });
@@ -134,11 +124,6 @@ describe("submitYSQForm", () => {
 
     vi.mocked(validateRequestBodyFields).mockReturnValue({ valid: true });
     vi.mocked(validateTokenOrFail).mockResolvedValue({ id: 1, token: "token123" } as never);
-    vi.mocked(getScoreCategory).mockImplementation((_schema, score) => {
-      if (score < 5) return "low";
-      if (score < 15) return "medium";
-      return "high";
-    });
   });
 
   test("should successfully submit the YSQ form", async () => {
@@ -152,8 +137,8 @@ describe("submitYSQForm", () => {
     expect(mockPrisma.form.update).toHaveBeenCalledWith({
       where: { token: "token123" },
       data: expect.objectContaining({
-        ysq_ed_456: "9-medium",
-        ysq_ed_score: "15-high",
+        ysq_ed_456: 9,
+        ysq_ed_score: 15,
       }),
     });
     expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({
@@ -218,10 +203,10 @@ describe("submitYSQForm", () => {
     expect(mockPrisma.form.update).toHaveBeenCalledWith({
       where: { token: "token123" },
       data: expect.objectContaining({
-        ysq_ed_score: "3-low",
-        ysq_ed_456: "0-low",
-        ysq_ab_score: "15-high",
-        ysq_ab_456: "15-high",
+        ysq_ed_score: 3,
+        ysq_ed_456: 0,
+        ysq_ab_score: 15,
+        ysq_ab_456: 15,
       }),
     });
 
@@ -255,24 +240,19 @@ describe("submitSMIForm", () => {
 
     vi.mocked(validateRequestBodyFields).mockReturnValue({ valid: true });
     vi.mocked(validateTokenOrFail).mockResolvedValue({ id: 1, token: "token123" } as never);
-    vi.mocked(classifyScore).mockReturnValue("medium");
   });
 
-  test("should successfully submit SMI form", async () => {
+  test("should successfully submit SMI form storing raw Float", async () => {
     mockPrisma.form.update.mockResolvedValue({ id: 1, token: "token123" });
     vi.mocked(mapFormSafe).mockReturnValue({ id: 1, token: "token123" } as unknown as ReturnType<typeof mapFormSafe>);
 
     await submitSMIForm(req, res);
 
     expect(vi.mocked(validateTokenOrFail)).toHaveBeenCalledWith("token123", res);
-    expect(vi.mocked(classifyScore)).toHaveBeenCalledWith(
-      12.34,
-      smiBoundaries.smi_depression
-    );
     expect(mockPrisma.form.update).toHaveBeenCalledWith({
       where: { token: "token123" },
       data: expect.objectContaining({
-        smi_depression: "12.34-medium",
+        smi_depression: 12.34,
       }),
     });
     expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({
@@ -319,7 +299,6 @@ describe("submitSMIForm", () => {
 
     await submitSMIForm(req, res);
 
-    expect(vi.mocked(classifyScore)).not.toHaveBeenCalled();
     expect(mockPrisma.form.update).toHaveBeenCalledWith({
       where: { token: "token123" },
       data: expect.not.objectContaining({ smi_depression: expect.anything() }),
@@ -362,7 +341,6 @@ describe("submitSMIForm", () => {
 
     await submitSMIForm(req, res);
 
-    expect(vi.mocked(classifyScore)).not.toHaveBeenCalled();
     expect(mockPrisma.form.update).toHaveBeenCalledWith({
       where: { token: "token123" },
       data: expect.not.objectContaining({ smi_depression: expect.anything() }),

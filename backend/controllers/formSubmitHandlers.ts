@@ -1,13 +1,8 @@
 import { Request, Response } from "express";
 import prisma from "../prisma/client";
 import { validateTokenOrFail } from "./formControllerHelpers/formTokenHelpers";
-import getBecksScoreCategory from "../utils/becksScoreUtils";
-import getBurnsScoreCategory from "../utils/burnsScoreUtils";
 import { validateRequestBodyFields } from "../utils/validationUtils";
-import { getScoreCategory } from "../utils/YSQScoreUtils";
-import { SchemaType } from "../data/YSQBoundariesBackend";
-import { parseAndCombineScore } from "../utils/scoreUtils";
-import { classifyScore, normalizeLabel } from "../utils/SMIScoreUtilsBackend";
+import { normalizeLabel } from "../utils/SMIScoreUtilsBackend";
 import {
   smiBoundaries,
   labelToBoundaryKey,
@@ -16,8 +11,7 @@ import { mapFormSafe, defaultUpdateFields } from "../utils/formHelpers";
 import { YSQ_SCHEMAS, type YSQSchemaCode } from "../data/ysqSchemaCodes";
 
 const submitScoreForm = (
-  scoreField: "bdi_score" | "bai_score",
-  categoryFn: (score: number) => string
+  scoreField: "bdi_score" | "bai_score"
 ) =>
   async (
     req: Request<{}, unknown, { token: string; result: string }>,
@@ -32,13 +26,13 @@ const submitScoreForm = (
       const form = await validateTokenOrFail(token, res);
       if (!form) return;
 
-      const combinedScore = parseAndCombineScore(result, categoryFn);
+      const score = parseInt(result, 10);
 
       const updatedForm = await prisma.form.update({
         where: { token },
         data: {
           ...defaultUpdateFields(),
-          [scoreField]: combinedScore,
+          [scoreField]: score,
         },
       });
 
@@ -51,8 +45,8 @@ const submitScoreForm = (
     }
   };
 
-export const submitBecksForm = submitScoreForm("bdi_score", getBecksScoreCategory);
-export const submitBurnsForm = submitScoreForm("bai_score", getBurnsScoreCategory);
+export const submitBecksForm = submitScoreForm("bdi_score");
+export const submitBurnsForm = submitScoreForm("bai_score");
 
 export const submitYSQForm = async (
   req: Request<
@@ -89,20 +83,12 @@ export const submitYSQForm = async (
 
       const numericAnswers = answers.map((v) => Number(v) || 0);
       const rawScore = numericAnswers.reduce((sum, val) => sum + val, 0);
-      const rawCategory = getScoreCategory(
-        schema.toUpperCase() as SchemaType,
-        rawScore
-      );
-      dataUpdate[`ysq_${schema}_score`] = `${rawScore}-${rawCategory}`;
+      dataUpdate[`ysq_${schema}_score`] = rawScore;
 
       const score456 = numericAnswers
         .filter((val) => val >= 4 && val <= 6)
         .reduce((sum, val) => sum + val, 0);
-      const score456Category = getScoreCategory(
-        schema.toUpperCase() as SchemaType,
-        score456
-      );
-      dataUpdate[`ysq_${schema}_456`] = `${score456}-${score456Category}`;
+      dataUpdate[`ysq_${schema}_456`] = score456;
     }
 
     const updatedForm = await prisma.form.update({
@@ -167,8 +153,7 @@ export const submitSMIForm = async (
         continue;
       }
 
-      const category = classifyScore(avg, smiBoundaries[boundaryKey]);
-      dataUpdate[boundaryKey] = `${avg.toFixed(2)}-${category}`;
+      dataUpdate[boundaryKey] = parseFloat(avg.toFixed(2));
     }
 
     const updatedForm = await prisma.form.update({
