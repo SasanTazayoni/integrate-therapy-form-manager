@@ -1,6 +1,6 @@
 # Integrate Therapy Form Manager
 
-![HTML](./tech/html.png) ![CSS](./tech/css.png) ![Typescript](./tech/typescript.png) ![Vite](./tech/vite.png) ![React](./tech/react.png) ![Jest](./tech/jest.png) ![Tailwind](./tech/tailwind.png) ![REST-API](./tech/restapi.png) ![Prisma](./tech/prisma.png) ![PostgreSQL](./tech/postgresql.png) ![Neon](./tech/neon.png) ![Node](./tech/node.png) ![Express](./tech/express.png) ![ChatGPT](./tech/chatgpt.png) ![Claude](./tech/claude.png) ![VSCode](./tech/vscode.png) ![render](./tech/render.png)
+![HTML](./tech/html.png) ![CSS](./tech/css.png) ![Typescript](./tech/typescript.png) ![Vite](./tech/vite.png) ![React](./tech/react.png) ![Jest](./tech/jest.png) ![Tailwind](./tech/tailwind.png) ![REST-API](./tech/restapi.png) ![Prisma](./tech/prisma.png) ![PostgreSQL](./tech/postgresql.png) ![Neon](./tech/neon.png) ![Node](./tech/node.png) ![Express](./tech/express.png) ![Resend](./tech/resend.png) ![ChatGPT](./tech/chatgpt.png) ![Claude](./tech/claude.png) ![VSCode](./tech/vscode.png) ![render](./tech/render.png)
 
 > **⚠️ Note:** This is a production application handling sensitive therapy client data. A live demo is not publicly available for privacy and GDPR compliance reasons. Please see the [video demonstrations](#introduction) and [screenshots](#features) below.
 
