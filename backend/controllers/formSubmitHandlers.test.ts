@@ -10,10 +10,7 @@ import { validateTokenOrFail } from "./formControllerHelpers/formTokenHelpers";
 import { validateRequestBodyFields } from "../utils/validationUtils";
 import { mapFormSafe } from "../utils/formHelpers";
 import { normalizeLabel } from "../utils/SMIScoreUtilsBackend";
-import {
-  smiBoundaries,
-  labelToBoundaryKey,
-} from "../data/SMIBoundariesBackend";
+import { labelToBoundaryKey } from "../data/SMIBoundariesBackend";
 import { BECKS_NORMAL_MAX } from "../utils/becksScoreUtils";
 import { BURNS_MILD_MAX } from "../utils/burnsScoreUtils";
 import type { Request, Response } from "express";
@@ -46,10 +43,18 @@ describe("submitScoreForm (shared factory behaviour)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockPrisma.form = { update: vi.fn() };
-    req = { body: { token: "token123", result: String(BECKS_NORMAL_MAX) } } as unknown as Request;
-    res = { json: vi.fn(), status: vi.fn().mockReturnThis() } as unknown as Response;
+    req = {
+      body: { token: "token123", result: String(BECKS_NORMAL_MAX) },
+    } as unknown as Request;
+    res = {
+      json: vi.fn(),
+      status: vi.fn().mockReturnThis(),
+    } as unknown as Response;
     vi.mocked(validateRequestBodyFields).mockReturnValue({ valid: true });
-    vi.mocked(validateTokenOrFail).mockResolvedValue({ id: 1, token: "token123" } as never);
+    vi.mocked(validateTokenOrFail).mockResolvedValue({
+      id: 1,
+      token: "token123",
+    } as never);
   });
 
   test("returns early if field validation fails", async () => {
@@ -62,14 +67,14 @@ describe("submitScoreForm (shared factory behaviour)", () => {
     vi.mocked(validateTokenOrFail).mockResolvedValue(null as never);
     await submitBecksForm(req, res);
     expect(mockPrisma.form.update).not.toHaveBeenCalled();
-    expect((res.json as ReturnType<typeof vi.fn>)).not.toHaveBeenCalled();
+    expect(res.json as ReturnType<typeof vi.fn>).not.toHaveBeenCalled();
   });
 
   test("returns 500 on unexpected error", async () => {
     vi.mocked(validateTokenOrFail).mockRejectedValue(new Error("DB Error"));
     await submitBecksForm(req, res);
-    expect((res.status as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith(500);
-    expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({
+    expect(res.status as ReturnType<typeof vi.fn>).toHaveBeenCalledWith(500);
+    expect(res.json as ReturnType<typeof vi.fn>).toHaveBeenCalledWith({
       error: "Failed to submit form",
       code: "SUBMIT_ERROR",
     });
@@ -85,11 +90,16 @@ describe("submitScoreForm (shared factory behaviour)", () => {
       where: { token: "token123" },
       data: expect.objectContaining({ bdi_score: BECKS_NORMAL_MAX }),
     });
-    expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({ success: true, form: { id: 1 } });
+    expect(res.json as ReturnType<typeof vi.fn>).toHaveBeenCalledWith({
+      success: true,
+      form: { id: 1 },
+    });
   });
 
   test("submitBurnsForm writes bai_score as Int", async () => {
-    req = { body: { token: "token123", result: String(BURNS_MILD_MAX) } } as unknown as Request;
+    req = {
+      body: { token: "token123", result: String(BURNS_MILD_MAX) },
+    } as unknown as Request;
     mockPrisma.form.update.mockResolvedValue({ id: 1 });
     vi.mocked(mapFormSafe).mockReturnValue({ id: 1 } as never);
 
@@ -99,7 +109,10 @@ describe("submitScoreForm (shared factory behaviour)", () => {
       where: { token: "token123" },
       data: expect.objectContaining({ bai_score: BURNS_MILD_MAX }),
     });
-    expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({ success: true, form: { id: 1 } });
+    expect(res.json as ReturnType<typeof vi.fn>).toHaveBeenCalledWith({
+      success: true,
+      form: { id: 1 },
+    });
   });
 });
 
@@ -123,16 +136,25 @@ describe("submitYSQForm", () => {
     } as unknown as Response;
 
     vi.mocked(validateRequestBodyFields).mockReturnValue({ valid: true });
-    vi.mocked(validateTokenOrFail).mockResolvedValue({ id: 1, token: "token123" } as never);
+    vi.mocked(validateTokenOrFail).mockResolvedValue({
+      id: 1,
+      token: "token123",
+    } as never);
   });
 
   test("should successfully submit the YSQ form", async () => {
     mockPrisma.form.update.mockResolvedValue({ id: 1, token: "token123" });
-    vi.mocked(mapFormSafe).mockReturnValue({ id: 1, token: "token123" } as unknown as ReturnType<typeof mapFormSafe>);
+    vi.mocked(mapFormSafe).mockReturnValue({
+      id: 1,
+      token: "token123",
+    } as unknown as ReturnType<typeof mapFormSafe>);
 
     await submitYSQForm(req, res);
 
-    expect(vi.mocked(validateTokenOrFail)).toHaveBeenCalledWith("token123", res);
+    expect(vi.mocked(validateTokenOrFail)).toHaveBeenCalledWith(
+      "token123",
+      res,
+    );
 
     expect(mockPrisma.form.update).toHaveBeenCalledWith({
       where: { token: "token123" },
@@ -141,7 +163,7 @@ describe("submitYSQForm", () => {
         ysq_ed_score: 15,
       }),
     });
-    expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({
+    expect(res.json as ReturnType<typeof vi.fn>).toHaveBeenCalledWith({
       success: true,
       form: { id: 1, token: "token123" },
     });
@@ -152,8 +174,8 @@ describe("submitYSQForm", () => {
 
     await submitYSQForm(req, res);
 
-    expect((res.status as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith(400);
-    expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({
+    expect(res.status as ReturnType<typeof vi.fn>).toHaveBeenCalledWith(400);
+    expect(res.json as ReturnType<typeof vi.fn>).toHaveBeenCalledWith({
       error: "Missing required fields",
       code: "MISSING_FIELDS",
     });
@@ -165,7 +187,7 @@ describe("submitYSQForm", () => {
     await submitYSQForm(req, res);
 
     expect(mockPrisma.form.update).not.toHaveBeenCalled();
-    expect((res.json as ReturnType<typeof vi.fn>)).not.toHaveBeenCalled();
+    expect(res.json as ReturnType<typeof vi.fn>).not.toHaveBeenCalled();
   });
 
   test("should return early if token validation returns null", async () => {
@@ -174,7 +196,7 @@ describe("submitYSQForm", () => {
     await submitYSQForm(req, res);
 
     expect(mockPrisma.form.update).not.toHaveBeenCalled();
-    expect((res.json as ReturnType<typeof vi.fn>)).not.toHaveBeenCalled();
+    expect(res.json as ReturnType<typeof vi.fn>).not.toHaveBeenCalled();
   });
 
   test("should handle errors thrown during submission", async () => {
@@ -182,8 +204,8 @@ describe("submitYSQForm", () => {
 
     await submitYSQForm(req, res);
 
-    expect((res.status as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith(500);
-    expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({
+    expect(res.status as ReturnType<typeof vi.fn>).toHaveBeenCalledWith(500);
+    expect(res.json as ReturnType<typeof vi.fn>).toHaveBeenCalledWith({
       error: "Failed to submit YSQ form",
       code: "SUBMIT_ERROR",
     });
@@ -196,7 +218,10 @@ describe("submitYSQForm", () => {
     };
 
     mockPrisma.form.update.mockResolvedValue({ id: 1, token: "token123" });
-    vi.mocked(mapFormSafe).mockReturnValue({ id: 1, token: "token123" } as unknown as ReturnType<typeof mapFormSafe>);
+    vi.mocked(mapFormSafe).mockReturnValue({
+      id: 1,
+      token: "token123",
+    } as unknown as ReturnType<typeof mapFormSafe>);
 
     await submitYSQForm(req, res);
 
@@ -210,7 +235,7 @@ describe("submitYSQForm", () => {
       }),
     });
 
-    expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({
+    expect(res.json as ReturnType<typeof vi.fn>).toHaveBeenCalledWith({
       success: true,
       form: { id: 1, token: "token123" },
     });
@@ -239,23 +264,32 @@ describe("submitSMIForm", () => {
     } as unknown as Response;
 
     vi.mocked(validateRequestBodyFields).mockReturnValue({ valid: true });
-    vi.mocked(validateTokenOrFail).mockResolvedValue({ id: 1, token: "token123" } as never);
+    vi.mocked(validateTokenOrFail).mockResolvedValue({
+      id: 1,
+      token: "token123",
+    } as never);
   });
 
   test("should successfully submit SMI form storing raw Float", async () => {
     mockPrisma.form.update.mockResolvedValue({ id: 1, token: "token123" });
-    vi.mocked(mapFormSafe).mockReturnValue({ id: 1, token: "token123" } as unknown as ReturnType<typeof mapFormSafe>);
+    vi.mocked(mapFormSafe).mockReturnValue({
+      id: 1,
+      token: "token123",
+    } as unknown as ReturnType<typeof mapFormSafe>);
 
     await submitSMIForm(req, res);
 
-    expect(vi.mocked(validateTokenOrFail)).toHaveBeenCalledWith("token123", res);
+    expect(vi.mocked(validateTokenOrFail)).toHaveBeenCalledWith(
+      "token123",
+      res,
+    );
     expect(mockPrisma.form.update).toHaveBeenCalledWith({
       where: { token: "token123" },
       data: expect.objectContaining({
         smi_depression: 12.34,
       }),
     });
-    expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({
+    expect(res.json as ReturnType<typeof vi.fn>).toHaveBeenCalledWith({
       success: true,
       form: { id: 1, token: "token123" },
     });
@@ -266,8 +300,8 @@ describe("submitSMIForm", () => {
 
     await submitSMIForm(req, res);
 
-    expect((res.status as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith(400);
-    expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({
+    expect(res.status as ReturnType<typeof vi.fn>).toHaveBeenCalledWith(400);
+    expect(res.json as ReturnType<typeof vi.fn>).toHaveBeenCalledWith({
       error: "Invalid or missing results object",
       code: "MISSING_FIELDS",
     });
@@ -279,7 +313,7 @@ describe("submitSMIForm", () => {
     await submitSMIForm(req, res);
 
     expect(mockPrisma.form.update).not.toHaveBeenCalled();
-    expect((res.json as ReturnType<typeof vi.fn>)).not.toHaveBeenCalled();
+    expect(res.json as ReturnType<typeof vi.fn>).not.toHaveBeenCalled();
   });
 
   test("should return early if token validation fails", async () => {
@@ -288,14 +322,17 @@ describe("submitSMIForm", () => {
     await submitSMIForm(req, res);
 
     expect(mockPrisma.form.update).not.toHaveBeenCalled();
-    expect((res.json as ReturnType<typeof vi.fn>)).not.toHaveBeenCalled();
+    expect(res.json as ReturnType<typeof vi.fn>).not.toHaveBeenCalled();
   });
 
   test("should skip invalid averages (NaN)", async () => {
     req.body.results = { smi_depression: { average: "oops" } };
 
     mockPrisma.form.update.mockResolvedValue({ id: 1, token: "token123" });
-    vi.mocked(mapFormSafe).mockReturnValue({ id: 1, token: "token123" } as unknown as ReturnType<typeof mapFormSafe>);
+    vi.mocked(mapFormSafe).mockReturnValue({
+      id: 1,
+      token: "token123",
+    } as unknown as ReturnType<typeof mapFormSafe>);
 
     await submitSMIForm(req, res);
 
@@ -310,8 +347,8 @@ describe("submitSMIForm", () => {
 
     await submitSMIForm(req, res);
 
-    expect((res.status as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith(500);
-    expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({
+    expect(res.status as ReturnType<typeof vi.fn>).toHaveBeenCalledWith(500);
+    expect(res.json as ReturnType<typeof vi.fn>).toHaveBeenCalledWith({
       error: "Failed to submit SMI form",
       code: "SUBMIT_ERROR",
     });
@@ -322,7 +359,10 @@ describe("submitSMIForm", () => {
 
     vi.mocked(normalizeLabel).mockReturnValue("anxiety");
     mockPrisma.form.update.mockResolvedValue({ id: 1, token: "token123" });
-    vi.mocked(mapFormSafe).mockReturnValue({ id: 1, token: "token123" } as unknown as ReturnType<typeof mapFormSafe>);
+    vi.mocked(mapFormSafe).mockReturnValue({
+      id: 1,
+      token: "token123",
+    } as unknown as ReturnType<typeof mapFormSafe>);
 
     await submitSMIForm(req, res);
 
@@ -337,7 +377,10 @@ describe("submitSMIForm", () => {
     req.body.results = {};
 
     mockPrisma.form.update.mockResolvedValue({ id: 1, token: "token123" });
-    vi.mocked(mapFormSafe).mockReturnValue({ id: 1, token: "token123" } as unknown as ReturnType<typeof mapFormSafe>);
+    vi.mocked(mapFormSafe).mockReturnValue({
+      id: 1,
+      token: "token123",
+    } as unknown as ReturnType<typeof mapFormSafe>);
 
     await submitSMIForm(req, res);
 
@@ -345,7 +388,7 @@ describe("submitSMIForm", () => {
       where: { token: "token123" },
       data: expect.not.objectContaining({ smi_depression: expect.anything() }),
     });
-    expect((res.json as ReturnType<typeof vi.fn>)).toHaveBeenCalledWith({
+    expect(res.json as ReturnType<typeof vi.fn>).toHaveBeenCalledWith({
       success: true,
       form: { id: 1, token: "token123" },
     });
@@ -358,7 +401,10 @@ describe("submitSMIForm", () => {
     labelToBoundaryKey.stress = "smi_stress";
 
     mockPrisma.form.update.mockResolvedValue({ id: 1, token: "token123" });
-    vi.mocked(mapFormSafe).mockReturnValue({ id: 1, token: "token123" } as unknown as ReturnType<typeof mapFormSafe>);
+    vi.mocked(mapFormSafe).mockReturnValue({
+      id: 1,
+      token: "token123",
+    } as unknown as ReturnType<typeof mapFormSafe>);
 
     await submitSMIForm(req, res);
 
