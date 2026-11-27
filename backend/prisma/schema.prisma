@@ -18,6 +18,7 @@ model Client {
   created_at       DateTime  @default(now())
   updated_at       DateTime  @updatedAt
   forms            Form[]
+  formTokens       FormToken[]
 
   @@index([status, delete_inactive])
 }
@@ -85,6 +86,22 @@ model Form {
   smi_ac_score     Float?
   smi_ec_score     Float?
   smi_ha_score     Float?
+  created_at       DateTime  @default(now())
+  updated_at       DateTime  @updatedAt
+
+  @@index([clientId])
+}
+
+model FormToken {
+  id               String    @id @default(uuid())
+  client           Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  clientId         String
+  form_type        String
+  token            String    @unique
+  token_sent_at    DateTime
+  token_expires_at DateTime
+  is_active        Boolean   @default(true)
+  revoked_at       DateTime?
   created_at       DateTime  @default(now())
   updated_at       DateTime  @updatedAt
 
